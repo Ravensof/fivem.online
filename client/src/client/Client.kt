@@ -18599,7 +18599,7 @@ fun Client.networkGetServerTime(): Time {
 
 //private external fun NetworkSetTransitionCreatorHandle(p0: number)
 
-//private external fun NetworkSetVoiceActive(toggle: boolean)
+//private external fun NetworkSetVoiceActive(toggle: boolean)//todo попробовать
 
 //private external fun NetworkSetVoiceChannel(p0: number)
 
@@ -18890,7 +18890,7 @@ fun Client.networkGetServerTime(): Time {
  * looks like it passes a player in the paramater
  * Contains string "NETWORK_VOICE_CONNECT_TO_PLAYER" in ida
  */
-//private external fun NetworkVoiceConnectToPlayer(globalPtr: number)
+//private external fun NetworkVoiceConnectToPlayer(globalPtr: number)//todo test
 /**
  * Only one occurence in the scripts:
  * auto sub_cb43(auto a_0, auto a_1) {

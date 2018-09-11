@@ -4,10 +4,9 @@ import server.Server
 import server.getNumPlayersOnline
 import server.structs.PlayerSrc
 import shared.Event
+import shared.Exports
 import shared.entities.Player
-import shared.exports
 import shared.normalizeEventName
-import shared.r.MODULE_FOLDER_NAME
 
 fun Event.emitNet(player: Player, data: Any) {
 	shared.emitNet(normalizeEventName(data::class.toString()), player.id.toString(), data)
@@ -26,7 +25,7 @@ inline fun <reified T> Event.onNet(noinline function: (PlayerSrc, T) -> Unit) {
 fun <T> Event.onNet(eventName: String, function: (PlayerSrc, T) -> Unit) {
 	console.log("net event $eventName registered")
 
-	exports[MODULE_FOLDER_NAME].onNet(eventName) { playerId: Int, data: T, numberOfPlayers: Int ->
+	Exports.onNet(eventName) { playerId: Int, data: T, numberOfPlayers: Int ->
 
 		val playerSrc = PlayerSrc(playerId)
 

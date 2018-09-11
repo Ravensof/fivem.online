@@ -20,3 +20,8 @@ exports("onNet", function(eventName, callback)
     end)
 end)
 
+exports("on", function(eventName, callback)
+    AddEventHandler(eventName, function(...)
+        callback(source, ...)
+    end)
+end)

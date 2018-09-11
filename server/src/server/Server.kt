@@ -7,6 +7,7 @@ import shared.r.MODULE_FOLDER_NAME
 import shared.struct.Command
 import shared.struct.HttpRequestType
 import shared.struct.Ped
+import shared.struct.tables.PlayerIdentifiers
 
 object Server
 
@@ -40,7 +41,7 @@ private external fun SetPedIntoVehicle(ped: Float, vehicle: Float, seatIndex: Fl
  * colorPrimary &amp; colorSecondary are the paint index for the vehicle.
  * For a list of valid paint indexes, view: pastebin.com/pwHci0xK
  * -------------------------------------------------------------------------
- * Use this to get the Float of color indices: pastebin.com/RQEeqTSM
+ * Use this to query the Float of color indices: pastebin.com/RQEeqTSM
  * Note: minimum color index is 0, maximum color index is (numColorIndices - 1)
  */
 private external fun SetVehicleColours(vehicle: Float, colorPrimary: Float, colorSecondary: Float)
@@ -98,7 +99,11 @@ private external fun GetInstanceId(): Float
 
 private external fun GetInvokingResource(): String
 
-private external fun GetNumPlayerIdentifiers(playerSrc: String): Float
+private external fun GetNumPlayerIdentifiers(playerSrc: Int): Int
+
+fun Server.getNumPlayerIdentifiers(playerSrc: PlayerSrc): Int {
+	return GetNumPlayerIdentifiers(playerSrc.value)
+}
 
 private external fun GetNumPlayerIndices(): Int
 
@@ -160,7 +165,36 @@ fun Server.getPlayerGuid(playerSrc: PlayerSrc): Double? {
 	}
 }
 
-private external fun GetPlayerIdentifier(playerSrc: String, identifier: Float): String
+private external fun GetPlayerIdentifier(playerSrc: Int, identifier: Int): String?
+
+fun Server.getPlayerIdentifiers(playerSrc: PlayerSrc): PlayerIdentifiers {
+
+	var steam: String? = null
+	var license: String? = null
+	var ip: String? = null
+
+	for (i in 0 until Server.getNumPlayerIdentifiers(playerSrc)) {
+
+		GetPlayerIdentifier(playerSrc.value, i)?.let {
+
+			val identifier = it.split(":")
+
+			if (identifier.size == 2) {
+				when (identifier[0]) {
+					"steam" -> steam = identifier[1]
+					"license" -> license = identifier[1]
+					"ip" -> ip = identifier[1]
+				}
+			}
+		}
+	}
+
+	return PlayerIdentifiers(
+			steam = steam,
+			license = license,
+			ip = ip
+	)
+}
 
 private external fun GetPlayerLastMsg(playerSrc: Int): Int
 

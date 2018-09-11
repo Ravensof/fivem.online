@@ -1,8 +1,9 @@
 package shared
 
-import shared.r.LOCAL_EVENT_PREFIX
 
 object Event {
+
+	private const val LOCAL_EVENT_PREFIX = "local"
 
 	fun emit(data: Any) {
 		emit(LOCAL_EVENT_PREFIX + normalizeEventName(data::class.toString()), data)

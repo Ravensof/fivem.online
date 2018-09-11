@@ -1,5 +1,7 @@
 package shared
 
+import shared.r.MODULE_FOLDER_NAME
+
 external interface IntPtrInitialized
 external interface FloatPtrInitialized
 external interface IntPtr
@@ -58,8 +60,8 @@ external interface CitizenInterface {
 
 external val Citizen: CitizenInterface
 
-external fun addRawEventListener(eventName: String, callback: (Any) -> Unit)
-external fun addEventListener(eventName: String, callback: (Any) -> Unit, netSafe: Boolean?)
+private external fun addRawEventListener(eventName: String, callback: (Any) -> Unit)
+private external fun addEventListener(eventName: String, callback: (Any) -> Unit, netSafe: Boolean?)
 
 external fun on(eventName: String, callback: Any)
 
@@ -79,12 +81,17 @@ external fun emitNet(eventName: String, vararg args: Any)
 //@Deprecated("use emitNet(Events, ...")
 //external fun TriggerServerEvent(eventName: String, eventArgument: Any)
 
-internal external fun emitNet(eventName: String, target: String, vararg args: Any)
+private external fun emitNet(eventName: String, target: String, vararg args: Any)
 //@Deprecated("use emitNet(Events, ...")
 //external fun TriggerClientEvent(eventName: String, target: String, eventArgument: Any)
 
-external fun removeEventListener(eventName: String, callback: (eventArgument: Any) -> Unit)
+private external fun removeEventListener(eventName: String, callback: (eventArgument: Any) -> Unit)
 
 external fun setTick(callback: () -> Unit)
 
 external val exports: dynamic
+
+inline val Exports: dynamic
+	get() {
+		return exports[MODULE_FOLDER_NAME]
+	}

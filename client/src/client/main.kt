@@ -4,6 +4,9 @@ import client.extensions.emitNet
 import client.extensions.onNet
 import shared.Event
 import shared.events.ConsoleLogEvent
+import shared.on
+import shared.r.MODULE_FOLDER_NAME
+import shared.setTimeout
 
 fun start() {
 
@@ -24,20 +27,24 @@ fun start() {
 
 	Event.emitNet("test")
 
-
 	console.log("client started")
 }
 
 fun main(args: Array<String>) {
 	console.log("hello client")
 
-	start()
+	var resourceLoaded = false
 
+	//без таймаута через раз exports работает. проверка в onClientResourceStart ничего не дает
+	setTimeout(20000) {
+		if (!resourceLoaded)
+			start()
+	}
 
-//	on("onClientResourceStart"){resource: String->
-//		if(resource== MODULE_FOLDER_NAME){
-//			start()
-//		}else
-//			println(resource)
-//	}
+	on("onClientResourceStart") { resource: String ->
+		if (resource == MODULE_FOLDER_NAME) {
+			resourceLoaded = true
+			start()
+		}
+	}
 }

@@ -1,13 +1,12 @@
 package client.extensions
 
 import shared.Event
-import shared.exports
+import shared.Exports
 import shared.normalizeEventName
-import shared.r.MODULE_FOLDER_NAME
 
 
 fun Event.emitNet(data: Any) {
-	exports[MODULE_FOLDER_NAME].emitNet(normalizeEventName(data::class.toString()), data)
+	Exports.emitNet(normalizeEventName(data::class.toString()), data)
 	console.log("net event " + normalizeEventName(data::class.toString()) + " sent")
 }
 

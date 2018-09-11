@@ -1,7 +1,6 @@
 package shared.r
 
 const val MAX_PLAYERS = 32
-const val LOCAL_EVENT_PREFIX = "local"
 const val MODULE_FOLDER_NAME = "fivem.online"
 
 
