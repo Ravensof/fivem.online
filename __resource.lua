@@ -7,6 +7,8 @@ resource_type 'data' {
 client_scripts {
     'client.lua',
 
+    'Base64.min.js',
+
     'out/production/client/lib/kotlin.js',
     'out/production/shared/shared.js',
     'out/production/client/client.js',
@@ -14,6 +16,8 @@ client_scripts {
 
 server_scripts {
     'server.lua',
+
+    'Base64.min.js',
 
     'out/production/server/lib/kotlin.js',
     'out/production/shared/shared.js',

@@ -30,3 +30,8 @@ external fun encodeURIComponent(str: Any): String
 fun normalizeEventName(className: String): String {
 	return className.replace("[A-z]+ (.*)".toRegex(), "$1").replace(" ", "_")
 }
+
+external object Base64 {
+	fun toBase64(string: String): String
+	fun fromBase64(string: String): String
+}
