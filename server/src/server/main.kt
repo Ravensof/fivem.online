@@ -2,13 +2,12 @@ package server
 
 import server.extensions.onNet
 import server.structs.PlayerSrc
-import shared.Console
-import shared.Event
-import shared.Exports
+import shared.*
 import shared.events.ConsoleLogEvent
-import shared.on
 import shared.r.MODULE_FOLDER_NAME
+import shared.r.NativeEvents
 import shared.struct.tables.PlayerIdentifiers
+
 
 fun start() {
 
@@ -18,8 +17,21 @@ fun start() {
 	}
 
 	Exports.on("playerConnecting") { source: Int, playerName: String, setKickReason: (reason: String) -> Unit ->
-		//		MySQL.execute("INSERT")
-		//		setKickReason("test for $playerName with id = $source and "+Server.getPlayerEndpoint(PlayerSrc(source)))
+
+		setTimeout {
+			val playerSrc = PlayerSrc(source)
+			val playerIdentifiers = Server.getPlayerIdentifiers(playerSrc)
+
+			MySQL.execute("INSERT INTO ${PlayerIdentifiers.TABLE_NAME} " +
+					"SET ${PlayerIdentifiers.FIELD_LAST_NAME}=${MySQL.filter(playerName)}, " +
+					"${PlayerIdentifiers.FIELD_STEAM}=${MySQL.filter(playerIdentifiers.steam.orEmpty())}, " +
+					"${PlayerIdentifiers.FIELD_LICENSE}=${MySQL.filter(playerIdentifiers.license.orEmpty())}, " +
+					"${PlayerIdentifiers.FIELD_IP}=${MySQL.filter(playerIdentifiers.ip.orEmpty())} " +
+					"ON DUPLICATE KEY UPDATE " +
+					"${PlayerIdentifiers.FIELD_LAST_NAME}=${MySQL.filter(playerName)}")
+		}
+
+//		setKickReason("test for $playerName with id = $source and "+Server.getPlayerEndpoint(PlayerSrc(source)))
 //		Server.cancelEvent()
 	}
 
@@ -36,21 +48,17 @@ fun start() {
 		println("playerSrc: $playerSrc")
 		println("string: $str")
 
-		Console.info(Server.getPlayerIdentifiers(playerSrc))
+		Console.debug(Server.getPlayerIdentifiers(playerSrc))
 	}
-
 
 
 	MySQL.query("SELECT `id`,`steam`,`license`,`ip` FROM player_identifiers") { data: Array<PlayerIdentifiers> ->
-		//			data.forEach {
-//				console.log(it.id.toString()+" " +it.license)
-//			}
+		data.forEach {
+			Console.log(it)
+		}
 	}
 
-
-
-
-
+	Console.log(Base64.fromBase64(Base64.toBase64("test")))
 
 	Console.info("server started")
 }
@@ -58,7 +66,7 @@ fun start() {
 fun main(args: Array<String>) {
 	Console.debug("hello server")
 
-	on("onServerResourceStart") { resourceName: String ->
+	on(NativeEvents.Server.RESOURCE_START) { resourceName: String ->
 		if (resourceName == MODULE_FOLDER_NAME) {
 			start()
 		}

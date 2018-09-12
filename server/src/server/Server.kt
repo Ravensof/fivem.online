@@ -1,7 +1,8 @@
 package server
 
 import server.structs.PlayerSrc
-import shared.exports
+import shared.Exports
+import shared.encodeURIComponent
 import shared.r.MAX_PLAYERS
 import shared.r.MODULE_FOLDER_NAME
 import shared.struct.Command
@@ -11,9 +12,13 @@ import shared.struct.tables.PlayerIdentifiers
 
 object Server
 
-fun Server.performHttpRequest(url: String, type: HttpRequestType = HttpRequestType.GET, data: String = "", headers: Any = object {}, callback: (Int, String, dynamic) -> Unit) {
+fun Server.performHttpRequest(url: String, type: HttpRequestType = HttpRequestType.GET, data: Map<String, String>? = null, headers: Any = object {}, callback: (Int, String, dynamic) -> Unit) {
 
-	exports[MODULE_FOLDER_NAME].performHttpRequest(url, callback, type.name, data, headers)
+	val postData = data?.map {
+		encodeURIComponent(it.key) + "=" + encodeURIComponent(it.value)
+	}?.joinToString("&").orEmpty()
+
+	Exports.performHttpRequest(url, callback, type.name, postData, headers)
 }
 
 /**
@@ -48,10 +53,10 @@ private external fun SetVehicleColours(vehicle: Float, colorPrimary: Float, colo
 
 private external fun DeleteFunctionReference(referenceIdentity: String)
 
-private external fun DropPlayer(playerSrc: String, reason: String)
+private external fun DropPlayer(playerSrc: Int, reason: String)
 
-fun Server.dropPlayer(playerSrc: String, reason: String) {
-	DropPlayer(playerSrc, reason)
+fun Server.dropPlayer(playerSrc: PlayerSrc, reason: String) {
+	DropPlayer(playerSrc.value, reason)
 }
 
 private external fun DuplicateFunctionReference(referenceIdentity: String): String
@@ -192,7 +197,8 @@ fun Server.getPlayerIdentifiers(playerSrc: PlayerSrc): PlayerIdentifiers {
 	return PlayerIdentifiers(
 			steam = steam,
 			license = license,
-			ip = ip
+			ip = ip,
+			last_name = Server.getPlayerName(playerSrc)
 	)
 }
 

@@ -2,6 +2,7 @@ package client
 
 import client.extensions.emitNet
 import client.extensions.onNet
+import shared.Console
 import shared.Event
 import shared.events.ConsoleLogEvent
 import shared.on
@@ -11,10 +12,10 @@ import shared.setTimeout
 fun start() {
 
 	Event.on { event: ConsoleLogEvent ->
-		console.log("client received message \"${event.message}\"")
+		Console.log("client received message \"${event.message}\"")
 	}
 	Event.onNet { event: ConsoleLogEvent ->
-		console.log("client received message \"${event.message}\" from server")
+		Console.log("client received message \"${event.message}\" from server")
 	}
 
 //	Event.onNet<ClientRegisteredEvent> {
@@ -27,11 +28,11 @@ fun start() {
 
 	Event.emitNet("test")
 
-	console.log("client started")
+	Console.info("client started")
 }
 
 fun main(args: Array<String>) {
-	console.log("hello client")
+	Console.debug("hello client")
 
 	var resourceLoaded = false
 
