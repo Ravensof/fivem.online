@@ -4,6 +4,12 @@ resource_type 'data' {
     name = 'test'
 }
 
+files {
+    'resources/radio/index.html'
+}
+
+ui_page "resources/radio/index.html"
+
 client_scripts {
     'client.lua',
 
@@ -24,4 +30,3 @@ server_scripts {
     'out/production/server/server.js',
 }
 
-files {}

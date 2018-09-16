@@ -1,8 +1,61 @@
-package client
+package client.common
 
+import shared.common.Console
+import shared.r.ProfileSetting
 import shared.struct.Time
 
-object Client
+object Client {
+
+	fun startAudioScene(scene: String): Int? {
+		return Console.checkValue("ClientStartAudioScene(scene: String)", StartAudioScene(scene))
+	}
+
+	fun stopAudioScene(scene: String) {
+		StopAudioScene(scene)
+	}
+
+	fun setFrontendRadioActive(active: Boolean) {
+		SetFrontendRadioActive(active)
+	}
+
+	fun setClockTime(hour: Short, minute: Short, second: Short) {
+		SetClockTime(hour, minute, second)
+	}
+
+	fun sendNuiMessage(obj: Any): Int {//todo проверить результат
+		val jsonString = JSON.stringify(obj)
+
+		return Console.checkValue("Client.sendNuiMessage($jsonString)", SendNuiMessage(jsonString)) { it != 1 }
+	}
+
+	fun registerNuiCallbackType(callbackType: String) {
+		registerNuiCallbackType(callbackType)
+	}
+
+	fun networkGetServerTime(): Time {
+		return NetworkGetServerTime()
+	}
+
+	/**
+	 * возвращает переменную metadataKey из __resource.lua в папке resourceName
+	 */
+	fun getResourceMetadata(resourceName: String, metadataKey: String, index: Int): String? {
+		return GetResourceMetadata(resourceName, metadataKey, index)
+	}
+
+	fun getProfileSetting(profileSetting: ProfileSetting): Int? {//todo проверить вывод, nullable?
+		return Console.checkValue("Client.getProfileSetting(profileSetting: ProfileSetting)", GetProfileSetting(profileSetting.id)) { it == null }
+	}
+
+	fun addTextEntry(entryKey: String, entryText: String) {
+		AddTextEntry(entryKey, entryText)
+	}
+
+	fun getNumResourceMetadata(resourceName: String, metadataKey: String): Int? {
+		return GetNumResourceMetadata(resourceName, metadataKey)
+	}
+}
+
 
 /**
  * Aborts the current message in the text chat.
@@ -607,7 +660,7 @@ object Client
  */
 //private external fun AddTextComponentString2(website: string)
 
-//private external fun AddTextEntry(entryKey: string, entryText: string)
+private external fun AddTextEntry(entryKey: String, entryText: String)
 
 //private external fun AddTextEntryByHash(entryKey: string | number, entryText: string)
 
@@ -6316,7 +6369,7 @@ object Client
  * @param resourceName The resource name.
  * @param metadataKey The key to look up in the resource manifest.
  */
-//private external fun GetNumResourceMetadata(resourceName: string, metadataKey: string): number;
+private external fun GetNumResourceMetadata(resourceName: String, metadataKey: String): Int?
 
 //private external fun GetNumResources(): number;
 
@@ -6817,165 +6870,6 @@ object Client
 //private external fun GetPickupObject(pickup: number): number;
 //private external fun N_0x5099bc55630b25ae(pickup: number): number;
 
-//private external fun GetPlayerAdvancedModifierPrivileges(p0: number): string;
-//private external fun N_0xcd67ad041a394c9c(p0: number): string;
-//private external fun GetContentUserId(p0: number): string;
-
-//private external fun GetPlayerCurrentStealthNoise(player: number): number;
-
-//private external fun GetPlayerFromServerId(serverId: number): number;
-
-/**
- * Returns the group ID the player is member of.
- */
-//private external fun GetPlayerGroup(player: number): number;
-
-//private external fun GetPlayerHasReserveParachute(player: number): number;
-
-/**
- * Called 5 times in the scripts. All occurrences found in b617d, sorted alphabetically and identical lines removed:
- * AUDIO::GET_PLAYER_HEADSET_SOUND_ALTERNATE("INOUT", 0.0);
- * AUDIO::GET_PLAYER_HEADSET_SOUND_ALTERNATE("INOUT", 1.0);
- */
-//private external fun GetPlayerHeadsetSoundAlternate(p0: string, p1: number)
-
-/**
- * Returns the same as PLAYER_ID and NETWORK_PLAYER_ID_TO_INT
- */
-external fun GetPlayerIndex(): Int
-
-/**
- * Returns the Player's Invincible status.
- * This function will always return false if 0x733A643B5B0C53C1 is used to set the invincibility status. To always get the correct result, use this:
- * bool IsPlayerInvincible(Player player)
- * {
- * auto addr = getScriptHandleBaseAddress(GET_PLAYER_PED(player));
- * if (addr)
- * {
- * DWORD flag = *(DWORD *)(addr + 0x188);
- * return ((flag &amp; (1 &lt;&lt; 8)) != 0) || ((flag &amp; (1 &lt;&lt; 9)) != 0);
- * }
- * return false;
- * }
- * ============================================================
- * This has bothered me for too long, whoever may come across this, where did anyone ever come up with this made up hash? 0x733A643B5B0C53C1 I've looked all over old hash list, and this nativedb I can not find that PC hash anywhere. What native name is it now or was it?
- */
-//private external fun GetPlayerInvincible(player: number): number;
-
-//private external fun GetPlayerMaxArmour(player: number): number;
-
-/**
- * Returns the players name
- */
-//private external fun GetPlayerName(player: number): string;
-
-//private external fun GetPlayerParachutePackTintIndex(player: number, tintIndex: number)
-
-//private external fun GetPlayerParachuteSmokeTrailColor(player: number): [number, number, number];
-
-/**
- * Tints:
- * None = -1,
- * Rainbow = 0,
- * Red = 1,
- * SeasideStripes = 2,
- * WidowMaker = 3,
- * Patriot = 4,
- * Blue = 5,
- * Black = 6,
- * Hornet = 7,
- * AirFocce = 8,
- * Desert = 9,
- * Shadow = 10,
- * HighAltitude = 11,
- * Airbone = 12,
- * Sunrise = 13,
- */
-//private external fun GetPlayerParachuteTintIndex(player: number, tintIndex: number)
-
-/**
- * returns the players ped used in many functions
- */
-//private external fun GetPlayerPed(playerId: number): number;
-
-//private external fun GetPlayerPedIsFollowing(ped: number): number;
-
-/**
- * Does the same like PLAYER::GET_PLAYER_PED<br/>
- */
-//private external fun GetPlayerPedScriptIndex(Player: number): number;
-
-//private external fun GetPlayerRadioStationGenre(): number;
-
-/**
- * Returns 255 (radio off index) if the function fails.
- */
-//private external fun GetPlayerRadioStationIndex(): number;
-
-/**
- * Returns active radio station name
- */
-//private external fun GetPlayerRadioStationName(): string;
-
-/**
- * Tints:
- * None = -1,
- * Rainbow = 0,
- * Red = 1,
- * SeasideStripes = 2,
- * WidowMaker = 3,
- * Patriot = 4,
- * Blue = 5,
- * Black = 6,
- * Hornet = 7,
- * AirFocce = 8,
- * Desert = 9,
- * Shadow = 10,
- * HighAltitude = 11,
- * Airbone = 12,
- * Sunrise = 13,
- */
-//private external fun GetPlayerReserveParachuteTintIndex(player: number, index: number)
-
-/**
- * Returns RGB color of the player
- */
-//private external fun GetPlayerRgbColour(Player: number): [number, number, number];
-
-//private external fun GetPlayerServerId(player: number): number;
-
-//private external fun GetPlayerShortSwitchState(): number;
-
-//private external fun GetPlayerSprintStaminaRemaining(player: number): number;
-
-//private external fun GetPlayerSprintTimeRemaining(player: number): number;
-
-//private external fun GetPlayerSwitchState(): number;
-
-//private external fun GetPlayerSwitchType(): number;
-
-/**
- * Assigns the handle of locked-on melee target to *entity that you pass it.
- * Returns false if no entity found.
- */
-//private external fun GetPlayerTargetEntity(player: number, entity: number): number;
-
-/**
- * Gets the player's team.
- * Does nothing in singleplayer.
- */
-external fun GetPlayerTeam(player: Int): Int
-
-//private external fun GetPlayerUnderwaterTimeRemaining(player: number): number;
-
-//private external fun GetPlayerWantedCentrePosition(player: number): number[];
-
-//private external fun GetPlayerWantedLevel(player: number): number;
-
-/**
- * Alternative: GET_VEHICLE_PED_IS_IN(PLAYER_PED_ID(), 1);
- */
-//private external fun GetPlayersLastVehicle(): number;
 
 //private external fun GetPositionInRecording(p0: number): number;
 
@@ -7018,7 +6912,7 @@ external fun GetPlayerTeam(player: Int): Int
 /**
  * gtaforums.com/topic/799843-stats-profile-settings/
  */
-//private external fun GetProfileSetting(profileSetting: number): number;
+private external fun GetProfileSetting(profileSettingId: Int): Int?
 
 /**
  * only documented to be continued...
@@ -7195,7 +7089,7 @@ external fun GetPlayerTeam(player: Int): Int
  * @param metadataKey The key in the resource manifest.
  * @param index The value index, in a range from [0..GET_NUM_RESOURCE_METDATA-1].
  */
-//private external fun GetResourceMetadata(resourceName: string, metadataKey: string, index: number): string;
+private external fun GetResourceMetadata(resourceName: String, metadataKey: String, index: Int): String?//todo проверить вывод
 
 /**
  * Returns the current state of the specified resource.
@@ -10075,101 +9969,6 @@ external fun GetPlayerTeam(player: Int): Int
 //private external fun IsPlaybackGoingOnForVehicle(p0: number): number;
 
 //private external fun IsPlaybackUsingAiGoingOnForVehicle(p0: number): number;
-
-/**
- * Return true while player is being arrested / busted.
- * If atArresting is set to 1, this function will return 1 when player is being arrested (while player is putting his hand up, but still have control)
- * If atArresting is set to 0, this function will return 1 only when the busted screen is shown.
- */
-//private external fun IsPlayerBeingArrested(player: number, atArresting: boolean): number;
-
-/**
- * Returns true when the player is not able to control the cam i.e. when running a benchmark test, switching the player or viewing a cutscene.
- * Note: I am not 100% sure if the native actually checks if the cam control is disabled but it seems promising.
- */
-//private external fun IsPlayerCamControlDisabled(): number;
-/**
- * Returns true when the player is not able to control the cam i.e. when running a benchmark test, switching the player or viewing a cutscene.
- * Note: I am not 100% sure if the native actually checks if the cam control is disabled but it seems promising.
- */
-//private external fun N_0x7c814d2fb49f40c0(): number;
-
-/**
- * Returns TRUE if the player ('s ped) is climbing at the moment.
- */
-//private external fun IsPlayerClimbing(player: number): number;
-
-/**
- * Can the player control himself, used to disable controls for player for things like a cutscene.
- * ---
- * You can't disable controls with this, use SET_PLAYER_CONTROL(...) for this.
- */
-//private external fun IsPlayerControlOn(player: number): number;
-
-//private external fun IsPlayerDead(player: number): number;
-
-/**
- * Gets a value indicating whether the specified player is currently aiming freely.
- */
-//private external fun IsPlayerFreeAiming(player: number): number;
-
-/**
- * Gets a value indicating whether the specified player is currently aiming freely at the specified entity.
- */
-//private external fun IsPlayerFreeAimingAtEntity(player: number, entity: number): number;
-
-//private external fun IsPlayerFreeForAmbientTask(player: number): number;
-
-//private external fun IsPlayerInCutscene(player: number): number;
-
-/**
- * this function is hard-coded to always return 0.
- */
-//private external fun IsPlayerLoggingInNp(): number;
-
-/**
- * Returns TRUE if the game is in online mode and FALSE if in offline mode.
- * This is an alias for NETWORK_IS_SIGNED_ONLINE.
- */
-//private external fun IsPlayerOnline(): number;
-
-/**
- * Checks whether the specified player has a Ped, the Ped is not dead, is not injured and is not arrested.
- */
-//private external fun IsPlayerPlaying(player: number): number;
-
-//private external fun IsPlayerPressingHorn(player: number): number;
-
-//private external fun IsPlayerReadyForCutscene(player: number): number;
-
-/**
- * Returns true if the player is riding a train.
- */
-//private external fun IsPlayerRidingTrain(player: number): number;
-
-//private external fun IsPlayerScriptControlOn(player: number): number;
-
-/**
- * Returns true if the player is currently switching, false otherwise.
- * (When the camera is in the sky moving from Trevor to Franklin for example)
- */
-//private external fun IsPlayerSwitchInProgress(): number;
-/**
- * Returns true if the player is currently switching, false otherwise.
- * (When the camera is in the sky moving from Trevor to Franklin for example)
- */
-//private external fun N_0xd9d2cfff49fab35f(): number;
-
-//private external fun IsPlayerTargettingAnything(player: number): number;
-
-//private external fun IsPlayerTargettingEntity(player: number, entity: number): number;
-
-//private external fun IsPlayerTeleportActive(): number;
-
-//private external fun IsPlayerVehicleRadioEnabled(): number;
-//private external fun N_0x5f43d83fd6738741(): number;
-
-//private external fun IsPlayerWantedLevelGreater(player: number, wantedLevel: number): number;
 
 //private external fun IsPlayingPhoneGestureAnim(ped: number): number;
 
@@ -17699,10 +17498,6 @@ external fun GetPlayerTeam(player: Int): Int
 
 private external fun NetworkGetServerTime(): Time
 
-fun Client.networkGetServerTime(): Time {
-	return NetworkGetServerTime()
-}
-
 //private external fun N_0x6d03bfbd643b2a02(): [number, number, number];
 
 //private external fun NetworkGetTalkerProximity(): number;
@@ -19514,7 +19309,7 @@ fun Client.networkGetServerTime(): Time {
 
 //private external fun RegisterNamedRendertarget(p0: string, p1: boolean): number;
 
-//private external fun RegisterNuiCallbackType(callbackType: string)
+private external fun RegisterNuiCallbackType(callbackType: String)
 
 /**
  * Registers a script for any object with a specific model hash.
@@ -20604,7 +20399,7 @@ fun Client.networkGetServerTime(): Time {
  */
 //private external fun SendLoadingScreenMessage(jsonString: string): number;
 
-//private external fun SendNuiMessage(jsonString: string): number;
+private external fun SendNuiMessage(jsonString: String): Int
 
 /**
  * If 'value' is 50 and 'maxValue' is 100, the bar is halfway filled.
@@ -21298,10 +21093,6 @@ fun Client.networkGetServerTime(): Time {
  * SET_CLOCK_TIME(12, 34, 56);
  */
 private external fun SetClockTime(hour: Short, minute: Short, second: Short)
-
-fun Client.setClockTime(hour: Short, minute: Short, second: Short) {
-	SetClockTime(hour, minute, second)
-}
 
 //private external fun SetCloudHatOpacity(opacity: number)
 //private external fun N_0xf36199225d6d8c86(opacity: number)
@@ -22047,7 +21838,7 @@ fun Client.setClockTime(hour: Short, minute: Short, second: Short) {
 
 //private external fun SetFrontendActive(active: boolean)
 
-//private external fun SetFrontendRadioActive(active: boolean)
+private external fun SetFrontendRadioActive(active: Boolean)
 
 //private external fun SetFrozenRenderingDisabled(enabled: boolean)
 //private external fun EnableGameplayCam(enabled: boolean)
@@ -26312,7 +26103,7 @@ fun Client.setClockTime(hour: Short, minute: Short, second: Short) {
  * Used to prepare a scene where the surrounding sound is muted or a bit changed. This does not play any sound.
  * List of all usable scene names found in b617d. Sorted alphabetically and identical names removed: pastebin.com/MtM9N9CC
  */
-//private external fun StartAudioScene(scene: string): number;
+private external fun StartAudioScene(scene: String): Int?
 
 /**
  * some kind of flag. Usually 0.
@@ -26897,7 +26688,7 @@ fun Client.setClockTime(hour: Short, minute: Short, second: Short) {
 
 //private external fun StopAnyPedModelBeingSuppressed()
 
-//private external fun StopAudioScene(scene: string)
+private external fun StopAudioScene(scene: String)
 
 /**
  * ??
@@ -27858,7 +27649,7 @@ fun Client.setClockTime(hour: Short, minute: Short, second: Short) {
 //private external fun TaskStealthKill(killer: number, target: number, actionType: string | number, p3: number, p4: number)
 
 /**
- * TODO: add hash from x360
+ * T0DO: add hash from x360
  * ^^^
  * I got you, x360 Hash: 0x5A32D4B4.
  * Note: Whoever named this I just compared it and the hash matches, it was the correct name thanks.

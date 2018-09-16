@@ -1,12 +1,19 @@
 package server
 
+import server.common.MySQL
+import server.common.Server
+import server.common.getPlayerIdentifiers
 import server.extensions.onNet
 import server.structs.PlayerSrc
-import shared.*
+import server.structs.tables.PlayerIdentifiers
+import shared.common.Console
+import shared.common.Event
+import shared.common.Exports
+import shared.common.on
 import shared.events.ConsoleLogEvent
 import shared.r.MODULE_FOLDER_NAME
 import shared.r.NativeEvents
-import shared.struct.tables.PlayerIdentifiers
+import shared.setTimeout
 
 
 fun start() {
@@ -51,14 +58,13 @@ fun start() {
 		Console.debug(Server.getPlayerIdentifiers(playerSrc))
 	}
 
-
-	MySQL.query("SELECT `id`,`steam`,`license`,`ip` FROM player_identifiers") { data: Array<PlayerIdentifiers> ->
-		data.forEach {
-			Console.log(it)
-		}
-	}
-
-	Console.log(Base64.fromBase64(Base64.toBase64("test")))
+//	setTimeout {
+//		MySQL.query("SELECT `id`,`steam`,`license`,`ip` FROM player_identifiers") { data: Array<PlayerIdentifiers> ->
+//			data.forEach {
+//				Console.log(it)
+//			}
+//		}
+//	}
 
 	Console.info("server started")
 }

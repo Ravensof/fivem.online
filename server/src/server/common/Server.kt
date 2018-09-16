@@ -1,14 +1,14 @@
-package server
+package server.common
 
 import server.structs.PlayerSrc
-import shared.Exports
+import server.structs.tables.PlayerIdentifiers
+import shared.common.Exports
 import shared.encodeURIComponent
 import shared.r.MAX_PLAYERS
 import shared.r.MODULE_FOLDER_NAME
 import shared.struct.Command
 import shared.struct.HttpRequestType
 import shared.struct.Ped
-import shared.struct.tables.PlayerIdentifiers
 
 object Server
 

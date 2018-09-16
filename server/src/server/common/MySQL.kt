@@ -1,7 +1,7 @@
-package server
+package server.common
 
-import shared.Base64
-import shared.Console
+import shared.common.Base64
+import shared.common.Console
 import shared.struct.CustomHttpResponse
 import shared.struct.HttpRequestType
 

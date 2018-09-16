@@ -2,10 +2,12 @@ package client
 
 import client.extensions.emitNet
 import client.extensions.onNet
-import shared.Console
-import shared.Event
+import client.modules.eventGenerator.EventGenerator
+import client.modules.radio.RadioModule
+import shared.common.Console
+import shared.common.Event
+import shared.common.on
 import shared.events.ConsoleLogEvent
-import shared.on
 import shared.r.MODULE_FOLDER_NAME
 import shared.setTimeout
 
@@ -27,6 +29,9 @@ fun start() {
 //	Event.emitNet(ConsoleLogEvent("hello from player"))
 
 	Event.emitNet("test")
+
+	EventGenerator()
+	RadioModule()
 
 	Console.info("client started")
 }

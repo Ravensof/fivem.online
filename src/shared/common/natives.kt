@@ -1,4 +1,4 @@
-package shared
+package shared.common
 
 import shared.r.MODULE_FOLDER_NAME
 

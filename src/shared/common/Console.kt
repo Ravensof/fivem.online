@@ -1,4 +1,4 @@
-package shared
+package shared.common
 
 import shared.r.*
 
@@ -45,5 +45,12 @@ object Console {
 		}
 	}
 
+	@Deprecated("check value")
+	fun <T> checkValue(functionName: String, functionResult: T, showIf: (T) -> Boolean = { true }): T {
+		if (showIf(functionResult)) {
+			debug("checkValue: $functionName=$functionResult")
+		}
+		return functionResult
+	}
 }
 

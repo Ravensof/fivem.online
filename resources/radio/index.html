@@ -1,0 +1,47 @@
+<html>
+<head>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.0.15/howler.core.min.js"></script>
+	<script>
+		let sound;
+
+		document.addEventListener("DOMContentLoaded", () => {
+			// fetch("http://fivem.online/radio:ready", {"method": "POST", "body": "{}"});
+
+			window.addEventListener("message", (event) => {
+
+				let data = event.data;
+
+				switch (data.type) {
+					case "play":
+						if (sound != null) {
+							sound.stop();
+						}
+
+						sound = new Howl({
+							src: data.url,
+							html5: true, // A live stream can only be played through HTML5 Audio.
+							format: ['opus', 'ogg', 'mp3'],
+							volume: data.volume
+						});
+
+						sound.play();
+
+						break;
+					case "stop":
+						if (sound != null) {
+							sound.stop();
+						}
+						break;
+					case "volume":
+						if (sound != null) {
+							sound.volume(data.volume);
+						}
+						break;
+				}
+			});
+		});
+	</script>
+</head>
+<body>
+</body>
+</html>

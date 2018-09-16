@@ -1,4 +1,4 @@
-package shared.struct.tables
+package server.structs.tables
 
 data class PlayerIdentifiers(
 		val id: Int? = null,
@@ -6,7 +6,7 @@ data class PlayerIdentifiers(
 		val steam: String? = null,
 		val license: String? = null,
 		val ip: String? = null
-) : AbstractTable {
+) {
 	companion object {
 		const val TABLE_NAME: String = "player_identifiers"
 		const val FIELD_ID = "id"
