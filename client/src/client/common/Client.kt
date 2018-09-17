@@ -29,7 +29,7 @@ object Client {
 	}
 
 	fun registerNuiCallbackType(callbackType: String) {
-		registerNuiCallbackType(callbackType)
+		RegisterNuiCallbackType(callbackType)
 	}
 
 	fun networkGetServerTime(): Time {

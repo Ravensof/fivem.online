@@ -5,7 +5,6 @@ import shared.common.Console
 import shared.common.Event
 import shared.common.Exports
 import shared.normalizeEventName
-import shared.struct.SafeEventContainer
 
 
 fun Event.emitNet(data: Any) {
@@ -26,28 +25,26 @@ fun <T> Event.onNet(eventName: String, function: (T) -> Unit) {
 	}
 }
 
-fun Event.emitSafeNet(data: Any) {
-	Event.clientToken?.let { token ->
-		Console.debug("safe net event " + normalizeEventName(data::class.toString()) + " sent")
-		Exports.emitNet(
-				SAFE_EVENT_PREFIX + normalizeEventName(data::class.toString()),
-				SafeEventContainer(token, data)
-		)
-		Unit
-	}
-}
+//fun Event.emitSafeNet(data: Any) {
+//	Event.clientToken?.let { token ->
+//		Console.debug("safe net event " + normalizeEventName(data::class.toString()) + " sent")
+//		Exports.emitNet(
+//				SAFE_EVENT_PREFIX + normalizeEventName(data::class.toString()),
+//				SafeEventContainer(token, data)
+//		)
+//		Unit
+//	}
+//}
 
-fun Event.onNui(eventName: String, function: Any) {//todo проверить и переделать
-	Client.registerNuiCallbackType(eventName)
+fun Event.onNui(eventName: String, function: (Any, (String) -> Unit) -> Unit) {//todo проверить и переделать
 	Console.info("nui event $eventName registered")
-
-	Exports.on("__cfx_nui:$eventName", function)
-	Exports.on("__cfx_nui:$eventName") {
-		Console.info("nui event $eventName triggered")
+	Exports.onNui(eventName) { data: Any, callback: (String) -> Unit ->
+		Console.debug("nui event $eventName triggered")
+		function(data, callback)
 	}
 }
 
 fun Event.emitNui(obj: Any): Int {
-	Console.info("nui data sent " + obj::class.toString() + " " + JSON.stringify(obj))
+	Console.debug("nui data sent " + obj::class.toString() + " " + JSON.stringify(obj))
 	return Client.sendNuiMessage(obj)
 }

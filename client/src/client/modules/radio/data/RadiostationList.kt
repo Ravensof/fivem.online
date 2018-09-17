@@ -13,7 +13,7 @@ val RadioStationList = mapOf(
 //		RadioStations.RADIO_07_DANCE_01.name to RadioStation(),    // Soulwax FM
 //		RadioStations.RADIO_08_MEXICAN.name to RadioStation(),     // East Los FM
 //		RadioStations.RADIO_09_HIPHOP_OLD.name to RadioStation(),  // West Coast Classics
-		RadioStation.RADIO_11_TALK_02.name to InternetRadioStation("http://filev.online:8000/")      // Blaine County Radio
+		RadioStation.RADIO_11_TALK_02.name to InternetRadioStation("http://fivem.online:8000/", 2.3)      // Blaine County Radio
 //		RadioStations.RADIO_12_REGGAE.name to RadioStation(),      // Blue Ark
 //		RadioStations.RADIO_13_JAZZ.name to RadioStation(),        // Worldwide FM
 //		RadioStations.RADIO_14_DANCE_02.name to RadioStation(),    // FlyLo FM

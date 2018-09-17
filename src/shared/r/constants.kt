@@ -1,7 +1,7 @@
 package shared.r
 
 const val MAX_PLAYERS = 32
-const val MODULE_FOLDER_NAME = "fivem.online"
+const val MODULE_FOLDER_NAME = "fivem-online"
 
 
 const val CONSOLE_PREFIX = "[$MODULE_FOLDER_NAME]"

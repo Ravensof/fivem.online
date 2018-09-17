@@ -1,7 +1,9 @@
 package client.modules.radio
 
 import client.common.Client
+import client.common.Player
 import client.extensions.emitNui
+import client.extensions.onNui
 import client.extensions.orZero
 import client.modules.AbstractModule
 import client.modules.eventGenerator.events.AudioMusicLevelInMPChanged
@@ -18,14 +20,14 @@ class RadioModule : AbstractModule() {
 
 	private var volume = getSettingsMusicLevel() / 10 * MAX_VOLUME
 
-	private var currentRadio: InternetRadioStation? = null
+	private val radioStationList = RadioStationList
+
+	private var currentRadio: InternetRadioStation? = getInternetRadioStation(Player.getRadioStation())
 
 	private var isPlaying: Boolean = false
 		get() {
 			return currentRadio != null
 		}
-
-	private val radioStationList = RadioStationList
 
 	init {
 
@@ -37,32 +39,21 @@ class RadioModule : AbstractModule() {
 			onSettingsMusicLevelChanged(event.volume)
 		}
 
-//		Event.onNui("radio:ready") { data: Any, cb: Any ->//todo проверить
-//			Console.info(data)
-//			Console.info(cb)
-////			Event.emitNui(arrayOf(
-////					"type" to "create",
-////					"radios" to customRadios,
-////					"volume" to volume
-////			))
-//		}
+		Event.onNui("radio:ready") { _: Any, _: (String) -> Unit ->
+			Console.info("on ready received")
+			onReady()
+//			callback("custom text")
+		}
 
-//		Event.emitNui(arrayOf(
-//				"type" to "create",
-//				"radios" to customRadios,
-//				"volume" to volume
-//		))
+		onReady()
 
-//		Event.emitNui(arrayOf(
-//				"type" to "play"
-//		))
-
+		Console.info("RadioModule loaded")
 	}
 
 	fun playCustomRadio(radio: InternetRadioStation) {
 		currentRadio = radio
 		toggleCustomRadioBehavior()
-		Console.info(volume)
+
 		Event.emitNui(object {
 			val type = "play"
 			val url = radio.url
@@ -79,9 +70,19 @@ class RadioModule : AbstractModule() {
 		})
 	}
 
+	private fun getInternetRadioStation(radioStation: RadioStation?): InternetRadioStation? {
+		return radioStation?.let { radioStationList[it.name] }
+	}
+
+	private fun onReady() {
+		currentRadio?.let {
+			playCustomRadio(it)
+		}
+	}
+
 	private fun onPlayerVehicleRadioStationChanged(radioStation: RadioStation?) {
 
-		val internetRadioStation = radioStation?.let { radioStationList.get(it.name) }
+		val internetRadioStation = getInternetRadioStation(radioStation)
 
 		if (internetRadioStation != null)
 			playCustomRadio(internetRadioStation)

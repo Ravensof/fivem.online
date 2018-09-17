@@ -16,13 +16,6 @@ exports("emitNet", function(eventName, data)
     TriggerServerEvent(eventName, data)
 end)
 
---exports("on", function(eventName, callback)
---    AddEventHandler(eventName, function(...)
---        callback(...)
---    end)
---end)
---
---exports("emit", function(eventName, data)
---    TriggerEvent(eventName, data)
---end)
-
+exports("onNui", function(eventName, callback)
+    RegisterNUICallback(eventName, callback)
+end)
