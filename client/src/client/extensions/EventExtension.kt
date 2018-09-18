@@ -36,7 +36,7 @@ fun <T> Event.onNet(eventName: String, function: (T) -> Unit) {
 //	}
 //}
 
-fun Event.onNui(eventName: String, function: (Any, (String) -> Unit) -> Unit) {//todo проверить и переделать
+fun Event.onNui(eventName: String, function: (Any, (String) -> Unit) -> Unit) {
 	Console.info("nui event $eventName registered")
 	Exports.onNui(eventName) { data: Any, callback: (String) -> Unit ->
 		Console.debug("nui event $eventName triggered")

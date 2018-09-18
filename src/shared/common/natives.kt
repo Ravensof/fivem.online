@@ -77,11 +77,11 @@ external fun emit(eventName: String, vararg args: Any)
 //@Deprecated("use emit(Events, ...")
 //external fun TriggerEvent(eventName: String, eventArgument: Any)
 
-external fun emitNet(eventName: String, vararg args: Any)
+private external fun emitNet(eventName: String, vararg args: Any)//не работает
 //@Deprecated("use emitNet(Events, ...")
 //external fun TriggerServerEvent(eventName: String, eventArgument: Any)
 
-private external fun emitNet(eventName: String, target: String, vararg args: Any)
+external fun emitNet(eventName: String, target: String, vararg args: Any)
 //@Deprecated("use emitNet(Events, ...")
 //external fun TriggerClientEvent(eventName: String, target: String, eventArgument: Any)
 

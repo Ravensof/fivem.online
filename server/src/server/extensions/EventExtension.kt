@@ -1,5 +1,7 @@
 package server.extensions
 
+import server.common.Server
+import server.common.getPlayersIds
 import server.structs.PlayerSrc
 import shared.common.Console
 import shared.common.Event
@@ -14,7 +16,12 @@ fun Event.emitNet(player: Player, data: Any) {
 }
 
 fun Event.emitNetAll(data: Any) {
-	shared.common.emitNet(normalizeEventName(data::class.toString()), data)
+	val eventName = normalizeEventName(data::class.toString())
+
+	Server.getPlayersIds().forEach {
+		shared.common.emitNet(eventName, it.toString(), data)
+	}
+
 	Console.debug("net event " + normalizeEventName(data::class.toString()) + " sent to all")
 }
 
