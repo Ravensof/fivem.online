@@ -27,7 +27,7 @@ object Event {
 			}
 
 			val eventHandlers = eventsHandlers[eventName]
-			Console.info(eventHandlers)
+
 			Console.debug("local event $LOCAL_EVENT_PREFIX$eventName sent")
 
 			eventHandlers?.forEach {
