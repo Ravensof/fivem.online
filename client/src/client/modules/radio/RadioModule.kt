@@ -6,19 +6,20 @@ import client.extensions.emitNui
 import client.extensions.onNui
 import client.extensions.orZero
 import client.modules.AbstractModule
-import client.modules.eventGenerator.events.AudioMusicLevelInMPChanged
-import client.modules.eventGenerator.events.PlayerRadioStationChanged
+import client.modules.eventGenerator.events.vehicle.radio.AudioMusicLevelInMPChanged
+import client.modules.eventGenerator.events.vehicle.radio.PlayerRadioStationChanged
 import client.modules.radio.data.RadioStationList
 import shared.common.Console
 import shared.common.Event
+import shared.extensions.onNull
 import shared.modules.radio.InternetRadioStation
 import shared.r.ProfileSetting
 import shared.r.RadioStation
 
 
-class RadioModule : AbstractModule() {
+class RadioModule private constructor() : AbstractModule() {
 
-	private var volume = getSettingsMusicLevel() / 10 * MAX_VOLUME
+	private var volume = getSettingsMusicLevel().toDouble() / 10 * MAX_VOLUME
 
 	private val radioStationList = RadioStationList
 
@@ -40,7 +41,7 @@ class RadioModule : AbstractModule() {
 		}
 
 		Event.onNui("radio:ready") { _: Any, _: (String) -> Unit ->
-			Console.info("on ready received")
+			Console.info("radio ready received")
 			onReady()
 //			callback("custom text")
 		}
@@ -84,15 +85,15 @@ class RadioModule : AbstractModule() {
 
 		val internetRadioStation = getInternetRadioStation(radioStation)
 
-		if (internetRadioStation != null)
-			playCustomRadio(internetRadioStation)
-		else
+		internetRadioStation?.let {
+			playCustomRadio(it)
+		}.onNull {
 			stopCustomRadio()
-
+		}
 	}
 
 	private fun onSettingsMusicLevelChanged(volume: Int) {
-		this.volume = volume / 10 * MAX_VOLUME
+		this.volume = volume.toDouble() / 10 * MAX_VOLUME
 
 		currentRadio?.let {
 			Event.emitNui(object {
@@ -118,6 +119,16 @@ class RadioModule : AbstractModule() {
 
 	companion object {
 		const val MAX_VOLUME = 0.3
+
+		private var instance: RadioModule? = null
+
+		fun getInstance(): RadioModule {
+			instance.onNull {
+				instance = RadioModule()
+			}
+
+			return instance!!
+		}
 	}
 }
 

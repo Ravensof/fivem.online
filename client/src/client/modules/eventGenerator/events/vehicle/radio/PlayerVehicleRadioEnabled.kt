@@ -1,0 +1,3 @@
+package client.modules.eventGenerator.events.vehicle.radio
+
+class PlayerVehicleRadioEnabled

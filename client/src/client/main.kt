@@ -3,6 +3,7 @@ package client
 import client.extensions.emitNet
 import client.extensions.onNet
 import client.modules.eventGenerator.EventGenerator
+import client.modules.player.PlayerModule
 import client.modules.radio.RadioModule
 import client.modules.session.SessionModule
 import shared.common.Console
@@ -27,10 +28,11 @@ fun start() {
 //		Engine(it.player)
 //	}
 
-	EventGenerator()
+	EventGenerator.getInstance()
 
 	SessionModule.getInstance()
-	RadioModule()
+	RadioModule.getInstance()
+	PlayerModule.getInstance()
 
 	Console.info("client started")
 

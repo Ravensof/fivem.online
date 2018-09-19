@@ -1,4 +1,4 @@
-package client.modules.eventGenerator.events
+package client.modules.eventGenerator.events.vehicle.radio
 
 import shared.r.RadioStation
 

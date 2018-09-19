@@ -3,8 +3,12 @@ package client.modules.eventGenerator
 import client.common.Client
 import client.common.Player
 import client.extensions.orZero
-import client.modules.eventGenerator.events.*
+import client.modules.eventGenerator.events.vehicle.PlayerJoinVehicle
+import client.modules.eventGenerator.events.vehicle.PlayerLeftOrJoinVehicle
+import client.modules.eventGenerator.events.vehicle.PlayerLeftVehicle
+import client.modules.eventGenerator.events.vehicle.radio.*
 import shared.common.Event
+import shared.extensions.onNull
 import shared.r.ProfileSetting
 import shared.r.RadioStation
 import shared.setInterval
@@ -74,6 +78,19 @@ class EventGenerator {
 			Event.emit(PlayerVehicleRadioToggled(enabled))
 
 			isPlayerVehicleRadioEnabled = enabled
+		}
+	}
+
+	companion object {
+
+		private var instance: EventGenerator? = null
+
+		fun getInstance(): EventGenerator {
+			instance.onNull {
+				instance = EventGenerator()
+			}
+
+			return instance!!
 		}
 	}
 }
