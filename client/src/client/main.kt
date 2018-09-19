@@ -4,9 +4,11 @@ import client.extensions.emitNet
 import client.extensions.onNet
 import client.modules.eventGenerator.EventGenerator
 import client.modules.radio.RadioModule
+import client.modules.session.SessionModule
 import shared.common.Console
 import shared.common.Event
 import shared.common.on
+import shared.events.ClientReady
 import shared.events.ConsoleLogEvent
 import shared.r.MODULE_FOLDER_NAME
 import shared.setTimeout
@@ -25,15 +27,14 @@ fun start() {
 //		Engine(it.player)
 //	}
 
-
-//	Event.emitNet(ConsoleLogEvent("hello from player"))
-
-	Event.emitNet("test")
-
 	EventGenerator()
+
+	SessionModule.getInstance()
 	RadioModule()
 
 	Console.info("client started")
+
+	Event.emitNet(ClientReady())
 }
 
 fun main(args: Array<String>) {

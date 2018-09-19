@@ -15,8 +15,8 @@ end)
 exports("onNet", function(eventName, callback)
     RegisterServerEvent(eventName)
 
-    AddEventHandler(eventName, function(data)
-        callback(source, data["data"], data["numberOfPlayers"])
+    AddEventHandler(eventName, function(...)
+        callback(source, ...)
     end)
 end)
 

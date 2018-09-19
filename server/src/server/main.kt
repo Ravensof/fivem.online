@@ -2,8 +2,8 @@ package server
 
 import server.common.MySQL
 import server.common.Server
-import server.common.getPlayerIdentifiers
 import server.extensions.onNet
+import server.modules.session.SessionModule
 import server.structs.PlayerSrc
 import server.structs.tables.PlayerIdentifiers
 import shared.common.Console
@@ -57,6 +57,8 @@ fun start() {
 
 		Console.debug(Server.getPlayerIdentifiers(playerSrc))
 	}
+
+	SessionModule.getInstance()
 
 //	setTimeout {
 //		MySQL.query("SELECT `id`,`steam`,`license`,`ip` FROM player_identifiers") { data: Array<PlayerIdentifiers> ->

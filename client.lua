@@ -6,14 +6,8 @@
 -- To change this template use File | Settings | File Templates.
 --
 
-exports("emitNet", function(eventName, data)
-
-    data = {
-        ["data"] = data,
-        ["numberOfPlayers"] = GetNumberOfPlayers(),
-    }
-
-    TriggerServerEvent(eventName, data)
+exports("emitNet", function(eventName, ...)
+    TriggerServerEvent(eventName, GetNumberOfPlayers(), ...)
 end)
 
 exports("onNui", function(eventName, callback)

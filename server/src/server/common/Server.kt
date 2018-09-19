@@ -10,16 +10,147 @@ import shared.struct.Command
 import shared.struct.HttpRequestType
 import shared.struct.Ped
 
-object Server
+object Server {
 
-fun Server.performHttpRequest(url: String, type: HttpRequestType = HttpRequestType.GET, data: Map<String, String>? = null, headers: Any = object {}, callback: (Int, String, dynamic) -> Unit) {
+	fun performHttpRequest(url: String, type: HttpRequestType = HttpRequestType.GET, data: Map<String, String>? = null, headers: Any = object {}, callback: (Int, String, dynamic) -> Unit) {
 
-	val postData = data?.map {
-		encodeURIComponent(it.key) + "=" + encodeURIComponent(it.value)
-	}?.joinToString("&").orEmpty()
+		val postData = data?.map {
+			encodeURIComponent(it.key) + "=" + encodeURIComponent(it.value)
+		}?.joinToString("&").orEmpty()
 
-	Exports.performHttpRequest(url, callback, type.name, postData, headers)
+		Exports.performHttpRequest(url, callback, type.name, postData, headers)
+	}
+
+	fun getEntityCoords(entity: Int): Any {//Array<Float>{
+		return GetEntityCoords(entity.toFloat())
+	}
+
+	fun dropPlayer(playerSrc: PlayerSrc, reason: String) {
+		DropPlayer(playerSrc.value, reason)
+	}
+
+	fun getConvar(varName: String, _default: String): String {
+		return GetConvar(varName, _default)
+	}
+
+	fun getConvar(varName: String, _default: Int): Int {
+		return GetConvarInt(varName, _default)
+	}
+
+	fun getNumPlayerIdentifiers(playerSrc: PlayerSrc): Int {
+		return GetNumPlayerIdentifiers(playerSrc.value)
+	}
+
+	fun getNumPlayersOnline(): Int {
+		return GetNumPlayerIndices()
+	}
+
+	fun getPlayerEndpoint(playerSrc: PlayerSrc): String? {
+		return if (playerSrc.value > 0) {
+			GetPlayerEndpoint(playerSrc.value)
+		} else {
+			null
+		}
+	}
+
+	fun getPlayersIds(): IntArray {
+		val playersList: MutableCollection<Int> = mutableListOf()
+
+		for (i in 1..MAX_PLAYERS) {
+			GetPlayerEndpoint(i)?.let {
+				playersList.add(i)
+			}
+		}
+
+		return playersList.toIntArray()
+	}
+
+	fun getPlayerFromIndex(index: Int): PlayerSrc? {
+		return GetPlayerFromIndex(index)?.let {
+			PlayerSrc(it)
+		}
+	}
+
+	fun getPlayerGuid(playerSrc: PlayerSrc): Double? {
+		return if (playerSrc.value > 0) {
+			GetPlayerGuid(playerSrc.value)
+		} else {
+			null
+		}
+	}
+
+	fun getPlayerIdentifiers(playerSrc: PlayerSrc): PlayerIdentifiers {
+
+		var steam: String? = null
+		var license: String? = null
+		var ip: String? = null
+
+		for (i in 0 until Server.getNumPlayerIdentifiers(playerSrc)) {
+
+			GetPlayerIdentifier(playerSrc.value, i)?.let {
+
+				val identifier = it.split(":")
+
+				if (identifier.size == 2) {
+					when (identifier[0]) {
+						"steam" -> steam = identifier[1]
+						"license" -> license = identifier[1]
+						"ip" -> ip = identifier[1]
+					}
+				}
+			}
+		}
+
+		return PlayerIdentifiers(
+				steam = steam,
+				license = license,
+				ip = ip,
+				last_name = Server.getPlayerName(playerSrc)
+		)
+	}
+
+	fun getPlayerLastMsg(playerSrc: PlayerSrc): Int? {
+		return if (playerSrc.value > 0 && playerSrc.value != Int.MAX_VALUE) {
+			GetPlayerLastMsg(playerSrc.value)
+		} else {
+			null
+		}
+	}
+
+	fun getPlayerName(playerSrc: PlayerSrc): String? {
+		return if (playerSrc.value > 0) {
+			GetPlayerName(playerSrc.value)
+		} else {
+			null
+		}
+	}
+
+	@Deprecated("for OnySync use only")
+	fun getPlayerPed(playerSrc: PlayerSrc): Ped? {
+		if (playerSrc.value > 0) {
+			val ped = GetPlayerPed(playerSrc.value)
+
+			if (ped > 0) {
+				return Ped(
+						ped
+				)
+			}
+		}
+
+		return null
+	}
+
+	fun getPlayerPing(playerSrc: PlayerSrc): Int {
+		return if (playerSrc.value > 0) {
+			GetPlayerPing(playerSrc.value)
+		} else {
+			0
+		}
+	}
+
 }
+
+
 
 /**
  * thisScriptCheck - can be destroyed if it belongs to the calling script.
@@ -55,10 +186,6 @@ private external fun DeleteFunctionReference(referenceIdentity: String)
 
 private external fun DropPlayer(playerSrc: Int, reason: String)
 
-fun Server.dropPlayer(playerSrc: PlayerSrc, reason: String) {
-	DropPlayer(playerSrc.value, reason)
-}
-
 private external fun DuplicateFunctionReference(referenceIdentity: String): String
 
 private external fun EnableEnhancedHostSupport(enabled: Boolean)
@@ -69,15 +196,7 @@ private external fun FlagServerAsPrivate(_private: Boolean)
 
 private external fun GetConvar(varName: String, _default: String): String
 
-fun Server.getConvar(varName: String, _default: String): String {
-	return GetConvar(varName, _default)
-}
-
 private external fun GetConvarInt(varName: String, _default: Int): Int
-
-fun Server.getConvar(varName: String, _default: Int): Int {
-	return GetConvarInt(varName, _default)
-}
 
 /**
  * Returns the name of the currently executing resource.
@@ -106,15 +225,7 @@ private external fun GetInvokingResource(): String
 
 private external fun GetNumPlayerIdentifiers(playerSrc: Int): Int
 
-fun Server.getNumPlayerIdentifiers(playerSrc: PlayerSrc): Int {
-	return GetNumPlayerIdentifiers(playerSrc.value)
-}
-
 private external fun GetNumPlayerIndices(): Int
-
-fun Server.getNumPlayersOnline(): Int {
-	return GetNumPlayerIndices()
-}
 
 /**
  * Gets the amount of metadata values with the specified key existing in the specified resource's manifest.
@@ -132,121 +243,19 @@ private external fun GetNumResources(): Float
 
 private external fun GetPlayerEndpoint(playerSrc: Int): String?
 
-fun Server.getPlayerEndpoint(playerSrc: PlayerSrc): String? {
-	return if (playerSrc.value > 0) {
-		GetPlayerEndpoint(playerSrc.value)
-	} else {
-		null
-	}
-}
-
-fun Server.getPlayersIds(): IntArray {
-	val playersList: MutableCollection<Int> = mutableListOf()
-
-	for (i in 1..MAX_PLAYERS) {
-		GetPlayerEndpoint(i)?.let {
-			playersList.add(i)
-		}
-	}
-
-	return playersList.toIntArray()
-}
-
 private external fun GetPlayerFromIndex(index: Int): Int?
-
-fun Server.getPlayerFromIndex(index: Int): PlayerSrc? {
-	return GetPlayerFromIndex(index)?.let {
-		PlayerSrc(it)
-	}
-}
 
 private external fun GetPlayerGuid(playerSrc: Int): Double?
 
-fun Server.getPlayerGuid(playerSrc: PlayerSrc): Double? {
-	return if (playerSrc.value > 0) {
-		GetPlayerGuid(playerSrc.value)
-	} else {
-		null
-	}
-}
-
 private external fun GetPlayerIdentifier(playerSrc: Int, identifier: Int): String?
-
-fun Server.getPlayerIdentifiers(playerSrc: PlayerSrc): PlayerIdentifiers {
-
-	var steam: String? = null
-	var license: String? = null
-	var ip: String? = null
-
-	for (i in 0 until Server.getNumPlayerIdentifiers(playerSrc)) {
-
-		GetPlayerIdentifier(playerSrc.value, i)?.let {
-
-			val identifier = it.split(":")
-
-			if (identifier.size == 2) {
-				when (identifier[0]) {
-					"steam" -> steam = identifier[1]
-					"license" -> license = identifier[1]
-					"ip" -> ip = identifier[1]
-				}
-			}
-		}
-	}
-
-	return PlayerIdentifiers(
-			steam = steam,
-			license = license,
-			ip = ip,
-			last_name = Server.getPlayerName(playerSrc)
-	)
-}
 
 private external fun GetPlayerLastMsg(playerSrc: Int): Int
 
-fun Server.getPlayerLastMsg(playerSrc: PlayerSrc): Int? {
-	return if (playerSrc.value > 0 && playerSrc.value != Int.MAX_VALUE) {
-		GetPlayerLastMsg(playerSrc.value)
-	} else {
-		null
-	}
-}
-
 private external fun GetPlayerName(playerSrc: Int): String?
 
-fun Server.getPlayerName(playerSrc: PlayerSrc): String? {
-	return if (playerSrc.value > 0) {
-		GetPlayerName(playerSrc.value)
-	} else {
-		null
-	}
-}
-
-private external fun GetPlayerPed(playerSrc: Int): Int
-
-fun Server.getPlayerPed(playerSrc: PlayerSrc): Ped? {
-	if (playerSrc.value > 0) {
-		val ped = GetPlayerPed(playerSrc.value)
-
-		if (ped > 0) {
-			return Ped(
-					ped
-			)
-		}
-	}
-
-	return null
-}
+private external fun GetPlayerPed(playerSrc: Int): Int //only OneSync
 
 private external fun GetPlayerPing(playerSrc: Int): Int
-
-fun Server.getPlayerPing(playerSrc: PlayerSrc): Int {
-	return if (playerSrc.value > 0) {
-		GetPlayerPing(playerSrc.value)
-	} else {
-		0
-	}
-}
 
 /**
  * Returns all commands that are registered in the command system.

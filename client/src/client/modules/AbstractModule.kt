@@ -1,4 +1,5 @@
 package client.modules
 
-abstract class AbstractModule {
-}
+import shared.modules.AbstractModule
+
+abstract class AbstractModule : AbstractModule()

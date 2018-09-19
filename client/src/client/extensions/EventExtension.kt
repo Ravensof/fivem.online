@@ -25,17 +25,6 @@ fun <T> Event.onNet(eventName: String, function: (T) -> Unit) {
 	}
 }
 
-//fun Event.emitSafeNet(data: Any) {
-//	Event.clientToken?.let { token ->
-//		Console.debug("safe net event " + normalizeEventName(data::class.toString()) + " sent")
-//		Exports.emitNet(
-//				SAFE_EVENT_PREFIX + normalizeEventName(data::class.toString()),
-//				SafeEventContainer(token, data)
-//		)
-//		Unit
-//	}
-//}
-
 fun Event.onNui(eventName: String, function: (Any, (String) -> Unit) -> Unit) {
 	Console.info("nui event $eventName registered")
 	Exports.onNui(eventName) { data: Any, callback: (String) -> Unit ->
