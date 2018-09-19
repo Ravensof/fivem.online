@@ -2,7 +2,7 @@ package client.modules.session
 
 import client.extensions.onNet
 import client.modules.AbstractModule
-import client.modules.session.extensions.emitSafeNet
+import client.modules.session.events.SafeEventsReady
 import shared.common.Event
 import shared.events.ClientReady
 import shared.extensions.onNull
@@ -12,10 +12,8 @@ class SessionModule private constructor() : AbstractModule() {
 	init {
 		Event.onNet<ClientReady> {
 			token = it.token
-
-			Event.emitSafeNet("test")
+			Event.emit(SafeEventsReady())
 		}
-
 
 	}
 
