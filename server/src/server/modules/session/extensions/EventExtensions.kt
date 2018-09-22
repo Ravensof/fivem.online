@@ -1,12 +1,12 @@
 package server.modules.session.extensions
 
+import fivem.common.Exports
 import server.common.Server
 import server.modules.session.SessionModule
 import server.structs.PlayerSrc
-import shared.common.Console
-import shared.common.Event
-import shared.common.Exports
-import shared.normalizeEventName
+import universal.common.Console
+import universal.common.Event
+import universal.common.normalizeEventName
 
 inline fun <reified T> Event.onSafeNet(noinline function: (PlayerSrc, T) -> Unit) {
 	Event.onSafeNet(Event.SAFE_EVENT_PREFIX + normalizeEventName(T::class.toString()), function)

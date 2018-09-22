@@ -1,20 +1,20 @@
 package server.extensions
 
+import fivem.common.Exports
 import server.common.Server
 import server.structs.PlayerSrc
-import shared.common.Console
-import shared.common.Event
-import shared.common.Exports
-import shared.entities.Player
-import shared.normalizeEventName
+import universal.common.Console
+import universal.common.Event
+import universal.common.normalizeEventName
+import universal.entities.Player
 
 fun Event.emitNet(player: Player, data: Any) {
-	shared.common.emitNet(normalizeEventName(data::class.toString()), player.id.toString(), data)
+	fivem.common.emitNet(normalizeEventName(data::class.toString()), player.id.toString(), data)
 	Console.debug("net event " + normalizeEventName(data::class.toString()) + " sent to " + player.id)
 }
 
 fun Event.emitNet(playerSrc: PlayerSrc, data: Any) {
-	shared.common.emitNet(normalizeEventName(data::class.toString()), playerSrc.value.toString(), data)
+	fivem.common.emitNet(normalizeEventName(data::class.toString()), playerSrc.value.toString(), data)
 	Console.debug("net event " + normalizeEventName(data::class.toString()) + " sent to ${Server.getPlayerName(playerSrc)} (${playerSrc.value})")
 }
 
@@ -22,7 +22,7 @@ fun Event.emitNetAll(data: Any) {
 	val eventName = normalizeEventName(data::class.toString())
 
 	Server.getPlayersIds().forEach {
-		shared.common.emitNet(eventName, it.toString(), data)
+		fivem.common.emitNet(eventName, it.toString(), data)
 	}
 
 	Console.debug("net event " + normalizeEventName(data::class.toString()) + " sent to all")

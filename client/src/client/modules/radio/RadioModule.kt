@@ -9,12 +9,15 @@ import client.modules.AbstractModule
 import client.modules.eventGenerator.events.vehicle.radio.AudioMusicLevelInMPChanged
 import client.modules.eventGenerator.events.vehicle.radio.PlayerRadioStationChanged
 import client.modules.radio.data.RadioStationList
-import shared.common.Console
-import shared.common.Event
-import shared.extensions.onNull
-import shared.modules.radio.InternetRadioStation
-import shared.r.ProfileSetting
-import shared.r.RadioStation
+import universal.common.Console
+import universal.common.Event
+import universal.extensions.onNull
+import universal.modules.radio.InternetRadioStation
+import universal.modules.radio.events.RadioChangeStationEvent
+import universal.modules.radio.events.RadioChangeVolumeEvent
+import universal.modules.radio.events.RadioDisableEvent
+import universal.r.ProfileSetting
+import universal.r.RadioStation
 
 
 class RadioModule private constructor() : AbstractModule() {
@@ -55,20 +58,14 @@ class RadioModule private constructor() : AbstractModule() {
 		currentRadio = radio
 		toggleCustomRadioBehavior()
 
-		Event.emitNui(object {
-			val type = "play"
-			val url = radio.url
-			val volume = this@RadioModule.volume * radio.defaultVolume
-		})
+		Event.emitNui(RadioChangeStationEvent(radio, volume))
 	}
 
 	fun stopCustomRadio() {
 		currentRadio = null
 		toggleCustomRadioBehavior()
 
-		Event.emitNui(object {
-			val type = "stop"
-		})
+		Event.emitNui(RadioDisableEvent())
 	}
 
 	private fun getInternetRadioStation(radioStation: RadioStation?): InternetRadioStation? {
@@ -96,10 +93,7 @@ class RadioModule private constructor() : AbstractModule() {
 		this.volume = volume.toDouble() / 10 * MAX_VOLUME
 
 		currentRadio?.let {
-			Event.emitNui(object {
-				val type = "volume"
-				val volume = this@RadioModule.volume * it.defaultVolume
-			})
+			Event.emitNui(RadioChangeVolumeEvent(this@RadioModule.volume))
 		}
 	}
 

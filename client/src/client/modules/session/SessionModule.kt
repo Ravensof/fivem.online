@@ -3,9 +3,9 @@ package client.modules.session
 import client.extensions.onNet
 import client.modules.AbstractModule
 import client.modules.session.events.SafeEventsReady
-import shared.common.Event
-import shared.events.ClientReady
-import shared.extensions.onNull
+import universal.common.Event
+import universal.events.ClientReady
+import universal.extensions.onNull
 
 class SessionModule private constructor() : AbstractModule() {
 

@@ -1,8 +1,10 @@
 package client.common
 
-import shared.common.Console
-import shared.r.ProfileSetting
-import shared.struct.Time
+import universal.common.Console
+import universal.r.ProfileSetting
+import universal.struct.Coords
+import universal.struct.Time
+
 
 object Client {
 
@@ -53,6 +55,36 @@ object Client {
 
 	fun getNumResourceMetadata(resourceName: String, metadataKey: String): Int? {
 		return GetNumResourceMetadata(resourceName, metadataKey)
+	}
+
+	fun getEntityCoords(entity: Int, alive: Boolean = true): Coords? {
+		val coords = GetEntityCoords(entity, alive)
+
+		val x = coords[0]
+		val y = coords[1]
+		val z = coords[2]
+
+		if (x == 0f && y == 0f && z == 0f) {
+			return null
+		}
+
+		return Coords(x, y, z)
+	}
+
+	fun getEntityForwardVector(entity: Int): Array<Float> {
+		return GetEntityForwardVector(entity)
+	}
+
+	fun getEntityForwardX(entity: Int): Float {
+		return GetEntityForwardX(entity)
+	}
+
+	fun getEntityForwardY(entity: Int): Float {
+		return GetEntityForwardY(entity)
+	}
+
+	fun getEntityHeading(entity: Int): Float {
+		return GetEntityHeading(entity)
 	}
 }
 
@@ -5028,7 +5060,7 @@ private external fun AddTextEntry(entryKey: String, entryText: String)
  * Returns the name of the currently executing resource.
  * @return The name of the resource.
  */
-//private external fun GetCurrentResourceName(): string;
+private external fun GetCurrentResourceName(): String
 
 //private external fun GetCurrentScriptedConversationLine(): number;
 
@@ -5271,27 +5303,27 @@ private external fun AddTextEntry(entryKey: String, entryText: String)
 /**
  * p1 = !IS_ENTITY_DEAD
  */
-//private external fun GetEntityCoords(entity: number, alive: boolean): number[];
+private external fun GetEntityCoords(entity: Int, alive: Boolean): Array<Float>
 
 /**
  * Gets the entity's forward vector.
  */
-//private external fun GetEntityForwardVector(entity: number): number[];
+private external fun GetEntityForwardVector(entity: Int): Array<Float>
 
 /**
  * Gets the X-component of the entity's forward vector.
  */
-//private external fun GetEntityForwardX(entity: number): number;
+private external fun GetEntityForwardX(entity: Int): Float
 
 /**
  * Gets the Y-component of the entity's forward vector.
  */
-//private external fun GetEntityForwardY(entity: number): number;
+private external fun GetEntityForwardY(entity: Int): Float
 
 /**
  * Returns the heading of the entity in degrees. Also know as the "Yaw" of an entity.
  */
-//private external fun GetEntityHeading(entity: number): number;
+private external fun GetEntityHeading(entity: Int): Float
 
 /**
  * Returns an integer value of entity's current health.

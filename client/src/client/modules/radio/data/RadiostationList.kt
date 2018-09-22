@@ -1,7 +1,7 @@
 package client.modules.radio.data
 
-import shared.modules.radio.InternetRadioStation
-import shared.r.RadioStation
+import universal.modules.radio.InternetRadioStation
+import universal.r.RadioStation
 
 val RadioStationList = mapOf(
 //		RadioStations.RADIO_01_CLASS_ROCK.name to RadioStation(),  // Los Santos Rock Radio

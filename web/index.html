@@ -1,0 +1,94 @@
+<html>
+<head>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.0.15/howler.core.min.js"></script>
+	<script src="../out/production/client/lib/kotlin.js"></script>
+	<script src="../external/Base64.min.js"></script>
+	<script src="../out/production/universal/universal.js"></script>
+	<script src="../out/production/web/web.js"></script>
+	<script>
+		let MODULE_FOLDER_NAME = "fivem-online";
+
+		let Nui = {
+			/**
+			 * @param eventName {string}
+			 * @param data
+			 * @param callback
+			 */
+			emit: function (eventName, data = null, callback = function (result) {
+			}) {
+				fetch(
+					"http://" + MODULE_FOLDER_NAME + "/" + eventName,
+					{"method": "POST", "body": JSON.stringify(data)}
+				)
+					.then(function (response) {
+						return response.text()
+					})
+					.then(function (body) {
+						callback(body)
+					})
+
+			},
+			// on: function(eventName, callback=function(event){}){
+			// 	window.addEventListener("message", (event) => {
+			//
+			// 		let data = event.data;
+			// 	})
+			// }
+		};
+
+		let sound = null;
+		let currentRadioVolume = 1;
+
+		document.addEventListener("DOMContentLoaded", () => {
+
+			Nui.emit("radio:ready");
+
+			window.addEventListener("message", (event) => {
+
+				let data = event.data.data;
+				let eventName = event.data.event;
+
+				try {
+
+					switch (eventName) {
+						case "RadioChangeStationEvent":
+
+							let radioStation = data.internetRadioStation;
+							currentRadioVolume = radioStation.defaultVolume;
+
+							if (sound != null) {
+								sound.stop();
+							}
+
+							sound = new Howl({
+								src: radioStation.url,
+								html5: true, // A live stream can only be played through HTML5 Audio.
+								format: ['opus', 'ogg', 'mp3'],
+								volume: data.volume * radioStation.defaultVolume
+							});
+
+							sound.play();
+
+							break;
+						case "RadioDisableEvent":
+							if (sound != null) {
+								sound.stop();
+								sound = null
+							}
+							break;
+						case "RadioChangeVolumeEvent":
+							if (sound != null) {
+								sound.volume(currentRadioVolume * data.volume);
+							}
+							break;
+					}
+				} catch (e) {
+					console.log(e.message)
+				}
+			});
+		});
+	</script>
+</head>
+<body id="content">
+</body>
+</html>

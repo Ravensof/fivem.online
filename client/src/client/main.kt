@@ -6,13 +6,16 @@ import client.modules.eventGenerator.EventGenerator
 import client.modules.player.PlayerModule
 import client.modules.radio.RadioModule
 import client.modules.session.SessionModule
-import shared.common.Console
-import shared.common.Event
-import shared.common.on
-import shared.events.ClientReady
-import shared.events.ConsoleLogEvent
-import shared.r.MODULE_FOLDER_NAME
-import shared.setTimeout
+import client.modules.web.WebModule
+import fivem.common.on
+
+import universal.common.Console
+import universal.common.Event
+import universal.common.setTimeout
+import universal.events.ClientReady
+import universal.events.ConsoleLogEvent
+import universal.r.MODULE_FOLDER_NAME
+
 
 fun start() {
 
@@ -33,6 +36,7 @@ fun start() {
 	SessionModule.getInstance()
 	RadioModule.getInstance()
 	PlayerModule.getInstance()
+	WebModule.getInstance()
 
 	Console.info("client started")
 
@@ -41,6 +45,8 @@ fun start() {
 
 fun main(args: Array<String>) {
 	Console.debug("hello client")
+
+//	MODULE_FOLDER_NAME = FiveM.getCurrentResourceName()
 
 	var resourceLoaded = false
 

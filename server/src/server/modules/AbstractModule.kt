@@ -1,5 +1,6 @@
 package server.modules
 
-import shared.modules.AbstractModule
+import universal.modules.AbstractModule
+
 
 abstract class AbstractModule : AbstractModule()

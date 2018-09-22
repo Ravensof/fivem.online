@@ -7,11 +7,11 @@ import client.modules.eventGenerator.events.vehicle.PlayerJoinVehicle
 import client.modules.eventGenerator.events.vehicle.PlayerLeftOrJoinVehicle
 import client.modules.eventGenerator.events.vehicle.PlayerLeftVehicle
 import client.modules.eventGenerator.events.vehicle.radio.*
-import shared.common.Event
-import shared.extensions.onNull
-import shared.r.ProfileSetting
-import shared.r.RadioStation
-import shared.setInterval
+import universal.common.Event
+import universal.common.setInterval
+import universal.extensions.onNull
+import universal.r.ProfileSetting
+import universal.r.RadioStation
 
 class EventGenerator {
 

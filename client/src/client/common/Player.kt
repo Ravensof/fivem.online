@@ -1,7 +1,8 @@
 package client.common
 
-import shared.common.Console
-import shared.r.RadioStation
+import universal.common.Console
+import universal.r.RadioStation
+
 
 class Player(val id: Int) {
 
@@ -11,8 +12,8 @@ class Player(val id: Int) {
 
 	companion object {
 
-		fun getPed(playerId: Int = -1): Int {
-			return Console.checkValue("GetPlayerPed(playerId: Int)", GetPlayerPed(playerId))
+		fun getPed(playerId: Int = -1): Int? {
+			return GetPlayerPed(playerId).takeIf { it != 0 }
 		}
 
 		fun getId(): Int {

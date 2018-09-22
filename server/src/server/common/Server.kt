@@ -1,14 +1,15 @@
 package server.common
 
+import fivem.common.Exports
 import server.structs.PlayerSrc
-import server.structs.tables.PlayerIdentifiers
-import shared.common.Exports
-import shared.encodeURIComponent
-import shared.r.MAX_PLAYERS
-import shared.r.MODULE_FOLDER_NAME
-import shared.struct.Command
-import shared.struct.HttpRequestType
-import shared.struct.Ped
+import server.structs.tables.ConnectionLogTable
+
+import universal.common.encodeURIComponent
+import universal.r.MAX_PLAYERS
+import universal.r.MODULE_FOLDER_NAME
+import universal.struct.Command
+import universal.struct.HttpRequestType
+import universal.struct.Ped
 
 object Server {
 
@@ -79,7 +80,7 @@ object Server {
 		}
 	}
 
-	fun getPlayerIdentifiers(playerSrc: PlayerSrc): PlayerIdentifiers {
+	fun getPlayerIdentifiers(playerSrc: PlayerSrc): ConnectionLogTable {
 
 		var steam: String? = null
 		var license: String? = null
@@ -101,7 +102,7 @@ object Server {
 			}
 		}
 
-		return PlayerIdentifiers(
+		return ConnectionLogTable(
 				steam = steam,
 				license = license,
 				ip = ip,
@@ -147,7 +148,6 @@ object Server {
 			0
 		}
 	}
-
 }
 
 

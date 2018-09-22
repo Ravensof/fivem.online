@@ -1,9 +1,10 @@
 package server.common
 
-import shared.common.Base64
-import shared.common.Console
-import shared.struct.CustomHttpResponse
-import shared.struct.HttpRequestType
+import universal.common.Base64
+import universal.common.Console
+import universal.common.setTimeout
+import universal.struct.CustomHttpResponse
+import universal.struct.HttpRequestType
 
 
 object MySQL {
@@ -15,6 +16,9 @@ object MySQL {
 	}
 
 	fun <T> query(sql: String, onError: (Exception) -> Unit = { Console.error(it.message) }, onSuccess: (Array<T>) -> Unit) {
+
+		Console.debug("MySQL: $sql")
+
 		Server.performHttpRequest(
 				SERVER,
 				data = mapOf(
@@ -41,7 +45,9 @@ object MySQL {
 	}
 
 	fun execute(sql: String, onError: (Exception) -> Unit = { Console.error(it.message) }, onSuccess: () -> Unit = {}) {
-		query<Any>(sql, onError, { onSuccess() })
+		setTimeout {
+			query<Any>(sql, onError, { onSuccess() })
+		}
 	}
 }
 

@@ -5,28 +5,35 @@ resource_type 'data' {
 }
 
 files {
-    'resources/radio/index.html'
+    --    'external/Base64.min.js',-- уже считается загруженным в client_scripts
+    --
+    --    'out/production/web/lib/kotlin.js',
+    --    'out/production/universal/universal.js',
+    'out/production/web/web.js',
+    'web/index.html'
 }
 
-ui_page "resources/radio/index.html"
+ui_page "web/index.html"
 
 client_scripts {
-    'client.lua',
+    'client/client.lua',
 
-    'Base64.min.js',
+    'external/Base64.min.js',
 
     'out/production/client/lib/kotlin.js',
-    'out/production/shared/shared.js',
-    'out/production/client/client.js',
+    'out/production/universal/universal.js',
+    'out/production/fivem/fivem.js',
+    'out/production/client/client.js'
 }
 
 server_scripts {
-    'server.lua',
+    'server/server.lua',
 
-    'Base64.min.js',
+    'external/Base64.min.js',
 
     'out/production/server/lib/kotlin.js',
-    'out/production/shared/shared.js',
-    'out/production/server/server.js',
+    'out/production/universal/universal.js',
+    'out/production/fivem/fivem.js',
+    'out/production/server/server.js'
 }
 

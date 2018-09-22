@@ -1,10 +1,10 @@
 package client.modules.session.extensions
 
 import client.modules.session.SessionModule
-import shared.common.Console
-import shared.common.Event
-import shared.common.Exports
-import shared.normalizeEventName
+import fivem.common.Exports
+import universal.common.Console
+import universal.common.Event
+import universal.common.normalizeEventName
 
 fun Event.emitSafeNet(data: Any) {
 	SessionModule.token?.let { token ->
