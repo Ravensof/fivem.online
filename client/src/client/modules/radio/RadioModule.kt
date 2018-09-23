@@ -6,8 +6,8 @@ import client.extensions.emitNui
 import client.extensions.onNui
 import client.extensions.orZero
 import client.modules.AbstractModule
-import client.modules.eventGenerator.events.vehicle.radio.AudioMusicLevelInMPChanged
-import client.modules.eventGenerator.events.vehicle.radio.PlayerRadioStationChanged
+import client.modules.eventGenerator.events.vehicle.radio.AudioMusicLevelInMPChangedEvent
+import client.modules.eventGenerator.events.vehicle.radio.PlayerRadioStationChangedEvent
 import client.modules.radio.data.RadioStationList
 import universal.common.Console
 import universal.common.Event
@@ -35,11 +35,11 @@ class RadioModule private constructor() : AbstractModule() {
 
 	init {
 
-		Event.on { it: PlayerRadioStationChanged ->
+		Event.on { it: PlayerRadioStationChangedEvent ->
 			onPlayerVehicleRadioStationChanged(it.radioStation)
 		}
 
-		Event.on { event: AudioMusicLevelInMPChanged ->
+		Event.on { event: AudioMusicLevelInMPChangedEvent ->
 			onSettingsMusicLevelChanged(event.volume)
 		}
 

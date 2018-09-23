@@ -1,5 +1,5 @@
 package client.modules.eventGenerator.events.vehicle.radio
 
-class AudioMusicLevelInMPChanged(
+class AudioMusicLevelInMPChangedEvent(
 		val volume: Int
 )

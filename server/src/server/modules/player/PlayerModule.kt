@@ -5,13 +5,13 @@ import server.modules.session.extensions.onSafeNet
 import server.structs.PlayerSrc
 import universal.common.Event
 import universal.extensions.onNull
-import universal.modules.player.struct.PlayerDataSave
+import universal.modules.player.events.PlayerDataSaveEvent
 
 
 class PlayerModule private constructor() : AbstractModule() {
 
 	init {
-		Event.onSafeNet { playerSrc: PlayerSrc, data: PlayerDataSave ->
+		Event.onSafeNet { playerSrc: PlayerSrc, data: PlayerDataSaveEvent ->
 
 		}
 	}

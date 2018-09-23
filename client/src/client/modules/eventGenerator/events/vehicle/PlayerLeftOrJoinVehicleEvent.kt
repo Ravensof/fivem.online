@@ -1,3 +1,3 @@
 package client.modules.eventGenerator.events.vehicle
 
-class PlayerLeftOrJoinVehicle
+class PlayerLeftOrJoinVehicleEvent

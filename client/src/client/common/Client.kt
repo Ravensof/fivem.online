@@ -22579,6 +22579,7 @@ private external fun SetFrontendRadioActive(active: Boolean)
  * return _DRAW_NOTIFICATION(1, 1);
  * }
  */
+
 private external fun SetNotificationTextEntry(text: String)
 
 fun Client.setNotificationTextEntry(text: String) {//todo test

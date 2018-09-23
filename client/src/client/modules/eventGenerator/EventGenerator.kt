@@ -3,9 +3,9 @@ package client.modules.eventGenerator
 import client.common.Client
 import client.common.Player
 import client.extensions.orZero
-import client.modules.eventGenerator.events.vehicle.PlayerJoinVehicle
-import client.modules.eventGenerator.events.vehicle.PlayerLeftOrJoinVehicle
-import client.modules.eventGenerator.events.vehicle.PlayerLeftVehicle
+import client.modules.eventGenerator.events.vehicle.PlayerJoinVehicleEvent
+import client.modules.eventGenerator.events.vehicle.PlayerLeftOrJoinVehicleEvent
+import client.modules.eventGenerator.events.vehicle.PlayerLeftVehicleEvent
 import client.modules.eventGenerator.events.vehicle.radio.*
 import universal.common.Event
 import universal.common.setInterval
@@ -32,7 +32,7 @@ class EventGenerator {
 
 	private fun checkAudioMusicLevelInMP(volume: Int) {
 		if (audioMusicLevelInMP != volume) {
-			Event.emit(AudioMusicLevelInMPChanged(volume))
+			Event.emit(AudioMusicLevelInMPChangedEvent(volume))
 
 			audioMusicLevelInMP = volume
 		}
@@ -43,12 +43,12 @@ class EventGenerator {
 	private fun checkIsPlayerInVehicle(isInVehicle: Boolean) {
 		if (isPlayerInVehicle != isInVehicle) {
 			if (isInVehicle) {
-				Event.emit(PlayerJoinVehicle())
+				Event.emit(PlayerJoinVehicleEvent())
 			} else {
-				Event.emit(PlayerLeftVehicle())
+				Event.emit(PlayerLeftVehicleEvent())
 			}
 
-			Event.emit(PlayerLeftOrJoinVehicle())
+			Event.emit(PlayerLeftOrJoinVehicleEvent())
 
 			isPlayerInVehicle = isInVehicle
 		}
@@ -59,7 +59,7 @@ class EventGenerator {
 	private fun checkPlayerRadioStationName(radioStation: RadioStation?) {
 		if (radioStation != playerRadioStationName) {
 
-			Event.emit(PlayerRadioStationChanged(radioStation))
+			Event.emit(PlayerRadioStationChangedEvent(radioStation))
 
 			playerRadioStationName = radioStation
 		}
@@ -70,12 +70,12 @@ class EventGenerator {
 	private fun checkIsPlayerRadioEnabled(enabled: Boolean) {
 		if (enabled != isPlayerVehicleRadioEnabled) {
 			if (enabled) {
-				Event.emit(PlayerVehicleRadioEnabled())
+				Event.emit(PlayerVehicleRadioEnabledEvent())
 			} else {
-				Event.emit(PlayerVehicleRadioDisabled())
+				Event.emit(PlayerVehicleRadioDisabledEvent())
 			}
 
-			Event.emit(PlayerVehicleRadioToggled(enabled))
+			Event.emit(PlayerVehicleRadioToggledEvent(enabled))
 
 			isPlayerVehicleRadioEnabled = enabled
 		}
