@@ -36,56 +36,8 @@
 			// }
 		};
 
-		let sound = null;
-		let currentRadioVolume = 1;
-
 		document.addEventListener("DOMContentLoaded", () => {
-
 			Nui.emit("radio:ready");
-
-			window.addEventListener("message", (event) => {
-
-				let data = event.data.data;
-				let eventName = event.data.event;
-
-				try {
-
-					switch (eventName) {
-						case "RadioChangeStationEvent":
-
-							let radioStation = data.internetRadioStation;
-							currentRadioVolume = radioStation.defaultVolume;
-
-							if (sound != null) {
-								sound.stop();
-							}
-
-							sound = new Howl({
-								src: radioStation.url,
-								html5: true, // A live stream can only be played through HTML5 Audio.
-								format: ['opus', 'ogg', 'mp3'],
-								volume: data.volume * radioStation.defaultVolume
-							});
-
-							sound.play();
-
-							break;
-						case "RadioDisableEvent":
-							if (sound != null) {
-								sound.stop();
-								sound = null
-							}
-							break;
-						case "RadioChangeVolumeEvent":
-							if (sound != null) {
-								sound.volume(currentRadioVolume * data.volume);
-							}
-							break;
-					}
-				} catch (e) {
-					console.log(e.message)
-				}
-			});
 		});
 	</script>
 </head>

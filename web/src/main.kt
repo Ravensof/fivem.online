@@ -1,19 +1,16 @@
-package web
-
 //import shared.struct.HttpRequestType
-import org.w3c.dom.events.Event
+
 import universal.common.Console
+import web.common.Event
 import web.common.performHttpRequest
+import web.modules.radio.RadioModule
 import web.struct.HttpRequestType
-import kotlin.browser.document
 
 fun main(args: Array<String>) {
 
-//	MODULE_FOLDER_NAME
+	Event.init()
 
-	document.addEventListener("DOMContentLoaded", fun(event: Event) {
-		Console.log("dom content loaded")
-	})
+	RadioModule.getInstance()
 
 //	Console.log("test 12345")
 

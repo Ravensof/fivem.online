@@ -35,6 +35,14 @@ class SessionModule private constructor() : AbstractModule() {
 			Console.debug(string)
 		}
 
+		Server.getPlayersIds().forEach {
+			val playerSrc = PlayerSrc(it)
+
+			onClientConnecting(it, Server.getPlayerName(playerSrc).orEmpty()) {
+				Server.dropPlayer(playerSrc, it)
+			}
+		}
+
 		Console.info("SessionModule loaded")
 	}
 

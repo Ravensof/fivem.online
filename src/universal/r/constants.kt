@@ -1,10 +1,13 @@
 package universal.r
 
+import MODULE_FOLDER_NAME
 
 const val MAX_PLAYERS = 32
-const val MODULE_FOLDER_NAME = "fivem-online"//Shared.getCurrentResourceName()//todo зависимость
 
-const val CONSOLE_PREFIX: String = "[$MODULE_FOLDER_NAME]"
+val CONSOLE_PREFIX: String
+	get() {
+		return "[$MODULE_FOLDER_NAME]"
+	}
 
 const val CONSOLE_DIR = true
 const val CONSOLE_ERROR = true

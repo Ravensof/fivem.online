@@ -1,0 +1,1 @@
+var MODULE_FOLDER_NAME = "fivem-online"

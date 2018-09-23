@@ -1,16 +1,91 @@
 package web.common
 
+import MODULE_FOLDER_NAME
+import universal.common.Console
+import universal.common.normalizeEventName
+import universal.common.setTimeout
+import web.events.WebReceiverReady
 import web.struct.HttpRequestType
+import kotlin.browser.document
+import kotlin.browser.window
 
-//object Event {
+object Event {
+
+	private val eventsHandlers = mutableMapOf<String, MutableList<(dynamic) -> Unit>>()
+	private val eventsHandlersRegistry = mutableListOf<Pair<String, Int>>()
+
+	init {
+
+		onNui<WebReceiverReady> {
+			MODULE_FOLDER_NAME = it.moduleFolderName
+
+			Console.info("Nui transceiver ready")
+		}
+
+		document.addEventListener("DOMContentLoaded", fun(event: org.w3c.dom.events.Event) {
+			Console.info("DOMContentLoaded")
+		})
+
+		window.addEventListener("message", fun(event: dynamic) {
+
+			val eventName: String = event.data.event
+			val data = event.data.data
+
+			setTimeout {
+				val eventHandlers = eventsHandlers.get(eventName)
+
+				if (eventHandlers != null) {
+					Console.debug("nui event $eventName triggered")
+				}
+
+				eventHandlers?.forEach {
+					it(data)
+				}
+			}
+		})
+
+//		window.removeEventListener()
+	}
+
+	fun init() {
+
+	}
+
+
+	inline fun <reified T> onNui(noinline function: (T) -> Unit): Int {
+		val eventName = normalizeEventName(T::class.toString())
+
+		return onNui(eventName, function)
+	}
+
+	fun <T> onNui(eventName: String, function: (T) -> Unit): Int {
+		if (!eventsHandlers.containsKey(eventName)) {
+			eventsHandlers[eventName] = mutableListOf()
+		}
+
+		val eventHandlers = eventsHandlers[eventName]!!
+
+		Console.info("nui event $eventName registered")
+
+		eventHandlers.add(function)
+
+		return registerEvent(eventName, eventHandlers.lastIndex)
+	}
+
+//	fun unSubscribe(id: Int) {
+//		val event: Pair<String, Int>? = eventsHandlersRegistry.get(id)
 //
-//	fun <T> onNui(eventName: String, function: (T, (String) -> Unit) -> Unit) {
-//		Console.info("nui event $eventName registered")
-//		Exports.onNui(eventName) { data: T, callback: (String) -> Unit ->
-//			Console.debug("nui event $eventName triggered")
-//			function(data, callback)
+//		event?.let {
+//			eventsHandlers[it.first]?.apply {
+//				removeAt(it.second)
+//			}
 //		}
 //	}
+
+	private fun registerEvent(eventName: String, index: Int): Int {
+		eventsHandlersRegistry.add(eventName to index)
+		return eventsHandlersRegistry.lastIndex
+	}
 //
 //	fun emitNui(data: Any): Int {
 //		val eventName = normalizeEventName(data::class.toString())
@@ -35,7 +110,7 @@ import web.struct.HttpRequestType
 //			val data = data
 //		})
 //	}
-//}
+}
 
 external val fetch: dynamic
 

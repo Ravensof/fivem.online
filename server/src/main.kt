@@ -1,6 +1,5 @@
-package server
-
 import fivem.common.Exports
+import fivem.common.FiveM
 import fivem.common.on
 import server.common.Server
 import server.extensions.onNet
@@ -12,7 +11,6 @@ import server.structs.PlayerSrc
 import universal.common.Console
 import universal.common.Event
 import universal.events.ConsoleLogEvent
-import universal.r.MODULE_FOLDER_NAME
 import universal.r.NativeEvents
 import universal.r.NativeEvents.Server.PLAYER_DROPPED
 
@@ -64,7 +62,7 @@ fun start() {
 fun main(args: Array<String>) {
 	Console.debug("hello server")
 
-//	MODULE_FOLDER_NAME = FiveM.getCurrentResourceName()
+	MODULE_FOLDER_NAME = FiveM.getCurrentResourceName()
 
 	on(NativeEvents.Server.RESOURCE_START) { resourceName: String ->
 		if (resourceName == MODULE_FOLDER_NAME) {

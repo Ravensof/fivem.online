@@ -1,6 +1,6 @@
 package fivem.common
 
-import universal.r.MODULE_FOLDER_NAME
+import MODULE_FOLDER_NAME
 
 
 external interface IntPtrInitialized

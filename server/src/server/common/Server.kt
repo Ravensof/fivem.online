@@ -1,12 +1,11 @@
 package server.common
 
+import MODULE_FOLDER_NAME
 import fivem.common.Exports
 import server.structs.PlayerSrc
 import server.structs.tables.ConnectionLogTable
-
 import universal.common.encodeURIComponent
 import universal.r.MAX_PLAYERS
-import universal.r.MODULE_FOLDER_NAME
 import universal.struct.Command
 import universal.struct.HttpRequestType
 import universal.struct.Ped

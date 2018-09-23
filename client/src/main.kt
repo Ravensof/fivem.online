@@ -1,4 +1,3 @@
-package client
 
 import client.extensions.emitNet
 import client.extensions.onNet
@@ -7,6 +6,7 @@ import client.modules.player.PlayerModule
 import client.modules.radio.RadioModule
 import client.modules.session.SessionModule
 import client.modules.web.WebModule
+import fivem.common.FiveM
 import fivem.common.on
 
 import universal.common.Console
@@ -14,7 +14,6 @@ import universal.common.Event
 import universal.common.setTimeout
 import universal.events.ClientReady
 import universal.events.ConsoleLogEvent
-import universal.r.MODULE_FOLDER_NAME
 
 
 fun start() {
@@ -46,7 +45,7 @@ fun start() {
 fun main(args: Array<String>) {
 	Console.debug("hello client")
 
-//	MODULE_FOLDER_NAME = FiveM.getCurrentResourceName()
+	MODULE_FOLDER_NAME = FiveM.getCurrentResourceName()
 
 	var resourceLoaded = false
 

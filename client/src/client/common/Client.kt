@@ -22579,11 +22579,19 @@ private external fun SetFrontendRadioActive(active: Boolean)
  * return _DRAW_NOTIFICATION(1, 1);
  * }
  */
-//private external fun SetNotificationTextEntry(text: string)
+private external fun SetNotificationTextEntry(text: String)
 
-//private external fun SetNuiFocus(hasFocus: boolean, hasCursor: boolean)
+fun Client.setNotificationTextEntry(text: String) {//todo test
+	SetNotificationTextEntry(text)
+}
 
-//private external fun SetNumberOfParkedVehicles(value: number): number;
+private external fun SetNuiFocus(hasFocus: Boolean, hasCursor: Boolean)
+
+fun Client.setNuiFocus(hasFocus: Boolean, hasCursor: Boolean) {
+	SetNuiFocus(hasFocus, hasCursor)
+}
+
+//private external fun SetNumberOfParkedVehicles(value: Int): Int
 
 /**
  * This is an alias of SET_ENTITY_AS_NO_LONGER_NEEDED.

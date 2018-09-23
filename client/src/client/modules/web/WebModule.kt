@@ -1,11 +1,11 @@
 package client.modules.web
 
+import MODULE_FOLDER_NAME
 import client.extensions.emitNui
 import client.modules.AbstractModule
 import client.modules.web.events.WebReceiverReady
 import universal.common.Event
 import universal.extensions.onNull
-import universal.r.MODULE_FOLDER_NAME
 
 class WebModule : AbstractModule() {
 	init {
