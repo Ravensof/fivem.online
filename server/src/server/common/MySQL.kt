@@ -3,13 +3,14 @@ package server.common
 import universal.common.Base64
 import universal.common.Console
 import universal.common.setTimeout
+import universal.r.MYSQL_API_URL
 import universal.struct.CustomHttpResponse
 import universal.struct.HttpRequestType
 
 
 object MySQL {
 
-	private const val SERVER = "http://localhost/fivemapi.php"
+	private const val SERVER = MYSQL_API_URL
 
 	fun filter(value: String): String {
 		return "FROM_BASE64('${Base64.toBase64(value)}')"

@@ -1,46 +1,59 @@
 <html>
 <head>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.0.15/howler.core.min.js"></script>
-	<script src="../out/production/client/lib/kotlin.js"></script>
-	<script src="../external/Base64.min.js"></script>
-	<script src="../out/production/universal/universal.js"></script>
-	<script src="../out/production/web/web.js"></script>
-	<script>
-		let MODULE_FOLDER_NAME = "fivem-online";
 
-		let Nui = {
-			/**
-			 * @param eventName {string}
-			 * @param data
-			 * @param callback
-			 */
-			emit: function (eventName, data = null, callback = function (result) {
-			}) {
-				fetch(
-					"http://" + MODULE_FOLDER_NAME + "/" + eventName,
-					{"method": "POST", "body": JSON.stringify(data)}
-				)
-					.then(function (response) {
-						return response.text()
-					})
-					.then(function (body) {
-						callback(body)
-					})
 
-			},
-			// on: function(eventName, callback=function(event){}){
-			// 	window.addEventListener("message", (event) => {
-			//
-			// 		let data = event.data;
-			// 	})
-			// }
-		};
-
-		document.addEventListener("DOMContentLoaded", () => {
-			Nui.emit("radio:ready");
-		});
-	</script>
 </head>
 <body id="content">
+
+<div id="speedometerBlock">
+	<script src="http://fivem.online/resources/Speedometer-0.2/gauge.js"></script>
+	<canvas width=380 height=150 id="speedometerCanvas"></canvas>
+</div>
+
+<div id="debug" style="background-color: aliceblue; color: black; width: fit-content">
+	default text
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.0.15/howler.core.min.js"></script>
+<script src="../out/production/client/lib/kotlin.js"></script>
+<script src="../external/Base64.min.js"></script>
+<script src="../out/production/universal/universal.js"></script>
+<script src="../out/production/web/web.js"></script>
+<script>
+	let MODULE_FOLDER_NAME = "fivem-online";
+
+	let Nui = {
+		/**
+		 * @param eventName {string}
+		 * @param data
+		 * @param callback
+		 */
+		emit: function (eventName, data = null, callback = function (result) {
+		}) {
+			fetch(
+				"http://" + MODULE_FOLDER_NAME + "/" + eventName,
+				{"method": "POST", "body": JSON.stringify(data)}
+			)
+				.then(function (response) {
+					return response.text()
+				})
+				.then(function (body) {
+					callback(body)
+				})
+
+		},
+		// on: function(eventName, callback=function(event){}){
+		// 	window.addEventListener("message", (event) => {
+		//
+		// 		let data = event.data;
+		// 	})
+		// }
+	};
+
+	// document.addEventListener("DOMContentLoaded", () => {
+	// 	Nui.emit("radio:ready");
+	// });
+</script>
 </body>
 </html>

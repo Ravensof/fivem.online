@@ -1,48 +1,74 @@
 package universal.common
 
+import universal.modules.web.events.ConsoleLogWeb
 import universal.r.*
 
 
 object Console {
-	fun dir(o: Any) {
-		if (CONSOLE_DIR) {
-			print("$CONSOLE_PREFIX[DIR]: ")
-			console.dir(o)
-		}
-	}
+//	fun dir(o: Any) {
+//		if (CONSOLE_DIR) {
+//			console.log("$CONSOLE_PREFIX[DIR]: ")
+//			console.dir(o)
+//		}
+//	}
 
 	fun error(vararg o: Any?) {
 		if (CONSOLE_ERROR) {
-			print("$CONSOLE_PREFIX[ERROR]: ")
-			console.error(*o)
+			var str = "$CONSOLE_PREFIX[ERROR]: "
+			o.forEach {
+				str += it
+			}
+			console.log(str)
 		}
 	}
 
 	fun info(vararg o: Any?) {
 		if (CONSOLE_INFO) {
-			print("$CONSOLE_PREFIX[INFO]: ")
-			console.info(*o)
+			var str = "$CONSOLE_PREFIX[INFO]: "
+			o.forEach {
+				str += it
+			}
+			console.log(str)
 		}
 	}
 
 	fun log(vararg o: Any?) {
 		if (CONSOLE_LOG) {
-			print("$CONSOLE_PREFIX[LOG]: ")
-			console.log(*o)
+			var str = "$CONSOLE_PREFIX[LOG]: "
+			o.forEach {
+				str += it
+			}
+			console.log(str)
 		}
 	}
 
 	fun warn(vararg o: Any?) {
 		if (CONSOLE_WARN) {
-			print("$CONSOLE_PREFIX[WARN]: ")
-			console.warn(*o)
+			var str = "$CONSOLE_PREFIX[WARN]: "
+			o.forEach {
+				str += it
+			}
+			console.warn(str)
 		}
 	}
 
 	fun debug(vararg o: Any?) {
 		if (CONSOLE_DEBUG) {
-			print("$CONSOLE_PREFIX[DEBUG]: ")
-			console.log(*o)
+			var str = "$CONSOLE_PREFIX[DEBUG]: "
+			o.forEach {
+				str += it
+			}
+			console.log(str)
+		}
+	}
+
+	fun logWeb(vararg o: Any?) {
+		if (CONSOLE_LOG) {
+			var str = "$CONSOLE_PREFIX[LOG]: "
+			o.forEach {
+				str += it
+			}
+			Event.emit(ConsoleLogWeb(str))
 		}
 	}
 

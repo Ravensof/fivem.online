@@ -1,4 +1,3 @@
-import fivem.common.Exports
 import fivem.common.FiveM
 import fivem.common.on
 import server.common.Server
@@ -12,7 +11,6 @@ import universal.common.Console
 import universal.common.Event
 import universal.events.ConsoleLogEvent
 import universal.r.NativeEvents
-import universal.r.NativeEvents.Server.PLAYER_DROPPED
 
 
 fun start() {
@@ -20,9 +18,6 @@ fun start() {
 	try {
 
 //		on("rconCommand", {command: String, commandArguments: Array<String>->})
-		Exports.on(PLAYER_DROPPED) { source: Int, reason: String ->
-			Console.log("$source $reason")
-		}
 
 		Event.on { event: ConsoleLogEvent ->
 			Console.log("server received message \"${event.message}\"")
@@ -34,8 +29,8 @@ fun start() {
 
 		Event.onNet { playerSrc: PlayerSrc, str: String ->
 
-			println("playerSrc: $playerSrc")
-			println("string: $str")
+			println("playerSrc: $playerSrc\r\n" +
+					"string: $str")
 
 			Console.debug(Server.getPlayerIdentifiers(playerSrc))
 		}

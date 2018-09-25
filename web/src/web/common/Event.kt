@@ -1,12 +1,12 @@
 package web.common
 
+import DEBUG_NUI
 import MODULE_FOLDER_NAME
 import universal.common.Console
 import universal.common.normalizeEventName
 import universal.common.setTimeout
-import web.events.WebReceiverReady
+import universal.modules.web.events.WebReceiverReady
 import web.struct.HttpRequestType
-import kotlin.browser.document
 import kotlin.browser.window
 
 object Event {
@@ -18,13 +18,11 @@ object Event {
 
 		onNui<WebReceiverReady> {
 			MODULE_FOLDER_NAME = it.moduleFolderName
-
-			Console.info("Nui transceiver ready")
 		}
 
-		document.addEventListener("DOMContentLoaded", fun(event: org.w3c.dom.events.Event) {
-			Console.info("DOMContentLoaded")
-		})
+//		document.addEventListener("DOMContentLoaded", fun(event: org.w3c.dom.events.Event) {
+//			universal.common.Event.emit(DOMContentLoadedEvent())
+//		})
 
 		window.addEventListener("message", fun(event: dynamic) {
 
@@ -34,7 +32,7 @@ object Event {
 			setTimeout {
 				val eventHandlers = eventsHandlers.get(eventName)
 
-				if (eventHandlers != null) {
+				if (eventHandlers != null && DEBUG_NUI) {
 					Console.debug("nui event $eventName triggered")
 				}
 

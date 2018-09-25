@@ -5,6 +5,7 @@ import client.modules.eventGenerator.EventGenerator
 import client.modules.player.PlayerModule
 import client.modules.radio.RadioModule
 import client.modules.session.SessionModule
+import client.modules.speedometer.SpeedometerModule
 import client.modules.web.WebModule
 import fivem.common.FiveM
 import fivem.common.on
@@ -30,12 +31,15 @@ fun start() {
 //		Engine(it.player)
 //	}
 
-	EventGenerator.getInstance()
 
 	SessionModule.getInstance()
 	RadioModule.getInstance()
 	PlayerModule.getInstance()
 	WebModule.getInstance()
+
+	SpeedometerModule.getInstance()
+
+	EventGenerator.getInstance()
 
 	Console.info("client started")
 

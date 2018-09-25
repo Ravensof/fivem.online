@@ -86,6 +86,83 @@ object Client {
 	fun getEntityHeading(entity: Int): Float {
 		return GetEntityHeading(entity)
 	}
+
+
+	fun getVehiclePedIsUsing(ped: Int): Int {
+		return GetVehiclePedIsUsing(ped)
+	}
+
+	fun getVehicleCurrentGear(vehicle: Int): Int {
+		return GetVehicleCurrentGear(vehicle)
+	}
+
+	fun getVehicleCurrentRpm(vehicle: Int): Double {
+		return GetVehicleCurrentRpm(vehicle)
+	}
+
+	fun getVehicleDashboardSpeed(vehicle: Int): Double {
+		return GetVehicleDashboardSpeed(vehicle)
+	}
+
+	fun getVehicleEngineTemperature(vehicle: Int): Int {
+		return GetVehicleEngineTemperature(vehicle)
+	}
+
+	fun getVehicleFuelLevel(vehicle: Int): Int {
+		return GetVehicleFuelLevel(vehicle)
+	}
+
+	fun getVehicleHandbrake(vehicle: Int): Boolean {
+		return GetVehicleHandbrake(vehicle) == 1
+	}
+
+	fun getVehicleIndexFromEntityIndex(entity: Int): Int {
+		return GetVehicleIndexFromEntityIndex(entity)
+	}
+
+//	fun getVehicleNextGear(vehicle: Int): Int{//тоже самое что и currentGear
+//		return GetVehicleNextGear(vehicle)
+//	}
+
+	fun getVehicleNumberPlateText(vehicle: Int): String? {
+		return GetVehicleNumberPlateText(vehicle)
+	}
+
+	fun getVehicleOilLevel(vehicle: Int): Float {
+		return GetVehicleOilLevel(vehicle)
+	}
+
+	fun getVehiclePetrolTankHealth(vehicle: Int): Int {
+		return GetVehiclePetrolTankHealth(vehicle)
+	}
+
+	fun getVehicleTurboPressure(vehicle: Int): Int {
+		return GetVehicleTurboPressure(vehicle)
+	}
+
+	fun getIsVehicleEngineRunning(vehicle: Int): Boolean {
+		return GetIsVehicleEngineRunning(vehicle) == 1
+	}
+
+	fun isVehicleEngineOn(vehicle: Int): Boolean {
+		return IsVehicleEngineOn(vehicle) == 1
+	}
+
+	fun getVehicleEngineHealth(vehicle: Int): Int {
+		return GetVehicleEngineHealth(vehicle)
+	}
+
+	fun getEntitySpeed(entity: Int): Double {
+		return GetEntitySpeed(entity)
+	}
+
+	fun getEntitySpeedKmH(entity: Int): Double {
+		return getEntitySpeed(entity) * 3.6
+	}
+
+	fun getEntitySpeedMpH(entity: Int): Double {
+		return getEntitySpeed(entity) * 2.236936
+	}
 }
 
 
@@ -5448,7 +5525,7 @@ private external fun GetEntityHeading(entity: Int): Float
  * float kmh = (speed * 3.6);
  * float mph = (speed * 2.236936);
  */
-//private external fun GetEntitySpeed(entity: number): number;
+private external fun GetEntitySpeed(entity: Int): Double
 
 /**
  * Relative can be used for getting speed relative to the frame of the vehicle, to determine for example, if you are going in reverse (-y speed) or not (+y speed).
@@ -5862,11 +5939,11 @@ private external fun GetEntityHeading(entity: Int): Float
 /**
  * Returns true when in a vehicle, false whilst entering/exiting.
  */
-//private external fun GetIsVehicleEngineRunning(vehicle: number): number;
+private external fun GetIsVehicleEngineRunning(vehicle: Int): Int
 /**
  * Returns true when in a vehicle, false whilst entering/exiting.
  */
-//private external fun IsVehicleEngineOn(vehicle: number): number;
+private external fun IsVehicleEngineOn(vehicle: Int): Int
 
 //private external fun GetIsVehiclePrimaryColourCustom(vehicle: number): number;
 
@@ -7821,9 +7898,9 @@ private external fun GetResourceMetadata(resourceName: String, metadataKey: Stri
 
 //private external fun GetVehicleColours(vehicle: number): [number, number];
 
-//private external fun GetVehicleCurrentGear(vehicle: number): number;
+private external fun GetVehicleCurrentGear(vehicle: Int): Int
 
-//private external fun GetVehicleCurrentRpm(vehicle: number): number;
+private external fun GetVehicleCurrentRpm(vehicle: Int): Double
 
 //private external fun GetVehicleCustomPrimaryColour(vehicle: number): [number, number, number];
 
@@ -7831,7 +7908,7 @@ private external fun GetResourceMetadata(resourceName: String, metadataKey: Stri
 
 //private external fun GetVehicleDashboardColour(vehicle: number, color: number)
 
-//private external fun GetVehicleDashboardSpeed(vehicle: number): number;
+private external fun GetVehicleDashboardSpeed(vehicle: Int): Double
 
 /**
  * Returns hash of default vehicle horn
@@ -7878,9 +7955,9 @@ private external fun GetResourceMetadata(resourceName: String, metadataKey: Stri
  * 300: Engine is smoking and losing functionality
  * 1000: Engine is perfect
  */
-//private external fun GetVehicleEngineHealth(vehicle: number): number;
+private external fun GetVehicleEngineHealth(vehicle: Int): Int
 
-//private external fun GetVehicleEngineTemperature(vehicle: number): number;
+private external fun GetVehicleEngineTemperature(vehicle: Int): Int
 
 /**
  * formerly known as _GET_VEHICLE_PAINT_FADE
@@ -7899,11 +7976,11 @@ private external fun GetResourceMetadata(resourceName: String, metadataKey: Stri
 
 //private external fun GetVehicleExtraColours(vehicle: number): [number, number];
 
-//private external fun GetVehicleFuelLevel(vehicle: number): number;
+private external fun GetVehicleFuelLevel(vehicle: Int): Int
 
 //private external fun GetVehicleGravityAmount(vehicle: number): number;
 
-//private external fun GetVehicleHandbrake(vehicle: number): number;
+private external fun GetVehicleHandbrake(vehicle: Int): Int
 
 /**
  * Returns the effective handling data of a vehicle as a floating-point value.
@@ -7949,7 +8026,7 @@ private external fun GetResourceMetadata(resourceName: String, metadataKey: Stri
 /**
  * Simply returns whatever is passed to it (Regardless of whether the handle is valid or not).
  */
-//private external fun GetVehicleIndexFromEntityIndex(entity: number): number;
+private external fun GetVehicleIndexFromEntityIndex(entity: Int): Int
 
 /**
  * Gets the vehicle indicator light state. 0 = off, 1 = left, 2 = right, 3 = both
@@ -7961,7 +8038,7 @@ private external fun GetResourceMetadata(resourceName: String, metadataKey: Stri
 
 //private external fun GetVehicleLayoutHash(vehicle: number): number;
 
-//private external fun GetVehicleLightsState(vehicle: number): [number, any /* actually bool */, any /* actually bool */];
+//private external fun GetVehicleLightsState(vehicle: Int): [number, any /* actually bool */, any /* actually bool */];
 
 /**
  * -1 = no livery
@@ -8138,7 +8215,7 @@ private external fun GetResourceMetadata(resourceName: String, metadataKey: Stri
  */
 //private external fun GetVehicleNeonLightsColour(vehicle: number): [number, number, number];
 
-//private external fun GetVehicleNextGear(vehicle: number): number;
+private external fun GetVehicleNextGear(vehicle: Int): Int
 
 /**
  * Calling this with an invalid node id, will crash the game.
@@ -8198,7 +8275,7 @@ private external fun GetResourceMetadata(resourceName: String, metadataKey: Stri
 /**
  * Returns the license plate text from a vehicle.  8 chars maximum.
  */
-//private external fun GetVehicleNumberPlateText(vehicle: number): string;
+private external fun GetVehicleNumberPlateText(vehicle: Int): String?
 
 /**
  * Returns the PlateType of a vehicle
@@ -8211,7 +8288,7 @@ private external fun GetResourceMetadata(resourceName: String, metadataKey: Stri
  */
 //private external fun GetVehicleNumberPlateTextIndex(elegy: number): number;
 
-//private external fun GetVehicleOilLevel(vehicle: number): number;
+private external fun GetVehicleOilLevel(vehicle: Int): Float
 
 /**
  * The resulting entity can be a Vehicle or Ped.
@@ -8238,13 +8315,13 @@ private external fun GetResourceMetadata(resourceName: String, metadataKey: Stri
 /**
  * Gets ID of vehicle player using. It means it can get ID at any interaction with vehicle. Enter\exit for example. And that means it is faster than GET_VEHICLE_PED_IS_IN but less safe.
  */
-//private external fun GetVehiclePedIsUsing(ped: number): number;
+private external fun GetVehiclePedIsUsing(ped: Int): Int
 
 /**
  * 1000 is max health
  * Begins leaking gas at around 650 health
  */
-//private external fun GetVehiclePetrolTankHealth(vehicle: number): number;
+private external fun GetVehiclePetrolTankHealth(vehicle: Int): Int
 
 //private external fun GetVehiclePlateType(vehicle: number): number;
 
@@ -8267,7 +8344,7 @@ private external fun GetResourceMetadata(resourceName: String, metadataKey: Stri
  */
 //private external fun GetVehicleTrailerVehicle(vehicle: number, trailer: number): number;
 
-//private external fun GetVehicleTurboPressure(vehicle: number): number;
+private external fun GetVehicleTurboPressure(vehicle: Int): Int
 
 //private external fun GetVehicleTyreSmokeColor(vehicle: number): [number, number, number];
 

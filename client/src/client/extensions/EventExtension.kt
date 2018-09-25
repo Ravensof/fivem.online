@@ -1,5 +1,6 @@
 package client.extensions
 
+import DEBUG_NUI
 import client.common.Client
 import fivem.common.Exports
 import universal.common.Console
@@ -32,7 +33,9 @@ inline fun <reified T : Any> Event.onNui(noinline function: (T, (String) -> Unit
 fun <T> Event.onNui(eventName: String, function: (T, (String) -> Unit) -> Unit) {
 	Console.info("nui event $eventName registered")
 	Exports.onNui(eventName) { data: T, callback: (String) -> Unit ->
-		Console.debug("nui event $eventName triggered")
+		if (DEBUG_NUI) {
+			Console.debug("nui event $eventName triggered")
+		}
 		function(data, callback)
 	}
 }
@@ -40,7 +43,9 @@ fun <T> Event.onNui(eventName: String, function: (T, (String) -> Unit) -> Unit) 
 fun Event.emitNui(data: Any): Int {
 	val eventName = normalizeEventName(data::class.toString())
 
-	Console.debug("nui data sent " + eventName + " " + JSON.stringify(data))
+	if (DEBUG_NUI) {
+		Console.debug("nui data sent " + eventName + " " + JSON.stringify(data))
+	}
 
 	return Client.sendNuiMessage(object {
 		val event = eventName

@@ -52,6 +52,7 @@ class SessionModule private constructor() : AbstractModule() {
 
 	private fun onPlayerDropped(playerId: Int, reason: String) {
 		playersIds.remove(playerId)
+		Console.log("$playerId $reason")
 	}
 
 	private fun onClientConnecting(source: Int, playerName: String, setKickReason: (reason: String) -> Unit) {

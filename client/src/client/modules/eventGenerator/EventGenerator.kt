@@ -18,7 +18,7 @@ class EventGenerator {
 	init {
 		setInterval(500) {
 			checkIsPlayerInVehicle(Player.isInVehicle())
-			checkPlayerRadioStationName(Player.getRadioStation()?.takeIf { isPlayerInVehicle })
+			checkPlayerRadioStationName(Player.getRadioStation()?.takeIf { isPlayerInVehicle == true })
 			checkIsPlayerRadioEnabled(playerRadioStationName != null)
 
 		}
@@ -28,7 +28,7 @@ class EventGenerator {
 		}
 	}
 
-	private var audioMusicLevelInMP = Client.getProfileSetting(ProfileSetting.AUDIO_MUSIC_LEVEL_IN_MP).orZero()
+	private var audioMusicLevelInMP: Int? = null// = Client.getProfileSetting(ProfileSetting.AUDIO_MUSIC_LEVEL_IN_MP).orZero()
 
 	private fun checkAudioMusicLevelInMP(volume: Int) {
 		if (audioMusicLevelInMP != volume) {
@@ -38,7 +38,7 @@ class EventGenerator {
 		}
 	}
 
-	private var isPlayerInVehicle = Player.isInVehicle()
+	private var isPlayerInVehicle: Boolean? = null// = Player.isInVehicle()
 
 	private fun checkIsPlayerInVehicle(isInVehicle: Boolean) {
 		if (isPlayerInVehicle != isInVehicle) {
@@ -54,7 +54,7 @@ class EventGenerator {
 		}
 	}
 
-	private var playerRadioStationName = Player.getRadioStation()
+	private var playerRadioStationName: RadioStation? = null //= Player.getRadioStation()
 
 	private fun checkPlayerRadioStationName(radioStation: RadioStation?) {
 		if (radioStation != playerRadioStationName) {
@@ -65,7 +65,7 @@ class EventGenerator {
 		}
 	}
 
-	private var isPlayerVehicleRadioEnabled = playerRadioStationName != null
+	private var isPlayerVehicleRadioEnabled: Boolean? = null// = playerRadioStationName != null
 
 	private fun checkIsPlayerRadioEnabled(enabled: Boolean) {
 		if (enabled != isPlayerVehicleRadioEnabled) {
