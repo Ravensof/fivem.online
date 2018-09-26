@@ -156,12 +156,41 @@ object Client {
 		return GetEntitySpeed(entity)
 	}
 
-	fun getEntitySpeedKmH(entity: Int): Double {
-		return getEntitySpeed(entity) * 3.6
+//	fun getEntitySpeedKmH(entity: Int): Double {
+//		return getEntitySpeed(entity) * 3.6
+//	}
+//
+//	fun getEntitySpeedMpH(entity: Int): Double {
+//		return getEntitySpeed(entity) * 2.236936
+//	}
+
+	fun getPedInVehicleSeat(vehicle: Int, index: Int): Int {//todo check
+		return GetPedInVehicleSeat(vehicle, index)
 	}
 
-	fun getEntitySpeedMpH(entity: Int): Double {
-		return getEntitySpeed(entity) * 2.236936
+	fun getVehicleMaxNumberOfPassengers(vehicle: Int): Int {//todo check
+		return GetVehicleMaxNumberOfPassengers(vehicle)
+	}
+
+	//если Null и игрок в машине, значит он водитель, наверное :/
+	fun getPassengerSeatOfPedInVehicle(vehicle: Int, ped: Int): Int? {
+//		Console.log("getVehicleMaxNumberOfPassengers($vehicle): " + getVehicleMaxNumberOfPassengers(vehicle))
+//		Console.log("getPedInVehicleSeat(vehicle, 0): "+getPedInVehicleSeat(vehicle, 0))
+//		Console.log("getPedInVehicleSeat(vehicle, 1): "+getPedInVehicleSeat(vehicle, 1))
+		for (i in 0..getVehicleMaxNumberOfPassengers(vehicle)) {
+			if (getPedInVehicleSeat(vehicle, i) == ped) {
+				return i
+			}
+		}
+
+		return null
+	}
+
+	fun getPassengerSeatOfPedInVehicle(): Int? {
+		val ped = Player.getPed()!!
+//		Console.log("ped: " + ped)
+
+		return getPassengerSeatOfPedInVehicle(getVehiclePedIsUsing(ped), ped)
 	}
 }
 
@@ -5940,6 +5969,7 @@ private external fun GetEntitySpeed(entity: Int): Double
  * Returns true when in a vehicle, false whilst entering/exiting.
  */
 private external fun GetIsVehicleEngineRunning(vehicle: Int): Int
+
 /**
  * Returns true when in a vehicle, false whilst entering/exiting.
  */
@@ -6769,7 +6799,7 @@ private external fun GetNumResourceMetadata(resourceName: String, metadataKey: S
 /**
  * -1 (driver) &lt;= index &lt; GET_VEHICLE_MAX_NUMBER_OF_PASSENGERS(vehicle)
  */
-//private external fun GetPedInVehicleSeat(vehicle: number, index: number): number;
+private external fun GetPedInVehicleSeat(vehicle: Int, index: Int): Int
 
 /**
  * Simply returns whatever is passed to it (Regardless of whether the handle is valid or not).
@@ -8052,7 +8082,7 @@ private external fun GetVehicleIndexFromEntityIndex(entity: Int): Int
 
 //private external fun GetVehicleMaxBraking(vehicle: number): number;
 
-//private external fun GetVehicleMaxNumberOfPassengers(vehicle: number): number;
+private external fun GetVehicleMaxNumberOfPassengers(vehicle: Int): Int
 
 //private external fun GetVehicleMaxSpeed(vehicle: number): number;
 //private external fun N_0x53af99baa671ca47(vehicle: number): number;
@@ -22657,9 +22687,9 @@ private external fun SetFrontendRadioActive(active: Boolean)
  * }
  */
 
-private external fun SetNotificationTextEntry(text: String)
+private external fun SetNotificationTextEntry(text: String)//todo test
 
-fun Client.setNotificationTextEntry(text: String) {//todo test
+fun Client.setNotificationTextEntry(text: String) {
 	SetNotificationTextEntry(text)
 }
 

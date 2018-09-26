@@ -5,13 +5,22 @@
 </head>
 <body id="content">
 
-<div id="speedometerBlock">
-	<script src="http://fivem.online/resources/Speedometer-0.2/gauge.js"></script>
-	<canvas width=380 height=150 id="speedometerCanvas"></canvas>
-</div>
+<!--<div id="speedometerBlock">-->
+<!--<script src="http://fivem.online/resources/Speedometer-0.2/gauge.js"></script>-->
+<!--<canvas width=380 height=150 id="speedometerCanvas"></canvas>-->
+<!--</div>-->
 
 <div id="debug" style="background-color: aliceblue; color: black; width: fit-content">
 	default text
+</div>
+
+<div id="speedometer_block" class="speedometer">
+	<link rel="stylesheet" href="http://fivem.online/resources/Speedometer-0.1/style.css">
+	<div style="display:none;">
+		<img src="http://fivem.online/resources/Speedometer-0.1/arrow-speedometer.svg" id="speedometer_arrow">
+		<img src="http://fivem.online/resources/Speedometer-0.1/arrow-tachometer.svg" id="tachometer_arrow">
+	</div>
+	<canvas id="speedometer_canvas" width="440" height="212"></canvas>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>

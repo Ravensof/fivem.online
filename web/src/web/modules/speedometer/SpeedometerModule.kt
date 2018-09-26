@@ -1,8 +1,8 @@
 package web.modules.speedometer
 
-import external.Gauge
 import js.externals.jquery.jQuery
-import org.w3c.dom.HTMLElement
+import org.w3c.dom.HTMLCanvasElement
+import org.w3c.dom.HTMLImageElement
 import universal.extensions.onNull
 import universal.modules.AbstractModule
 import universal.modules.speedometer.events.SpeedoMeterDisableEvent
@@ -13,15 +13,15 @@ import kotlin.browser.document
 
 class SpeedometerModule private constructor() : AbstractModule() {
 
-	val body = jQuery("body")
-//	val block = jQuery("<iframe hidden='hidden' id=\"speedometer\" src='" + RESOURCES_URL + "Speedometer-0.1/Speedometer.html' width=\"100%\" height=\"100%\" frameborder=\"0\" scrolling=\"no\" style=\"position: absolute; top: 0; left: 0;\"></iframe>")
+	private var speedometerCanvas = document.getElementById(SPEEDOMETER_CANVAS) as HTMLCanvasElement?
+	private var context: dynamic = speedometerCanvas?.getContext("2d")
 
-	private var speedometerBlock: js.externals.jquery.JQuery<HTMLElement>? = null
-//	private var speedometerCanvas: js.externals.jquery.JQuery<HTMLElement>?=null
+	private var speedometerBlock = jQuery("#$SPEEDOMETER_BLOCK")
 
-	var debug: js.externals.jquery.JQuery<HTMLElement>? = null
+	private var speedometerArrow = document.getElementById(SPEEDOMETER_ARROW) as HTMLImageElement?
+	private var tachometerArrow = document.getElementById(TACHOMETER_ARROW) as HTMLImageElement?
 
-	private var gauge: Gauge? = null
+	private val debug = jQuery("#debug")
 
 	init {
 
@@ -40,74 +40,55 @@ class SpeedometerModule private constructor() : AbstractModule() {
 							"oilLevel ${it.oilLevel} <br />" +
 							"petrolTankHealth ${it.petrolTankHealth} <br />"
 
-			debug?.html(text)
+			debug.html(text)
 
-//			gauge.set(it.currentRpm*150)
-			gauge?.set(it.dashboardSpeed * 5)
+			drawSpeedo(it.dashboardSpeed * 2.236936 * 180 / 150, it.currentRpm * 180)
 		}
 
 		Event.onNui<SpeedoMeterEnableEvent> {
-			speedometerBlock?.show()
+			debug.show()
+			speedometerBlock.show()
 		}
 
 		Event.onNui<SpeedoMeterDisableEvent> {
-			debug?.html("")
-			speedometerBlock?.hide()
+			debug.hide()
+			speedometerBlock.hide()
 		}
-
-		onDomContentLoaded()
 	}
 
-	private fun onDomContentLoaded() {
-		debug = jQuery("#debug")
-		speedometerBlock = jQuery("#$SPEEDOMETER_BLOCK")
+	fun drawRotatedImage(image: HTMLImageElement, x: Int, y: Int, angle: Double, rotatePointX: Double, rotatePointY: Double) {
 
-		val target = document.getElementById(SPEEDOMETER_CANVAS) // your canvas element
+		context.save()
 
-		val opts = object {
-			val angle = 0.01 // The span of the gauge arc
-			val lineWidth = 0.31 // The line thickness
-			val radiusScale = 1 // Relative radius
-			val pointer = object {
-				val length = 0.57 // // Relative to gauge radius
-				val strokeWidth = 0.084 // The thickness
-				val color = "#FF0000" // Fill color
-			}
-			val limitMax = false     // If false, max value increases automatically if value > maxValue
-			val limitMin = false     // If true, the min value of the gauge will be fixed
-			val colorStart = "#6FADCF"   // Colors
-			val colorStop = "#1bb84f"    // just experiment with them
-			val strokeColor = "#ffffff"  // to see which ones work best for you
-			val generateGradient = true
-			val highDpiSupport = true     // High resolution support
-			// renderTicks is Optional
+		context.translate(x, y)
 
-			val renderTicks = object {
-				val divisions = 5
-				val divWidth = 2.8
-				val divLength = 0.68
-				val divColor = "#000000"
-				val subDivisions = 4
-				val subLength = 0.48
-				val subWidth = 1.2
-				val subColor = "#000000"
-			}
+		context.rotate(angle * TO_RADIANS)
+
+		context.drawImage(image, -rotatePointX, -rotatePointY)
+
+		context.restore()
+	}
+
+	fun drawSpeedo(speed: Double, rpm: Double, turbo: Double? = null) {
+
+		context.clearRect(0, 0, speedometerCanvas?.width, speedometerCanvas?.height)
+
+		tachometerArrow?.let {
+			drawRotatedImage(it, 105, 102, rpm, it.width.toDouble() / 2, 17.02)
 		}
-
-		target?.let {
-			gauge = Gauge(target).apply {
-				setOptions(opts) // create sexy gauge!
-				maxValue = 250 // set max gauge value
-				setMinValue(0)  // Prefer setter over gauge.minValue = 0
-				animationSpeed = 20 // set animation speed (32 is default value)
-			}
+		speedometerArrow?.let {
+			drawRotatedImage(it, 291, 182, speed, 148.0, it.height.toDouble() / 2)
 		}
 	}
 
 	companion object {
 
-		private const val SPEEDOMETER_BLOCK = "speedometerBlock"
-		private const val SPEEDOMETER_CANVAS = "speedometerCanvas"
+		private const val SPEEDOMETER_BLOCK = "speedometer_block"
+		private const val SPEEDOMETER_CANVAS = "speedometer_canvas"
+		private const val SPEEDOMETER_ARROW = "speedometer_arrow"
+		private const val TACHOMETER_ARROW = "tachometer_arrow"
+
+		private const val TO_RADIANS = kotlin.math.PI / 180
 
 		private var instance: SpeedometerModule? = null
 
