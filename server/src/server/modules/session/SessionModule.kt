@@ -1,6 +1,7 @@
 package server.modules.session
 
 import fivem.common.Exports
+import fivem.events.ClientReady
 import server.common.MySQL
 import server.common.Server
 import server.extensions.emitNet
@@ -12,7 +13,6 @@ import server.structs.tables.ConnectionLogTable
 import universal.common.Console
 import universal.common.Event
 import universal.common.setTimeout
-import universal.events.ClientReady
 import universal.extensions.onNull
 import universal.r.NativeEvents
 import kotlin.js.Date

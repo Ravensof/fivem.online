@@ -3,6 +3,7 @@ package client.modules.eventGenerator
 import client.common.Client
 import client.common.Player
 import client.extensions.orZero
+import client.modules.eventGenerator.events.PauseMenuStateChangedEvent
 import client.modules.eventGenerator.events.vehicle.PlayerJoinVehicleEvent
 import client.modules.eventGenerator.events.vehicle.PlayerLeftOrJoinVehicleEvent
 import client.modules.eventGenerator.events.vehicle.PlayerLeftVehicleEvent
@@ -17,6 +18,7 @@ class EventGenerator {
 
 	init {
 		setInterval(500) {
+			checkPauseMenuState(Client.getPauseMenuState())
 			checkIsPlayerInVehicle(Player.isInVehicle())
 			checkPlayerRadioStationName(Player.getRadioStation()?.takeIf { isPlayerInVehicle == true })
 			checkIsPlayerRadioEnabled(playerRadioStationName != null)
@@ -25,6 +27,16 @@ class EventGenerator {
 
 		setInterval(1000) {
 			checkAudioMusicLevelInMP(Client.getProfileSetting(ProfileSetting.AUDIO_MUSIC_LEVEL_IN_MP).orZero())
+		}
+	}
+
+	private var pauseMenuState: Int? = null
+
+	private fun checkPauseMenuState(state: Int) {
+		if (pauseMenuState != state) {
+			Event.emit(PauseMenuStateChangedEvent(state))
+
+			pauseMenuState = state
 		}
 	}
 

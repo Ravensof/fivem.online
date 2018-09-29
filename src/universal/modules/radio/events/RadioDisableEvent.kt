@@ -1,3 +1,5 @@
 package universal.modules.radio.events
 
-class RadioDisableEvent
+import universal.events.IEvent
+
+class RadioDisableEvent : IEvent()

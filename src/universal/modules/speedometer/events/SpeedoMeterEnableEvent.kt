@@ -1,3 +1,5 @@
 package universal.modules.speedometer.events
 
-class SpeedoMeterEnableEvent
+import universal.events.IEvent
+
+class SpeedoMeterEnableEvent : IEvent()

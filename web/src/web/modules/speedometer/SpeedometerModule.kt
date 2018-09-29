@@ -21,42 +21,40 @@ class SpeedometerModule private constructor() : AbstractModule() {
 	private var speedometerArrow = document.getElementById(SPEEDOMETER_ARROW) as HTMLImageElement?
 	private var tachometerArrow = document.getElementById(TACHOMETER_ARROW) as HTMLImageElement?
 
-	private val debug = jQuery("#debug")
 
 	init {
 
 		Event.onNui<SpeedoMeterUpdateEvent> {
-			val text =
-					"currentRpm  ${it.currentRpm} <br />" +
-							"dashboardSpeed ${it.dashboardSpeed} <br />" + //*2.236936 mph
-							"turboPressure ${it.turboPressure} <br />" +
-							"engineHealth ${it.engineHealth} <br />" +
-							"engineOn ${it.engineOn} <br />" +
-							"engineRunning ${it.engineRunning} <br />" +
-							"engineTemperature ${it.engineTemperature} <br />" +
-							"currentGear ${it.currentGear} <br />" +
-							"fuelLevel ${it.fuelLevel} <br />" +
-							"handbrake ${it.handbrake} <br />" +
-							"oilLevel ${it.oilLevel} <br />" +
-							"petrolTankHealth ${it.petrolTankHealth} <br />"
 
-			debug.html(text)
+			//			val text =
+//					"currentRpm  ${it.currentRpm} <br />" +
+//							"dashboardSpeed ${it.dashboardSpeed} <br />" + //*2.236936 mph
+//							"turboPressure ${it.turboPressure} <br />" +
+//							"engineHealth ${it.engineHealth} <br />" +
+//							"engineOn ${it.engineOn} <br />" +
+//							"engineRunning ${it.engineRunning} <br />" +
+//							"engineTemperature ${it.engineTemperature} <br />" +
+//							"currentGear ${it.currentGear} <br />" +
+//							"fuelLevel ${it.fuelLevel} <br />" +
+//							"handbrake ${it.handbrake} <br />" +
+//							"oilLevel ${it.oilLevel} <br />" +
+//							"petrolTankHealth ${it.petrolTankHealth} <br />"
+//
+//			Console.logWeb(text)
 
 			drawSpeedo(it.dashboardSpeed * 2.236936 * 180 / 150, it.currentRpm * 180)
 		}
 
 		Event.onNui<SpeedoMeterEnableEvent> {
-			debug.show()
 			speedometerBlock.show()
 		}
 
 		Event.onNui<SpeedoMeterDisableEvent> {
-			debug.hide()
 			speedometerBlock.hide()
 		}
 	}
 
-	fun drawRotatedImage(image: HTMLImageElement, x: Int, y: Int, angle: Double, rotatePointX: Double, rotatePointY: Double) {
+	private fun drawRotatedImage(image: HTMLImageElement, x: Int, y: Int, angle: Double, rotatePointX: Double, rotatePointY: Double) {
 
 		context.save()
 
@@ -69,7 +67,7 @@ class SpeedometerModule private constructor() : AbstractModule() {
 		context.restore()
 	}
 
-	fun drawSpeedo(speed: Double, rpm: Double, turbo: Double? = null) {
+	private fun drawSpeedo(speed: Double, rpm: Double, turbo: Double? = null) {
 
 		context.clearRect(0, 0, speedometerCanvas?.width, speedometerCanvas?.height)
 

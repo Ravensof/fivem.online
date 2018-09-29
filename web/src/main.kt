@@ -1,4 +1,5 @@
 import web.common.Event
+import web.modules.gui.GuiModule
 import web.modules.radio.RadioModule
 import web.modules.speedometer.SpeedometerModule
 
@@ -11,6 +12,7 @@ fun main(args: Array<String>) {
 	RadioModule.getInstance()
 
 	SpeedometerModule.getInstance()
+	GuiModule.getInstance()
 
 //	Console.log("test 12345")
 

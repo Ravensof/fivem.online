@@ -6,23 +6,24 @@ import server.structs.PlayerSrc
 import universal.common.Console
 import universal.common.Event
 import universal.common.normalizeEventName
-import universal.entities.Player
+import universal.events.IEvent
+import universal.r.Strings
 
-fun Event.emitNet(player: Player, data: Any) {
-	fivem.common.emitNet(normalizeEventName(data::class.toString()), player.id.toString(), data)
-	Console.debug("net event " + normalizeEventName(data::class.toString()) + " sent to " + player.id)
-}
+//fun Event.emitNet(player: Player, data: Any) {
+//	fivem.common.emitNet(normalizeEventName(data::class.toString()), player.id.toString(), data)
+//	Console.debug("net event " + normalizeEventName(data::class.toString()) + " sent to " + player.id)
+//}
 
-fun Event.emitNet(playerSrc: PlayerSrc, data: Any) {
-	fivem.common.emitNet(normalizeEventName(data::class.toString()), playerSrc.value.toString(), data)
+inline fun <reified T : IEvent> Event.emitNet(playerSrc: PlayerSrc, data: T) {
+	fivem.common.emitNet(normalizeEventName(data::class.toString()), playerSrc.value.toString(), data.serialize())
 	Console.debug("net event " + normalizeEventName(data::class.toString()) + " sent to ${Server.getPlayerName(playerSrc)} (${playerSrc.value})")
 }
 
-fun Event.emitNetAll(data: Any) {
+inline fun <reified T : IEvent> Event.emitNetAll(data: T) {
 	val eventName = normalizeEventName(data::class.toString())
 
 	Server.getPlayersIds().forEach {
-		fivem.common.emitNet(eventName, it.toString(), data)
+		fivem.common.emitNet(eventName, it.toString(), data.serialize())
 	}
 
 	Console.debug("net event " + normalizeEventName(data::class.toString()) + " sent to all")
@@ -38,15 +39,15 @@ fun <T> Event.onNet(eventName: String, function: (PlayerSrc, T) -> Unit) {
 	Exports.onNet(eventName) { playerId: Int, numberOfPlayers: Int, data: T ->
 
 		val playerSrc = PlayerSrc(playerId)
+		val serverNumberOfPlayers = Server.getNumPlayersOnline()
 
-		Console.checkValue("numberOfPlayers", "client: $numberOfPlayers != server: ${Server.getNumPlayersOnline()}") { numberOfPlayers != Server.getNumPlayersOnline() }
-
-//		if (Server.getNumPlayersOnline() - numberOfPlayers < 4) {
-		Console.debug("net event $eventName triggered for ${Server.getPlayerName(playerSrc)} (${playerSrc.value})")
+		if (numberOfPlayers == 1 && serverNumberOfPlayers > 1) {
+			Console.log("net event $eventName rejected for ${Server.getPlayerName(playerSrc)} (${playerSrc.value}) solo session")
+			Server.dropPlayer(playerSrc, Strings.CLIENT_IN_SINGLE_SESSION)
+		} else {
+			Console.debug("net event $eventName triggered for ${Server.getPlayerName(playerSrc)} (${playerSrc.value})")
 			function(playerSrc, data)
-//		} else {
-//			console.log("net event $eventName rejected for $playerSrc")
-//		}
+		}
 	}
 }
 

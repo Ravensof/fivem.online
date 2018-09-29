@@ -1,6 +1,6 @@
 package universal.common
 
-import universal.modules.web.events.ConsoleLogWeb
+import universal.modules.gui.events.ConsoleLogWebEvent
 import universal.r.*
 
 
@@ -64,11 +64,11 @@ object Console {
 
 	fun logWeb(vararg o: Any?) {
 		if (CONSOLE_LOG) {
-			var str = "$CONSOLE_PREFIX[LOG]: "
+			var str = ""
 			o.forEach {
 				str += it
 			}
-			Event.emit(ConsoleLogWeb(str))
+			Event.emit(ConsoleLogWebEvent(str))
 		}
 	}
 

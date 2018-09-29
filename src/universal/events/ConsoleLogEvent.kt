@@ -1,5 +1,5 @@
 package universal.events
 
-data class ConsoleLogEvent(
+class ConsoleLogEvent(
 		val message: String
-)
+) : IEvent()

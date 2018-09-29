@@ -5,7 +5,8 @@ import MODULE_FOLDER_NAME
 import universal.common.Console
 import universal.common.normalizeEventName
 import universal.common.setTimeout
-import universal.modules.web.events.WebReceiverReady
+import universal.events.IEvent
+import universal.modules.gui.events.WebReceiverReady
 import web.struct.HttpRequestType
 import kotlin.browser.window
 
@@ -50,13 +51,15 @@ object Event {
 	}
 
 
-	inline fun <reified T> onNui(noinline function: (T) -> Unit): Int {
+	inline fun <reified T : IEvent> onNui(noinline function: (T) -> Unit): Int {
 		val eventName = normalizeEventName(T::class.toString())
 
-		return onNui(eventName, function)
+		return onNui<T>(eventName) {
+			function(IEvent.unserialize(it))
+		}
 	}
 
-	fun <T> onNui(eventName: String, function: (T) -> Unit): Int {
+	fun <T : IEvent> onNui(eventName: String, function: (T) -> Unit): Int {
 		if (!eventsHandlers.containsKey(eventName)) {
 			eventsHandlers[eventName] = mutableListOf()
 		}

@@ -7,6 +7,7 @@ import server.structs.PlayerSrc
 import universal.common.Console
 import universal.common.Event
 import universal.common.normalizeEventName
+import universal.r.Strings
 
 inline fun <reified T> Event.onSafeNet(noinline function: (PlayerSrc, T) -> Unit) {
 	Event.onSafeNet(Event.SAFE_EVENT_PREFIX + normalizeEventName(T::class.toString()), function)
@@ -18,14 +19,21 @@ fun <T> Event.onSafeNet(eventName: String, function: (PlayerSrc, T) -> Unit) {
 	Exports.onNet(eventName) { playerId: Int, numberOfPlayers: Int, token: String, data: T ->
 
 		val playerSrc = PlayerSrc(playerId)
+		val serverNumberOfPlayers = Server.getNumPlayersOnline()
 
-		Console.checkValue("numberOfPlayers", "client: $numberOfPlayers != server: ${Server.getNumPlayersOnline()}") { numberOfPlayers != Server.getNumPlayersOnline() }
+		when {
+			numberOfPlayers == 1 && serverNumberOfPlayers > 1 -> {
+				Console.log("net event $eventName rejected for ${Server.getPlayerName(playerSrc)} (${playerSrc.value}) solo session")
+				Server.dropPlayer(playerSrc, Strings.CLIENT_IN_SINGLE_SESSION)
+			}
+			!SessionModule.getInstance().checkToken(playerSrc, token) -> {
+				Console.warn("safe net event $eventName rejected for ${Server.getPlayerName(playerSrc)} (${playerSrc.value})")
+			}
 
-		if (SessionModule.getInstance().checkToken(playerSrc, token)) {
-			Console.debug("safe net event $eventName triggered for ${Server.getPlayerName(playerSrc)} (${playerSrc.value})")
-			function(playerSrc, data)
-		} else {
-			Console.warn("safe net event $eventName rejected for ${Server.getPlayerName(playerSrc)} (${playerSrc.value})")
+			else -> {
+				Console.debug("safe net event $eventName triggered for ${Server.getPlayerName(playerSrc)} (${playerSrc.value})")
+				function(playerSrc, data)
+			}
 		}
 	}
 }

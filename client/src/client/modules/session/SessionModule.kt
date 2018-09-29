@@ -3,8 +3,8 @@ package client.modules.session
 import client.extensions.onNet
 import client.modules.AbstractModule
 import client.modules.session.events.SafeEventsReady
+import fivem.events.ClientReady
 import universal.common.Event
-import universal.events.ClientReady
 import universal.extensions.onNull
 
 class SessionModule private constructor() : AbstractModule() {

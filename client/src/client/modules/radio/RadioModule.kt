@@ -3,7 +3,6 @@ package client.modules.radio
 import client.common.Client
 import client.common.Player
 import client.extensions.emitNui
-import client.extensions.onNui
 import client.extensions.orZero
 import client.modules.AbstractModule
 import client.modules.eventGenerator.events.vehicle.radio.AudioMusicLevelInMPChangedEvent
@@ -43,11 +42,11 @@ class RadioModule private constructor() : AbstractModule() {
 			onSettingsMusicLevelChanged(event.volume)
 		}
 
-		Event.onNui("radio:ready") { _: Any, _: (String) -> Unit ->
-			Console.info("radio ready received")
-			onReady()
-//			callback("custom text")
-		}
+//		Event.onNui("radio:ready") { _: Any, _: (String) -> Unit ->
+//			Console.info("radio ready received")
+//			onReady()
+////			callback("custom text")
+//		}
 
 		onReady()
 

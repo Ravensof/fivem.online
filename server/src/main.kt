@@ -2,10 +2,10 @@ import fivem.common.FiveM
 import fivem.common.on
 import server.common.Server
 import server.extensions.onNet
+import server.modules.gui.GuiModule
 import server.modules.player.PlayerModule
 import server.modules.session.SessionModule
 import server.modules.test.TestModule
-import server.modules.web.WebModule
 import server.structs.PlayerSrc
 import universal.common.Console
 import universal.common.Event
@@ -37,7 +37,7 @@ fun start() {
 
 		SessionModule.getInstance()
 		PlayerModule.getInstance()
-		WebModule.getInstance()
+	GuiModule.getInstance()
 		TestModule.getInstance()
 
 //	setTimeout {
