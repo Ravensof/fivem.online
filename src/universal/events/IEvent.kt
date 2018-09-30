@@ -10,7 +10,10 @@ abstract class IEvent {
 
 	companion object {
 
-		inline fun <A> unserialize(obj: Any): A {
+		/**
+		 * не видит классы, лежащие не в universal
+		 */
+		fun <A> unserialize(obj: Any): A {
 
 			return js("""
 	function unserialize1(object) {

@@ -3,7 +3,7 @@
 	position: absolute;
 	width: 440px;
 	height: 212px;
-	border: solid 1px red;
+	/*border: solid 1px red;*/
 	bottom: 30px;
 	right: 50px;
 	background-image: url(speedometer.svg);

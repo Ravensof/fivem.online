@@ -28,7 +28,7 @@ object Event {
 		window.addEventListener("message", fun(event: dynamic) {
 
 			val eventName: String = event.data.event
-			val data = event.data.data
+			val data = IEvent.unserialize<Any>(event.data.data)
 
 			setTimeout {
 				val eventHandlers = eventsHandlers.get(eventName)
@@ -54,9 +54,7 @@ object Event {
 	inline fun <reified T : IEvent> onNui(noinline function: (T) -> Unit): Int {
 		val eventName = normalizeEventName(T::class.toString())
 
-		return onNui<T>(eventName) {
-			function(IEvent.unserialize(it))
-		}
+		return onNui(eventName, function)
 	}
 
 	fun <T : IEvent> onNui(eventName: String, function: (T) -> Unit): Int {

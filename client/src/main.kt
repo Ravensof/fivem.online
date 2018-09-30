@@ -17,31 +17,35 @@ import universal.events.ConsoleLogEvent
 
 fun start() {
 
-	Event.on { event: ConsoleLogEvent ->
-		Console.log("client received message \"${event.message}\"")
-	}
-	Event.onNet { event: ConsoleLogEvent ->
-		Console.log("client received message \"${event.message}\" from server")
-	}
+	try {
+
+		Event.on { event: ConsoleLogEvent ->
+			Console.log("client received message \"${event.message}\"")
+		}
+		Event.onNet { event: ConsoleLogEvent ->
+			Console.log("client received message \"${event.message}\" from server")
+		}
 
 //	Event.onNet<ClientRegisteredEvent> {
 //		console.log("client registered as player " + it.player.id)
 //		Engine(it.player)
 //	}
 
+		SessionModule.getInstance()
+		RadioModule.getInstance()
+		PlayerModule.getInstance()
+		GuiModule.getInstance()
 
-	SessionModule.getInstance()
-	RadioModule.getInstance()
-	PlayerModule.getInstance()
-	GuiModule.getInstance()
+		SpeedometerModule.getInstance()
 
-	SpeedometerModule.getInstance()
+		EventGenerator.getInstance()
 
-	EventGenerator.getInstance()
+		Console.info("client started")
 
-	Console.info("client started")
-
-	Event.emitNet(ClientReady())
+		Event.emitNet(ClientReady())
+	} catch (exception: Exception) {
+		Console.error(exception.message)
+	}
 }
 
 fun main(args: Array<String>) {

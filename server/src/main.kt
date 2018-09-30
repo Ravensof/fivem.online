@@ -37,7 +37,7 @@ fun start() {
 
 		SessionModule.getInstance()
 		PlayerModule.getInstance()
-	GuiModule.getInstance()
+		GuiModule.getInstance()
 		TestModule.getInstance()
 
 //	setTimeout {
