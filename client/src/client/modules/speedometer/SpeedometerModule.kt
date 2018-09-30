@@ -5,8 +5,8 @@ import client.common.Player
 import client.extensions.emitNui
 import client.extensions.orZero
 import client.modules.AbstractModule
-import client.modules.eventGenerator.events.vehicle.PlayerJoinVehicleEvent
 import client.modules.eventGenerator.events.vehicle.PlayerLeftVehicleEvent
+import client.modules.eventGenerator.events.vehicle.PlayerSeatChangedEvent
 import universal.common.Console
 import universal.common.Event
 import universal.common.clearInterval
@@ -22,7 +22,11 @@ class SpeedometerModule private constructor() : AbstractModule() {
 	private var vehicleHasSpeedo = false
 
 	init {
-		Event.on<PlayerJoinVehicleEvent> { onPlayerJoinVehicle() }
+		Event.on<PlayerSeatChangedEvent> {
+			if (it.seatIndex == -1) {
+				onPlayerJoinVehicle()
+			}
+		}
 		Event.on<PlayerLeftVehicleEvent> { onPlayerLeftVehicle() }
 		Console.log("Client.getPauseMenuState(): " + Client.getPauseMenuState())
 	}
@@ -59,8 +63,8 @@ class SpeedometerModule private constructor() : AbstractModule() {
 			}
 		}
 
-		Client.setVehicleFuelLevel(vehicle, 65.0)
-		Client.setVehicleOilLevel(vehicle, 0.0)
+//		Client.setVehicleFuelLevel(vehicle, 65.0)
+//		Client.setVehicleOilLevel(vehicle, 0.0)
 
 	}
 

@@ -5,7 +5,7 @@ import universal.r.RadioStation
 
 val RadioStationList = mapOf(
 //		RadioStations.RADIO_01_CLASS_ROCK.name to RadioStation(),  // Los Santos Rock Radio
-		RadioStation.RADIO_02_POP.name to InternetRadioStation("https://revolutionradio.ru:8443/live.ogg"),         // Non-Stop-Pop FM
+		RadioStation.RADIO_02_POP.name to InternetRadioStation("https://revolutionradio.ru:8443/live.ogg", 0.7),         // Non-Stop-Pop FM
 		RadioStation.RADIO_03_HIPHOP_NEW.name to InternetRadioStation("http://stream.radioreklama.bg/nrj.ogg"),  // Radio Los Santos
 //		RadioStations.RADIO_04_PUNK.name to RadioStation(),        // Channel X
 //		RadioStations.RADIO_05_TALK_01.name to RadioStation(),     // West Coast Talk Radio

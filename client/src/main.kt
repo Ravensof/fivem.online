@@ -6,6 +6,7 @@ import client.modules.player.PlayerModule
 import client.modules.radio.RadioModule
 import client.modules.session.SessionModule
 import client.modules.speedometer.SpeedometerModule
+import client.modules.test.TestModule
 import fivem.common.FiveM
 import fivem.common.on
 import fivem.events.ClientReady
@@ -37,6 +38,8 @@ fun start() {
 		GuiModule.getInstance()
 
 		SpeedometerModule.getInstance()
+
+		TestModule.getInstance()
 
 		EventGenerator.getInstance()
 

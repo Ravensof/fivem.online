@@ -1,6 +1,8 @@
 package client.common
 
+import client.extensions.orZero
 import universal.common.Console
+import universal.r.Controls
 import universal.r.ProfileSetting
 import universal.struct.Coords
 import universal.struct.Time
@@ -108,8 +110,8 @@ object Client {
 		return GetVehicleEngineTemperature(vehicle)
 	}
 
-	fun getVehicleFuelLevel(vehicle: Int): Int {
-		return GetVehicleFuelLevel(vehicle)
+	fun getVehicleFuelLevel(vehicle: Int): Double {
+		return GetVehicleFuelLevel(vehicle).toDouble()
 	}
 
 	fun getVehicleHandbrake(vehicle: Int): Boolean {
@@ -128,8 +130,8 @@ object Client {
 		return GetVehicleNumberPlateText(vehicle)
 	}
 
-	fun getVehicleOilLevel(vehicle: Int): Float {
-		return GetVehicleOilLevel(vehicle)
+	fun getVehicleOilLevel(vehicle: Int): Double {
+		return GetVehicleOilLevel(vehicle).toDouble()
 	}
 
 	fun getVehiclePetrolTankHealth(vehicle: Int): Int {
@@ -148,6 +150,15 @@ object Client {
 		return IsVehicleEngineOn(vehicle) == 1
 	}
 
+	/**
+	 * Returns 1000.0 if the function is unable to get the address of the specified vehicle or if it's not a vehicle.
+	 * Minimum: -4000
+	 * Maximum: 1000
+	 * -4000: Engine is destroyed
+	 * 0 and below: Engine catches fire and health rapidly declines
+	 * 300: Engine is smoking and losing functionality
+	 * 1000: Engine is perfect
+	 */
 	fun getVehicleEngineHealth(vehicle: Int): Int {
 		return GetVehicleEngineHealth(vehicle)
 	}
@@ -168,16 +179,21 @@ object Client {
 		return GetPedInVehicleSeat(vehicle, index)
 	}
 
+	/**
+	 * количество ПАССАЖИРСКИХ мест в машине
+	 */
 	fun getVehicleMaxNumberOfPassengers(vehicle: Int): Int {//todo check
 		return GetVehicleMaxNumberOfPassengers(vehicle)
 	}
 
-	//если Null и игрок в машине, значит он водитель, наверное :/
+	/**
+	 * -1 водитель
+	 * 0 справа от водителя
+	 * 1 позади водителя
+	 * 2 ...
+	 */
 	fun getPassengerSeatOfPedInVehicle(vehicle: Int, ped: Int): Int? {
-//		Console.log("getVehicleMaxNumberOfPassengers($vehicle): " + getVehicleMaxNumberOfPassengers(vehicle))
-//		Console.log("getPedInVehicleSeat(vehicle, 0): "+getPedInVehicleSeat(vehicle, 0))
-//		Console.log("getPedInVehicleSeat(vehicle, 1): "+getPedInVehicleSeat(vehicle, 1))
-		for (i in 0..getVehicleMaxNumberOfPassengers(vehicle)) {
+		for (i in -1 until getVehicleMaxNumberOfPassengers(vehicle)) {
 			if (getPedInVehicleSeat(vehicle, i) == ped) {
 				return i
 			}
@@ -187,10 +203,74 @@ object Client {
 	}
 
 	fun getPassengerSeatOfPedInVehicle(): Int? {
-		val ped = Player.getPed()!!
-//		Console.log("ped: " + ped)
+		val ped = Player.getPed().orZero()
 
 		return getPassengerSeatOfPedInVehicle(getVehiclePedIsUsing(ped), ped)
+	}
+
+	/**
+	 * max level 65
+	 */
+	fun setVehicleFuelLevel(vehicle: Int, level: Double) {
+		SetVehicleFuelLevel(vehicle, level)
+	}
+
+	/**
+	 * max level 1
+	 */
+	fun setVehicleOilLevel(vehicle: Int, level: Double) {
+		SetVehicleOilLevel(vehicle, level)
+	}
+
+	/**
+	 * Control Groups:
+	 * enum InputGroups
+	 * {
+	 * INPUTGROUP_MOVE = 0,
+	 * INPUTGROUP_LOOK = 1,
+	 * INPUTGROUP_WHEEL = 2,
+	 * };
+	 * 0, 1 and 2 used in the scripts.
+	 */
+	fun isControlEnabled(inputGroup: Controls.Groups, control: Controls.Keys): Boolean {
+		return IsControlEnabled(inputGroup.index, control.index) == 1
+	}
+
+	fun isControlJustPressed(inputGroup: Controls.Groups, control: Controls.Keys): Boolean {
+		return IsControlJustPressed(inputGroup.index, control.index) == 1
+	}
+
+	fun isControlJustReleased(inputGroup: Controls.Groups, control: Controls.Keys): Boolean {
+		return IsControlJustReleased(inputGroup.index, control.index) == 1
+	}
+
+	/**
+	 * index always is 2 for xbox 360 controller and razerblade
+	 * 0, 1 and 2 used in the scripts. 0 is by far the most common of them.
+	 */
+	fun isControlPressed(inputGroup: Controls.Groups, control: Controls.Keys): Boolean {
+		return IsControlPressed(inputGroup.index, control.index) == 1
+	}
+
+	/**
+	 * 0, 1 and 2 used in the scripts. 0 is by far the most common of them.
+	 */
+	fun isControlReleased(inputGroup: Controls.Groups, control: Controls.Keys): Boolean {
+		return IsControlReleased(inputGroup.index, control.index) == 1
+	}
+
+	/**
+	 * Returns:
+	 * 5
+	 * 10
+	 * 15
+	 * 20
+	 * 25
+	 * 30
+	 * 35
+	 */
+	fun getPauseMenuState(): Int {
+		return GetPauseMenuState()
 	}
 }
 
@@ -6662,7 +6742,7 @@ private external fun GetNumResourceMetadata(resourceName: String, metadataKey: S
  * 30
  * 35
  */
-//private external fun GetPauseMenuState(): number;
+private external fun GetPauseMenuState(): Int
 
 //private external fun GetPedAccuracy(ped: number): number;
 
@@ -9264,22 +9344,22 @@ private external fun GetVehicleTurboPressure(vehicle: Int): Int
  * };
  * 0, 1 and 2 used in the scripts.
  */
-//private external fun IsControlEnabled(inputGroup: number, control: number): number;
+private external fun IsControlEnabled(inputGroup: Int, control: Int): Int
 
-//private external fun IsControlJustPressed(inputGroup: number, control: number): number;
+private external fun IsControlJustPressed(inputGroup: Int, control: Int): Int
 
-//private external fun IsControlJustReleased(inputGroup: number, control: number): number;
+private external fun IsControlJustReleased(inputGroup: Int, control: Int): Int
 
 /**
  * index always is 2 for xbox 360 controller and razerblade
  * 0, 1 and 2 used in the scripts. 0 is by far the most common of them.
  */
-//private external fun IsControlPressed(inputGroup: number, control: number): number;
+private external fun IsControlPressed(inputGroup: Int, control: Int): Int
 
 /**
  * 0, 1 and 2 used in the scripts. 0 is by far the most common of them.
  */
-//private external fun IsControlReleased(inputGroup: number, control: number): number;
+private external fun IsControlReleased(inputGroup: Int, control: Int): Int
 
 //private external fun IsConversationPedDead(ped: number): number;
 
@@ -25231,7 +25311,7 @@ fun Client.setNuiFocus(hasFocus: Boolean, hasCursor: Boolean) {
  */
 //private external fun SetVehicleFrictionOverride(vehicle: number, friction: number)
 
-//private external fun SetVehicleFuelLevel(vehicle: number, level: number)
+private external fun SetVehicleFuelLevel(vehicle: Int, level: Double)
 
 /**
  * It switch to highbeam when p1 is set to true.
@@ -25544,7 +25624,7 @@ fun Client.setNuiFocus(hasFocus: Boolean, hasCursor: Boolean) {
  */
 //private external fun SetVehicleNumberPlateTextIndex(vehicle: number, plateIndex: number)
 
-//private external fun SetVehicleOilLevel(vehicle: number, level: number)
+private external fun SetVehicleOilLevel(vehicle: Int, level: Double)
 
 /**
  * Sets a vehicle on the ground on all wheels.  Returns whether or not the operation was successful.

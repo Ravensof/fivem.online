@@ -42,12 +42,6 @@ class RadioModule private constructor() : AbstractModule() {
 			onSettingsMusicLevelChanged(event.volume)
 		}
 
-//		Event.onNui("radio:ready") { _: Any, _: (String) -> Unit ->
-//			Console.info("radio ready received")
-//			onReady()
-////			callback("custom text")
-//		}
-
 		onReady()
 
 		Console.info("RadioModule loaded")

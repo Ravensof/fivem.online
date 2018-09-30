@@ -8,7 +8,7 @@ import universal.common.Event
 import universal.common.normalizeEventName
 import universal.events.IEvent
 
-
+@Deprecated("use Event.emitSafeNet(data) instead")
 inline fun <reified T : IEvent> Event.emitNet(data: T) {
 	Console.debug("net event " + normalizeEventName(data::class.toString()) + " sent")
 	Exports.emitNet(normalizeEventName(data::class.toString()), data.serialize())
