@@ -7,6 +7,7 @@ import client.modules.eventGenerator.events.PauseMenuStateChangedEvent
 import client.modules.eventGenerator.events.controls.ControlJustPressedEvent
 import client.modules.eventGenerator.events.controls.ControlJustReleasedEvent
 import client.modules.eventGenerator.events.controls.ControlLongPressedEvent
+import client.modules.eventGenerator.events.controls.ControlShortPressedEvent
 import client.modules.eventGenerator.events.vehicle.PlayerJoinVehicleEvent
 import client.modules.eventGenerator.events.vehicle.PlayerLeftOrJoinVehicleEvent
 import client.modules.eventGenerator.events.vehicle.PlayerLeftVehicleEvent
@@ -59,7 +60,12 @@ class EventGenerator {
 			} else {
 
 				if (pair.second != 0.0) {
+					if (pair.second != -1.0) {
+						Event.emit(ControlShortPressedEvent(pair.first))
+					}
+
 					Event.emit(ControlJustReleasedEvent(pair.first))
+
 					pressedKeys[index] = pair.first to 0.0
 				}
 			}
