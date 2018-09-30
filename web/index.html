@@ -15,6 +15,12 @@
 </head>
 <body id="content" style="display: none">
 
+<!--<div id="menu_block" class="menu">-->
+<!--<input type="text"><br/>-->
+<!--<input type="number"><br/>-->
+<!--<input type="text"><br/>-->
+<!--</div>-->
+
 <div id="debug" class="debug" style="display: none">
 	debug block
 </div>
@@ -34,40 +40,5 @@
 <script src="../external/Base64.min.js"></script>
 <script src="../out/production/universal/universal.js"></script>
 <script src="../out/production/web/web.js"></script>
-<script>
-	let MODULE_FOLDER_NAME = "fivem-online";
-
-	let Nui = {
-		/**
-		 * @param eventName {string}
-		 * @param data
-		 * @param callback
-		 */
-		emit: function (eventName, data = null, callback = function (result) {
-		}) {
-			fetch(
-				"http://" + MODULE_FOLDER_NAME + "/" + eventName,
-				{"method": "POST", "body": JSON.stringify(data)}
-			)
-				.then(function (response) {
-					return response.text()
-				})
-				.then(function (body) {
-					callback(body)
-				})
-
-		},
-		// on: function(eventName, callback=function(event){}){
-		// 	window.addEventListener("message", (event) => {
-		//
-		// 		let data = event.data;
-		// 	})
-		// }
-	};
-
-	// document.addEventListener("DOMContentLoaded", () => {
-	// 	Nui.emit("radio:ready");
-	// });
-</script>
 </body>
 </html>

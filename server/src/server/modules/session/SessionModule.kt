@@ -7,7 +7,6 @@ import server.common.Server
 import server.extensions.emitNet
 import server.extensions.onNet
 import server.modules.AbstractModule
-import server.modules.session.extensions.onSafeNet
 import server.structs.PlayerSrc
 import server.structs.tables.ConnectionLogTable
 import universal.common.Console
@@ -29,10 +28,6 @@ class SessionModule private constructor() : AbstractModule() {
 
 		Event.onNet<ClientReady> { playerSrc: PlayerSrc, _ ->
 			onClientReady(playerSrc)
-		}
-
-		Event.onSafeNet<String> { playerSrc: PlayerSrc, string ->
-			Console.debug(string)
 		}
 
 		Server.getPlayersIds().forEach {

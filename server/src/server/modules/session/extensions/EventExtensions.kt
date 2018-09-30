@@ -7,13 +7,14 @@ import server.structs.PlayerSrc
 import universal.common.Console
 import universal.common.Event
 import universal.common.normalizeEventName
+import universal.events.IEvent
 import universal.r.Strings
 
-inline fun <reified T> Event.onSafeNet(noinline function: (PlayerSrc, T) -> Unit) {
+inline fun <reified T : IEvent> Event.onSafeNet(noinline function: (PlayerSrc, T) -> Unit) {
 	Event.onSafeNet(Event.SAFE_EVENT_PREFIX + normalizeEventName(T::class.toString()), function)
 }
 
-fun <T> Event.onSafeNet(eventName: String, function: (PlayerSrc, T) -> Unit) {
+fun <T : IEvent> Event.onSafeNet(eventName: String, function: (PlayerSrc, T) -> Unit) {
 	Console.info("safe net event $eventName registered")
 
 	Exports.onNet(eventName) { playerId: Int, numberOfPlayers: Int, token: String, data: T ->
@@ -32,7 +33,7 @@ fun <T> Event.onSafeNet(eventName: String, function: (PlayerSrc, T) -> Unit) {
 
 			else -> {
 				Console.debug("safe net event $eventName triggered for ${Server.getPlayerName(playerSrc)} (${playerSrc.value})")
-				function(playerSrc, data)
+				function(playerSrc, IEvent.unserialize(data))
 			}
 		}
 	}

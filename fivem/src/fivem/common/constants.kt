@@ -1,2 +1,0 @@
-package fivem.common
-

@@ -1,4 +1,3 @@
-import client.extensions.emitNet
 import client.extensions.onNet
 import client.modules.eventGenerator.EventGenerator
 import client.modules.gui.GuiModule
@@ -9,10 +8,10 @@ import client.modules.speedometer.SpeedometerModule
 import client.modules.test.TestModule
 import fivem.common.FiveM
 import fivem.common.on
-import fivem.events.ClientReady
 import universal.common.Console
 import universal.common.Event
 import universal.common.setTimeout
+import universal.events.ClientReadyEvent
 import universal.events.ConsoleLogEvent
 
 
@@ -33,19 +32,19 @@ fun start() {
 //	}
 
 		SessionModule.getInstance()
+		GuiModule.getInstance()
 		RadioModule.getInstance()
 		PlayerModule.getInstance()
-		GuiModule.getInstance()
-
 		SpeedometerModule.getInstance()
 
 		TestModule.getInstance()
 
 		EventGenerator.getInstance()
 
+		Event.emit(ClientReadyEvent())
+
 		Console.info("client started")
 
-		Event.emitNet(ClientReady())
 	} catch (exception: Exception) {
 		Console.error(exception.message)
 	}

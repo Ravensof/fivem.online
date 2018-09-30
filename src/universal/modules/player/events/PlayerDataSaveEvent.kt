@@ -1,7 +1,8 @@
 package universal.modules.player.events
 
+import universal.events.IEvent
 import universal.struct.Coords
 
-data class PlayerDataSaveEvent(
+class PlayerDataSaveEvent(
 		val coords: Coords?
-)
+) : IEvent()

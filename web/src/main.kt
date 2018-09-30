@@ -1,33 +1,38 @@
 import universal.common.Console
+import universal.events.NuiReadyEvent
+import universal.modules.gui.events.WebReceiverReady
 import web.common.Event
 import web.modules.gui.GuiModule
 import web.modules.radio.RadioModule
 import web.modules.speedometer.SpeedometerModule
+import web.modules.test.TestModule
+
+fun start() {
+
+	Event.init()
+
+	RadioModule.getInstance()
+
+	SpeedometerModule.getInstance()
+	GuiModule.getInstance()
+
+	TestModule.getInstance()
+
+	Event.emitNui(NuiReadyEvent())
+
+	Console.info("web gui started")
+}
 
 fun main(args: Array<String>) {
 
-	try {
+	Event.onNui<WebReceiverReady> {
+		MODULE_FOLDER_NAME = it.moduleFolderName
 
-		Event.init()
-
-//	Event.onNui<ConsoleLogWeb> {  }
-
-		RadioModule.getInstance()
-
-		SpeedometerModule.getInstance()
-		GuiModule.getInstance()
-
-//	Console.log("test 12345")
-
-
-//	performHttpRequest("http://cms-test.socialsib.net/fivemapi/", HttpRequestType.POST, mapOf("test" to "123")) {
-//		Console.log("answer received")
-//		Console.log(it)
-//	}
-
-		Console.info("web gui started")
-	} catch (exception: Exception) {
-		Console.logWeb(exception.message)
-		Console.error(exception.message)
+		try {
+			start()
+		} catch (exception: Exception) {
+			Console.logWeb(exception.message)
+			Console.error(exception.message)
+		}
 	}
 }

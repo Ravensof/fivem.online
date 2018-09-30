@@ -3,10 +3,14 @@ package client.modules.gui
 import MODULE_FOLDER_NAME
 import client.extensions.emitNui
 import client.extensions.onNet
+import client.extensions.onNui
 import client.modules.AbstractModule
 import client.modules.eventGenerator.events.PauseMenuStateChangedEvent
 import universal.common.Console
 import universal.common.Event
+import universal.common.clearInterval
+import universal.common.setInterval
+import universal.events.NuiReadyEvent
 import universal.extensions.onNull
 import universal.modules.gui.events.ConsoleLogWebEvent
 import universal.modules.gui.events.GuiHideEvent
@@ -20,7 +24,14 @@ class GuiModule private constructor() : AbstractModule() {
 
 		Event.onNet<ConsoleLogWebEvent> { Event.emitNui(it) }
 
-		Event.emitNui(WebReceiverReady(MODULE_FOLDER_NAME))
+		val intervalId = setInterval(25) {
+			Event.emitNui(WebReceiverReady(MODULE_FOLDER_NAME))
+		}
+
+		Event.onNui<NuiReadyEvent> { _, _ ->
+			clearInterval(intervalId)
+			Event.emit(NuiReadyEvent())
+		}
 
 		Event.on<PauseMenuStateChangedEvent> { onPauseMenuStateChanged(it.pauseMenuState) }
 

@@ -2,12 +2,11 @@ package web.common
 
 import DEBUG_NUI
 import MODULE_FOLDER_NAME
+import js.externals.jquery.jQuery
 import universal.common.Console
 import universal.common.normalizeEventName
 import universal.common.setTimeout
 import universal.events.IEvent
-import universal.modules.gui.events.WebReceiverReady
-import web.struct.HttpRequestType
 import kotlin.browser.window
 
 object Event {
@@ -16,15 +15,6 @@ object Event {
 	private val eventsHandlersRegistry = mutableListOf<Pair<String, Int>>()
 
 	init {
-
-		onNui<WebReceiverReady> {
-			MODULE_FOLDER_NAME = it.moduleFolderName
-		}
-
-//		document.addEventListener("DOMContentLoaded", fun(event: org.w3c.dom.events.Event) {
-//			universal.common.Event.emit(DOMContentLoadedEvent())
-//		})
-
 		window.addEventListener("message", fun(event: dynamic) {
 
 			val eventName: String = event.data.event
@@ -50,6 +40,17 @@ object Event {
 
 	}
 
+	inline fun <reified T> emit(data: T) {
+		universal.common.Event.emit(data)
+	}
+
+	inline fun <reified T> on(noinline function: (T) -> Unit): Int {
+		return universal.common.Event.on(function)
+	}
+
+	fun unSubscribe(id: Int) {
+		universal.common.Event.unSubscribe(id)
+	}
 
 	inline fun <reified T : IEvent> onNui(noinline function: (T) -> Unit): Int {
 		val eventName = normalizeEventName(T::class.toString())
@@ -71,6 +72,16 @@ object Event {
 		return registerEvent(eventName, eventHandlers.lastIndex)
 	}
 
+	fun emitNui(data: IEvent) {
+		val eventName = normalizeEventName(data::class.toString())
+
+		jQuery.post("http://$MODULE_FOLDER_NAME/$eventName", JSON.stringify(data.serialize()))
+
+		if (DEBUG_NUI) {
+			Console.debug("nui data sent " + eventName + " " + JSON.stringify(data))
+		}
+	}
+
 //	fun unSubscribe(id: Int) {
 //		val event: Pair<String, Int>? = eventsHandlersRegistry.get(id)
 //
@@ -85,70 +96,4 @@ object Event {
 		eventsHandlersRegistry.add(eventName to index)
 		return eventsHandlersRegistry.lastIndex
 	}
-//
-//	fun emitNui(data: Any): Int {
-//		val eventName = normalizeEventName(data::class.toString())
-//
-//		Console.debug("nui data sent " + eventName + " " + JSON.stringify(data))
-//
-//		fetch(23)
-//
-//		fetch(
-//				"http://" + MODULE_FOLDER_NAME + "/" + eventName,
-//				{"method": "POST", "body": JSON.stringify(data)}
-//		)
-//				.then(function (response) {
-//					return response.text()
-//				})
-//				.then(function (body) {
-//					callback(body)
-//				})
-//
-//		return NativeEvents.Client.sendNuiMessage(object {
-//			val event = eventName
-//			val data = data
-//		})
-//	}
 }
-
-external val fetch: dynamic
-
-fun performHttpRequest(url: String, type: HttpRequestType = HttpRequestType.GET, data: Map<String, String>? = null, onSuccess: ((String) -> Unit)? = null) {
-
-	val result = if (type != HttpRequestType.POST) {
-		fetch(url, object {
-			val method = type.name
-		})
-	} else {
-		val postData = data?.map {
-			encodeURIComponent(it.key) + "=" + encodeURIComponent(it.value)
-		}?.joinToString("&").orEmpty()
-
-//		fetch(url, object {
-//			val method = type.name
-//			val body = "test=123"//JSON.stringify(data)//postData
-//		})
-
-		fetch(url, object {
-			val method = "POST"
-			val body = "{test=123}"//JSON.stringify(data)//postData
-		})
-	}
-
-	result.then { response: dynamic ->
-		return@then response.text()
-	}.then { body: String ->
-		onSuccess?.invoke(body)
-	}
-}
-
-//fun performHttpRequest(url: String, type: HttpRequestType = HttpRequestType.GET, data: Map<String, String>? = null, headers: Any = object {}, callback: (Int, String, dynamic) -> Unit) {
-//
-//	val postData = data?.map {
-//		encodeURIComponent(it.key) + "=" + encodeURIComponent(it.value)
-//	}?.joinToString("&").orEmpty()
-//
-//	Exports.performHttpRequest(url, callback, type.name, postData, headers)
-//}
-
-external fun encodeURIComponent(str: String): String

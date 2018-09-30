@@ -53,8 +53,3 @@ inline fun <reified T : IEvent> Event.emitNui(data: T): Int {
 		val data = data.serialize()
 	})
 }
-
-//fun Event.emitNui(obj: Any): Int {
-//	Console.debug("nui data sent " + obj::class.toString() + " " + JSON.stringify(obj))
-//	return Client.sendNuiMessage(obj)
-//}
