@@ -1,7 +1,7 @@
 package web.modules.speedometer
 
+import RESOURCES_URL
 import js.externals.jquery.jQuery
-import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLImageElement
 import universal.extensions.onNull
 import universal.modules.AbstractModule
@@ -9,17 +9,31 @@ import universal.modules.speedometer.events.SpeedoMeterDisableEvent
 import universal.modules.speedometer.events.SpeedoMeterEnableEvent
 import universal.modules.speedometer.events.SpeedoMeterUpdateEvent
 import web.common.Event
-import kotlin.browser.document
+import web.extensions.toHTMLCanvasElement
+import web.extensions.toHTMLImageElement
 
 class SpeedometerModule private constructor() : AbstractModule() {
 
-	private var speedometerCanvas = document.getElementById(SPEEDOMETER_CANVAS) as HTMLCanvasElement?
-	private var context: dynamic = speedometerCanvas?.getContext("2d")
 
-	private var speedometerBlock = jQuery("#$SPEEDOMETER_BLOCK")
+	private var speedometerCanvas = jQuery("<canvas id=\"$SPEEDOMETER_CANVAS\" width=\"440\" height=\"212\"></canvas>")
 
-	private var speedometerArrow = document.getElementById(SPEEDOMETER_ARROW) as HTMLImageElement?
-	private var tachometerArrow = document.getElementById(TACHOMETER_ARROW) as HTMLImageElement?
+	private var speedometerArrow: HTMLImageElement? = jQuery("<img src=\"${RESOURCES_URL}Speedometer-0.1/arrow-speedometer.svg\"/>").toHTMLImageElement()
+
+	private var tachometerArrow: HTMLImageElement? = jQuery("<img src=\"${RESOURCES_URL}Speedometer-0.1/arrow-tachometer.svg\"/>").toHTMLImageElement()
+
+	private var speedometerBlock = jQuery("""
+		<div id="$SPEEDOMETER_BLOCK" class="speedometer" style="display: none">
+			<link rel="stylesheet" href="${RESOURCES_URL}Speedometer-0.1/style.css">
+		</div>
+	""".trimIndent()).apply {
+		append(speedometerCanvas)
+	}
+
+	private val body = jQuery("#content").apply {
+		append(speedometerBlock)
+	}
+
+	private var context: dynamic = speedometerCanvas.toHTMLCanvasElement()?.getContext("2d")
 
 
 	init {
@@ -69,7 +83,7 @@ class SpeedometerModule private constructor() : AbstractModule() {
 
 	private fun drawSpeedo(speed: Double, rpm: Double, turbo: Double? = null) {
 
-		context.clearRect(0, 0, speedometerCanvas?.width, speedometerCanvas?.height)
+		context.clearRect(0, 0, speedometerCanvas.width(), speedometerCanvas.height())
 
 		tachometerArrow?.let {
 			drawRotatedImage(it, 105, 102, rpm, it.width.toDouble() / 2, 17.02)
@@ -83,8 +97,6 @@ class SpeedometerModule private constructor() : AbstractModule() {
 
 		private const val SPEEDOMETER_BLOCK = "speedometer_block"
 		private const val SPEEDOMETER_CANVAS = "speedometer_canvas"
-		private const val SPEEDOMETER_ARROW = "speedometer_arrow"
-		private const val TACHOMETER_ARROW = "tachometer_arrow"
 
 		private const val TO_RADIANS = kotlin.math.PI / 180
 

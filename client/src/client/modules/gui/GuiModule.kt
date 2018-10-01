@@ -6,6 +6,7 @@ import client.extensions.onNet
 import client.extensions.onNui
 import client.modules.AbstractModule
 import client.modules.eventGenerator.events.PauseMenuStateChangedEvent
+import fivem.Config
 import universal.common.Console
 import universal.common.Event
 import universal.common.clearInterval
@@ -25,7 +26,10 @@ class GuiModule private constructor() : AbstractModule() {
 		Event.onNet<ConsoleLogWebEvent> { Event.emitNui(it) }
 
 		val intervalId = setInterval(25) {
-			Event.emitNui(WebReceiverReady(MODULE_FOLDER_NAME))
+			Event.emitNui(WebReceiverReady(
+					moduleFolderName = MODULE_FOLDER_NAME,
+					resourcesURL = Config.RESOURCES_URL
+			))
 		}
 
 		Event.onNui<NuiReadyEvent> { _, _ ->

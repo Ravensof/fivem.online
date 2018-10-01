@@ -27,6 +27,7 @@ fun main(args: Array<String>) {
 
 	Event.onNui<WebReceiverReady> {
 		MODULE_FOLDER_NAME = it.moduleFolderName
+		RESOURCES_URL = it.resourcesURL
 
 		try {
 			start()
