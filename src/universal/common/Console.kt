@@ -75,7 +75,7 @@ object Console {
 	@Deprecated("check value")
 	fun <T> checkValue(functionName: String, functionResult: T, showIf: (T) -> Boolean = { true }): T {
 		if (showIf(functionResult)) {
-			debug("checkValue: $functionName=$functionResult")
+			logWeb("checkValue: $functionName=$functionResult")
 		}
 		return functionResult
 	}

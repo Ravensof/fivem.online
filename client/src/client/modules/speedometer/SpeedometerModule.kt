@@ -79,7 +79,7 @@ class SpeedometerModule private constructor() : AbstractModule() {
 
 	companion object {
 
-		private const val TARGET_FPS = 25
+		private const val TARGET_FPS = 10
 		private const val UPDATE_RATE = 1000 / TARGET_FPS
 
 		private var instance: SpeedometerModule? = null

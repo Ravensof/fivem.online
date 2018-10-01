@@ -3,6 +3,8 @@ package web.modules.speedometer
 import RESOURCES_URL
 import js.externals.jquery.jQuery
 import org.w3c.dom.HTMLImageElement
+import universal.common.clearInterval
+import universal.common.setInterval
 import universal.extensions.onNull
 import universal.modules.AbstractModule
 import universal.modules.speedometer.events.SpeedoMeterDisableEvent
@@ -11,6 +13,7 @@ import universal.modules.speedometer.events.SpeedoMeterUpdateEvent
 import web.common.Event
 import web.extensions.toHTMLCanvasElement
 import web.extensions.toHTMLImageElement
+import kotlin.js.Date
 
 class SpeedometerModule private constructor() : AbstractModule() {
 
@@ -81,16 +84,46 @@ class SpeedometerModule private constructor() : AbstractModule() {
 		context.restore()
 	}
 
+
+	private var lastSpeed: Double = 0.0
+	private var lastRpm: Double = 0.0
+	private var lastUpdate = Date.now()
+	private var intervalUpdateId = 0f
+
 	private fun drawSpeedo(speed: Double, rpm: Double, turbo: Double? = null) {
+		val n = 10
 
-		context.clearRect(0, 0, speedometerCanvas.width(), speedometerCanvas.height())
+		val stepRPM = (rpm - this.lastRpm) / n
+		val stepSpeed = (speed - this.lastSpeed) / n
 
-		tachometerArrow?.let {
-			drawRotatedImage(it, 105, 102, rpm, it.width.toDouble() / 2, 17.02)
+		var i = 1
+
+		clearInterval(intervalUpdateId)
+
+		intervalUpdateId = setInterval((Date.now() - lastUpdate).toInt() / n) {
+
+			context.clearRect(0, 0, speedometerCanvas.width(), speedometerCanvas.height())
+
+			tachometerArrow?.let {
+				drawRotatedImage(it, 105, 102, this.lastRpm, it.width.toDouble() / 2, 17.02)
+			}
+			speedometerArrow?.let {
+				drawRotatedImage(it, 291, 182, this.lastSpeed, 148.0, it.height.toDouble() / 2)
+			}
+
+			this.lastRpm += stepRPM
+			this.lastSpeed += stepSpeed
+
+			if (i >= n) {
+				clearInterval(intervalUpdateId)
+
+				this.lastRpm = rpm
+				this.lastSpeed = speed
+			}
+			i++
 		}
-		speedometerArrow?.let {
-			drawRotatedImage(it, 291, 182, speed, 148.0, it.height.toDouble() / 2)
-		}
+
+		lastUpdate = Date.now()
 	}
 
 	companion object {
