@@ -1,10 +1,11 @@
 package client.extensions
 
 import DEBUG_NUI
-import client.common.Client
+import client.modules.gui.NuiDataTransferHelper
 import fivem.common.Exports
 import universal.common.Console
 import universal.common.Event
+import universal.common.Serializable
 import universal.common.normalizeEventName
 import universal.events.IEvent
 
@@ -23,7 +24,7 @@ fun <T : IEvent> Event.onNet(eventName: String, function: (T) -> Unit) {
 
 	fivem.common.onNet(eventName) { data: T ->
 		Console.debug("net event $eventName triggered")
-		function(IEvent.unserialize(data))
+		function(Serializable.unserialize(data))
 	}
 }
 
@@ -37,19 +38,16 @@ fun <T : IEvent> Event.onNui(eventName: String, function: (T, (String) -> Unit) 
 		if (DEBUG_NUI) {
 			Console.debug("nui event $eventName triggered")
 		}
-		function(IEvent.unserialize(data), callback)
+		function(Serializable.unserialize(data), callback)
 	}
 }
 
-inline fun <reified T : IEvent> Event.emitNui(data: T): Int {
+fun <T : IEvent> Event.emitNui(data: T, deliveryCheck: Boolean = true) {
 	val eventName = normalizeEventName(data::class.toString())
 
 	if (DEBUG_NUI) {
 		Console.debug("nui data sent " + eventName + " " + JSON.stringify(data))
 	}
 
-	return Client.sendNuiMessage(object {
-		val event = eventName
-		val data = data.serialize()
-	})
+	NuiDataTransferHelper.emitPacket(deliveryCheck, data)
 }

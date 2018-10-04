@@ -24,8 +24,8 @@ class GuiModule private constructor() : AbstractModule() {
 	}
 
 	private fun onConsoleLogWeb(text: String) {
+		debugBlock.append("$text<br/>")
 		debugBlock.show()
-		debugBlock.html(debugBlock.html() + "<br/>" + text)
 
 		debugBlockTimeoutId?.let {
 			clearTimeout(it)
@@ -34,12 +34,12 @@ class GuiModule private constructor() : AbstractModule() {
 			debugBlock.hide()
 			debugBlock.html("")
 			debugBlockTimeoutId = null
-		}
+		} as Float
 	}
 
 	companion object {
 
-		private const val HIDE_DEBUG_TIMEOUT = 30_000
+		private const val HIDE_DEBUG_TIMEOUT = 15_000
 
 		private var instance: GuiModule? = null
 

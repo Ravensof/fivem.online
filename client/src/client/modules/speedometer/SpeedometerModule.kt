@@ -7,7 +7,6 @@ import client.extensions.orZero
 import client.modules.AbstractModule
 import client.modules.eventGenerator.events.vehicle.PlayerLeftVehicleEvent
 import client.modules.eventGenerator.events.vehicle.PlayerSeatChangedEvent
-import universal.common.Console
 import universal.common.Event
 import universal.common.clearInterval
 import universal.common.setInterval
@@ -18,7 +17,7 @@ import universal.modules.speedometer.events.SpeedoMeterUpdateEvent
 
 class SpeedometerModule private constructor() : AbstractModule() {
 
-	private var intervalId: Float? = null
+	private var intervalId: dynamic = null
 	private var vehicleHasSpeedo = false
 
 	init {
@@ -28,7 +27,7 @@ class SpeedometerModule private constructor() : AbstractModule() {
 			}
 		}
 		Event.on<PlayerLeftVehicleEvent> { onPlayerLeftVehicle() }
-		Console.log("Client.getPauseMenuState(): " + Client.getPauseMenuState())
+
 	}
 
 	private fun onPlayerJoinVehicle() {
@@ -59,7 +58,7 @@ class SpeedometerModule private constructor() : AbstractModule() {
 						engineRunning = Client.getIsVehicleEngineRunning(vehicle),
 						engineOn = Client.isVehicleEngineOn(vehicle),
 						engineHealth = Client.getVehicleEngineHealth(vehicle)
-				))
+				), false)
 			}
 		}
 
@@ -70,9 +69,7 @@ class SpeedometerModule private constructor() : AbstractModule() {
 
 	private fun onPlayerLeftVehicle() {
 		Event.emitNui(SpeedoMeterDisableEvent())
-		intervalId?.let {
-			clearInterval(it)
-		}
+		clearInterval(intervalId)
 		intervalId = null
 		vehicleHasSpeedo = false
 	}

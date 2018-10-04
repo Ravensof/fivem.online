@@ -13,8 +13,10 @@ import client.modules.eventGenerator.events.vehicle.PlayerLeftOrJoinVehicleEvent
 import client.modules.eventGenerator.events.vehicle.PlayerLeftVehicleEvent
 import client.modules.eventGenerator.events.vehicle.PlayerSeatChangedEvent
 import client.modules.eventGenerator.events.vehicle.radio.*
+import fivem.common.setTick
 import universal.common.Event
 import universal.common.setInterval
+import universal.common.setTimeout
 import universal.extensions.onNull
 import universal.r.Controls
 import universal.r.ProfileSetting
@@ -25,7 +27,11 @@ class EventGenerator {
 
 	init {
 
-		setInterval(40) {
+		setTick {
+			checkPressedFlashKeys()
+		}
+
+		setInterval(KEY_SCAN_TIME) {
 			checkPressedKeys()
 		}
 
@@ -51,22 +57,52 @@ class EventGenerator {
 			if (Client.isControlPressed(group, pair.first)) {
 
 				if (pair.second == 0.0) {
-					Event.emit(ControlJustPressedEvent(pair.first))
+					setTimeout {
+						Event.emit(ControlJustPressedEvent(pair.first))
+					}
 					pressedKeys[index] = pair.first to Date.now()
 				} else if (pair.second > 0 && Date.now() - pair.second > KEY_HOLD_TIME) {
-					Event.emit(ControlLongPressedEvent(pair.first))
+					setTimeout {
+						Event.emit(ControlLongPressedEvent(pair.first))
+					}
 					pressedKeys[index] = pair.first to -1.0
 				}
+
 			} else {
 
 				if (pair.second != 0.0) {
-					if (pair.second != -1.0) {
-						Event.emit(ControlShortPressedEvent(pair.first))
+					setTimeout {
+						if (pair.second != -1.0) {
+							Event.emit(ControlShortPressedEvent(pair.first))
+						}
+
+						Event.emit(ControlJustReleasedEvent(pair.first))
 					}
 
-					Event.emit(ControlJustReleasedEvent(pair.first))
-
 					pressedKeys[index] = pair.first to 0.0
+				}
+			}
+		}
+	}
+
+	private fun checkPressedFlashKeys() {
+		val group = Controls.Groups.INPUTGROUP_LOOK
+
+		pressedFlashKeys.forEachIndexed { index, pair ->
+			val isControlJustPressed = Client.isControlJustPressed(group, pair.first)
+
+			if (pair.second != 0.0) {
+				if (Date.now() - pair.second >= KEY_DEBOUNCE_TIME) {
+					pressedFlashKeys[index] = pair.first to 0.0
+				} else {
+					return@forEachIndexed
+				}
+			}
+
+			if (isControlJustPressed) {
+				pressedFlashKeys[index] = pair.first to Date.now()
+				setTimeout {
+					Event.emit(ControlShortPressedEvent(pair.first))
 				}
 			}
 		}
@@ -147,7 +183,21 @@ class EventGenerator {
 
 	companion object {
 
+		private val flashKeys = arrayListOf(
+				Controls.Keys.INPUT_CELLPHONE_SCROLL_BACKWARD,
+				Controls.Keys.INPUT_CURSOR_SCROLL_UP,
+				Controls.Keys.INPUT_CELLPHONE_SCROLL_FORWARD,
+				Controls.Keys.INPUT_CURSOR_SCROLL_DOWN,
+				Controls.Keys.INPUT_PREV_WEAPON,
+				Controls.Keys.INPUT_NEXT_WEAPON,
+				Controls.Keys.INPUT_VEH_SLOWMO_UD,
+				Controls.Keys.INPUT_VEH_SLOWMO_UP_ONLY,
+				Controls.Keys.INPUT_VEH_SLOWMO_DOWN_ONLY
+		)
+
 		private const val KEY_HOLD_TIME = 250
+		private const val KEY_DEBOUNCE_TIME = 75
+		private const val KEY_SCAN_TIME = 40
 
 		private var instance: EventGenerator? = null
 
@@ -161,15 +211,28 @@ class EventGenerator {
 
 		fun addListenedKey(control: Controls.Keys) {
 
-			pressedKeys.forEach {
-				if (it.first == control) {
-					return
+			if (isFlashKey(control)) {
+				pressedFlashKeys.forEach {
+					if (it.first == control) return
 				}
+
+				pressedFlashKeys.add(control to 0.0)
+
+				return
+			}
+
+			pressedKeys.forEach {
+				if (it.first == control) return
 			}
 
 			pressedKeys.add(control to 0.0)
 		}
 
+		fun isFlashKey(control: Controls.Keys): Boolean {
+			return flashKeys.contains(control)
+		}
+
 		private val pressedKeys: MutableList<Pair<Controls.Keys, Double>> = mutableListOf()
+		private val pressedFlashKeys: MutableList<Pair<Controls.Keys, Double>> = mutableListOf()
 	}
 }

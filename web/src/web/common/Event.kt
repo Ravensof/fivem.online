@@ -4,9 +4,11 @@ import DEBUG_NUI
 import MODULE_FOLDER_NAME
 import js.externals.jquery.jQuery
 import universal.common.Console
+import universal.common.Serializable
 import universal.common.normalizeEventName
 import universal.common.setTimeout
 import universal.events.IEvent
+import universal.modules.gui.events.PacketReceived
 import kotlin.browser.window
 
 object Event {
@@ -16,11 +18,16 @@ object Event {
 
 	init {
 		window.addEventListener("message", fun(event: dynamic) {
-
-			val eventName: String = event.data.event
-			val data = IEvent.unserialize<Any>(event.data.data)
-
 			setTimeout {
+
+				val eventName: String = event.data.event
+				val packetId: Float? = event.data.packetId
+				val data = Serializable.unserialize<Any>(event.data.data)
+
+				packetId?.let {
+					Event.emitNui(PacketReceived(it))
+				}
+
 				val eventHandlers = eventsHandlers.get(eventName)
 
 				if (eventHandlers != null && DEBUG_NUI) {

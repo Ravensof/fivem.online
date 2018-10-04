@@ -6,6 +6,7 @@ import server.modules.session.SessionModule
 import server.structs.PlayerSrc
 import universal.common.Console
 import universal.common.Event
+import universal.common.Serializable
 import universal.common.normalizeEventName
 import universal.events.IEvent
 import universal.r.Strings
@@ -33,7 +34,7 @@ fun <T : IEvent> Event.onSafeNet(eventName: String, function: (PlayerSrc, T) -> 
 
 			else -> {
 				Console.debug("safe net event $eventName triggered for ${Server.getPlayerName(playerSrc)} (${playerSrc.value})")
-				function(playerSrc, IEvent.unserialize(data))
+				function(playerSrc, Serializable.unserialize(data))
 			}
 		}
 	}

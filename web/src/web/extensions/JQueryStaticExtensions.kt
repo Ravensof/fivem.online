@@ -6,9 +6,9 @@ import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLImageElement
 
 fun JQuery<HTMLElement>.toHTMLImageElement(): HTMLImageElement? {
-	return this.get().first() as HTMLImageElement
+	return get().first() as HTMLImageElement
 }
 
 fun JQuery<HTMLElement>.toHTMLCanvasElement(): HTMLCanvasElement? {
-	return this.get().first() as HTMLCanvasElement
+	return get().first() as HTMLCanvasElement
 }

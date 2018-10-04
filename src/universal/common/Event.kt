@@ -1,5 +1,7 @@
 package universal.common
 
+import DEBUG_LOCAL_EVENTS
+
 object Event {
 
 	private const val LOCAL_EVENT_PREFIX = "local"
@@ -25,7 +27,9 @@ object Event {
 
 			val eventHandlers = eventsHandlers[eventName]
 
-			Console.debug("local event $LOCAL_EVENT_PREFIX$eventName sent")
+			if (DEBUG_LOCAL_EVENTS) {
+				Console.debug("local event $LOCAL_EVENT_PREFIX$eventName sent")
+			}
 
 			eventHandlers?.forEach {
 				it(data)

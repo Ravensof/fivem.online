@@ -88,7 +88,7 @@ class SpeedometerModule private constructor() : AbstractModule() {
 	private var lastSpeed: Double = 0.0
 	private var lastRpm: Double = 0.0
 	private var lastUpdate = Date.now()
-	private var intervalUpdateId = 0f
+	private var intervalUpdateId: dynamic = 0f
 
 	private fun drawSpeedo(speed: Double, rpm: Double, turbo: Double? = null) {
 		val n = 10

@@ -9,23 +9,46 @@ import universal.common.Event
 import universal.r.Controls
 
 fun Controls.onKeyJustPressed(key: Controls.Keys, function: () -> Unit) {
-	EventGenerator.addListenedKey(key)
-	Event.on<ControlJustPressedEvent> { function() }
+	registerRegularKey(key)
+	Event.on<ControlJustPressedEvent> {
+		if (it.control == key) {
+			function()
+		}
+	}
 }
 
 fun Controls.onKeyJustReleased(key: Controls.Keys, function: () -> Unit) {
-	EventGenerator.addListenedKey(key)
-	Event.on<ControlJustReleasedEvent> { function() }
+	registerRegularKey(key)
+	Event.on<ControlJustReleasedEvent> {
+		if (it.control == key) {
+			function()
+		}
+	}
 }
 
 fun Controls.onKeyLongPressed(key: Controls.Keys, function: () -> Unit) {
-	EventGenerator.addListenedKey(key)
-	Event.on<ControlLongPressedEvent> { function() }
+	registerRegularKey(key)
+	Event.on<ControlLongPressedEvent> {
+		if (it.control == key) {
+			function()
+		}
+	}
 }
 
 fun Controls.onKeyShortPressed(key: Controls.Keys, function: () -> Unit) {
 	EventGenerator.addListenedKey(key)
-	Event.on<ControlShortPressedEvent> { function() }
+	Event.on<ControlShortPressedEvent> {
+		if (it.control == key) {
+			function()
+		}
+	}
+}
+
+private fun registerRegularKey(key: Controls.Keys) {
+	if (EventGenerator.isFlashKey(key)) {
+		throw RuntimeException("you not allowed to use flash keys as regular ($key)")
+	}
+	EventGenerator.addListenedKey(key)
 }
 
 //fun Controls.onKeyHolds(keys: Controls.Keys, function: ()->Unit){

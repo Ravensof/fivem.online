@@ -1,7 +1,12 @@
 package universal.common
 
+import CONSOLE_DEBUG
+import CONSOLE_ERROR
+import CONSOLE_INFO
+import CONSOLE_LOG
+import CONSOLE_PREFIX
+import CONSOLE_WARN
 import universal.modules.gui.events.ConsoleLogWebEvent
-import universal.r.*
 
 
 object Console {

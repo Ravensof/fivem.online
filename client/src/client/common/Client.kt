@@ -10,8 +10,8 @@ import universal.struct.Time
 
 object Client {
 
-	fun startAudioScene(scene: String): Int? {
-		return Console.checkValue("ClientStartAudioScene(scene: String)", StartAudioScene(scene))
+	fun startAudioScene(scene: String): Boolean {
+		return StartAudioScene(scene) == 1
 	}
 
 	fun stopAudioScene(scene: String) {
@@ -26,10 +26,10 @@ object Client {
 		SetClockTime(hour, minute, second)
 	}
 
-	fun sendNuiMessage(obj: Any): Int {//todo проверить результат
+	fun sendNuiMessage(obj: Any): Boolean {
 		val jsonString = JSON.stringify(obj)
 
-		return Console.checkValue("Client.sendNuiMessage($jsonString)", SendNuiMessage(jsonString)) { it != 1 }
+		return SendNuiMessage(jsonString) == 1
 	}
 
 	fun registerNuiCallbackType(callbackType: String) {
