@@ -14,28 +14,34 @@ abstract class Serializable {
 		fun <A> unserialize(obj: Any): A {
 
 			return js("""
-	function unserialize1(object) {
-		var args = [];
-		var params = [];
-		for (var i in object) {
-			if (i !== '__className' && typeof object[i] !== 'function') {
-				params[params.length] = 'args[' + args.length + ']';
-				if (typeof object[i] === 'object' && typeof object[i].__className !== 'undefined') {
-					if(typeof object[i].__className !== 'undefined'){
-						args[args.length] = unserialize1(object[i]);
-					}else{
-						args[args.length] = object[i];
-					}
-				} else {
-					args[args.length] = '\'' + object[i] + '\'';
-				}
-			}
-		}
-		return 'new ' + object.__className + '(' + args.join(',') + ')';
-	}
+	  function unserialize1(object) {
+		  if (object != null && typeof object === 'object') {
+			  if (typeof object.__className !== 'undefined') {
+				  function recoveredObject() {
+					  for (var key in object) {
+						  this[key] = object[key];
+					  }
 
-	eval(unserialize1(obj));
-			 """)
+				  }
+				  recoveredObject.prototype.__proto__ = eval(object.__className + '.prototype');
+
+				  recoveredObject.${"$"}metadata${"$"} = {
+					  kind: Kotlin.Kind.CLASS,
+					  simpleName: object.__className,
+					  interfaces: []
+				  }
+
+				  object = new recoveredObject();
+			  }
+			  for (var key in object) {
+				  object[key] = unserialize1(object[key]);
+			  }
+		  }
+		  return object;
+	  }
+
+	unserialize1(obj)
+			""") as A
 
 		}
 	}

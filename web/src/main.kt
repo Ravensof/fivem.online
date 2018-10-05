@@ -26,14 +26,16 @@ fun start() {
 fun main(args: Array<String>) {
 
 	Event.onNui<WebReceiverReady> {
-		MODULE_FOLDER_NAME = it.moduleFolderName
-		RESOURCES_URL = it.resourcesURL
+		if (MODULE_FOLDER_NAME.isEmpty()) {
+			MODULE_FOLDER_NAME = it.moduleFolderName
+			RESOURCES_URL = it.resourcesURL
 
-		try {
-			start()
-		} catch (exception: Exception) {
-			Console.logWeb(exception.message)
-			Console.error(exception.message)
+			try {
+				start()
+			} catch (exception: Exception) {
+				Console.logWeb(exception.message)
+				Console.error(exception.message)
+			}
 		}
 	}
 }
