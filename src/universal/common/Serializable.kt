@@ -25,11 +25,7 @@ abstract class Serializable {
 				  }
 				  recoveredObject.prototype.__proto__ = eval(object.__className + '.prototype');
 
-				  recoveredObject.${"$"}metadata${"$"} = {
-					  kind: Kotlin.Kind.CLASS,
-					  simpleName: object.__className,
-					  interfaces: []
-				  }
+				  recoveredObject.${"$"}metadata${"$"} = recoveredObject.${"$"}metadata${"$"} = eval(object.__className + '.${"$"}metadata${'$'}')
 
 				  object = new recoveredObject();
 			  }
