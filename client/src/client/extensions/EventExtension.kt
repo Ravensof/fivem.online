@@ -45,7 +45,7 @@ fun <T : IEvent> Event.onNui(eventName: String, function: (T, (String) -> Unit) 
 fun <T : IEvent> Event.emitNui(data: T, deliveryCheck: Boolean = true) {
 	val eventName = normalizeEventName(data::class.toString())
 
-	if (DEBUG_NUI) {
+	if (DEBUG_NUI && deliveryCheck) {
 		Console.debug("nui data sent " + eventName + " " + JSON.stringify(data))
 	}
 

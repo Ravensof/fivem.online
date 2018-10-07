@@ -55,15 +55,17 @@ function unserialize1(object) {
 		fun <T> prepare(obj: T): T {
 
 			return js("""
-						function Serialize1(obj) {
+		function Serialize1(obj) {
+
 			if (obj != null && typeof obj === 'object') {
 				for (var i in obj) {
-					obj[i] = Serialize1(obj[i])
+					obj[i] = Serialize1(obj[i]);
 				}
-				obj['__className'] = obj.constructor.name;
+				if(typeof obj['__className']==='undefined'){
+					obj['__className'] = obj.constructor.name;
+				}
 			}
-
-			return obj
+			return obj;
 		}
 
 		return Serialize1(obj)
