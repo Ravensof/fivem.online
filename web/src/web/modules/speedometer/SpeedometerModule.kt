@@ -18,18 +18,26 @@ import kotlin.js.Date
 class SpeedometerModule private constructor() : AbstractModule() {
 
 
-	private var speedometerCanvas = jQuery("<canvas id=\"$SPEEDOMETER_CANVAS\" width=\"440\" height=\"212\"></canvas>")
+	private val speedometerArrow: HTMLImageElement? by lazy {
+		jQuery("<img src=\"${RESOURCES_URL}Speedometer-0.1/arrow-speedometer.svg\"/>").toHTMLImageElement()
+	}
 
-	private var speedometerArrow: HTMLImageElement? = jQuery("<img src=\"${RESOURCES_URL}Speedometer-0.1/arrow-speedometer.svg\"/>").toHTMLImageElement()
+	private val tachometerArrow: HTMLImageElement? by lazy {
+		jQuery("<img src=\"${RESOURCES_URL}Speedometer-0.1/arrow-tachometer.svg\"/>").toHTMLImageElement()
+	}
 
-	private var tachometerArrow: HTMLImageElement? = jQuery("<img src=\"${RESOURCES_URL}Speedometer-0.1/arrow-tachometer.svg\"/>").toHTMLImageElement()
+	private val speedometerCanvas by lazy {
+		jQuery("<canvas id=\"$SPEEDOMETER_CANVAS\" width=\"440\" height=\"212\"></canvas>")
+	}
 
-	private var speedometerBlock = jQuery("""
+	private val speedometerBlock by lazy {
+		jQuery("""
 		<div id="$SPEEDOMETER_BLOCK" class="speedometer" style="display: none">
 			<link rel="stylesheet" href="${RESOURCES_URL}Speedometer-0.1/style.css">
 		</div>
 	""".trimIndent()).apply {
-		append(speedometerCanvas)
+			append(speedometerCanvas)
+		}
 	}
 
 	private val body = jQuery("#content").apply {

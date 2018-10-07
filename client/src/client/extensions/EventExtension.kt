@@ -12,7 +12,7 @@ import universal.events.IEvent
 @Deprecated("use Event.emitSafeNet(data) instead")
 inline fun <reified T : IEvent> Event.emitNet(data: T) {
 	Console.debug("net event " + normalizeEventName(data::class.toString()) + " sent")
-	Exports.emitNet(normalizeEventName(data::class.toString()), data.serialize())
+	Exports.emitNet(normalizeEventName(data::class.toString()), Serializable.prepare(data))
 }
 
 inline fun <reified T : IEvent> Event.onNet(noinline function: (T) -> Unit) {
@@ -24,7 +24,7 @@ fun <T : IEvent> Event.onNet(eventName: String, function: (T) -> Unit) {
 
 	fivem.common.onNet(eventName) { data: T ->
 		Console.debug("net event $eventName triggered")
-		function(Serializable.unserialize(data))
+		function(Serializable.unpack(data) as T)
 	}
 }
 
@@ -38,7 +38,7 @@ fun <T : IEvent> Event.onNui(eventName: String, function: (T, (String) -> Unit) 
 		if (DEBUG_NUI) {
 			Console.debug("nui event $eventName triggered")
 		}
-		function(Serializable.unserialize(data), callback)
+		function(Serializable.unpack(data) as T, callback)
 	}
 }
 

@@ -34,7 +34,7 @@ fun <T : IEvent> Event.onSafeNet(eventName: String, function: (PlayerSrc, T) -> 
 
 			else -> {
 				Console.debug("safe net event $eventName triggered for ${Server.getPlayerName(playerSrc)} (${playerSrc.value})")
-				function(playerSrc, Serializable.unserialize(data))
+				function(playerSrc, Serializable.unpack(data) as T)
 			}
 		}
 	}

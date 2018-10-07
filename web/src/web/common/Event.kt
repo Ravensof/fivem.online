@@ -22,7 +22,7 @@ object Event {
 
 				val eventName: String = event.data.event
 				val packetId: Float? = event.data.packetId
-				val data = Serializable.unserialize<Any>(event.data.data)
+				val data = Serializable.unpack(event.data.data)
 
 				packetId?.let {
 					Event.emitNui(PacketReceived(it))
@@ -82,7 +82,7 @@ object Event {
 	fun emitNui(data: IEvent) {
 		val eventName = normalizeEventName(data::class.toString())
 
-		jQuery.post("http://$MODULE_FOLDER_NAME/$eventName", JSON.stringify(data.serialize()))
+		jQuery.post("http://$MODULE_FOLDER_NAME/$eventName", Serializable.serialize(data))
 
 		if (DEBUG_NUI) {
 			Console.debug("nui data sent " + eventName + " " + JSON.stringify(data))

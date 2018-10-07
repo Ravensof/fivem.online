@@ -2,10 +2,7 @@ package client.modules.gui
 
 import client.common.Client
 import client.extensions.onNui
-import universal.common.Event
-import universal.common.clearInterval
-import universal.common.normalizeEventName
-import universal.common.setInterval
+import universal.common.*
 import universal.events.IEvent
 import universal.modules.gui.events.PacketReceived
 
@@ -23,7 +20,7 @@ object NuiDataTransferHelper {
 
 	fun emitPacket(deliveryCheck: Boolean = true, data: IEvent) {
 		val eventName = normalizeEventName(data::class.toString())
-		val data = data.serialize()
+		val data = Serializable.prepare(data)
 
 		var packetId: dynamic = object {
 			val id = null

@@ -5,6 +5,7 @@ import server.common.Server
 import server.structs.PlayerSrc
 import universal.common.Console
 import universal.common.Event
+import universal.common.Serializable
 import universal.common.normalizeEventName
 import universal.events.IEvent
 import universal.r.Strings
@@ -15,7 +16,7 @@ import universal.r.Strings
 //}
 
 inline fun <reified T : IEvent> Event.emitNet(playerSrc: PlayerSrc, data: T) {
-	fivem.common.emitNet(normalizeEventName(data::class.toString()), playerSrc.value.toString(), data.serialize())
+	fivem.common.emitNet(normalizeEventName(data::class.toString()), playerSrc.value.toString(), Serializable.prepare(data))
 	Console.debug("net event " + normalizeEventName(data::class.toString()) + " sent to ${Server.getPlayerName(playerSrc)} (${playerSrc.value})")
 }
 
@@ -23,7 +24,7 @@ inline fun <reified T : IEvent> Event.emitNetAll(data: T) {
 	val eventName = normalizeEventName(data::class.toString())
 
 	Server.getPlayersIds().forEach {
-		fivem.common.emitNet(eventName, it.toString(), data.serialize())
+		fivem.common.emitNet(eventName, it.toString(), Serializable.prepare(data))
 	}
 
 	Console.debug("net event " + normalizeEventName(data::class.toString()) + " sent to all")
