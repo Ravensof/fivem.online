@@ -47,6 +47,7 @@ fun start() {
 
 	} catch (exception: Exception) {
 		Console.error(exception.message)
+		Console.warnWeb(exception.message)
 	}
 }
 

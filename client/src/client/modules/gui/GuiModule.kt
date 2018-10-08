@@ -9,17 +9,16 @@ import fivem.Config
 import universal.common.Console
 import universal.common.Event
 import universal.extensions.onNull
-import universal.modules.gui.events.ConsoleLogWebEvent
-import universal.modules.gui.events.GuiHideEvent
-import universal.modules.gui.events.GuiShowEvent
-import universal.modules.gui.events.WebReceiverReady
+import universal.modules.gui.events.*
 
 class GuiModule private constructor() : AbstractModule() {
 
 	init {
 		Event.on<ConsoleLogWebEvent> { Event.emitNui(it) }
-
 		Event.onNet<ConsoleLogWebEvent> { Event.emitNui(it) }
+
+		Event.on<ConsoleWarnWebEvent> { Event.emitNui(it) }
+		Event.onNet<ConsoleWarnWebEvent> { Event.emitNui(it) }
 
 		Event.emitNui(WebReceiverReady(
 				moduleFolderName = MODULE_FOLDER_NAME,

@@ -9,8 +9,6 @@ import web.modules.test.TestModule
 
 fun start() {
 
-	Event.init()
-
 	RadioModule.getInstance()
 
 	SpeedometerModule.getInstance()
@@ -24,6 +22,8 @@ fun start() {
 }
 
 fun main(args: Array<String>) {
+
+	Event.init()
 
 	Event.onNui<WebReceiverReady> {
 		if (MODULE_FOLDER_NAME.isEmpty()) {

@@ -51,6 +51,7 @@ fun start() {
 		Console.info("server started")
 	} catch (exception: Exception) {
 		Console.error(exception.message)
+		Console.warnWeb(exception.message)
 	}
 }
 

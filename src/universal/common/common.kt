@@ -13,6 +13,24 @@ fun normalizeEventName(eventClass: String): String {
 	return eventClass.replace("[A-z]+ (.*)".toRegex(), "$1").replace(" ", "_")
 }
 
+fun escapeHtml(text: String): String {
+
+	var text = text
+
+	val map = mapOf(
+			"&" to "&amp;",
+			"<" to "&lt;",
+			">" to "&gt;",
+			"\"" to "&quot;",
+			"'" to "&#039;"
+	)
+
+	map.forEach {
+		text = text.replace(it.key, it.value)
+	}
+
+	return text
+}
 
 private external fun setInterval(handler: Any, timeout: Int): dynamic
 

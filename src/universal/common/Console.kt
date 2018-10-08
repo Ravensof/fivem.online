@@ -7,6 +7,7 @@ import CONSOLE_LOG
 import CONSOLE_PREFIX
 import CONSOLE_WARN
 import universal.modules.gui.events.ConsoleLogWebEvent
+import universal.modules.gui.events.ConsoleWarnWebEvent
 
 
 object Console {
@@ -74,6 +75,16 @@ object Console {
 				str += it
 			}
 			Event.emit(ConsoleLogWebEvent(str))
+		}
+	}
+
+	fun warnWeb(vararg o: Any?) {
+		if (CONSOLE_LOG) {
+			var str = ""
+			o.forEach {
+				str += it
+			}
+			Event.emit(ConsoleWarnWebEvent(str))
 		}
 	}
 
