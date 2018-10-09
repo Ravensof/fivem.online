@@ -27,7 +27,13 @@ class GuiModule private constructor() : AbstractModule() {
 
 		Event.on<PauseMenuStateChangedEvent> { onPauseMenuStateChanged(it.pauseMenuState) }
 
+		init()
+
 		Console.info("GuiModule loaded")
+	}
+
+	private fun init() {
+		GlobalControlsListener()
 	}
 
 	private fun onPauseMenuStateChanged(state: Int) {

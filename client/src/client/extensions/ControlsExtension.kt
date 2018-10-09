@@ -8,6 +8,7 @@ import client.modules.eventGenerator.events.controls.ControlShortPressedEvent
 import universal.common.Event
 import universal.r.Controls
 
+@Deprecated("use ControlManager")
 fun Controls.onKeyJustPressed(key: Controls.Keys, function: () -> Unit) {
 	registerRegularKey(key)
 	Event.on<ControlJustPressedEvent> {
@@ -17,6 +18,7 @@ fun Controls.onKeyJustPressed(key: Controls.Keys, function: () -> Unit) {
 	}
 }
 
+@Deprecated("use ControlManager")
 fun Controls.onKeyJustReleased(key: Controls.Keys, function: () -> Unit) {
 	registerRegularKey(key)
 	Event.on<ControlJustReleasedEvent> {
@@ -26,6 +28,7 @@ fun Controls.onKeyJustReleased(key: Controls.Keys, function: () -> Unit) {
 	}
 }
 
+@Deprecated("use ControlManager")
 fun Controls.onKeyLongPressed(key: Controls.Keys, function: () -> Unit) {
 	registerRegularKey(key)
 	Event.on<ControlLongPressedEvent> {
@@ -35,6 +38,7 @@ fun Controls.onKeyLongPressed(key: Controls.Keys, function: () -> Unit) {
 	}
 }
 
+@Deprecated("use ControlManager")
 fun Controls.onKeyShortPressed(key: Controls.Keys, function: () -> Unit) {
 	EventGenerator.addListenedKey(key)
 	Event.on<ControlShortPressedEvent> {
@@ -44,6 +48,7 @@ fun Controls.onKeyShortPressed(key: Controls.Keys, function: () -> Unit) {
 	}
 }
 
+@Deprecated("use ControlManager")
 private fun registerRegularKey(key: Controls.Keys) {
 	if (EventGenerator.isFlashKey(key)) {
 		throw RuntimeException("you not allowed to use flash keys as regular ($key)")
