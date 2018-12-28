@@ -24,11 +24,6 @@ subprojects {
 
 	group = "online.fivem"
 
-	ext["kotlin_version"] = "1.3.11"
-	ext["web_path"] = "web"
-	ext["serverDir"] = "P:\\2018.08.23_30120\\resources\\fivem-online1\\" + project.name
-	ext["localDir"] = "F:\\testFivem\\" + project.name
-
 	repositories {
 		mavenCentral()
 		jcenter()
@@ -47,15 +42,14 @@ subprojects {
 		}
 
 		dependencies {
-			classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${ext["kotlin_version"]}")
-			classpath("org.jetbrains.kotlin:kotlin-serialization:${ext["kotlin_version"]}")
+			classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${properties["config.kotlin_version"]}")
+			classpath("org.jetbrains.kotlin:kotlin-serialization:${properties["config.kotlin_version"]}")
 		}
 	}
 
 	apply("plugin" to "kotlin2js")
 	apply("plugin" to "kotlinx-serialization")
 	apply("plugin" to "kotlin-platform-js")
-//    apply plugin: "kotlin-dce-js"
 
 	(tasks["compileKotlin2Js"] as Kotlin2JsCompile).apply {
 		kotlinOptions.moduleKind = "umd"
@@ -68,10 +62,10 @@ subprojects {
 
 	dependencies {
 
-		compile("org.jetbrains.kotlin:kotlin-stdlib-js:${ext["kotlin_version"]}")
+		compile("org.jetbrains.kotlin:kotlin-stdlib-js:${properties["config.kotlin_version"]}")
 //		testCompile "org.jetbrains.kotlin:kotlin-test-js:$kotlin_version"
 		compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:0.9.0")
-		compile("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.0.1")
+		compile("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:${properties["config.coroutines_version"]}")
 
 		when (project.name) {
 			"common" -> {
@@ -114,14 +108,14 @@ subprojects {
 		getAt("assemble").dependsOn(assembleWeb)
 
 		val cleanServerCopy by registering(Delete::class) {
-			delete(ext["serverDir"].toString() + "\\lib")
-			delete(ext["serverDir"].toString() + "\\resources")
+			delete(properties["config.serverDir"].toString() + project.name + "\\lib")
+			delete(properties["config.serverDir"].toString() + project.name + "\\resources")
 			isFollowSymlinks = true
 		}
 
 		val cleanLocalCopy by registering(Delete::class) {
-			delete(ext["localDir"].toString() + "\\lib")
-			delete(ext["localDir"].toString() + "\\resources")
+			delete(properties["config.localDir"].toString() + project.name + "\\lib")
+			delete(properties["config.localDir"].toString() + project.name + "\\resources")
 			isFollowSymlinks = true
 		}
 
@@ -132,7 +126,7 @@ subprojects {
 				include("lib/**")
 				include("resources/**")
 			}
-			into(ext["localDir"]!!)
+			into(properties["config.localDir"].toString())
 		}
 
 		val copyToServer by registering(Copy::class) {
@@ -144,7 +138,7 @@ subprojects {
 				include("resources/**")
 			}
 
-			into(ext["serverDir"]!!)
+			into(properties["config.serverDir"].toString() + project.name)
 		}
 
 		val fullBuildAndCopy = task("fullBuildAndCopy") {
