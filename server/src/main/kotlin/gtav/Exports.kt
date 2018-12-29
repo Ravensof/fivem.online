@@ -42,4 +42,8 @@ object Exports {
 			callback(PlayerSrc(playerId), data)
 		}
 	}
+
+	fun on(eventName: String, callback: Any) {
+		exports.on(eventName, callback)
+	}
 }

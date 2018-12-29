@@ -1,8 +1,9 @@
 package online.fivem.server.gtav
 
 import online.fivem.common.GlobalConfig
-import online.fivem.common.entities.Command
 import online.fivem.common.entities.PlayerSrc
+import online.fivem.common.gtav.entities.Command
+import online.fivem.common.gtav.entities.PlayerIdentifiers
 
 object Natives {
 	fun on(eventName: String, callback: Any) = online.fivem.server.gtav.on(eventName, callback)
@@ -31,12 +32,82 @@ object Natives {
 		return SaveResourceFile(GlobalConfig.MODULE_NAME, fileName, data, data.length) == 1
 	}
 
-	fun getPasswordHash(password: String): String {
-		return GetPasswordHash(password)
+	fun countPlayersOnline(): Int {
+		return GetNumPlayerIndices()
 	}
 
-	fun verifyPasswordHash(password: String, hash: String): Boolean {
-		return VerifyPasswordHash(password, hash) == 1
+	fun getPlayerIP(playerSrc: PlayerSrc): String? {
+		return if (playerSrc.value > 0) {
+			GetPlayerEndpoint(playerSrc.value)
+		} else {
+			null
+		}
+	}
+
+	fun getPlayerPing(playerSrc: PlayerSrc): Int? {
+		return if (playerSrc.value > 0) {
+			GetPlayerPing(playerSrc.value)
+		} else {
+			null
+		}
+	}
+
+	fun getPlayersIds(): IntArray {
+		val playersList: MutableCollection<Int> = mutableListOf()
+
+		for (i in 1..GlobalConfig.MAX_PLAYERS) {
+			GetPlayerEndpoint(i)?.let {
+				playersList.add(i)
+			}
+		}
+
+		return playersList.toIntArray()
+	}
+
+	fun getPlayerIdentifiers(playerSrc: PlayerSrc): PlayerIdentifiers {
+
+		var steam: String? = null
+		var license: String? = null
+		var ip: String? = null
+
+		for (i in 0 until getNumPlayerIdentifiers(playerSrc)) {
+
+			GetPlayerIdentifier(playerSrc.value, i)?.let {
+
+				val identifier = it.split(":")
+
+				if (identifier.size == 2) {
+					when (identifier[0]) {
+						"steam" -> steam = identifier[1]
+						"license" -> license = identifier[1]
+						"ip" -> ip = identifier[1]
+					}
+				}
+			}
+		}
+
+		return PlayerIdentifiers(
+			steam = steam,
+			license = license,
+			ip = ip,
+			name = getPlayerName(playerSrc)
+		)
+	}
+
+	fun getPlayerName(playerSrc: PlayerSrc): String? {
+		return if (playerSrc.value > 0) {
+			GetPlayerName(playerSrc.value)
+		} else {
+			null
+		}
+	}
+
+	fun dropPlayer(playerSrc: PlayerSrc, reason: String) {
+		DropPlayer(playerSrc.value, reason)
+	}
+
+	private fun getNumPlayerIdentifiers(playerSrc: PlayerSrc): Int {
+		return GetNumPlayerIdentifiers(playerSrc.value)
 	}
 }
 
@@ -295,8 +366,3 @@ private external fun StartResource(resourceName: String): Float
 private external fun StopResource(resourceName: String): Float
 
 private external fun TempBanPlayer(playerSrc: String, reason: String)
-
-private external fun GetPasswordHash(password: String): String
-
-private external fun VerifyPasswordHash(password: String, hash: String): Int
-

@@ -2,6 +2,7 @@ package online.fivem.common
 
 object GlobalConfig {
 	const val MODULE_NAME = "fivem-online"
+	const val MAX_PLAYERS = 32
 
 	const val DEBUG_LOCAL_EVENTS = true
 
