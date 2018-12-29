@@ -126,7 +126,7 @@ subprojects {
 				include("lib/**")
 				include("resources/**")
 			}
-			into(properties["config.localDir"].toString())
+			into(properties["config.localDir"].toString() + project.name)
 		}
 
 		val copyToServer = create("copyToServer", Copy::class) {
@@ -150,6 +150,11 @@ subprojects {
 		val fastBuildAndDeploy = create("fastBuildAndDeploy") {
 			dependsOn(assemble)
 			dependsOn(copyToServer)
+		}
+
+		val localBuild = create("localBuild") {
+			dependsOn(assemble)
+			dependsOn(copyToLocal)
 		}
 	}
 }

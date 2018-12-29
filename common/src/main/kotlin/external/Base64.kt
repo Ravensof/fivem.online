@@ -1,4 +1,4 @@
-package online.fivem.common.common
+package online.fivem.common.external
 
 external class Base64 {
 	companion object {
