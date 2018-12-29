@@ -17,7 +17,7 @@ import kotlin.browser.window
 class ClientEventExchanger : AbstractModule(), EventListener {
 
 	override fun start(): Job? {
-		window.addEventListener("message", this)//todo протестировать
+		window.addEventListener("message", this)
 
 		val channel = Channel<Unit>()
 

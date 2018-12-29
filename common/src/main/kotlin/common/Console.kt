@@ -2,8 +2,6 @@ package online.fivem.common.common
 
 import online.fivem.common.GlobalConfig
 import online.fivem.common.GlobalConfig.CONSOLE_PREFIX
-import online.fivem.common.events.ConsoleLogWebEvent
-import online.fivem.common.events.ConsoleWarnWebEvent
 import kotlin.js.Console
 
 object Console : Console {
@@ -61,32 +59,32 @@ object Console : Console {
 		}
 	}
 
-	fun logWeb(vararg o: Any?) {
-		if (GlobalConfig.SHOW_CONSOLE_LOG) {
-			var str = ""
-			o.forEach {
-				str += it
-			}
-			Event.emit(ConsoleLogWebEvent(str))
-		}
-	}
-
-	fun warnWeb(vararg o: Any?) {
-		if (GlobalConfig.SHOW_CONSOLE_LOG) {
-			var str = ""
-			o.forEach {
-				str += it
-			}
-			Event.emit(ConsoleWarnWebEvent(str))
-		}
-	}
-
-	@Deprecated("check value")
-	fun <T> checkValue(functionName: String, functionResult: T, showIf: (T) -> Boolean = { true }): T {
-		if (showIf(functionResult)) {
-			logWeb("checkValue: $functionName=$functionResult")
-		}
-		return functionResult
-	}
+//	fun logWeb(vararg o: Any?) {
+//		if (GlobalConfig.SHOW_CONSOLE_LOG) {
+//			var str = ""
+//			o.forEach {
+//				str += it
+//			}
+//			Event.emit(ConsoleLogWebEvent(str))
+//		}
+//	}
+//
+//	fun warnWeb(vararg o: Any?) {
+//		if (GlobalConfig.SHOW_CONSOLE_LOG) {
+//			var str = ""
+//			o.forEach {
+//				str += it
+//			}
+//			Event.emit(ConsoleWarnWebEvent(str))
+//		}
+//	}
+//
+//	@Deprecated("check value")
+//	fun <T> checkValue(functionName: String, functionResult: T, showIf: (T) -> Boolean = { true }): T {
+//		if (showIf(functionResult)) {
+//			logWeb("checkValue: $functionName=$functionResult")
+//		}
+//		return functionResult
+//	}
 }
 
