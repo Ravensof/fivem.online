@@ -79,12 +79,13 @@ object Console : Console {
 //		}
 //	}
 //
-//	@Deprecated("check value")
-//	fun <T> checkValue(functionName: String, functionResult: T, showIf: (T) -> Boolean = { true }): T {
-//		if (showIf(functionResult)) {
+@Deprecated("check value")
+fun <T> checkValue(functionName: String, functionResult: T, showIf: (T) -> Boolean = { true }): T {
+	if (showIf(functionResult)) {
 //			logWeb("checkValue: $functionName=$functionResult")
-//		}
-//		return functionResult
-//	}
+		log("checkValue: $functionName=$functionResult")
+	}
+	return functionResult
+}
 }
 
