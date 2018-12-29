@@ -17,12 +17,6 @@ import kotlin.browser.window
 class ClientEventExchanger : AbstractModule(), EventListener {
 
 	override fun start(): Job? {
-//		window.addEventListener("message", fun(event: dynamic) {
-//			val packet = Serializer.unpack(event.data) as NuiPacket
-//
-//			ClientEvent.handle(packet.data)
-//		})
-
 		window.addEventListener("message", this)//todo протестировать
 
 		val channel = Channel<Unit>()

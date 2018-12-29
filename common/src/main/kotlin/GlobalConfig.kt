@@ -1,7 +1,7 @@
 package online.fivem.common
 
 object GlobalConfig {
-	const val MODULE_NAME = "fivem-online1"
+	const val MODULE_NAME = "fivem-online"
 
 	const val DEBUG_LOCAL_EVENTS = true
 

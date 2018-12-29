@@ -7,9 +7,7 @@ object Natives {
 
 	fun emitNet(eventName: String, playerSrc: Int, data: Any) = emitNet(eventName, playerSrc.toString(), data)
 
-	fun onNet(eventName: String, callback: (PlayerSrc, Any) -> Unit) {
-		Exports.onNet(eventName, callback)
-	}
+	fun onNet(eventName: String, callback: (PlayerSrc, Any) -> Unit): Unit = Exports.onNet(eventName, callback)
 
 }
 
