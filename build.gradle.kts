@@ -87,7 +87,7 @@ subprojects {
 		val classes = getAt("classes")
 		val compileKotlin2Js = getAt("compileKotlin2Js") as Kotlin2JsCompile
 
-		val assembleWeb by registering(Sync::class) {
+		val assembleWeb = create("", Sync::class) {
 			dependsOn(classes)
 
 			configurations.compile.forEach { file ->
@@ -107,19 +107,19 @@ subprojects {
 
 		getAt("assemble").dependsOn(assembleWeb)
 
-		val cleanServerCopy by registering(Delete::class) {
+		val cleanServerCopy = create("cleanServerCopy", Delete::class) {
 			delete(properties["config.serverDir"].toString() + project.name + "\\lib")
 			delete(properties["config.serverDir"].toString() + project.name + "\\resources")
 			isFollowSymlinks = true
 		}
 
-		val cleanLocalCopy by registering(Delete::class) {
+		val cleanLocalCopy = create("cleanLocalCopy", Delete::class) {
 			delete(properties["config.localDir"].toString() + project.name + "\\lib")
 			delete(properties["config.localDir"].toString() + project.name + "\\resources")
 			isFollowSymlinks = true
 		}
 
-		val copyToLocal by registering(Copy::class) {
+		val copyToLocal = create("copyToLocal", Copy::class) {
 			dependsOn(cleanLocalCopy)
 
 			from(buildDir) {
@@ -129,7 +129,7 @@ subprojects {
 			into(properties["config.localDir"].toString())
 		}
 
-		val copyToServer by registering(Copy::class) {
+		val copyToServer = create("copyToServer", Copy::class) {
 			dependsOn(cleanServerCopy)
 
 			from(buildDir) {
@@ -141,13 +141,13 @@ subprojects {
 			into(properties["config.serverDir"].toString() + project.name)
 		}
 
-		val fullBuildAndCopy = task("fullBuildAndCopy") {
+		val fullBuildAndCopy = create("fullBuildAndCopy") {
 			dependsOn(assemble)
 			dependsOn(copyToServer)
 			dependsOn(copyToLocal)
 		}
 
-		val fastBuildAndDeploy = task("fastBuildAndDeploy") {
+		val fastBuildAndDeploy = create("fastBuildAndDeploy") {
 			dependsOn(assemble)
 			dependsOn(copyToServer)
 		}
