@@ -87,7 +87,7 @@ subprojects {
 		val classes = getAt("classes")
 		val compileKotlin2Js = getAt("compileKotlin2Js") as Kotlin2JsCompile
 
-		val assembleWeb = create("", Sync::class) {
+		val assembleWeb = create("assembleWeb", Sync::class) {
 			dependsOn(classes)
 
 			configurations.compile.forEach { file ->
