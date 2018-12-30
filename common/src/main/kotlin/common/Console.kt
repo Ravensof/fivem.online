@@ -1,10 +1,23 @@
 package online.fivem.common.common
 
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.launch
 import online.fivem.common.GlobalConfig
 import online.fivem.common.GlobalConfig.CONSOLE_PREFIX
 import kotlin.js.Console
 
 object Console : Console {
+	private val channel = Channel<String>(32)
+
+	init {
+		GlobalScope.launch {
+			for (data in channel) {
+				console.log(data)
+			}
+		}
+	}
+
 	override fun dir(o: Any) {
 		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 	}
@@ -15,7 +28,7 @@ object Console : Console {
 			o.forEach {
 				str += it
 			}
-			console.log(str)
+			GlobalScope.launch { channel.send(str) }
 		}
 	}
 
@@ -25,7 +38,7 @@ object Console : Console {
 			o.forEach {
 				str += it
 			}
-			console.log(str)
+			GlobalScope.launch { channel.send(str) }
 		}
 	}
 
@@ -35,7 +48,7 @@ object Console : Console {
 			o.forEach {
 				str += it
 			}
-			console.log(str)
+			GlobalScope.launch { channel.send(str) }
 		}
 	}
 
@@ -45,7 +58,7 @@ object Console : Console {
 			o.forEach {
 				str += it
 			}
-			console.warn(str)
+			GlobalScope.launch { channel.send(str) }
 		}
 	}
 
@@ -55,7 +68,7 @@ object Console : Console {
 			o.forEach {
 				str += it
 			}
-			console.log(str)
+			GlobalScope.launch { channel.send(str) }
 		}
 	}
 

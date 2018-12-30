@@ -30,6 +30,7 @@ object Exports {
 			GlobalScope.launch {
 				channel.send(response)
 			}
+			Unit
 		}, httpRequestType, postData, headers)
 
 		return GlobalScope.async {
