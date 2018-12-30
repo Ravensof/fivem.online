@@ -21,13 +21,30 @@ open class UEvent {
 		}
 	}
 
-	inline fun <reified T> on(noinline function: (T) -> Unit) {
-		handlers.add {
+	inline fun <reified T> on(noinline function: (T) -> Unit): (Any) -> Unit {
+		val handler = { it: Any ->
 			if (it is T) {
 				function(it)
 			}
 		}
+		handlers.add(handler)
+
 		Console.info("$printType event ${T::class} registered")
+
+		return handler
+	}
+
+	inline fun <reified T> once(noinline function: (T) -> Unit) {
+		var link: (Any) -> Unit = {}
+
+		link = on<T> {
+			function(it)
+			unSubscribe(link)
+		}
+	}
+
+	inline fun <reified T : Any> unSubscribe(noinline function: (T) -> Unit) {
+		handlers.remove(function)
 	}
 
 	companion object : UEvent()
