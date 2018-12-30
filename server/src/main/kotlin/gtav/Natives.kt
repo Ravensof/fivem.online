@@ -52,16 +52,16 @@ object Natives {
 		}
 	}
 
-	fun getPlayersIds(): IntArray {
-		val playersList: MutableCollection<Int> = mutableListOf()
+	fun getPlayers(): List<PlayerSrc> {
+		val playersList = mutableListOf<PlayerSrc>()
 
 		for (i in 1..GlobalConfig.MAX_PLAYERS) {
 			GetPlayerEndpoint(i)?.let {
-				playersList.add(i)
+				playersList.add(PlayerSrc(i))
 			}
 		}
 
-		return playersList.toIntArray()
+		return playersList
 	}
 
 	fun getPlayerIdentifiers(playerSrc: PlayerSrc): PlayerIdentifiers {

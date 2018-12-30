@@ -85,6 +85,7 @@ subprojects {
 	tasks {
 		val assemble = getAt("assemble")
 		val classes = getAt("classes")
+		val clean = getAt("assemble")
 		val compileKotlin2Js = getAt("compileKotlin2Js") as Kotlin2JsCompile
 
 		val assembleWeb = create("assembleWeb", Sync::class) {
@@ -113,24 +114,17 @@ subprojects {
 			isFollowSymlinks = true
 		}
 
-		val cleanLocalCopy = create("cleanLocalCopy", Delete::class) {
-			delete(properties["config.localDir"].toString() + project.name + "\\lib")
-			delete(properties["config.localDir"].toString() + project.name + "\\resources")
-			isFollowSymlinks = true
-		}
+		clean.dependsOn(cleanServerCopy)
 
-		val copyToLocal = create("copyToLocal", Copy::class) {
-			dependsOn(cleanLocalCopy)
-
+		val debugCopyToServer = create("debugCopyToServer", Copy::class) {
 			from(buildDir) {
 				include("lib/**")
 				include("resources/**")
 			}
-			into(properties["config.localDir"].toString() + project.name)
+			into(properties["config.serverDir"].toString() + project.name)
 		}
 
 		val copyToServer = create("copyToServer", Copy::class) {
-			dependsOn(cleanServerCopy)
 
 			from(buildDir) {
 				include("lib/**.js")
@@ -142,19 +136,15 @@ subprojects {
 		}
 
 		val fullBuildAndCopy = create("fullBuildAndCopy") {
-			dependsOn(assemble)
-			dependsOn(copyToServer)
-			dependsOn(copyToLocal)
-		}
-
-		val fastBuildAndDeploy = create("fastBuildAndDeploy") {
+			dependsOn(clean)
 			dependsOn(assemble)
 			dependsOn(copyToServer)
 		}
 
-		val localBuild = create("localBuild") {
+		val debugBuildAndDeploy = create("debugBuildAndDeploy") {
+			dependsOn(clean)
 			dependsOn(assemble)
-			dependsOn(copyToLocal)
+			dependsOn(debugCopyToServer)
 		}
 	}
 }

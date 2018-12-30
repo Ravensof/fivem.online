@@ -17,4 +17,5 @@ object GlobalConfig {
 
 	const val NUI_EVENT_NAME = "nui"
 	const val NET_EVENT_NAME = "net"
+	const val NET_EVENT_ESTABLISHING_NAME = "establishing"
 }

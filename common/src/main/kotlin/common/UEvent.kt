@@ -9,42 +9,46 @@ open class UEvent {
 
 	open val printType = "local"
 
-	val handlers = mutableListOf<(Any) -> Unit>()
+	val handlers = mutableListOf<Pair<KClass<*>, (Any) -> Unit>>()
 
-	inline fun <reified T : Any> emit(data: T): Job {
-		return emit(T::class, data)
-	}
-
-	open fun emit(kClass: KClass<out Any>, data: Any): Job {
+	open fun emit(data: Any): Job {
 		return GlobalScope.launch {
-			handlers.forEach { it.invoke(data) }
-		}
-	}
-
-	inline fun <reified T> on(noinline function: (T) -> Unit): (Any) -> Unit {
-		val handler = { it: Any ->
-			if (it is T) {
-				function(it)
+			handlers.forEach {
+				if (it.first.isInstance(data)) {
+					it.second(data)
+				}
 			}
 		}
-		handlers.add(handler)
-
-		Console.info("$printType event ${T::class} registered")
-
-		return handler
 	}
 
-	inline fun <reified T> once(noinline function: (T) -> Unit) {
-		var link: (Any) -> Unit = {}
+	inline fun <reified T : Any> on(noinline function: (T) -> Unit) {
+		@Suppress("UNCHECKED_CAST")
+		handlers.add(T::class to function as (Any) -> Unit)
 
-		link = on<T> {
-			function(it)
-			unSubscribe(link)
+		Console.info("$printType event ${T::class} registered")
+	}
+
+	inline fun <reified T : Any> once(noinline function: (T) -> Unit) {
+		var handler: (T) -> Unit = {}
+
+		handler = { data ->
+			function(data)
+			unSubscribe(handler)
 		}
+
+		@Suppress("UNCHECKED_CAST")
+		handlers.add(T::class to handler as (Any) -> Unit)
+
+		Console.info("$printType event ${T::class} registered")
 	}
 
 	inline fun <reified T : Any> unSubscribe(noinline function: (T) -> Unit) {
-		handlers.remove(function)
+		handlers.forEach {
+			if (it.second == function) {
+				handlers.remove(it)
+				Console.info("$printType event ${T::class} unsubscribed")
+			}
+		}
 	}
 
 	companion object : UEvent()

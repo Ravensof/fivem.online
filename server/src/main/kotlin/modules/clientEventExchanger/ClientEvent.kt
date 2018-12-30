@@ -3,15 +3,17 @@ package online.fivem.server.modules.clientEventExchanger
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import online.fivem.common.common.UEvent
+import online.fivem.common.common.Console
 import online.fivem.common.entities.PlayerSrc
 import kotlin.reflect.KClass
 
-object ClientEvent : UEvent() {
+open class ClientEvent {
 
-	override val printType = "net"
+	open val printType = "net"
 
-	fun emit(playerSrc: PlayerSrc, data: Any): Job {
+	val handlers = mutableListOf<Pair<KClass<*>, (PlayerSrc, Any) -> Unit>>()
+
+	fun emit(data: Any, playerSrc: PlayerSrc? = null): Job {
 		return GlobalScope.launch {
 			ClientEventExchanger.channel.send(
 				ClientEventExchanger.Packet(
@@ -22,28 +24,45 @@ object ClientEvent : UEvent() {
 		}
 	}
 
-	fun emit(data: Any) {
-		emit(data::class, data)
+	inline fun <reified T : Any> on(noinline function: (PlayerSrc, T) -> Unit) {
+		@Suppress("UNCHECKED_CAST")
+		handlers.add(T::class to function as (PlayerSrc, Any) -> Unit)
+
+		Console.info("$printType event ${T::class} registered")
 	}
 
-	override fun emit(kClass: KClass<out Any>, data: Any): Job {
-		return GlobalScope.launch {
-			ClientEventExchanger.channel.send(ClientEventExchanger.Packet(data = data))
+	inline fun <reified T : Any> once(noinline function: (PlayerSrc, T) -> Unit) {
+		var handler: (PlayerSrc, T) -> Unit = { _, _ -> }
+
+		handler = { playerSrc, data ->
+			function(playerSrc, data)
+			unSubscribe(handler)
 		}
+
+		@Suppress("UNCHECKED_CAST")
+		handlers.add(T::class to handler as (PlayerSrc, Any) -> Unit)
+
+		Console.info("$printType event ${T::class} registered")
 	}
 
-	//todo убрать родительскую on, т.к. она не будет работать
-	inline fun <reified T> on(noinline callback: (PlayerSrc, T) -> Unit) {
-		handlers.add {
-			val packet = it as ClientEventExchanger.Packet
-
-			if (packet.data is T) {
-				callback(packet.playerSrc!!, packet.data)
+	inline fun <reified T : Any> unSubscribe(noinline function: (PlayerSrc, T) -> Unit) {
+		handlers.forEach {
+			if (it.second == function) {
+				handlers.remove(it)
+				Console.info("$printType event ${T::class} unsubscribed")
 			}
 		}
 	}
 
-	fun handle(data: ClientEventExchanger.Packet) {
-		super.emit(data::class, data)
+	fun handle(playerSrc: PlayerSrc, data: Any): Job {
+		return GlobalScope.launch {
+			handlers.forEach {
+				if (it.first.isInstance(data)) {
+					it.second(playerSrc, data)
+				}
+			}
+		}
 	}
+
+	companion object : ClientEvent()
 }

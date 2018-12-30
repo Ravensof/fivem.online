@@ -5,6 +5,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import online.fivem.client.gtav.Natives
 import online.fivem.client.modules.nuiEventExchanger.NuiEventExchanger
+import online.fivem.client.modules.serverEventExchanger.ServerEventExchanger
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.Console
 import online.fivem.common.common.ModuleLoader
@@ -35,6 +36,10 @@ fun start() {
 
 	ModuleLoader().apply {
 		add(NuiEventExchanger())
+
+		add(ServerEventExchanger())
+
+//		add(Test())
 
 		finally {
 			Console.log("all modules loaded")

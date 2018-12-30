@@ -4,6 +4,7 @@ import kotlinx.serialization.json.JSON
 import kotlinx.serialization.loads
 import kotlinx.serialization.protobuf.ProtoBuf
 import online.fivem.common.external.Base64
+import online.fivem.nui.test.CommonTest
 import kotlin.browser.window
 
 fun main() {
