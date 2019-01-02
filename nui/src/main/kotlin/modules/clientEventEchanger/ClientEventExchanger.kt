@@ -49,7 +49,7 @@ class ClientEventExchanger : AbstractModule(), EventListener {
 
 	override fun handleEvent(event: Event) {
 		try {
-			val packet = Serializer.unpack<NuiPacket>(event.asDynamic().data)
+			val packet = Serializer.unpack<NuiPacket>(event.asDynamic().data as Any)
 			ClientEvent.handle(packet.data)
 		} catch (exception: Serializer.DeserializationException) {
 		}
