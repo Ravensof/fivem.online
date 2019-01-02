@@ -41,8 +41,10 @@ class ClientEventExchanger : AbstractModule(), EventListener {
 		}
 	}
 
-	override fun stop() {
+	override fun stop(): Job? {
 		window.removeEventListener("message", this)
+
+		return super.stop()
 	}
 
 	override fun handleEvent(event: Event) {

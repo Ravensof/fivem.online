@@ -1,9 +1,9 @@
 package online.fivem.client
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import online.fivem.client.gtav.Natives
+import online.fivem.client.modules.controlManager.ControlManager
+import online.fivem.client.modules.eventGenerator.EventGenerator
+import online.fivem.client.modules.internetRadio.InternetRadio
 import online.fivem.client.modules.nuiEventExchanger.NuiEvent
 import online.fivem.client.modules.nuiEventExchanger.NuiEventExchanger
 import online.fivem.client.modules.serverEventExchanger.ServerEventExchanger
@@ -15,19 +15,8 @@ import online.fivem.common.gtav.NativeEvents
 
 internal fun main(args: Array<String>) {
 
-	var resourceLoaded = false
-
-	GlobalScope.launch {
-		delay(10_000)
-		if (!resourceLoaded) {
-			Console.warn("client side start manual loading after 10 seconds..")
-			start()
-		}
-	}
-
 	Natives.on(NativeEvents.Client.RESOURCE_START) { resource: String ->
 		if (resource == GlobalConfig.MODULE_NAME) {
-			resourceLoaded = true
 			start()
 		}
 	}
@@ -37,7 +26,14 @@ fun start() {
 	Console.log("client side loading..")
 
 	ModuleLoader().apply {
+
 		add(NuiEventExchanger())
+
+		add(InternetRadio())
+
+		add(ControlManager())
+
+		add(EventGenerator())
 
 		add(ServerEventExchanger())
 

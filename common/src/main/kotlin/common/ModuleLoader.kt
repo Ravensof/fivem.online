@@ -26,6 +26,15 @@ class ModuleLoader {
 		}
 	}
 
+	fun stop() {
+		GlobalScope.launch {
+			modules.asReversed().forEach {
+				Console.log("stop module ${it::class.simpleName}")
+				it.stop()?.join()
+			}
+		}
+	}
+
 	companion object {
 		private val modules = mutableListOf<AbstractModule>()
 

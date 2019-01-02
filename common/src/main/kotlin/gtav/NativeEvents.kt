@@ -213,5 +213,7 @@ object NativeEvents {
 		const val PLAYER_CONNECTING = "playerConnecting"
 
 		const val RESOURCE_START = "onServerResourceStart"//resourceName: String
+
+		const val RESOURCE_STOP = "onResourceStop"
 	}
 }

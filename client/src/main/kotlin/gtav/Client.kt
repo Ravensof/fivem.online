@@ -1,10 +1,12 @@
+@file:Suppress("FunctionName")
+
 package online.fivem.client.gtav
 
 import online.fivem.common.common.Console
 import online.fivem.common.entities.Coordinates
 import online.fivem.common.entities.Time
 import online.fivem.common.extensions.orZero
-import online.fivem.common.gtav.Controls
+import online.fivem.common.gtav.NativeControls
 import online.fivem.common.gtav.ProfileSetting
 
 object Client {
@@ -235,17 +237,26 @@ object Client {
 	 * 0, 1 and 2 used in the scripts.
 	 */
 
-	private val defaultControlGroup = Controls.Groups.INPUTGROUP_MOVE
+	private val defaultControlGroup = NativeControls.Groups.MOVE
 
-	fun isControlEnabled(inputGroup: Controls.Groups = defaultControlGroup, control: Controls.Keys): Boolean {
+	fun isControlEnabled(
+		inputGroup: NativeControls.Groups = defaultControlGroup,
+		control: NativeControls.Keys
+	): Boolean {
 		return IsControlEnabled(inputGroup.index, control.index) == 1
 	}
 
-	fun isControlJustPressed(inputGroup: Controls.Groups = defaultControlGroup, control: Controls.Keys): Boolean {
+	fun isControlJustPressed(
+		inputGroup: NativeControls.Groups = defaultControlGroup,
+		control: NativeControls.Keys
+	): Boolean {
 		return IsControlJustPressed(inputGroup.index, control.index) == 1
 	}
 
-	fun isControlJustReleased(inputGroup: Controls.Groups = defaultControlGroup, control: Controls.Keys): Boolean {
+	fun isControlJustReleased(
+		inputGroup: NativeControls.Groups = defaultControlGroup,
+		control: NativeControls.Keys
+	): Boolean {
 		return IsControlJustReleased(inputGroup.index, control.index) == 1
 	}
 
@@ -253,14 +264,20 @@ object Client {
 	 * index always is 2 for xbox 360 controller and razerblade
 	 * 0, 1 and 2 used in the scripts. 0 is by far the most common of them.
 	 */
-	fun isControlPressed(inputGroup: Controls.Groups = defaultControlGroup, control: Controls.Keys): Boolean {
+	fun isControlPressed(
+		inputGroup: NativeControls.Groups = defaultControlGroup,
+		control: NativeControls.Keys
+	): Boolean {
 		return IsControlPressed(inputGroup.index, control.index) == 1
 	}
 
 	/**
 	 * 0, 1 and 2 used in the scripts. 0 is by far the most common of them.
 	 */
-	fun isControlReleased(inputGroup: Controls.Groups = defaultControlGroup, control: Controls.Keys): Boolean {
+	fun isControlReleased(
+		inputGroup: NativeControls.Groups = defaultControlGroup,
+		control: NativeControls.Keys
+	): Boolean {
 		return IsControlReleased(inputGroup.index, control.index) == 1
 	}
 
@@ -283,29 +300,40 @@ object Client {
 	}
 
 	fun disableControlAction(
-		inputGroup: Controls.Groups = defaultControlGroup,
-		control: Controls.Keys,
+		inputGroup: NativeControls.Groups = defaultControlGroup,
+		control: NativeControls.Keys,
 		disable: Boolean = true
 	) {
 		DisableControlAction(inputGroup.index, control.index, disable)
 	}
 
 	fun isDisabledControlJustPressed(
-		inputGroup: Controls.Groups = defaultControlGroup,
-		control: Controls.Keys
+		inputGroup: NativeControls.Groups = defaultControlGroup,
+		control: NativeControls.Keys
 	): Boolean {
 		return IsDisabledControlJustPressed(inputGroup.index, control.index) == 1
 	}
 
 	fun isDisabledControlJustReleased(
-		inputGroup: Controls.Groups = defaultControlGroup,
-		control: Controls.Keys
+		inputGroup: NativeControls.Groups = defaultControlGroup,
+		control: NativeControls.Keys
 	): Boolean {
 		return IsDisabledControlJustReleased(inputGroup.index, control.index) == 1
 	}
 
-	fun isDisabledControlPressed(inputGroup: Controls.Groups = defaultControlGroup, control: Controls.Keys): Boolean {
+	fun isDisabledControlPressed(
+		inputGroup: NativeControls.Groups = defaultControlGroup,
+		control: NativeControls.Keys
+	): Boolean {
 		return IsDisabledControlPressed(inputGroup.index, control.index) == 1
+	}
+
+	fun getEntityHeightAboveGround(entity: Int): Float {
+		return GetEntityHeightAboveGround(entity)
+	}
+
+	fun setNuiFocus(hasFocus: Boolean, hasCursor: Boolean) {
+		SetNuiFocus(hasFocus, hasCursor)
 	}
 }
 
@@ -5575,7 +5603,7 @@ private external fun GetEntityHeading(entity: Int): Float
  * How can i convert it to meters?
  * Everything seems to be in meters, probably this too.
  */
-//private external fun GetEntityHeightAboveGround(entity: number): number;
+private external fun GetEntityHeightAboveGround(entity: Int): Float
 
 //private external fun GetEntityIndexOfCutsceneEntity(cutsceneEntName: string, modelHash: string | number): number;
 
@@ -18052,7 +18080,7 @@ private external fun NetworkGetServerTime(): Time
 /**
  * returns true if someone is screaming or talking in a microphone
  */
-//private external fun NetworkIsPlayerTalking(player: number): number;
+//private external fun NetworkIsPlayerTalking(player: number): number;//todo use
 
 //private external fun NetworkIsPsnAvailable(): number;
 //private external fun N_0x8d11e61a4abf49cc(): number;
@@ -22821,10 +22849,6 @@ fun Client.setNotificationTextEntry(text: String) {
 }
 
 private external fun SetNuiFocus(hasFocus: Boolean, hasCursor: Boolean)
-
-fun Client.setNuiFocus(hasFocus: Boolean, hasCursor: Boolean) {
-	SetNuiFocus(hasFocus, hasCursor)
-}
 
 //private external fun SetNumberOfParkedVehicles(value: Int): Int
 

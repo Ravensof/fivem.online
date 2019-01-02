@@ -26,7 +26,7 @@ object Exports {
 
 		val channel = Channel<String>()
 
-		exports.performHttpRequest(url, { httpCode: Int, response: String, headers: dynamic ->
+		exports.performHttpRequest(url, { _: Int, response: String, _: Any ->
 			GlobalScope.launch {
 				channel.send(response)
 			}

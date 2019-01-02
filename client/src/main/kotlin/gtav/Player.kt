@@ -1,14 +1,9 @@
 package online.fivem.client.gtav
 
-import online.fivem.common.common.Console
 import online.fivem.common.gtav.RadioStation
 
 
 class Player(val id: Int) {
-
-	fun getPed(): Int {
-		return Console.checkValue("GetPlayerPed(playerId: Int)", GetPlayerPed(id))
-	}
 
 	companion object {
 
