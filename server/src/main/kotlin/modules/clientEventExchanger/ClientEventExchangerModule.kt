@@ -18,7 +18,7 @@ import online.fivem.server.gtav.Exports
 import online.fivem.server.gtav.Natives
 import kotlin.random.Random
 
-class ClientEventExchanger : AbstractModule() {
+class ClientEventExchangerModule : AbstractModule() {
 
 	private val playersList = mutableMapOf<PlayerSrc, Long>()
 

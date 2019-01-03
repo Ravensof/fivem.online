@@ -1,4 +1,4 @@
-package online.fivem.client.modules.internetRadio
+package online.fivem.client.modules.vehicle
 
 import kotlinx.coroutines.Job
 import online.fivem.client.gtav.Client

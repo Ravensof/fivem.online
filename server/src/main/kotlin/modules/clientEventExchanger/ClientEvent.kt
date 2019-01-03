@@ -15,8 +15,8 @@ open class ClientEvent {
 
 	fun emit(data: Any, playerSrc: PlayerSrc? = null): Job {
 		return GlobalScope.launch {
-			ClientEventExchanger.channel.send(
-				ClientEventExchanger.Packet(
+			ClientEventExchangerModule.channel.send(
+				ClientEventExchangerModule.Packet(
 					playerSrc = playerSrc,
 					data = data
 				)

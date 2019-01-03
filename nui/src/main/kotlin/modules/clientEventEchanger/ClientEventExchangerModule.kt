@@ -14,7 +14,7 @@ import org.w3c.dom.events.Event
 import org.w3c.dom.events.EventListener
 import kotlin.browser.window
 
-class ClientEventExchanger : AbstractModule(), EventListener {
+class ClientEventExchangerModule : AbstractModule(), EventListener {
 
 	override fun start(): Job? {
 		window.addEventListener("message", this)
@@ -28,7 +28,7 @@ class ClientEventExchanger : AbstractModule(), EventListener {
 		}
 
 		GlobalScope.launch {
-			for (data in ClientEventExchanger.channel) {
+			for (data in ClientEventExchangerModule.channel) {
 				jQuery.post("http://${GlobalConfig.MODULE_NAME}/${GlobalConfig.NUI_EVENT_NAME}", data)
 			}
 		}

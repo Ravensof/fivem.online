@@ -2,9 +2,9 @@ package online.fivem.nui
 
 import online.fivem.common.common.Console
 import online.fivem.common.common.ModuleLoader
-import online.fivem.nui.modules.clientEventEchanger.ClientEventExchanger
-import online.fivem.nui.modules.internetRadio.InternetRadio
+import online.fivem.nui.modules.clientEventEchanger.ClientEventExchangerModule
 import online.fivem.nui.modules.loadingScreen.LoadingScreenModule
+import online.fivem.nui.modules.vehicle.VehicleModule
 
 internal fun main() {
 	Console.log("nui side loading..")
@@ -13,9 +13,9 @@ internal fun main() {
 
 		add(LoadingScreenModule())
 
-		add(InternetRadio())
+		add(VehicleModule())
 
-		add(ClientEventExchanger())//last
+		add(ClientEventExchangerModule())//last
 
 //		add(Test())
 

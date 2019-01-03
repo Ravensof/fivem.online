@@ -12,7 +12,7 @@ import online.fivem.common.entities.NetPacket
 import online.fivem.common.events.EstablishConnection
 import online.fivem.common.events.ImReady
 
-class ServerEventExchanger : AbstractModule() {
+class ServerEventExchangerModule : AbstractModule() {
 
 	var key: Long? = null
 

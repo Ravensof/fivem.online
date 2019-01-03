@@ -1,12 +1,12 @@
 package online.fivem.client
 
 import online.fivem.client.gtav.Natives
-import online.fivem.client.modules.controlManager.ControlManager
+import online.fivem.client.modules.controlManager.ControlManagerModule
 import online.fivem.client.modules.eventGenerator.EventGenerator
-import online.fivem.client.modules.internetRadio.InternetRadio
 import online.fivem.client.modules.nuiEventExchanger.NuiEvent
-import online.fivem.client.modules.nuiEventExchanger.NuiEventExchanger
-import online.fivem.client.modules.serverEventExchanger.ServerEventExchanger
+import online.fivem.client.modules.nuiEventExchanger.NuiEventExchangerModule
+import online.fivem.client.modules.serverEventExchanger.ServerEventExchangerModule
+import online.fivem.client.modules.vehicle.VehicleModule
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.Console
 import online.fivem.common.common.ModuleLoader
@@ -27,15 +27,15 @@ fun start() {
 
 	ModuleLoader().apply {
 
-		add(NuiEventExchanger())
+		add(NuiEventExchangerModule())//first
 
-		add(InternetRadio())
+		add(VehicleModule())
 
-		add(ControlManager())
+		add(ControlManagerModule())
 
 		add(EventGenerator())
 
-		add(ServerEventExchanger())
+		add(ServerEventExchangerModule())//last
 
 //		add(Test())
 

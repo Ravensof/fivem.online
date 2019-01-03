@@ -1,4 +1,4 @@
-package online.fivem.nui.modules.internetRadio
+package online.fivem.nui.modules.vehicle
 
 import kotlinx.coroutines.Job
 import online.fivem.common.common.AbstractModule

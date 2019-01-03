@@ -11,7 +11,7 @@ object NuiEvent : UEvent() {
 
 	override fun emit(data: Any): Job {
 		return GlobalScope.launch {
-			NuiEventExchanger.channel.send(data)
+			NuiEventExchangerModule.channel.send(data)
 		}
 	}
 

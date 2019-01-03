@@ -9,7 +9,7 @@ object ServerEvent : UEvent() {
 
 	override fun emit(data: Any): Job {
 		return GlobalScope.launch {
-			ServerEventExchanger.channel.send(data)
+			ServerEventExchangerModule.channel.send(data)
 		}
 	}
 

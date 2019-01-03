@@ -3,10 +3,12 @@ package online.fivem.server.modules.session
 import kotlinx.coroutines.Job
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
+import online.fivem.common.entities.PlayerSrc
 import online.fivem.common.gtav.NativeEvents
 import online.fivem.server.gtav.Exports
+import online.fivem.server.gtav.Natives
 
-class Session : AbstractModule() {
+class SessionModule : AbstractModule() {
 	override fun start(): Job? {
 		Exports.on(NativeEvents.Server.PLAYER_CONNECTING, ::onClientConnecting)
 

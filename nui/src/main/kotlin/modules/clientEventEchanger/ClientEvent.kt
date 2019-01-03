@@ -12,7 +12,7 @@ object ClientEvent : UEvent() {
 
 	override fun emit(data: Any): Job {
 		return GlobalScope.launch {
-			ClientEventExchanger.channel.send(
+			ClientEventExchangerModule.channel.send(
 				Serializer.serialize(data)
 			)
 		}

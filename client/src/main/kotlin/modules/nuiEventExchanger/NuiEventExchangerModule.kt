@@ -12,7 +12,7 @@ import online.fivem.common.common.Serializer
 import online.fivem.common.entities.NuiPacket
 import online.fivem.common.events.ImReady
 
-class NuiEventExchanger : AbstractModule() {
+class NuiEventExchangerModule : AbstractModule() {
 	override fun start(): Job? {
 
 		Exports.onNui(GlobalConfig.NUI_EVENT_NAME) {
