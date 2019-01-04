@@ -94,6 +94,10 @@ object Natives {
 		)
 	}
 
+	fun getPlayerIdentifiers(source: Int): PlayerIdentifiers {
+		return getPlayerIdentifiers(PlayerSrc(source))
+	}
+
 	fun getPlayerName(playerSrc: PlayerSrc): String? {
 		return if (playerSrc.value > 0) {
 			GetPlayerName(playerSrc.value)
@@ -104,6 +108,10 @@ object Natives {
 
 	fun dropPlayer(playerSrc: PlayerSrc, reason: String) {
 		DropPlayer(playerSrc.value, reason)
+	}
+
+	fun dropPlayer(playerSrc: Int, reason: String) {
+		DropPlayer(playerSrc, reason)
 	}
 
 	private fun getNumPlayerIdentifiers(playerSrc: PlayerSrc): Int {

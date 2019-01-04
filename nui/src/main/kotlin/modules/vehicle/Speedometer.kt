@@ -15,7 +15,8 @@ import online.fivem.nui.modules.clientEventEchanger.ClientEvent
 import org.w3c.dom.HTMLImageElement
 import kotlin.js.Date
 
-@UseExperimental(ExperimentalCoroutinesApi::class)
+
+@ExperimentalCoroutinesApi
 class Speedometer : AbstractModule() {
 
 	private val speedometerArrow: HTMLImageElement by lazy {
@@ -92,6 +93,8 @@ class Speedometer : AbstractModule() {
 
 	override fun start(): Job? {
 		ClientEvent.on<SpeedometerUpdateEvent> {
+			if (speedometerInterpolatorChannel.isFull) return@on
+
 			GlobalScope.launch {
 				speedometerInterpolatorChannel.send(
 					SpeedometerData(

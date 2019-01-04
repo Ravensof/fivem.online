@@ -74,7 +74,7 @@ function unserialize1(object) {
 				for (var i in obj) {
 					obj[i] = Serialize1(obj[i]);
 				}
-				if(typeof obj['__className']==='undefined'){
+				if(typeof obj['__className']==='undefined' && obj.constructor.name!=''){
 					obj['__className'] = obj.constructor.name;
 				}
 			}

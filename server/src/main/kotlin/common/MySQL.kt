@@ -7,7 +7,7 @@ import online.fivem.common.external.Base64
 import online.fivem.server.ServerConfig
 import online.fivem.server.gtav.Exports
 
-class MySQL {
+open class MySQL {
 
 	fun connect() {
 
@@ -24,7 +24,7 @@ class MySQL {
 			val result = JSON.parse<MySQLResponse<Type>>(response)
 
 			@Suppress("CAST_NEVER_SUCCEEDS")
-			if (result.code != 0) throw MySQLException(result.response as String)
+			if (result.code != 0) throw MySQLException(result.response.joinToString("\r\n"))
 
 			return@async result.response
 		}
@@ -51,6 +51,13 @@ class MySQL {
 	class MySQLException(message: String) : Throwable(message)
 
 	companion object {
+
+		val instance by lazy {
+			MySQL().apply {
+				connect()
+			}
+		}
+
 		fun filter(value: String): String {
 			return "FROM_BASE64('${Base64.encode(value)}')"
 		}

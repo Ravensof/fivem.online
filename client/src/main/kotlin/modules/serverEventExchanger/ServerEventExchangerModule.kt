@@ -1,12 +1,11 @@
 package online.fivem.client.modules.serverEventExchanger
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.launch
 import online.fivem.client.gtav.Natives
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
+import online.fivem.common.common.Console
 import online.fivem.common.common.Serializer
 import online.fivem.common.entities.NetPacket
 import online.fivem.common.events.EstablishConnection
@@ -14,16 +13,30 @@ import online.fivem.common.events.ImReady
 
 class ServerEventExchangerModule : AbstractModule() {
 
-	var key: Long? = null
+	var key: Double? = null
 
+	@ExperimentalCoroutinesApi
 	override fun start(): Job? {
-		Natives.onNet(GlobalConfig.NET_EVENT_NAME) { netPacket: dynamic ->
-			if (netPacket !is NetPacket) throw ServerEventExchangerException("wrong net packet format")
 
-			ServerEvent.handle(netPacket.data)
+		val pauseChannel = Channel<Boolean>()
+
+		Natives.onNet(GlobalConfig.NET_EVENT_NAME) { netPacket: Any ->
+			try {
+				val packet = Serializer.unpack<NetPacket>(netPacket)
+
+				ServerEvent.handle(packet.data)
+			} catch (e: Throwable) {
+				Console.error("${e.message} ${JSON.stringify(netPacket)}")
+			} catch (e: Serializer.DeserializationException) {
+				Console.error("wrong net packet format")
+			}
 		}
 
-		ServerEvent.on<EstablishConnection> { key = it.key }
+		ServerEvent.on<EstablishConnection> {
+			ServerEvent.emit(ImReady())
+			GlobalScope.launch { pauseChannel.send(true) }
+			key = it.key
+		}
 
 		GlobalScope.launch {
 			for (data in channel) {
@@ -36,12 +49,24 @@ class ServerEventExchangerModule : AbstractModule() {
 			}
 		}
 
-		Natives.emitNet(GlobalConfig.NET_EVENT_ESTABLISHING_NAME, Serializer.prepare(NetPacket(data = ImReady())))
+		GlobalScope.launch {
+			while (!pauseChannel.isClosedForSend) {
+				startHandshaking()
+				delay(5_000)
+			}
+		}
 
-		return super.start()
+		return GlobalScope.launch {
+			Console.log("connecting to server..")
+			pauseChannel.receive()
+			pauseChannel.close()
+			Console.log("connected to server")
+		}
 	}
 
-	class ServerEventExchangerException(message: String) : Throwable(message)
+	private fun startHandshaking() {
+		Natives.emitNet(GlobalConfig.NET_EVENT_ESTABLISHING_NAME, Serializer.prepare(NetPacket(data = ImReady())))
+	}
 
 	companion object {
 		val channel = Channel<Any>()
