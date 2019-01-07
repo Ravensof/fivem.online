@@ -16,11 +16,25 @@ import kotlin.js.Date
 
 class EventGenerator : AbstractModule() {
 
+	private lateinit var job50: Job
 	private lateinit var job500: Job
 	private lateinit var job1000: Job
 	private lateinit var jobKeyScan: Job
 
-	private var playerPed = Player.getPed().orZero()
+	private var playerPed = 0
+	private var playersVehicle: Int? = null
+
+	private var vehicleBodyHealth: Int? = null
+	private var vehicleEngineHealth: Double? = null
+	private var vehiclePetrolTankHealth: Double? = null
+
+	private var playerCoordinates: CoordinatesX? = null
+	private var playerSeatIndex: Int? = null
+	private var pauseMenuState: Int? = null
+	private var audioMusicLevelInMP: Int? =
+		null// = Client.getProfileSetting(ProfileSetting.AUDIO_MUSIC_LEVEL_IN_MP).orZero()
+	private var playerRadioStationName: RadioStation? = null //= Player.getRadioStation()
+	private var isPlayerVehicleRadioEnabled: Boolean? = null// = playerRadioStationName != null
 
 	override fun start(): Job? {
 		TickExecutor.addTick(::checkPressedFlashKeys)
@@ -29,17 +43,21 @@ class EventGenerator : AbstractModule() {
 			checkPressedKeys()
 		}
 
+		job50 = repeatJob(50) {
+			checkVehicleHealth()
+		}
+
 		job500 = repeatJob(500) {
 
 			checkPlayerSeatIndex(Client.getPassengerSeatOfPedInVehicle())
 			checkPauseMenuState(Client.getPauseMenuState())
 			checkIsPlayerInVehicle(Player.isInVehicle())
-			checkPlayerRadioStationName(Player.getRadioStation()?.takeIf { isPlayerInVehicle == true })
+			checkPlayerRadioStationName(Player.getRadioStation()?.takeIf { playersVehicle != null })
 			checkIsPlayerRadioEnabled(playerRadioStationName != null)
 		}
 
 		job1000 = repeatJob(1_000) {
-			playerPed = Player.getPed().orZero()
+			checkPlayersPed(Player.getPed().orZero())
 
 			checkAudioMusicLevelInMP(Client.getProfileSetting(ProfileSetting.AUDIO_MUSIC_LEVEL_IN_MP).orZero())
 			Client.getEntityCoords(playerPed)?.let { updateCoordinates(it, Client.getEntityHeading(playerPed)) }
@@ -56,7 +74,47 @@ class EventGenerator : AbstractModule() {
 		return super.stop()
 	}
 
-	var playerCoordinates: CoordinatesX? = null
+	private fun checkPlayersPed(ped: Int) {
+		if (playerPed != ped) {
+			playerPed = ped
+
+			UEvent.emit(PlayersPedChangedEvent(ped))
+		}
+	}
+
+	private fun checkVehicleHealth() {
+		if (playersVehicle == null) {
+			vehicleBodyHealth = null
+			vehicleEngineHealth = null
+			vehiclePetrolTankHealth = null
+			return
+		}
+
+		val vehicle = playersVehicle ?: return
+
+		val bodyHealth = Client.getVehicleBodyHealth(vehicle)
+		val engineHealth = Client.getVehicleEngineHealth(vehicle)
+		val petrolTankHealth = Client.getVehiclePetrolTankHealth(vehicle)
+
+		if (bodyHealth == vehicleBodyHealth && engineHealth == vehicleEngineHealth && petrolTankHealth == vehiclePetrolTankHealth) return
+
+		UEvent.emit(
+			PlayersVehicleHealthChanged(
+				bodyHealth = bodyHealth,
+				bodyDiff = bodyHealth - (vehicleBodyHealth ?: bodyHealth),
+
+				engineHealth = engineHealth,
+				engineDiff = engineHealth - (vehicleEngineHealth ?: engineHealth),
+
+				petrolTankHealth = petrolTankHealth,
+				petrolTankDiff = petrolTankHealth - (vehiclePetrolTankHealth ?: petrolTankHealth)
+			)
+		)
+
+		vehicleBodyHealth = bodyHealth
+		vehicleEngineHealth = engineHealth
+		vehiclePetrolTankHealth = petrolTankHealth
+	}
 
 	private fun updateCoordinates(coordinates: Coordinates, rotation: Float) {
 		if (playerCoordinates != coordinates) {
@@ -108,9 +166,9 @@ class EventGenerator : AbstractModule() {
 				if (pair.second != 0.0) {
 					if (pair.second != -1.0) {
 						UEvent.emit(ControlShortPressedEvent(pair.first))
+					} else {
+						UEvent.emit(ControlJustReleasedEvent(pair.first))
 					}
-
-					UEvent.emit(ControlJustReleasedEvent(pair.first))
 
 					pressedKeys[index] = pair.first to 0.0
 				}
@@ -140,8 +198,6 @@ class EventGenerator : AbstractModule() {
 		}
 	}
 
-	private var playerSeatIndex: Int? = null
-
 	private fun checkPlayerSeatIndex(seatIndex: Int?) {
 		if (seatIndex != playerSeatIndex) {
 			when (seatIndex) {
@@ -157,8 +213,6 @@ class EventGenerator : AbstractModule() {
 		}
 	}
 
-	private var pauseMenuState: Int? = null
-
 	private fun checkPauseMenuState(state: Int) {
 		if (pauseMenuState != state) {
 			UEvent.emit(PauseMenuStateChangedEvent(state))
@@ -166,9 +220,6 @@ class EventGenerator : AbstractModule() {
 			pauseMenuState = state
 		}
 	}
-
-	private var audioMusicLevelInMP: Int? =
-		null// = Client.getProfileSetting(ProfileSetting.AUDIO_MUSIC_LEVEL_IN_MP).orZero()
 
 	private fun checkAudioMusicLevelInMP(volume: Int) {
 		if (audioMusicLevelInMP != volume) {
@@ -178,23 +229,26 @@ class EventGenerator : AbstractModule() {
 		}
 	}
 
-	private var isPlayerInVehicle: Boolean? = null// = Player.isInVehicle()
-
 	private fun checkIsPlayerInVehicle(isInVehicle: Boolean) {
-		if (isPlayerInVehicle != isInVehicle) {
-			if (isInVehicle) {
-				UEvent.emit(PlayerJoinVehicleEvent(Client.getPassengerSeatOfPedInVehicle().orZero()))
+		val currentVehicle = if (isInVehicle) Client.getVehiclePedIsUsing(playerPed) else null
+
+		if (currentVehicle != playersVehicle) {
+			playersVehicle = currentVehicle
+
+			UEvent.emit(PlayersVehicleChanged(currentVehicle))
+
+			if (currentVehicle != null) {
+				UEvent.emit(
+					PlayerJoinVehicleEvent(
+						currentVehicle.orZero(),
+						Client.getPassengerSeatOfPedInVehicle().orZero()
+					)
+				)
 			} else {
 				UEvent.emit(PlayerLeftVehicleEvent())
 			}
-
-			UEvent.emit(PlayerLeftOrJoinVehicleEvent())
-
-			isPlayerInVehicle = isInVehicle
 		}
 	}
-
-	private var playerRadioStationName: RadioStation? = null //= Player.getRadioStation()
 
 	private fun checkPlayerRadioStationName(radioStation: RadioStation?) {
 		if (radioStation != playerRadioStationName) {
@@ -204,8 +258,6 @@ class EventGenerator : AbstractModule() {
 			playerRadioStationName = radioStation
 		}
 	}
-
-	private var isPlayerVehicleRadioEnabled: Boolean? = null// = playerRadioStationName != null
 
 	private fun checkIsPlayerRadioEnabled(enabled: Boolean) {
 		if (enabled != isPlayerVehicleRadioEnabled) {

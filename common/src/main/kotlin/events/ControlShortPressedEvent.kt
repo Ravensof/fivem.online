@@ -4,4 +4,4 @@ import online.fivem.common.gtav.NativeControls
 
 class ControlShortPressedEvent(
 	control: NativeControls.Keys
-) : ControlChangedEvent(control, true)
+) : ControlJustReleasedEvent(control)

@@ -3,11 +3,9 @@ package online.fivem.server.modules.clientEventExchanger
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
-import online.fivem.common.common.Console
 import online.fivem.common.common.Serializer
 import online.fivem.common.entities.NetPacket
 import online.fivem.common.entities.PlayerSrc
@@ -63,24 +61,23 @@ class ClientEventExchangerModule : AbstractModule() {
 			}
 		}
 
-		return connectAllClients()
+		return super.start()//waitingForClients()
 	}
 
 	fun getConnectedClients(): List<PlayerSrc> {
 		return playersList.map { PlayerSrc(it.key) }
 	}
 
-	private fun connectAllClients() = GlobalScope.launch {
-		delay(5_000)
-		val players = Natives.getPlayers()
-
-		players.forEach {
-			if (!playersList.containsKey(it.value)) {
-				Console.debug("kick ${it.value}")
+//	private fun waitingForClients() = GlobalScope.launch {
+//		delay(5_000)
+//		val players = Natives.getPlayers()
+//
+//		players.forEach {
+//			if (!playersList.containsKey(it.value)) {
 //				Natives.dropPlayer(it, Strings.CLIENT_WASNT_CONNECT)
-			}
-		}
-	}
+//			}
+//		}
+//	}
 
 	private fun onPlayerDropped(playerId: Int) {
 		playersList.remove(playerId)

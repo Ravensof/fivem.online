@@ -1,6 +1,7 @@
 package online.fivem.client
 
 import online.fivem.client.gtav.Natives
+import online.fivem.client.modules.basics.BasicsModule
 import online.fivem.client.modules.controlManager.ControlManagerModule
 import online.fivem.client.modules.eventGenerator.EventGenerator
 import online.fivem.client.modules.nuiEventExchanger.NuiEvent
@@ -28,6 +29,8 @@ fun start() {
 	ModuleLoader().apply {
 
 		add(NuiEventExchangerModule())//first
+
+		add(BasicsModule())
 
 		add(VehicleModule())
 

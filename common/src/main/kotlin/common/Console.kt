@@ -72,26 +72,6 @@ object Console : Console {
 		}
 	}
 
-	//	fun logWeb(vararg o: Any?) {
-//		if (GlobalConfig.SHOW_CONSOLE_LOG) {
-//			var str = ""
-//			o.forEach {
-//				str += it
-//			}
-//			Event.emit(ConsoleLogWebEvent(str))
-//		}
-//	}
-//
-//	fun warnWeb(vararg o: Any?) {
-//		if (GlobalConfig.SHOW_CONSOLE_LOG) {
-//			var str = ""
-//			o.forEach {
-//				str += it
-//			}
-//			Event.emit(ConsoleWarnWebEvent(str))
-//		}
-//	}
-//
 	@Deprecated("check value")
 	fun <T> checkValue(functionName: String, functionResult: T, showIf: (T) -> Boolean = { true }): T {
 		if (showIf(functionResult)) {

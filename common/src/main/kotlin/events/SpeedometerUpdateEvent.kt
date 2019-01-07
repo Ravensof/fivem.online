@@ -10,9 +10,9 @@ class SpeedometerUpdateEvent(
 	val fuelLevel: Double,
 	val handbrake: Boolean,
 	val oilLevel: Double,
-	val petrolTankHealth: Int,
+	val petrolTankHealth: Double,
 	val turboPressure: Int,
 	val engineRunning: Boolean,
 	val engineOn: Boolean,
-	val engineHealth: Int
+	val engineHealth: Double
 )

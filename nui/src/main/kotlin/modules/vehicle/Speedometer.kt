@@ -43,10 +43,6 @@ class Speedometer : AbstractModule() {
 		}
 	}
 
-	private val body = jQuery("#content").apply {
-		append(speedometerBlock)
-	}
-
 	private var context: dynamic = speedometerCanvas.toHTMLCanvasElement().getContext("2d")
 
 	private val speedometerInterpolatorChannel = Channel<SpeedometerData>(1)
@@ -61,9 +57,6 @@ class Speedometer : AbstractModule() {
 			var stepRPM: Double
 			var stepSpeed: Double
 
-			val tachometerRotatePointX = tachometerArrow.width.toDouble() / 2
-			val speedometerRotatePointY = speedometerArrow.height.toDouble() / 2
-
 			var del: Long = 0
 			var drawingTime: Double
 
@@ -74,8 +67,15 @@ class Speedometer : AbstractModule() {
 				for (i in 1..INTERPOLATION_STEPS) {
 					drawingTime = Date.now()
 					context.clearRect(0, 0, speedometerCanvas.width(), speedometerCanvas.height())
-					drawRotatedImage(tachometerArrow, 105, 102, lastRpm, tachometerRotatePointX, 17.02)
-					drawRotatedImage(speedometerArrow, 291, 182, lastSpeed, 148.0, speedometerRotatePointY)
+					drawRotatedImage(tachometerArrow, 105, 102, lastRpm, tachometerArrow.width.toDouble() / 2, 17.02)
+					drawRotatedImage(
+						speedometerArrow,
+						291,
+						182,
+						lastSpeed,
+						148.0,
+						speedometerArrow.height.toDouble() / 2
+					)
 
 					lastRpm += stepRPM
 					lastSpeed += stepSpeed
@@ -92,6 +92,8 @@ class Speedometer : AbstractModule() {
 	}
 
 	override fun start(): Job? {
+		jQuery("#content").append(speedometerBlock)
+
 		ClientEvent.on<SpeedometerUpdateEvent> {
 			if (speedometerInterpolatorChannel.isFull) return@on
 

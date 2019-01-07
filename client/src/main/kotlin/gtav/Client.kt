@@ -89,6 +89,9 @@ object Client {
 		return GetEntityForwardY(entity)
 	}
 
+	/**
+	 * 0.0-360.0 degrees
+	 */
 	fun getEntityHeading(entity: Int): Float {
 		return GetEntityHeading(entity)
 	}
@@ -138,8 +141,8 @@ object Client {
 		return GetVehicleOilLevel(vehicle).toDouble()
 	}
 
-	fun getVehiclePetrolTankHealth(vehicle: Int): Int {
-		return GetVehiclePetrolTankHealth(vehicle)
+	fun getVehiclePetrolTankHealth(vehicle: Int): Double {
+		return GetVehiclePetrolTankHealth(vehicle).toDouble()
 	}
 
 	fun getVehicleTurboPressure(vehicle: Int): Int {
@@ -163,8 +166,8 @@ object Client {
 	 * 300: Engine is smoking and losing functionality
 	 * 1000: Engine is perfect
 	 */
-	fun getVehicleEngineHealth(vehicle: Int): Int {
-		return GetVehicleEngineHealth(vehicle)
+	fun getVehicleEngineHealth(vehicle: Int): Double {
+		return GetVehicleEngineHealth(vehicle).toDouble()
 	}
 
 	fun getEntitySpeed(entity: Int): Double {
@@ -222,7 +225,7 @@ object Client {
 	/**
 	 * max level 1
 	 */
-	fun setVehicleOilLevel(vehicle: Int, level: Double) {
+	fun setVehicleOilLevel(vehicle: Int, level: Number) {
 		SetVehicleOilLevel(vehicle, level)
 	}
 
@@ -334,6 +337,26 @@ object Client {
 
 	fun setNuiFocus(hasFocus: Boolean, hasCursor: Boolean) {
 		SetNuiFocus(hasFocus, hasCursor)
+	}
+
+//	fun loadResourceFile(resourceName: String = GlobalConfig.MODULE_NAME, fileName: String): String {
+//		return LoadResourceFile(resourceName, fileName)
+//	}
+
+	fun doScreenFadeIn(duration: Int) {
+		DoScreenFadeIn(duration)
+	}
+
+	fun doScreenFadeOut(duration: Int) {
+		DoScreenFadeOut(duration)
+	}
+
+	fun isScreenFadedOut(): Boolean {
+		return IsScreenFadedOut() == 1
+	}
+
+	fun getVehicleBodyHealth(vehicle: Int): Int {
+		return GetVehicleBodyHealth(vehicle).toInt()
 	}
 }
 
@@ -3252,13 +3275,13 @@ private external fun DisableControlAction(inputGroup: Int, control: Int, disable
  * Fades the screen in.
  * duration: The time the fade should take, in milliseconds.
  */
-//private external fun DoScreenFadeIn(duration: number)
+private external fun DoScreenFadeIn(duration: Int)
 
 /**
  * Fades the screen out.
  * duration: The time the fade should take, in milliseconds.
  */
-//private external fun DoScreenFadeOut(duration: number)
+private external fun DoScreenFadeOut(duration: Int)
 
 //private external fun DoesAnimDictExist(animDict: string): number;
 
@@ -7984,7 +8007,7 @@ private external fun GetResourceMetadata(
  * Max 1000, min 0.
  * Vehicle does not necessarily explode or become undrivable at 0.
  */
-//private external fun GetVehicleBodyHealth(vehicle: number): number;
+private external fun GetVehicleBodyHealth(vehicle: Int): Number
 
 /**
  * 0 min 100 max
@@ -8140,7 +8163,7 @@ private external fun GetVehicleDashboardSpeed(vehicle: Int): Double
  * 300: Engine is smoking and losing functionality
  * 1000: Engine is perfect
  */
-private external fun GetVehicleEngineHealth(vehicle: Int): Int
+private external fun GetVehicleEngineHealth(vehicle: Int): Number
 
 private external fun GetVehicleEngineTemperature(vehicle: Int): Int
 
@@ -8473,7 +8496,7 @@ private external fun GetVehicleNumberPlateText(vehicle: Int): String?
  */
 //private external fun GetVehicleNumberPlateTextIndex(elegy: number): number;
 
-private external fun GetVehicleOilLevel(vehicle: Int): Float
+private external fun GetVehicleOilLevel(vehicle: Int): Number
 
 /**
  * The resulting entity can be a Vehicle or Ped.
@@ -8506,7 +8529,7 @@ private external fun GetVehiclePedIsUsing(ped: Int): Int
  * 1000 is max health
  * Begins leaking gas at around 650 health
  */
-private external fun GetVehiclePetrolTankHealth(vehicle: Int): Int
+private external fun GetVehiclePetrolTankHealth(vehicle: Int): Number
 
 //private external fun GetVehiclePlateType(vehicle: number): number;
 
@@ -10384,7 +10407,7 @@ private external fun IsDisabledControlPressed(inputGroup: Int, control: Int): In
 
 //private external fun IsScreenFadedIn(): number;
 
-//private external fun IsScreenFadedOut(): number;
+private external fun IsScreenFadedOut(): Any
 
 //private external fun IsScreenFadingIn(): number;
 
@@ -10930,7 +10953,7 @@ private external fun IsDisabledControlPressed(inputGroup: Int, control: Int): In
  * @param fileName The file in the resource.
  * @return The file contents
  */
-//private external fun LoadResourceFile(resourceName: string, fileName: string): string;
+private external fun LoadResourceFile(resourceName: String, fileName: String): String
 
 /**
  * Rope presets can be found in the gamefiles. One example is "ropeFamily3", it is NOT a hash but rather a string.
@@ -25695,7 +25718,7 @@ private external fun SetVehicleFuelLevel(vehicle: Int, level: Double)
  */
 //private external fun SetVehicleNumberPlateTextIndex(vehicle: number, plateIndex: number)
 
-private external fun SetVehicleOilLevel(vehicle: Int, level: Double)
+private external fun SetVehicleOilLevel(vehicle: Int, level: Number)
 
 /**
  * Sets a vehicle on the ground on all wheels.  Returns whether or not the operation was successful.

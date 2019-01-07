@@ -11,6 +11,7 @@ class VehicleModule : AbstractModule() {
 		return GlobalScope.launch {
 			InternetRadio().start()?.join()
 			Speedometer().start()?.join()
+			BlackOut().start()?.join()
 		}
 	}
 }

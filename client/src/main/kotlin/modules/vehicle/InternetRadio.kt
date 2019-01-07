@@ -23,11 +23,6 @@ class InternetRadio : AbstractModule() {
 
 	private var currentRadio: InternetRadioStation? = getInternetRadioStation(Player.getRadioStation())
 
-	private var isPlaying: Boolean = false
-		get() {
-			return currentRadio != null
-		}
-
 	override fun start(): Job? {
 		UEvent.on<PlayerRadioStationChangedEvent> {
 			onPlayerVehicleRadioStationChanged(it.radioStation)
@@ -46,14 +41,14 @@ class InternetRadio : AbstractModule() {
 
 	fun playRadio(radio: InternetRadioStation) {
 		currentRadio = radio
-		toggleCustomRadioBehavior()
+		muteNativeRadio(true)
 
 		NuiEvent.emit(InternetRadioChangedEvent(radio))
 	}
 
 	fun stopRadio() {
 		currentRadio = null
-		toggleCustomRadioBehavior()
+		muteNativeRadio(false)
 
 		NuiEvent.emit(InternetRadioStopEvent())
 	}
@@ -83,10 +78,10 @@ class InternetRadio : AbstractModule() {
 		return Client.getProfileSetting(ProfileSetting.AUDIO_MUSIC_LEVEL_IN_MP).orZero()
 	}
 
-	private fun toggleCustomRadioBehavior() {
-		Client.setFrontendRadioActive(!isPlaying)
+	private fun muteNativeRadio(mute: Boolean) {
+		Client.setFrontendRadioActive(!mute)
 
-		if (isPlaying) {
+		if (mute) {
 			Client.startAudioScene(NativeScenes.DLC_MPHEIST_TRANSITION_TO_APT_FADE_IN_RADIO_SCENE.name)
 		} else {
 			Client.stopAudioScene(NativeScenes.DLC_MPHEIST_TRANSITION_TO_APT_FADE_IN_RADIO_SCENE.name)

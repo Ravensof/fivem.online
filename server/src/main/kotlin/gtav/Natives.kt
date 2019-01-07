@@ -16,6 +16,10 @@ object Natives {
 		return GetRegisteredCommands()
 	}
 
+//	fun registerCommand(commandName: String, restricted: Boolean = false, handler: (Int, Any, String)->Unit) {
+//		Exports.registerCommand(commandName, restricted, handler)
+//	}
+
 	fun loadResourceFile(resourceName: String, fileName: String): String? {
 		return LoadResourceFile(resourceName, fileName)
 	}
@@ -346,7 +350,7 @@ private external fun SetConvar(varName: String, value: String)
  * Axis - Invert Axis Flags
  */
 private external fun SetEntityCoords(
-	entity: Float,
+	entity: Double,
 	xPos: Float,
 	yPos: Float,
 	zPos: Float,

@@ -10,20 +10,24 @@ object Natives {
 	fun emitNet(eventName: String, data: Any) {
 		Exports.emitNet(eventName, data)
 	}
+
+//	fun <T>invokeNative(hash: String,vararg args: InputArgument): T {
+//		return Citizen.invokeNative(hash, *args)
+//	}
 }
 
-//external interface IntPtrInitialized
-//external interface FloatPtrInitialized
-//external interface IntPtr
-//external interface FloatPtr
-//external interface VectorPtr
-//external interface ReturnResultAnyway
-//external interface ResultAsInteger
-//external interface ResultAsFloat
-//external interface ResultAsString
-//external interface ResultAsVector
+//private external interface IntPtrInitialized
+//private external interface FloatPtrInitialized
+//private external interface IntPtr
+//private external interface FloatPtr
+//private external interface VectorPtr
+//private external interface ReturnResultAnyway
+//private external interface ResultAsInteger
+//private external interface ResultAsFloat
+//private external interface ResultAsString
+//private external interface ResultAsVector
 //
-//typealias InputArgument = String
+//private typealias InputArgument = Any
 //
 ////string |
 ////number |
@@ -38,7 +42,7 @@ object Natives {
 ////ResultAsString |
 ////ResultAsVector;
 //
-//external interface CitizenInterface {
+//private external interface CitizenInterface {
 //	fun trace(vararg args: Array<String>)
 //	fun setTickFunction(callback: () -> Unit)
 //	fun setEventFunction(callback: () -> Unit)
@@ -68,7 +72,7 @@ object Natives {
 //	fun makeRefFunction(refFunction: () -> Unit): String
 //}
 //
-//external val Citizen: CitizenInterface
+//private external val Citizen: CitizenInterface
 
 private external fun on(eventName: String, callback: Any)
 

@@ -2,6 +2,7 @@ package online.fivem.nui
 
 import online.fivem.common.common.Console
 import online.fivem.common.common.ModuleLoader
+import online.fivem.nui.modules.basics.BasicsModule
 import online.fivem.nui.modules.clientEventEchanger.ClientEventExchangerModule
 import online.fivem.nui.modules.loadingScreen.LoadingScreenModule
 import online.fivem.nui.modules.vehicle.VehicleModule
@@ -11,7 +12,7 @@ internal fun main() {
 
 	ModuleLoader().apply {
 
-		add(LoadingScreenModule())
+		add(BasicsModule())
 
 		add(VehicleModule())
 

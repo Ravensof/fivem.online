@@ -7,17 +7,7 @@ object GlobalConfig {
 	const val RESOURCES_HTTP_HOME = "http://fivem.online/nui/resources/main/"
 	const val MODULE_NAME = "fivem-online"
 	const val MAX_PLAYERS = 32
-
-	const val CONSOLE_PREFIX = "$MODULE_NAME/"
-	const val SHOW_CONSOLE_ERROR = true
-	const val SHOW_CONSOLE_INFO = true
-	const val SHOW_CONSOLE_WARN = true
-	const val SHOW_CONSOLE_DEBUG = true
-	const val SHOW_CONSOLE_LOG = true
-
-	const val NUI_EVENT_NAME = "nui"
-	const val NET_EVENT_NAME = "net"
-	const val NET_EVENT_ESTABLISHING_NAME = "establishing"
+	const val APP_VERSION = 190107
 
 	val internetRadioStations = mapOf(
 		//		RadioStations.RADIO_01_CLASS_ROCK.name to RadioStation(),  // Los Santos Rock Radio
@@ -42,4 +32,22 @@ object GlobalConfig {
 //		RadioStations.RADIO_18_90S_ROCK.name to RadioStation(),    // Vinewood Boulevard Radio
 //		RadioStations.RADIO_20_THELAB.name to RadioStation(),      // The Lab
 	)
+
+	object BlackOut {
+		const val blackOutTime: Long = 2_000
+		const val blackOutFromDamage: Boolean = true
+		const val blackoutDamageRequired: Int = 25
+	}
+
+	const val SHOW_CONSOLE_ERROR = true
+	const val SHOW_CONSOLE_INFO = true
+	const val SHOW_CONSOLE_WARN = true
+	const val SHOW_CONSOLE_DEBUG = true
+	const val SHOW_CONSOLE_LOG = true
+
+	const val CONSOLE_PREFIX = "$MODULE_NAME/"
+
+	const val NUI_EVENT_NAME = "nui"
+	const val NET_EVENT_NAME = "net"
+	const val NET_EVENT_ESTABLISHING_NAME = "establishing"
 }
