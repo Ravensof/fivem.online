@@ -9,8 +9,8 @@ import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Serializer
 import online.fivem.common.entities.NetPacket
 import online.fivem.common.entities.PlayerSrc
-import online.fivem.common.events.EstablishConnection
-import online.fivem.common.events.ImReady
+import online.fivem.common.events.EstablishConnectionEvent
+import online.fivem.common.events.ImReadyEvent
 import online.fivem.common.extensions.onNull
 import online.fivem.common.gtav.NativeEvents
 import online.fivem.server.Strings
@@ -40,7 +40,7 @@ class ClientEventExchangerModule : AbstractModule() {
 		Natives.onNet(GlobalConfig.NET_EVENT_ESTABLISHING_NAME) { playerSrc: PlayerSrc, netPacket: Any ->
 			@Suppress("NAME_SHADOWING") val netPacket = Serializer.unpack<NetPacket>(netPacket)
 
-			if (netPacket.data !is ImReady) return@onNet Natives.dropPlayer(
+			if (netPacket.data !is ImReadyEvent) return@onNet Natives.dropPlayer(
 				playerSrc,
 				Strings.CLIENT_WRONG_PACKET_FORMAT
 			)
@@ -92,7 +92,7 @@ class ClientEventExchangerModule : AbstractModule() {
 		val key = Random.nextDouble()
 
 		playersList[playerSrc.value] = key
-		emit(playerSrc.value, EstablishConnection(key))
+		emit(playerSrc.value, EstablishConnectionEvent(key))
 	}
 
 	private fun emit(playerSrc: Int, data: Any) {

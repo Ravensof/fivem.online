@@ -1,3 +1,3 @@
 package online.fivem.common.events
 
-class PlayerSpawned
+class PlayerSpawnedEvent

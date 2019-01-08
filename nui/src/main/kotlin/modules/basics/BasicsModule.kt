@@ -8,7 +8,7 @@ import kotlinx.coroutines.launch
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Html
 import online.fivem.common.events.DebugNUITextEvent
-import online.fivem.common.events.HideLoadingScreen
+import online.fivem.common.events.HideLoadingScreenEvent
 import online.fivem.common.events.ShowGuiEvent
 import online.fivem.nui.modules.clientEventEchanger.ClientEvent
 import kotlin.js.Date
@@ -22,7 +22,7 @@ class BasicsModule : AbstractModule() {
 
 		ClientEvent.on<ShowGuiEvent> { showGui(it.show) }
 		ClientEvent.on<DebugNUITextEvent> { onConsoleLogWeb(it.text) }
-		ClientEvent.on<HideLoadingScreen> { loadingScreenBlock.hide() }
+		ClientEvent.on<HideLoadingScreenEvent> { loadingScreenBlock.hide() }
 
 		return super.start()
 	}

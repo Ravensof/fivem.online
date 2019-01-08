@@ -12,7 +12,7 @@ import online.fivem.client.modules.vehicle.VehicleModule
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.Console
 import online.fivem.common.common.ModuleLoader
-import online.fivem.common.events.HideLoadingScreen
+import online.fivem.common.events.HideLoadingScreenEvent
 import online.fivem.common.gtav.NativeEvents
 
 internal fun main(args: Array<String>) {
@@ -44,7 +44,7 @@ fun start() {
 		add(Test())
 
 		finally {
-			NuiEvent.emit(HideLoadingScreen())
+			NuiEvent.emit(HideLoadingScreenEvent())
 
 			Console.log("all modules loaded")
 		}

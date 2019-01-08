@@ -8,7 +8,7 @@ import online.fivem.client.gtav.Client
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.UEvent
 import online.fivem.common.entities.CoordinatesX
-import online.fivem.common.events.PlayerSpawned
+import online.fivem.common.events.PlayerSpawnedEvent
 
 class SpawnManager : AbstractModule() {
 
@@ -64,7 +64,7 @@ class SpawnManager : AbstractModule() {
 
 				freezePlayer(playerId, false)
 
-				UEvent.emit(PlayerSpawned())
+				UEvent.emit(PlayerSpawnedEvent())
 
 				callback()
 			}

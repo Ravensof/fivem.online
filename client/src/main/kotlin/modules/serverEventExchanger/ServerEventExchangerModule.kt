@@ -8,8 +8,8 @@ import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
 import online.fivem.common.common.Serializer
 import online.fivem.common.entities.NetPacket
-import online.fivem.common.events.EstablishConnection
-import online.fivem.common.events.ImReady
+import online.fivem.common.events.EstablishConnectionEvent
+import online.fivem.common.events.ImReadyEvent
 
 class ServerEventExchangerModule : AbstractModule() {
 
@@ -32,8 +32,8 @@ class ServerEventExchangerModule : AbstractModule() {
 			}
 		}
 
-		ServerEvent.on<EstablishConnection> {
-			ServerEvent.emit(ImReady())
+		ServerEvent.on<EstablishConnectionEvent> {
+			ServerEvent.emit(ImReadyEvent())
 			GlobalScope.launch { pauseChannel.send(true) }
 			key = it.key
 		}
@@ -65,7 +65,7 @@ class ServerEventExchangerModule : AbstractModule() {
 	}
 
 	private fun startHandshaking() {
-		Natives.emitNet(GlobalConfig.NET_EVENT_ESTABLISHING_NAME, Serializer.prepare(NetPacket(data = ImReady())))
+		Natives.emitNet(GlobalConfig.NET_EVENT_ESTABLISHING_NAME, Serializer.prepare(NetPacket(data = ImReadyEvent())))
 	}
 
 	companion object {

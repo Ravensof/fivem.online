@@ -9,7 +9,7 @@ import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Serializer
 import online.fivem.common.entities.NuiPacket
-import online.fivem.common.events.ImReady
+import online.fivem.common.events.ImReadyEvent
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.EventListener
 import kotlin.browser.window
@@ -21,7 +21,7 @@ class ClientEventExchangerModule : AbstractModule(), EventListener {
 
 		val channel = Channel<Unit>()
 
-		ClientEvent.on<ImReady> {
+		ClientEvent.on<ImReadyEvent> {
 			GlobalScope.launch {
 				channel.send(Unit)
 			}
@@ -34,7 +34,7 @@ class ClientEventExchangerModule : AbstractModule(), EventListener {
 		}
 
 		return GlobalScope.launch {
-			ClientEvent.emit(ImReady())
+			ClientEvent.emit(ImReadyEvent())
 
 			channel.receive()
 			channel.close()

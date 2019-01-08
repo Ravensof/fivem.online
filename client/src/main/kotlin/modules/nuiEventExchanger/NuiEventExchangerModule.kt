@@ -10,7 +10,7 @@ import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Serializer
 import online.fivem.common.entities.NuiPacket
-import online.fivem.common.events.ImReady
+import online.fivem.common.events.ImReadyEvent
 
 class NuiEventExchangerModule : AbstractModule() {
 	override fun start(): Job? {
@@ -33,7 +33,7 @@ class NuiEventExchangerModule : AbstractModule() {
 
 		val channel = Channel<Unit>()
 
-		NuiEvent.on<ImReady> {
+		NuiEvent.on<ImReadyEvent> {
 			GlobalScope.launch {
 				channel.send(Unit)
 			}
@@ -42,7 +42,7 @@ class NuiEventExchangerModule : AbstractModule() {
 		return GlobalScope.launch {
 			channel.receive()
 			channel.close()
-			NuiEvent.emit(ImReady())
+			NuiEvent.emit(ImReadyEvent())
 		}
 	}
 
