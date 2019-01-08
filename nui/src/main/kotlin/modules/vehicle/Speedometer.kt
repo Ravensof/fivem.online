@@ -156,6 +156,6 @@ class Speedometer : AbstractModule() {
 		private const val SPEEDOMETER_CANVAS = "speedometer_canvas"
 
 		private const val TO_RADIANS = kotlin.math.PI / 180
-		private const val INTERPOLATION_STEPS = 20
+		private const val INTERPOLATION_STEPS = 10
 	}
 }

@@ -7,7 +7,6 @@ import online.fivem.client.modules.nuiEventExchanger.NuiEvent
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.UEvent
 import online.fivem.common.events.*
-import online.fivem.common.extensions.orZero
 
 class Speedometer : AbstractModule() {
 
@@ -15,6 +14,7 @@ class Speedometer : AbstractModule() {
 	private var updateJob: Job? = null
 
 	override fun start(): Job? {
+
 		UEvent.on<PlayerGetInDriversSeatEvent> {
 			onPlayerJoinVehicle()
 		}
@@ -24,7 +24,8 @@ class Speedometer : AbstractModule() {
 	}
 
 	private fun updateJob(): Job = GlobalScope.launch {
-		val vehicle = Client.getVehiclePedIsUsing(Player.getPed().orZero())
+		val ped = Player.getPed() ?: return@launch
+		val vehicle = Client.getVehiclePedIsUsing(ped) ?: return@launch
 
 		while (isActive) {
 			if (!vehicleHasSpeedo && Client.getVehicleDashboardSpeed(vehicle) > 0) {
@@ -57,14 +58,12 @@ class Speedometer : AbstractModule() {
 
 	private fun onPlayerJoinVehicle() {
 		updateJob = updateJob()
-//		Client.setVehicleFuelLevel(vehicle, 65.0)
-//		Client.setVehicleOilLevel(vehicle, 0.0)
 	}
 
 	private fun onPlayerLeftVehicle() {
-		NuiEvent.emit(SpeedometerDisableEvent())
 		updateJob?.cancel()
 		vehicleHasSpeedo = false
+		NuiEvent.emit(SpeedometerDisableEvent())
 	}
 
 	companion object {

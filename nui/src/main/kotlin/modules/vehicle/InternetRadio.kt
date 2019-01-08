@@ -2,7 +2,6 @@ package online.fivem.nui.modules.vehicle
 
 import kotlinx.coroutines.Job
 import online.fivem.common.common.AbstractModule
-import online.fivem.common.common.Console
 import online.fivem.common.common.Html
 import online.fivem.common.entities.InternetRadioStation
 import online.fivem.common.events.InternetRadioChangedEvent
@@ -75,7 +74,7 @@ class InternetRadio : AbstractModule() {
 			},
 			onloaderror = {
 				if (attemptsLeft-- > 0) {
-					Console.warn("error loading radio, try again..")
+					howler?.unload()
 					howler = Howl(options!!)
 				}
 			}
@@ -91,6 +90,6 @@ class InternetRadio : AbstractModule() {
 
 	companion object {
 		private val NOISE_RESOURCE = Html.nuiLink("radio/noise.mp3")
-		private const val MAX_RECONNECTING_ATTEMPTS = 100
+		private const val MAX_RECONNECTING_ATTEMPTS = 5000
 	}
 }

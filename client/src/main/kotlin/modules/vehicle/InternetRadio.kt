@@ -2,7 +2,6 @@ package online.fivem.client.modules.vehicle
 
 import kotlinx.coroutines.Job
 import online.fivem.client.gtav.Client
-import online.fivem.client.gtav.Player
 import online.fivem.client.modules.nuiEventExchanger.NuiEvent
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
@@ -11,7 +10,7 @@ import online.fivem.common.entities.InternetRadioStation
 import online.fivem.common.events.*
 import online.fivem.common.extensions.onNull
 import online.fivem.common.extensions.orZero
-import online.fivem.common.gtav.NativeScenes
+import online.fivem.common.gtav.NativeAudioScenes
 import online.fivem.common.gtav.ProfileSetting
 import online.fivem.common.gtav.RadioStation
 
@@ -21,12 +20,8 @@ class InternetRadio : AbstractModule() {
 
 	private val radioStationList = GlobalConfig.internetRadioStations
 
-	private var currentRadio: InternetRadioStation? = getInternetRadioStation(Player.getRadioStation())
-
 	override fun start(): Job? {
-		UEvent.on<PlayerRadioStationChangedEvent> {
-			onPlayerVehicleRadioStationChanged(it.radioStation)
-		}
+		UEvent.on<PlayerRadioStationChangedEvent> { onPlayerVehicleRadioStationChanged(it.radioStation) }
 
 		UEvent.on<AudioMusicLevelInMPChangedEvent> {
 			onSettingsMusicLevelChanged(it.value)
@@ -34,20 +29,16 @@ class InternetRadio : AbstractModule() {
 
 		NuiEvent.emit(InternetRadioVolumeChangeEvent(this@InternetRadio.volume))
 
-		currentRadio?.let { playRadio(it) }
-
 		return super.start()
 	}
 
 	fun playRadio(radio: InternetRadioStation) {
-		currentRadio = radio
 		muteNativeRadio(true)
 
 		NuiEvent.emit(InternetRadioChangedEvent(radio))
 	}
 
 	fun stopRadio() {
-		currentRadio = null
 		muteNativeRadio(false)
 
 		NuiEvent.emit(InternetRadioStopEvent())
@@ -82,9 +73,9 @@ class InternetRadio : AbstractModule() {
 		Client.setFrontendRadioActive(!mute)
 
 		if (mute) {
-			Client.startAudioScene(NativeScenes.DLC_MPHEIST_TRANSITION_TO_APT_FADE_IN_RADIO_SCENE.name)
+			Client.startAudioScene(NativeAudioScenes.DLC_MPHEIST_TRANSITION_TO_APT_FADE_IN_RADIO_SCENE.name)
 		} else {
-			Client.stopAudioScene(NativeScenes.DLC_MPHEIST_TRANSITION_TO_APT_FADE_IN_RADIO_SCENE.name)
+			Client.stopAudioScene(NativeAudioScenes.DLC_MPHEIST_TRANSITION_TO_APT_FADE_IN_RADIO_SCENE.name)
 		}
 	}
 
