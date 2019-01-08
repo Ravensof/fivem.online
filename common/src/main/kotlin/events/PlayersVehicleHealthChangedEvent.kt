@@ -1,6 +1,6 @@
 package online.fivem.common.events
 
-class PlayersVehicleHealthChanged(
+class PlayersVehicleHealthChangedEvent(
 	val bodyHealth: Int,
 	val bodyDiff: Int,
 
@@ -8,5 +8,8 @@ class PlayersVehicleHealthChanged(
 	val engineDiff: Double,
 
 	val petrolTankHealth: Double,
-	val petrolTankDiff: Double
+	val petrolTankDiff: Double,
+
+	val pedHealth: Int,
+	val pedDiff: Int
 )

@@ -4,7 +4,7 @@ import online.fivem.common.common.Console
 import online.fivem.common.common.ModuleLoader
 import online.fivem.nui.modules.basics.BasicsModule
 import online.fivem.nui.modules.clientEventEchanger.ClientEventExchangerModule
-import online.fivem.nui.modules.loadingScreen.LoadingScreenModule
+import online.fivem.nui.modules.test.Test
 import online.fivem.nui.modules.vehicle.VehicleModule
 
 internal fun main() {
@@ -16,9 +16,9 @@ internal fun main() {
 
 		add(VehicleModule())
 
-		add(ClientEventExchangerModule())//last
+		add(Test())
 
-//		add(Test())
+		add(ClientEventExchangerModule())//last
 
 		finally {
 			Console.log("all modules loaded")

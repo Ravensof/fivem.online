@@ -1,3 +1,5 @@
 package online.fivem.common.events
 
-class PlayerVehicleRadioEnabledEvent : PlayerVehicleRadioToggledEvent(true)
+import online.fivem.common.gtav.RadioStation
+
+class PlayerVehicleRadioEnabledEvent(val radioStation: RadioStation) : PlayerVehicleRadioToggledEvent(true)

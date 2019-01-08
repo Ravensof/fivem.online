@@ -3,13 +3,19 @@
 package online.fivem.client.gtav
 
 import online.fivem.common.common.Console
+import online.fivem.common.common.Entity
 import online.fivem.common.entities.Coordinates
+import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.entities.Time
-import online.fivem.common.extensions.orZero
 import online.fivem.common.gtav.NativeControls
 import online.fivem.common.gtav.ProfileSetting
+import online.fivem.common.gtav.RadioStation
 
 object Client {
+
+	fun getHashKey(string: String): Number {
+		return GetHashKey(string)
+	}
 
 	fun startAudioScene(scene: String): Boolean {
 		return StartAudioScene(scene) == 1
@@ -31,6 +37,10 @@ object Client {
 		val jsonString = JSON.stringify(obj)
 
 		return SendNuiMessage(jsonString) == 1
+	}
+
+	fun sendLoadingScreenMessage(obj: Any): Boolean {
+		return SendLoadingScreenMessage(JSON.stringify(obj)) == 1
 	}
 
 	fun registerNuiCallbackType(callbackType: String) {
@@ -63,7 +73,7 @@ object Client {
 		return GetNumResourceMetadata(resourceName, metadataKey)
 	}
 
-	fun getEntityCoords(entity: Int, alive: Boolean = true): Coordinates? {
+	fun getEntityCoords(entity: Entity, alive: Boolean = true): Coordinates? {
 		val coords = GetEntityCoords(entity, alive)
 
 		val x = coords[0]
@@ -77,55 +87,55 @@ object Client {
 		return Coordinates(x, y, z)
 	}
 
-	fun getEntityForwardVector(entity: Int): Array<Float> {
+	fun getEntityForwardVector(entity: Entity): Array<Float> {
 		return GetEntityForwardVector(entity)
 	}
 
-	fun getEntityForwardX(entity: Int): Float {
+	fun getEntityForwardX(entity: Entity): Float {
 		return GetEntityForwardX(entity)
 	}
 
-	fun getEntityForwardY(entity: Int): Float {
+	fun getEntityForwardY(entity: Entity): Float {
 		return GetEntityForwardY(entity)
 	}
 
 	/**
 	 * 0.0-360.0 degrees
 	 */
-	fun getEntityHeading(entity: Int): Float {
+	fun getEntityHeading(entity: Entity): Float {
 		return GetEntityHeading(entity)
 	}
 
 
-	fun getVehiclePedIsUsing(ped: Int): Int {
-		return GetVehiclePedIsUsing(ped)
+	fun getVehiclePedIsUsing(ped: Entity): Int? {
+		return GetVehiclePedIsUsing(ped).takeIf { it != 0 }
 	}
 
-	fun getVehicleCurrentGear(vehicle: Int): Int {
+	fun getVehicleCurrentGear(vehicle: Entity): Int {
 		return GetVehicleCurrentGear(vehicle)
 	}
 
-	fun getVehicleCurrentRpm(vehicle: Int): Double {
+	fun getVehicleCurrentRpm(vehicle: Entity): Double {
 		return GetVehicleCurrentRpm(vehicle)
 	}
 
-	fun getVehicleDashboardSpeed(vehicle: Int): Double {
+	fun getVehicleDashboardSpeed(vehicle: Entity): Double {
 		return GetVehicleDashboardSpeed(vehicle)
 	}
 
-	fun getVehicleEngineTemperature(vehicle: Int): Int {
+	fun getVehicleEngineTemperature(vehicle: Entity): Int {
 		return GetVehicleEngineTemperature(vehicle)
 	}
 
-	fun getVehicleFuelLevel(vehicle: Int): Double {
+	fun getVehicleFuelLevel(vehicle: Entity): Double {
 		return GetVehicleFuelLevel(vehicle).toDouble()
 	}
 
-	fun getVehicleHandbrake(vehicle: Int): Boolean {
+	fun getVehicleHandbrake(vehicle: Entity): Boolean {
 		return GetVehicleHandbrake(vehicle) == 1
 	}
 
-	fun getVehicleIndexFromEntityIndex(entity: Int): Int {
+	fun getVehicleIndexFromEntityIndex(entity: Entity): Int {
 		return GetVehicleIndexFromEntityIndex(entity)
 	}
 
@@ -133,27 +143,27 @@ object Client {
 //		return GetVehicleNextGear(vehicle)
 //	}
 
-	fun getVehicleNumberPlateText(vehicle: Int): String? {
+	fun getVehicleNumberPlateText(vehicle: Entity): String? {
 		return GetVehicleNumberPlateText(vehicle)
 	}
 
-	fun getVehicleOilLevel(vehicle: Int): Double {
+	fun getVehicleOilLevel(vehicle: Entity): Double {
 		return GetVehicleOilLevel(vehicle).toDouble()
 	}
 
-	fun getVehiclePetrolTankHealth(vehicle: Int): Double {
+	fun getVehiclePetrolTankHealth(vehicle: Entity): Double {
 		return GetVehiclePetrolTankHealth(vehicle).toDouble()
 	}
 
-	fun getVehicleTurboPressure(vehicle: Int): Int {
+	fun getVehicleTurboPressure(vehicle: Entity): Int {
 		return GetVehicleTurboPressure(vehicle)
 	}
 
-	fun getIsVehicleEngineRunning(vehicle: Int): Boolean {
+	fun getIsVehicleEngineRunning(vehicle: Entity): Boolean {
 		return GetIsVehicleEngineRunning(vehicle) == 1
 	}
 
-	fun isVehicleEngineOn(vehicle: Int): Boolean {
+	fun isVehicleEngineOn(vehicle: Entity): Boolean {
 		return IsVehicleEngineOn(vehicle) == 1
 	}
 
@@ -166,11 +176,11 @@ object Client {
 	 * 300: Engine is smoking and losing functionality
 	 * 1000: Engine is perfect
 	 */
-	fun getVehicleEngineHealth(vehicle: Int): Double {
+	fun getVehicleEngineHealth(vehicle: Entity): Double {
 		return GetVehicleEngineHealth(vehicle).toDouble()
 	}
 
-	fun getEntitySpeed(entity: Int): Double {
+	fun getEntitySpeed(entity: Entity): Double {
 		return GetEntitySpeed(entity)
 	}
 
@@ -182,14 +192,14 @@ object Client {
 //		return getEntitySpeed(entity) * 2.236936
 //	}
 
-	fun getPedInVehicleSeat(vehicle: Int, index: Int): Int {//todo check
+	fun getPedInVehicleSeat(vehicle: Entity, index: Int): Entity {//todo check
 		return GetPedInVehicleSeat(vehicle, index)
 	}
 
 	/**
 	 * количество ПАССАЖИРСКИХ мест в машине
 	 */
-	fun getVehicleMaxNumberOfPassengers(vehicle: Int): Int {//todo check
+	fun getVehicleMaxNumberOfPassengers(vehicle: Entity): Int {
 		return GetVehicleMaxNumberOfPassengers(vehicle)
 	}
 
@@ -199,7 +209,7 @@ object Client {
 	 * 1 позади водителя
 	 * 2 ...
 	 */
-	fun getPassengerSeatOfPedInVehicle(vehicle: Int, ped: Int): Int? {
+	fun getPassengerSeatOfPedInVehicle(vehicle: Entity, ped: Entity): Int? {
 		for (i in -1 until getVehicleMaxNumberOfPassengers(vehicle)) {
 			if (getPedInVehicleSeat(vehicle, i) == ped) {
 				return i
@@ -210,22 +220,23 @@ object Client {
 	}
 
 	fun getPassengerSeatOfPedInVehicle(): Int? {
-		val ped = Player.getPed().orZero()
+		val ped = Client.getPlayerPed() ?: return null
+		val vehicle = getVehiclePedIsUsing(ped) ?: return null
 
-		return getPassengerSeatOfPedInVehicle(getVehiclePedIsUsing(ped), ped)
+		return getPassengerSeatOfPedInVehicle(vehicle, ped)
 	}
 
 	/**
 	 * max level 65
 	 */
-	fun setVehicleFuelLevel(vehicle: Int, level: Double) {
+	fun setVehicleFuelLevel(vehicle: Entity, level: Number) {
 		SetVehicleFuelLevel(vehicle, level)
 	}
 
 	/**
 	 * max level 1
 	 */
-	fun setVehicleOilLevel(vehicle: Int, level: Number) {
+	fun setVehicleOilLevel(vehicle: Entity, level: Number) {
 		SetVehicleOilLevel(vehicle, level)
 	}
 
@@ -298,7 +309,7 @@ object Client {
 		return GetPauseMenuState()
 	}
 
-	fun getDistanceBetweenCoords(coords1: Coordinates, coords2: Coordinates, useZ: Boolean = true): Float {
+	fun getDistanceBetweenCoords(coords1: Coordinates, coords2: Coordinates, useZ: Boolean = true): Number {
 		return GetDistanceBetweenCoords(coords1.x, coords1.y, coords1.z, coords2.x, coords2.y, coords2.z, useZ)
 	}
 
@@ -331,7 +342,7 @@ object Client {
 		return IsDisabledControlPressed(inputGroup.index, control.index) == 1
 	}
 
-	fun getEntityHeightAboveGround(entity: Int): Float {
+	fun getEntityHeightAboveGround(entity: Entity): Float {
 		return GetEntityHeightAboveGround(entity)
 	}
 
@@ -355,8 +366,178 @@ object Client {
 		return IsScreenFadedOut() == 1
 	}
 
-	fun getVehicleBodyHealth(vehicle: Int): Int {
+	fun isScreenFadingOut(): Boolean {
+		return IsScreenFadingOut() == 1
+	}
+
+	fun isScreenFadingIn(): Boolean {
+		return IsScreenFadingIn() == 1
+	}
+
+	fun getVehicleBodyHealth(vehicle: Entity): Int {
 		return GetVehicleBodyHealth(vehicle).toInt()
+	}
+
+	fun getEntityHealth(entity: Entity): Int {
+		return GetEntityHealth(entity)
+	}
+
+	fun setEntityHealth(entity: Entity, health: Int) {
+		SetEntityHealth(entity, health)
+	}
+
+	fun setPedCanRagdollFromPlayerImpact(ped: Entity, toggle: Boolean) {
+		SetPedCanRagdollFromPlayerImpact(ped, toggle)
+	}
+
+	fun setPedRagdollOnCollision(ped: Entity, toggle: Boolean) {
+		SetPedRagdollOnCollision(ped, toggle)
+	}
+
+	fun setPedToRagdoll(
+		ped: Entity,
+		time1: Int = 1000,
+		time2: Int = 1000,
+		ragdollType: Short = 0,
+		p4: Boolean = false,
+		p5: Boolean = false,
+		p6: Boolean = false
+	): Number {
+		return SetPedToRagdoll(ped, time1, time2, ragdollType, p4, p5, p6)
+	}
+
+	fun setEntityCoords(
+		entity: Entity,
+		xPos: Number,
+		yPos: Number,
+		zPos: Number,
+		xAxis: Boolean = false,
+		yAxis: Boolean = false,
+		zAxis: Boolean = false,
+		clearArea: Boolean = false
+	) {
+		SetEntityCoords(entity, xPos, yPos, zPos, xAxis, yAxis, zAxis, clearArea)
+	}
+
+	fun setPlayerControl(player: Int, toggle: Boolean, flags: Number = 0) {
+		SetPlayerControl(player, toggle, flags)
+	}
+
+	fun isEntityVisible(entity: Entity): Boolean {
+		return IsEntityVisible(entity) == 1
+	}
+
+	fun getPlayerPed(id: Int = -1): Entity? {
+		return GetPlayerPed(id).takeIf { it != 0 }
+	}
+
+	fun setEntityVisible(entity: Entity, toggle: Boolean) {
+		SetEntityVisible(entity, toggle, false)
+	}
+
+	fun isPedInAnyVehicle(ped: Entity, atGetIn: Boolean = false): Boolean {
+		return IsPedInAnyVehicle(ped, atGetIn) == 1
+	}
+
+	fun setEntityCollision(entity: Entity, toggle: Boolean, keepPhysics: Boolean = true) {
+		SetEntityCollision(entity, toggle, keepPhysics)
+	}
+
+	fun setEntityKinematic(entity: Entity, toggle: Boolean) {
+		FreezeEntityPosition(entity, toggle)
+	}
+
+	fun setPlayerInvincible(player: Int, toggle: Boolean) {
+		SetPlayerInvincible(player, toggle)
+	}
+
+	fun isPedFatallyInjured(ped: Entity): Boolean {
+		return IsPedFatallyInjured(ped) == 1
+	}
+
+	fun clearPedTasksImmediately(ped: Entity) {
+		ClearPedTasksImmediately(ped)
+	}
+
+	fun getPlayerId(): Int {
+		return PlayerId()
+	}
+
+	fun requestModel(hash: Int) {
+		RequestModel(hash)
+	}
+
+	fun hasModelLoaded(hash: Int): Boolean {
+		return HasModelLoaded(hash) == 1
+	}
+
+	fun setPlayerModel(player: Int, model: String) {
+		SetPlayerModel(player, model)
+	}
+
+	fun setPlayerModel(player: Int, hash: Int) {
+		SetPlayerModel(player, hash)
+	}
+
+	fun setModelAsNoLongerNeeded(model: String) {
+		SetModelAsNoLongerNeeded(model)
+	}
+
+	fun setModelAsNoLongerNeeded(hash: Int) {
+		SetModelAsNoLongerNeeded(hash)
+	}
+
+	fun requestCollisionAtCoordinates(coordinates: Coordinates) =
+		requestCollisionAtCoordinates(coordinates.x, coordinates.y, coordinates.z)
+
+
+	fun requestCollisionAtCoordinates(x: Number, y: Number, z: Number): Number {
+		return RequestCollisionAtCoord(x, y, z)
+	}
+
+	fun setEntityCoordsNoOffset(
+		entity: Entity,
+		xPos: Number,
+		yPos: Number,
+		zPos: Number,
+		xAxis: Boolean = false,
+		yAxis: Boolean = false,
+		zAxis: Boolean = false
+	) {
+		SetEntityCoordsNoOffset(entity, xPos, yPos, zPos, xAxis, yAxis, zAxis)
+	}
+
+	fun networkResurrectLocalPlayer(coordinatesX: CoordinatesX, changeTime: Boolean = true) =
+		networkResurrectLocalPlayer(coordinatesX.x, coordinatesX.y, coordinatesX.z, coordinatesX.rotation, changeTime)
+
+	fun networkResurrectLocalPlayer(
+		x: Number,
+		y: Number,
+		z: Number,
+		heading: Number,
+		changeTime: Boolean = true
+	) {
+		NetworkResurrectLocalPlayer(x, y, z, heading, true, changeTime)
+	}
+
+	fun removeAllPedWeapons(ped: Entity) {
+		RemoveAllPedWeapons(ped, true)
+	}
+
+	fun clearPlayerWantedLevel(player: Int) {
+		ClearPlayerWantedLevel(player)
+	}
+
+	fun hasCollisionLoadedAroundEntity(entity: Entity): Boolean {
+		return HasCollisionLoadedAroundEntity(entity) == 1
+	}
+
+	fun shutdownLoadingScreen() {
+		ShutdownLoadingScreen()
+	}
+
+	fun getRadioStation(): RadioStation? {
+		return GetPlayerRadioStationName()?.let { RadioStation.valueOf(it) }
 	}
 }
 
@@ -2116,7 +2297,7 @@ private external fun AddTextEntry(entryKey: String, entryText: String)
 /**
  * Immediately stops the pedestrian from whatever it's doing. They stop fighting, animations, etc. they forget what they were doing.
  */
-//private external fun ClearPedTasksImmediately(ped: number)
+private external fun ClearPedTasksImmediately(ped: Entity)
 
 /**
  * It clears the wetness of the selected Ped/Player. Clothes have to be wet to notice the difference.
@@ -2137,7 +2318,7 @@ private external fun AddTextEntry(entryKey: String, entryText: String)
  * This executes at the same as speed as PLAYER::SET_PLAYER_WANTED_LEVEL(player, 0, false);
  * PLAYER::GET_PLAYER_WANTED_LEVEL(player); executes in less than half the time. Which means that it's worth first checking if the wanted level needs to be cleared before clearing. However, this is mostly about good code practice and can important in other situations. The difference in time in this example is negligible.
  */
-//private external fun ClearPlayerWantedLevel(player: number)
+private external fun ClearPlayerWantedLevel(player: Int)
 
 /**
  * Only used once in the decompiled scripts. Seems to be related to scripted vehicle generators.
@@ -4747,7 +4928,7 @@ private external fun DoScreenFadeOut(duration: Int)
  * No, this should be called SET_ENTITY_KINEMATIC. It does more than just "freeze" it's position.
  * ^Rockstar Devs named it like that, Now cry about it.
  */
-//private external fun FreezeEntityPosition(entity: number, toggle: boolean)
+private external fun FreezeEntityPosition(entity: Entity, toggle: Boolean)
 
 //private external fun FreezePedCameraRotation(ped: number)
 //private external fun N_0xff287323b0e2c69a(ped: number)
@@ -5419,14 +5600,14 @@ private external fun GetCurrentResourceName(): String
  * Consider using this faster native instead: SYSTEM::VDIST - DVIST always takes in consideration the 3D coordinates.
  */
 private external fun GetDistanceBetweenCoords(
-	x1: Float,
-	y1: Float,
-	z1: Float,
-	x2: Float,
-	y2: Float,
-	z2: Float,
+	x1: Number,
+	y1: Number,
+	z1: Number,
+	x2: Number,
+	y2: Number,
+	z2: Number,
 	useZ: Boolean
-): Float
+): Number
 
 /**
  * dlcVehicleIndex takes a number from 0 - GET_NUM_DLC_VEHICLES() - 1.
@@ -5583,7 +5764,7 @@ private external fun GetDistanceBetweenCoords(
 /**
  * p1 = !IS_ENTITY_DEAD
  */
-private external fun GetEntityCoords(entity: Int, alive: Boolean): Array<Float>
+private external fun GetEntityCoords(entity: Int, alive: Boolean): Array<Number>
 
 /**
  * Gets the entity's forward vector.
@@ -5616,7 +5797,7 @@ private external fun GetEntityHeading(entity: Int): Float
  * In order to get the actual value, do:
  * float health = *(float *)(entityAddress + 0x280);
  */
-//private external fun GetEntityHealth(entity: number): number;
+private external fun GetEntityHealth(entity: Int): Int
 
 //private external fun GetEntityHeight(entity: number, X: number, Y: number, Z: number, atTop: boolean, inWorldCoords: boolean): number;
 
@@ -5926,7 +6107,7 @@ private external fun GetEntitySpeed(entity: Int): Double
  * As a result, it makes this native case-insensitive.
  * For example: "zentorno", "ZENTORNO" and "Zentorno" produce the same hash.
  */
-//private external fun GetHashKey(_string: string): number;
+private external fun GetHashKey(_string: String): Number
 
 //private external fun GetHashNameForComponent(entity: number, componentId: number, drawableVariant: number, textureVariant: number): number;
 
@@ -8998,7 +9179,7 @@ private external fun GetVehicleTurboPressure(vehicle: Int): Int
 
 //private external fun HasCollisionForModelLoaded(model: string | number): number;
 
-//private external fun HasCollisionLoadedAroundEntity(entity: number): number;
+private external fun HasCollisionLoadedAroundEntity(entity: Entity): Number
 
 //private external fun HasCutsceneFinished(): number;
 
@@ -9070,7 +9251,7 @@ private external fun GetVehicleTurboPressure(vehicle: Int): Int
 /**
  * Checks if the specified model has loaded into memory.
  */
-//private external fun HasModelLoaded(model: string | number): number;
+private external fun HasModelLoaded(model: Int): Number
 
 //private external fun HasMpGamerTag(): number;
 //private external fun N_0x6e0eb3eb47c8d7aa(): number;
@@ -9645,7 +9826,7 @@ private external fun IsDisabledControlPressed(inputGroup: Int, control: Int): In
 
 //private external fun IsEntityUpsidedown(entity: number): number;
 
-//private external fun IsEntityVisible(entity: number): number;
+private external fun IsEntityVisible(entity: Entity): Number
 
 //private external fun IsEntityVisibleToScript(entity: number): number;
 
@@ -10020,7 +10201,7 @@ private external fun IsDisabledControlPressed(inputGroup: Int, control: Int): In
  * Gets a value indicating whether this ped's health is below its fatally injured threshold. The default threshold is 100.
  * If the handle is invalid, the function returns true.
  */
-//private external fun IsPedFatallyInjured(ped: number): number;
+private external fun IsPedFatallyInjured(ped: Entity): Number
 
 //private external fun IsPedFleeing(ped: number): number;
 
@@ -10069,7 +10250,7 @@ private external fun IsDisabledControlPressed(inputGroup: Int, control: Int): In
  * Gets a value indicating whether the specified ped is in any vehicle.
  * If 'atGetIn' is false, the function will not return true until the ped is sitting in the vehicle and is about to close the door. If it's true, the function returns true the moment the ped starts to get onto the seat (after opening the door). Eg. if false, and the ped is getting into a submersible, the function will not return true until the ped has descended down into the submersible and gotten into the seat, while if it's true, it'll return true the moment the hatch has been opened and the ped is about to descend into the submersible.
  */
-//private external fun IsPedInAnyVehicle(ped: number, atGetIn: boolean): number;
+private external fun IsPedInAnyVehicle(ped: Entity, atGetIn: Boolean): Number
 
 /**
  * Checks to see if ped and target are in combat with eachother. Only goes one-way: if target is engaged in combat with ped but ped has not yet reacted, the function will return false until ped starts fighting back.
@@ -10409,9 +10590,9 @@ private external fun IsDisabledControlPressed(inputGroup: Int, control: Int): In
 
 private external fun IsScreenFadedOut(): Any
 
-//private external fun IsScreenFadingIn(): number;
+private external fun IsScreenFadingIn(): Any
 
-//private external fun IsScreenFadingOut(): number;
+private external fun IsScreenFadingOut(): Any
 
 /**
  * In drunk_controller.c4, sub_309
@@ -18452,7 +18633,14 @@ private external fun NetworkGetServerTime(): Time
  */
 //private external fun N_0x9769f811d1785b03(player: number, x: number, y: number, z: number, p4: boolean, p5: boolean)
 
-//private external fun NetworkResurrectLocalPlayer(x: number, y: number, z: number, heading: number, unk: boolean, changetime: boolean)
+private external fun NetworkResurrectLocalPlayer(
+	x: Number,
+	y: Number,
+	z: Number,
+	heading: Number,
+	unk: Boolean,
+	changetime: Boolean
+)
 
 /**
  * p0 = 0 or 4
@@ -19440,7 +19628,7 @@ private external fun NetworkGetServerTime(): Time
  * This returns YOUR 'identity' as a Player type.
  * Always returns 0 in story mode.
  */
-//private external fun PlayerId(): number;
+private external fun PlayerId(): Int
 
 /**
  * Returns current player ped
@@ -19678,7 +19866,7 @@ private external fun RegisterNuiCallbackType(callbackType: String)
 /**
  * setting the last params to false it does that same so I would suggest its not a toggle
  */
-//private external fun RemoveAllPedWeapons(ped: number, p1: boolean)
+private external fun RemoveAllPedWeapons(ped: Entity, p1: Boolean)
 
 /**
  * Pickup hashes: pastebin.com/8EuSv2r1
@@ -20071,7 +20259,7 @@ private external fun RegisterNuiCallbackType(callbackType: String)
 
 //private external fun RequestClipSet(clipSet: string)
 
-//private external fun RequestCollisionAtCoord(x: number, y: number, z: number): number;
+private external fun RequestCollisionAtCoord(x: Number, y: Number, z: Number): Number
 
 //private external fun RequestCollisionForModel(model: string | number)
 
@@ -20157,7 +20345,7 @@ private external fun RegisterNuiCallbackType(callbackType: String)
  * Request a model to be loaded into memory
  * Looking it the disassembly, it seems like it actually returns the model if it's already loaded.
  */
-//private external fun RequestModel(model: string | number)
+private external fun RequestModel(model: Int)
 
 /**
  * assetName = For example "core"
@@ -20714,7 +20902,7 @@ private external fun RegisterNuiCallbackType(callbackType: String)
  * @param jsonString The JSON-encoded message.
  * @return A success value.
  */
-//private external fun SendLoadingScreenMessage(jsonString: string): number;
+private external fun SendLoadingScreenMessage(jsonString: String): Number
 
 private external fun SendNuiMessage(jsonString: String): Int
 
@@ -21781,7 +21969,7 @@ private external fun SetClockTime(hour: Short, minute: Short, second: Short)
  */
 //private external fun SetEntityCanBeTargetedWithoutLos(entity: number, toggle: boolean)
 
-//private external fun SetEntityCollision(entity: number, toggle: boolean, keepPhysics: boolean)
+private external fun SetEntityCollision(entity: Entity, toggle: Boolean, keepPhysics: Boolean)
 
 /**
  * console hash: 0xBD0D4831
@@ -21823,12 +22011,29 @@ private external fun SetClockTime(hour: Short, minute: Short, second: Short)
  * Often ends with 1, 0, 0, 1); in the scripts. It works.
  * Axis - Invert Axis Flags
  */
-//private external fun SetEntityCoords(entity: number, xPos: number, yPos: number, zPos: number, xAxis: boolean, yAxis: boolean, zAxis: boolean, clearArea: boolean)
+private external fun SetEntityCoords(
+	entity: Int,
+	xPos: Number,
+	yPos: Number,
+	zPos: Number,
+	xAxis: Boolean,
+	yAxis: Boolean,
+	zAxis: Boolean,
+	clearArea: Boolean
+)
 
 /**
  * Axis - Invert Axis Flags
  */
-//private external fun SetEntityCoordsNoOffset(entity: number, xPos: number, yPos: number, zPos: number, xAxis: boolean, yAxis: boolean, zAxis: boolean)
+private external fun SetEntityCoordsNoOffset(
+	entity: Entity,
+	xPos: Number,
+	yPos: Number,
+	zPos: Number,
+	xAxis: Boolean,
+	yAxis: Boolean,
+	zAxis: Boolean
+)
 
 /**
  * does the same as SET_ENTITY_COORDS.
@@ -21845,7 +22050,7 @@ private external fun SetClockTime(hour: Short, minute: Short, second: Short)
 /**
  * health &gt;= 0
  */
-//private external fun SetEntityHealth(entity: number, health: number)
+private external fun SetEntityHealth(entity: Int, health: Int)
 
 //private external fun SetEntityIconColor(entity: number, red: number, green: number, blue: number, alpha: number)
 
@@ -22006,7 +22211,7 @@ private external fun SetClockTime(hour: Short, minute: Short, second: Short)
 /**
  * unk was always 0.
  */
-//private external fun SetEntityVisible(entity: number, toggle: boolean, unk: boolean)
+private external fun SetEntityVisible(entity: Entity, toggle: Boolean, unk: Boolean)
 
 //private external fun SetEntityVisibleInCutscene(p0: number, p1: boolean, p2: boolean)
 
@@ -22497,7 +22702,9 @@ private external fun SetFrontendRadioActive(active: Boolean)
 /**
  * Unloads model from memory
  */
-//private external fun SetModelAsNoLongerNeeded(model: string | number)
+private external fun SetModelAsNoLongerNeeded(model: String)
+
+private external fun SetModelAsNoLongerNeeded(model: Int)
 
 //private external fun SetModelHeadlightConfiguration(modelHash: string | number, ratePerSecond: number, headlightRotation: number, invertRotation: boolean)
 
@@ -23232,7 +23439,7 @@ private external fun SetNuiFocus(hasFocus: Boolean, hasCursor: Boolean)
 
 //private external fun SetPedCanRagdoll(ped: number, toggle: boolean)
 
-//private external fun SetPedCanRagdollFromPlayerImpact(ped: number, toggle: boolean)
+private external fun SetPedCanRagdollFromPlayerImpact(ped: Int, toggle: Boolean)
 
 //private external fun SetPedCanSmashGlass(ped: number, p1: boolean, p2: boolean)
 
@@ -23962,7 +24169,7 @@ private external fun SetNuiFocus(hasFocus: Boolean, hasCursor: Boolean)
 /**
  * Causes Ped to ragdoll on collision with any object (e.g Running into trashcan). If applied to player you will sometimes trip on the sidewalk.
  */
-//private external fun SetPedRagdollOnCollision(ped: number, toggle: boolean)
+private external fun SetPedRagdollOnCollision(ped: Int, toggle: Boolean)
 
 /**
  * p1 is always false in R* scripts.
@@ -24071,7 +24278,15 @@ private external fun SetNuiFocus(hasFocus: Boolean, hasCursor: Boolean)
  * EDIT 3/11/16: unclear what 'mircoseconds' mean-- a microsecond is 1000x a ms, so time2 must be 1000x time1?  more testing needed.  -sob
  * Edit Mar 21, 2017: removed part about time2 being the microseconds version of time1. this just isn't correct. time2 is in milliseconds, and time1 and time2 don't seem to be connected in any way.
  */
-//private external fun SetPedToRagdoll(ped: number, time1: number, time2: number, ragdollType: number, p4: boolean, p5: boolean, p6: boolean): number;
+private external fun SetPedToRagdoll(
+	ped: Int,
+	time1: Int,
+	time2: Int,
+	ragdollType: Short,
+	p4: Boolean,
+	p5: Boolean,
+	p6: Boolean
+): Number
 
 /**
  * Return variable is never used in R*'s scripts.
@@ -24218,7 +24433,7 @@ private external fun SetNuiFocus(hasFocus: Boolean, hasCursor: Boolean)
  * Flags(256, 260, 384, 768, 896, 900, 952, 1280)
  * [ translation: cameraRotation = flags &amp; (1 &lt;&lt; 8) - sfink]
  */
-//private external fun SetPlayerControl(player: number, toggle: boolean, flags: number)
+private external fun SetPlayerControl(player: Int, toggle: Boolean, flags: Number)
 
 //private external fun SetPlayerForceSkipAimIntro(player: number, toggle: boolean)
 
@@ -24240,7 +24455,7 @@ private external fun SetNuiFocus(hasFocus: Boolean, hasCursor: Boolean)
  * Use 0x733A643B5B0C53C1 instead if you want Ragdoll enabled, which is equal to:
  * *(DWORD *)(playerPedAddress + 0x188) |= (1 &lt;&lt; 9);
  */
-//private external fun SetPlayerInvincible(player: number, toggle: boolean)
+private external fun SetPlayerInvincible(player: Int, toggle: Boolean)
 
 //private external fun SetPlayerInvisibleLocally(player: number, toggle: boolean)
 
@@ -24273,7 +24488,9 @@ private external fun SetNuiFocus(hasFocus: Boolean, hasCursor: Boolean)
 /**
  * Make sure to request the model first and wait until it has loaded.
  */
-//private external fun SetPlayerModel(player: number, model: string | number)
+private external fun SetPlayerModel(player: Int, model: String)
+
+private external fun SetPlayerModel(player: Int, model: Int)
 
 //private external fun SetPlayerNoiseMultiplier(player: number, multiplier: number)
 
@@ -25405,7 +25622,7 @@ private external fun SetNuiFocus(hasFocus: Boolean, hasCursor: Boolean)
  */
 //private external fun SetVehicleFrictionOverride(vehicle: number, friction: number)
 
-private external fun SetVehicleFuelLevel(vehicle: Int, level: Double)
+private external fun SetVehicleFuelLevel(vehicle: Int, level: Number)
 
 /**
  * It switch to highbeam when p1 is set to true.
@@ -26287,7 +26504,7 @@ private external fun SetVehicleOilLevel(vehicle: Int, level: Number)
 //private external fun ShutdownCreatorBudget()
 //private external fun N_0xcce26000e9a6fad7()
 
-//private external fun ShutdownLoadingScreen()
+private external fun ShutdownLoadingScreen()
 
 /**
  * Shuts down the `loadingScreen` NUI frame, similarly to `SHUTDOWN_LOADING_SCREEN`.
@@ -28596,3 +28813,259 @@ private external fun StopAudioScene(scene: String)
  * First parameter was previously an Entity but after further research it is definitely a hash.
  */
 //private external fun WouldEntityBeOccluded(entityModelHash: string | number, x: number, y: number, z: number, p4: boolean): number;
+
+/**
+ * returns the players ped used in many functions
+ */
+private external fun GetPlayerPed(playerId: Int): Int
+
+//private external fun GetPlayerAdvancedModifierPrivileges(p0: number): string;
+//private external fun N_0xcd67ad041a394c9c(p0: number): string;
+//private external fun GetContentUserId(p0: number): string;
+
+//private external fun GetPlayerCurrentStealthNoise(player: number): number;
+
+//private external fun GetPlayerFromServerId(serverId: number): number;
+
+/**
+ * Returns the group ID the player is member of.
+ */
+//private external fun GetPlayerGroup(player: number): number;
+
+//private external fun GetPlayerHasReserveParachute(player: number): number;
+
+/**
+ * Called 5 times in the scripts. All occurrences found in b617d, sorted alphabetically and identical lines removed:
+ * AUDIO::GET_PLAYER_HEADSET_SOUND_ALTERNATE("INOUT", 0.0);
+ * AUDIO::GET_PLAYER_HEADSET_SOUND_ALTERNATE("INOUT", 1.0);
+ */
+//private external fun GetPlayerHeadsetSoundAlternate(p0: string, p1: number)
+
+/**
+ * Returns the same as PLAYER_ID and NETWORK_PLAYER_ID_TO_INT
+ */
+private external fun GetPlayerIndex(): Int
+
+/**
+ * Returns the Player's Invincible status.
+ * This function will always return false if 0x733A643B5B0C53C1 is used to set the invincibility status. To always get the correct result, use this:
+ * bool IsPlayerInvincible(Player player)
+ * {
+ * auto addr = getScriptHandleBaseAddress(GET_PLAYER_PED(player));
+ * if (addr)
+ * {
+ * DWORD flag = *(DWORD *)(addr + 0x188);
+ * return ((flag &amp; (1 &lt;&lt; 8)) != 0) || ((flag &amp; (1 &lt;&lt; 9)) != 0);
+ * }
+ * return false;
+ * }
+ * ============================================================
+ * This has bothered me for too long, whoever may come across this, where did anyone ever come up with this made up hash? 0x733A643B5B0C53C1 I've looked all over old hash list, and this nativedb I can not find that PC hash anywhere. What native name is it now or was it?
+ */
+//private external fun GetPlayerInvincible(player: number): number;
+
+//private external fun GetPlayerMaxArmour(player: number): number;
+
+/**
+ * Returns the players name
+ */
+//private external fun GetPlayerName(player: number): string;
+
+//private external fun GetPlayerParachutePackTintIndex(player: number, tintIndex: number)
+
+//private external fun GetPlayerParachuteSmokeTrailColor(player: number): [number, number, number];
+
+/**
+ * Tints:
+ * None = -1,
+ * Rainbow = 0,
+ * Red = 1,
+ * SeasideStripes = 2,
+ * WidowMaker = 3,
+ * Patriot = 4,
+ * Blue = 5,
+ * Black = 6,
+ * Hornet = 7,
+ * AirFocce = 8,
+ * Desert = 9,
+ * Shadow = 10,
+ * HighAltitude = 11,
+ * Airbone = 12,
+ * Sunrise = 13,
+ */
+//private external fun GetPlayerParachuteTintIndex(player: number, tintIndex: number)
+
+//private external fun GetPlayerPedIsFollowing(ped: number): number;
+
+/**
+ * Does the same like PLAYER::GET_PLAYER_PED<br/>
+ */
+//private external fun GetPlayerPedScriptIndex(Player: number): number;
+
+//private external fun GetPlayerRadioStationGenre(): number;
+
+/**
+ * Returns 255 (radio off index) if the function fails.
+ */
+//private external fun GetPlayerRadioStationIndex(): number;
+
+/**
+ * Returns active radio station name
+ */
+private external fun GetPlayerRadioStationName(): String?
+
+/**
+ * Tints:
+ * None = -1,
+ * Rainbow = 0,
+ * Red = 1,
+ * SeasideStripes = 2,
+ * WidowMaker = 3,
+ * Patriot = 4,
+ * Blue = 5,
+ * Black = 6,
+ * Hornet = 7,
+ * AirFocce = 8,
+ * Desert = 9,
+ * Shadow = 10,
+ * HighAltitude = 11,
+ * Airbone = 12,
+ * Sunrise = 13,
+ */
+//private external fun GetPlayerReserveParachuteTintIndex(player: number, index: number)
+
+/**
+ * Returns RGB color of the player
+ */
+//private external fun GetPlayerRgbColour(Player: number): [number, number, number];
+
+//private external fun GetPlayerServerId(player: number): number;
+
+//private external fun GetPlayerShortSwitchState(): number;
+
+//private external fun GetPlayerSprintStaminaRemaining(player: number): number;
+
+//private external fun GetPlayerSprintTimeRemaining(player: number): number;
+
+//private external fun GetPlayerSwitchState(): number;
+
+//private external fun GetPlayerSwitchType(): number;
+
+/**
+ * Assigns the handle of locked-on melee target to *entity that you pass it.
+ * Returns false if no entity found.
+ */
+//private external fun GetPlayerTargetEntity(player: number, entity: number): number;
+
+/**
+ * Gets the player's team.
+ * Does nothing in singleplayer.
+ */
+external fun GetPlayerTeam(player: Int): Int
+
+//private external fun GetPlayerUnderwaterTimeRemaining(player: number): number;
+
+//private external fun GetPlayerWantedCentrePosition(player: number): number[];
+
+//private external fun GetPlayerWantedLevel(player: number): number;
+
+/**
+ * Alternative: GET_VEHICLE_PED_IS_IN(PLAYER_PED_ID(), 1);
+ */
+//private external fun GetPlayersLastVehicle(): number;
+
+/**
+ * Return true while player is being arrested / busted.
+ * If atArresting is set to 1, this function will return 1 when player is being arrested (while player is putting his hand up, but still have control)
+ * If atArresting is set to 0, this function will return 1 only when the busted screen is shown.
+ */
+//private external fun IsPlayerBeingArrested(player: number, atArresting: boolean): number;
+
+/**
+ * Returns true when the player is not able to control the cam i.e. when running a benchmark test, switching the player or viewing a cutscene.
+ * Note: I am not 100% sure if the native actually checks if the cam control is disabled but it seems promising.
+ */
+//private external fun IsPlayerCamControlDisabled(): number;
+/**
+ * Returns true when the player is not able to control the cam i.e. when running a benchmark test, switching the player or viewing a cutscene.
+ * Note: I am not 100% sure if the native actually checks if the cam control is disabled but it seems promising.
+ */
+//private external fun N_0x7c814d2fb49f40c0(): number;
+
+/**
+ * Returns TRUE if the player ('s ped) is climbing at the moment.
+ */
+//private external fun IsPlayerClimbing(player: number): number;
+
+/**
+ * Can the player control himself, used to disable controls for player for things like a cutscene.
+ * ---
+ * You can't disable controls with this, use SET_PLAYER_CONTROL(...) for this.
+ */
+//private external fun IsPlayerControlOn(player: number): number;
+
+//private external fun IsPlayerDead(player: number): number;
+
+/**
+ * Gets a value indicating whether the specified player is currently aiming freely.
+ */
+//private external fun IsPlayerFreeAiming(player: number): number;
+
+/**
+ * Gets a value indicating whether the specified player is currently aiming freely at the specified entity.
+ */
+//private external fun IsPlayerFreeAimingAtEntity(player: number, entity: number): number;
+
+//private external fun IsPlayerFreeForAmbientTask(player: number): number;
+
+//private external fun IsPlayerInCutscene(player: number): number;
+
+/**
+ * this function is hard-coded to always return 0.
+ */
+//private external fun IsPlayerLoggingInNp(): number;
+
+/**
+ * Returns TRUE if the game is in online mode and FALSE if in offline mode.
+ * This is an alias for NETWORK_IS_SIGNED_ONLINE.
+ */
+//private external fun IsPlayerOnline(): number;
+
+/**
+ * Checks whether the specified player has a Ped, the Ped is not dead, is not injured and is not arrested.
+ */
+//private external fun IsPlayerPlaying(player: number): number;
+
+//private external fun IsPlayerPressingHorn(player: number): number;
+
+//private external fun IsPlayerReadyForCutscene(player: number): number;
+
+/**
+ * Returns true if the player is riding a train.
+ */
+//private external fun IsPlayerRidingTrain(player: number): number;
+
+//private external fun IsPlayerScriptControlOn(player: number): number;
+
+/**
+ * Returns true if the player is currently switching, false otherwise.
+ * (When the camera is in the sky moving from Trevor to Franklin for example)
+ */
+//private external fun IsPlayerSwitchInProgress(): number;
+/**
+ * Returns true if the player is currently switching, false otherwise.
+ * (When the camera is in the sky moving from Trevor to Franklin for example)
+ */
+//private external fun N_0xd9d2cfff49fab35f(): number;
+
+//private external fun IsPlayerTargettingAnything(player: number): number;
+
+//private external fun IsPlayerTargettingEntity(player: number, entity: number): number;
+
+//private external fun IsPlayerTeleportActive(): number;
+
+private external fun IsPlayerVehicleRadioEnabled(): Int
+
+//private external fun N_0x5f43d83fd6738741(): number;
+
+//private external fun IsPlayerWantedLevelGreater(player: number, wantedLevel: number): number;

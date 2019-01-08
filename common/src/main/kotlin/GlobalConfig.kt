@@ -6,6 +6,7 @@ import online.fivem.common.gtav.RadioStation
 object GlobalConfig {
 	const val RESOURCES_HTTP_HOME = "http://fivem.online/nui/resources/main/"
 	const val MODULE_NAME = "fivem-online"
+	const val SERVER_NAME_IN_MENU = "FIVEM.ONLINE"
 	const val MAX_PLAYERS = 32
 	const val APP_VERSION = 190107
 

@@ -1,8 +1,11 @@
 package online.fivem.nui.modules.vehicle
 
 import js.externals.jquery.jQuery
-import kotlinx.coroutines.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Html
 import online.fivem.common.events.SpeedometerDisableEvent
@@ -15,8 +18,6 @@ import online.fivem.nui.modules.clientEventEchanger.ClientEvent
 import org.w3c.dom.HTMLImageElement
 import kotlin.js.Date
 
-
-@ExperimentalCoroutinesApi
 class Speedometer : AbstractModule() {
 
 	private val speedometerArrow: HTMLImageElement by lazy {

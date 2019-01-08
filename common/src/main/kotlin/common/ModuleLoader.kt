@@ -1,14 +1,22 @@
 package online.fivem.common.common
 
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
-import kotlin.reflect.KClass
+import online.fivem.common.events.ModuleLoadedEvent
 
 class ModuleLoader {
+	private val queue = Channel<AbstractModule>(128)
 	private var finally: (() -> Unit)? = null
 
+	private val modules = mutableListOf<AbstractModule>()
+
 	fun add(module: AbstractModule) {
-		modules.add(module)
+		module.moduleLoader = this@ModuleLoader
+		module.init()
+		GlobalScope.launch {
+			queue.send(module)
+		}
 	}
 
 	fun finally(function: () -> Unit) {
@@ -17,10 +25,13 @@ class ModuleLoader {
 
 	fun start() {
 		GlobalScope.launch {
-			modules.forEach {
-				Console.log("start module ${it::class.simpleName}")
-				it.moduleLoader = ModuleLoader.Companion
-				it.start()?.join()
+
+			while (!queue.isEmpty) {
+				val module = queue.receive()
+				Console.log("start module ${module::class.simpleName}")
+				module.start()?.join()
+				UEvent.emit(ModuleLoadedEvent(module))
+				modules.add(module)
 			}
 			finally?.invoke()
 		}
@@ -35,11 +46,11 @@ class ModuleLoader {
 		}
 	}
 
-	companion object {
-		private val modules = mutableListOf<AbstractModule>()
-
-		fun <T : AbstractModule> get(kClass: KClass<T>): T? {
-			return modules.find { kClass == it::class } as T?
+	inline fun <reified T : AbstractModule> on(noinline function: (T) -> Unit) {
+		UEvent.on<ModuleLoadedEvent> {
+			if (it.module is T) {
+				function(it.module)
+			}
 		}
 	}
 }

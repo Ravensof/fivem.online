@@ -2,7 +2,6 @@ package online.fivem.client.modules.vehicle
 
 import kotlinx.coroutines.*
 import online.fivem.client.gtav.Client
-import online.fivem.client.gtav.Player
 import online.fivem.client.modules.nuiEventExchanger.NuiEvent
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.UEvent
@@ -13,18 +12,13 @@ class Speedometer : AbstractModule() {
 	private var vehicleHasSpeedo = false
 	private var updateJob: Job? = null
 
-	override fun start(): Job? {
-
-		UEvent.on<PlayerGetInDriversSeatEvent> {
-			onPlayerJoinVehicle()
-		}
+	override fun init() {
+		UEvent.on<PlayerGetInDriversSeatEvent> { onPlayerJoinVehicle() }
 		UEvent.on<PlayerLeftVehicleEvent> { onPlayerLeftVehicle() }
-
-		return super.start()
 	}
 
 	private fun updateJob(): Job = GlobalScope.launch {
-		val ped = Player.getPed() ?: return@launch
+		val ped = Client.getPlayerPed() ?: return@launch
 		val vehicle = Client.getVehiclePedIsUsing(ped) ?: return@launch
 
 		while (isActive) {

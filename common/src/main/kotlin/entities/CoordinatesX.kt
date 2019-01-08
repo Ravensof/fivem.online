@@ -1,12 +1,17 @@
 package online.fivem.common.entities
 
 class CoordinatesX(
-	x: Float,
-	y: Float,
-	z: Float,
-	val rotation: Float
+	x: Number,
+	y: Number,
+	z: Number,
+	val rotation: Number
 ) : Coordinates(x, y, z) {
-	constructor(coordinates: Coordinates, rotation: Float) : this(coordinates.x, coordinates.y, coordinates.z, rotation)
+	constructor(coordinates: Coordinates, rotation: Number) : this(
+		coordinates.x,
+		coordinates.y,
+		coordinates.z,
+		rotation
+	)
 
 	override fun equals(other: Any?): Boolean {
 		if (other !is CoordinatesX) return false

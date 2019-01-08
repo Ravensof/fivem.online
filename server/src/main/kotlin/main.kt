@@ -7,6 +7,8 @@ import online.fivem.common.gtav.NativeEvents
 import online.fivem.server.gtav.Natives
 import online.fivem.server.modules.clientEventExchanger.ClientEventExchangerModule
 import online.fivem.server.modules.session.SessionModule
+import online.fivem.server.modules.synchronization.SynchronizationModule
+import online.fivem.server.modules.test.Test
 
 internal fun main() {
 	Natives.on(NativeEvents.Server.RESOURCE_START) { resourceName: String ->
@@ -21,11 +23,12 @@ fun start() {
 
 	ModuleLoader().apply {
 
-		add(ClientEventExchangerModule())
-
 		add(SessionModule())
+		add(SynchronizationModule())
 
-//		add(Test())
+		add(Test())
+
+		add(ClientEventExchangerModule())//last
 
 		finally {
 			Console.log("server side loaded")

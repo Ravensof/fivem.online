@@ -2,7 +2,6 @@ package online.fivem.client.modules.eventGenerator
 
 import kotlinx.coroutines.*
 import online.fivem.client.gtav.Client
-import online.fivem.client.gtav.Player
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.UEvent
 import online.fivem.common.entities.Coordinates
@@ -22,11 +21,13 @@ class EventGenerator : AbstractModule() {
 	private lateinit var jobKeyScan: Job
 
 	private var playerPed = 0
+	private var playerPedHealth: Int = 0
 	private var playersVehicle: Int? = null
 
 	private var vehicleBodyHealth: Int? = null
 	private var vehicleEngineHealth: Double? = null
 	private var vehiclePetrolTankHealth: Double? = null
+	private var isFadeOut: Boolean = true
 
 	private var playerCoordinates: CoordinatesX? = null
 	private var playerSeatIndex: Int? = null
@@ -34,7 +35,6 @@ class EventGenerator : AbstractModule() {
 	private var audioMusicLevelInMP: Int? =
 		null// = Client.getProfileSetting(ProfileSetting.AUDIO_MUSIC_LEVEL_IN_MP).orZero()
 	private var playerRadioStationName: RadioStation? = null //= Player.getRadioStation()
-	private var isPlayerVehicleRadioEnabled: Boolean? = null// = playerRadioStationName != null
 
 	override fun start(): Job? {
 		TickExecutor.addTick(::checkPressedFlashKeys)
@@ -51,16 +51,17 @@ class EventGenerator : AbstractModule() {
 
 			checkPlayerSeatIndex(Client.getPassengerSeatOfPedInVehicle())
 			checkPauseMenuState(Client.getPauseMenuState())
-			checkIsPlayerInVehicle(Player.isInVehicle())
-			checkPlayerRadioStationName(Player.getRadioStation()?.takeIf { playersVehicle != null })
-			checkIsPlayerRadioEnabled(playerRadioStationName != null)
+			checkIsPlayerInVehicle()
+			checkRadio()
 		}
 
 		job1000 = repeatJob(1_000) {
-			checkPlayersPed(Player.getPed().orZero())
+			checkPlayersPed(Client.getPlayerPed().orZero())
 
 			checkAudioMusicLevelInMP(Client.getProfileSetting(ProfileSetting.AUDIO_MUSIC_LEVEL_IN_MP).orZero())
 			Client.getEntityCoords(playerPed)?.let { updateCoordinates(it, Client.getEntityHeading(playerPed)) }
+
+			checkFadeInOut(Client.isScreenFadedOut())
 		}
 
 		return super.start()
@@ -74,6 +75,13 @@ class EventGenerator : AbstractModule() {
 		return super.stop()
 	}
 
+	private fun checkFadeInOut(isFadeOut: Boolean) {
+		if (isFadeOut != this.isFadeOut) {
+			this.isFadeOut = isFadeOut
+			UEvent.emit(ScreenFadeOutEvent(isFadeOut))
+		}
+	}
+
 	private fun checkPlayersPed(ped: Int) {
 		if (playerPed != ped) {
 			playerPed = ped
@@ -83,6 +91,13 @@ class EventGenerator : AbstractModule() {
 	}
 
 	private fun checkVehicleHealth() {
+		val currentPedHealth = Client.getEntityHealth(playerPed)
+		val pedHealthDiff = currentPedHealth - playerPedHealth
+
+		if (pedHealthDiff > 0) {
+			UEvent.emit(PlayersPedHealthChangedEvent(currentPedHealth, pedHealthDiff))
+		}
+
 		if (playersVehicle == null) {
 			vehicleBodyHealth = null
 			vehicleEngineHealth = null
@@ -99,7 +114,7 @@ class EventGenerator : AbstractModule() {
 		if (bodyHealth == vehicleBodyHealth && engineHealth == vehicleEngineHealth && petrolTankHealth == vehiclePetrolTankHealth) return
 
 		UEvent.emit(
-			PlayersVehicleHealthChanged(
+			PlayersVehicleHealthChangedEvent(
 				bodyHealth = bodyHealth,
 				bodyDiff = bodyHealth - (vehicleBodyHealth ?: bodyHealth),
 
@@ -107,7 +122,10 @@ class EventGenerator : AbstractModule() {
 				engineDiff = engineHealth - (vehicleEngineHealth ?: engineHealth),
 
 				petrolTankHealth = petrolTankHealth,
-				petrolTankDiff = petrolTankHealth - (vehiclePetrolTankHealth ?: petrolTankHealth)
+				petrolTankDiff = petrolTankHealth - (vehiclePetrolTankHealth ?: petrolTankHealth),
+
+				pedHealth = currentPedHealth,
+				pedDiff = pedHealthDiff
 			)
 		)
 
@@ -198,21 +216,6 @@ class EventGenerator : AbstractModule() {
 		}
 	}
 
-	private fun checkPlayerSeatIndex(seatIndex: Int?) {
-		if (seatIndex != playerSeatIndex) {
-			when (seatIndex) {
-				-1 -> UEvent.emit(PlayerGetInDriversSeatEvent())
-
-				null -> {
-				}//UEvent.emit(PlayerSeatChangedEvent(seatIndex))
-
-				else -> UEvent.emit(PlayerGetInPassengerSeatEvent(seatIndex))
-			}
-
-			playerSeatIndex = seatIndex
-		}
-	}
-
 	private fun checkPauseMenuState(state: Int) {
 		if (pauseMenuState != state) {
 			UEvent.emit(PauseMenuStateChangedEvent(state))
@@ -229,48 +232,57 @@ class EventGenerator : AbstractModule() {
 		}
 	}
 
-	private fun checkIsPlayerInVehicle(isInVehicle: Boolean) {
-		val currentVehicle = if (isInVehicle) Client.getVehiclePedIsUsing(playerPed) else null
+	private fun checkPlayerSeatIndex(seatIndex: Int?) {
+		if (seatIndex != playerSeatIndex) {
+			when (seatIndex) {
+				-1 -> UEvent.emit(PlayerGetInDriversSeatEvent())
 
-		if (currentVehicle != playersVehicle) {
-			playersVehicle = currentVehicle
+				null -> {
+				}//UEvent.emit(PlayerSeatChangedEvent(seatIndex))
 
-			UEvent.emit(PlayersVehicleChanged(currentVehicle))
-
-			if (currentVehicle != null) {
-				UEvent.emit(
-					PlayerJoinVehicleEvent(
-						currentVehicle.orZero(),
-						Client.getPassengerSeatOfPedInVehicle().orZero()
-					)
-				)
-			} else {
-				UEvent.emit(PlayerLeftVehicleEvent())
+				else -> UEvent.emit(PlayerGetInPassengerSeatEvent(seatIndex))
 			}
+
+			playerSeatIndex = seatIndex
 		}
 	}
 
-	private fun checkPlayerRadioStationName(radioStation: RadioStation?) {
-		if (radioStation != playerRadioStationName) {
+	private fun checkRadio() {
+		val currentRadio = Client.getRadioStation().takeIf { playersVehicle != null }
 
-			UEvent.emit(PlayerRadioStationChangedEvent(radioStation))
+		if (currentRadio != playerRadioStationName) {
+			UEvent.emit(PlayerRadioStationChangedEvent(currentRadio))
 
-			playerRadioStationName = radioStation
-		}
-	}
+			playerRadioStationName = currentRadio
 
-	private fun checkIsPlayerRadioEnabled(enabled: Boolean) {
-		if (enabled != isPlayerVehicleRadioEnabled) {
-			UEvent.emit(PlayerVehicleRadioToggledEvent(enabled))
-
-			if (enabled) {
-				UEvent.emit(PlayerVehicleRadioEnabledEvent())
+			if (currentRadio != null) {
+				UEvent.emit(PlayerVehicleRadioEnabledEvent(currentRadio))
 			} else {
 				UEvent.emit(PlayerVehicleRadioDisabledEvent())
 			}
-
-			isPlayerVehicleRadioEnabled = enabled
 		}
+	}
+
+	private fun checkIsPlayerInVehicle() {
+		val currentVehicle = Client.getVehiclePedIsUsing(playerPed)
+
+		if (currentVehicle == playersVehicle) return
+
+		if (currentVehicle == null) {
+			UEvent.emit(PlayerLeftVehicleEvent())
+		} else {
+			val seat = Client.getPassengerSeatOfPedInVehicle(currentVehicle, playerPed) ?: return
+
+			UEvent.emit(
+				PlayerJoinVehicleEvent(
+					currentVehicle,
+					seat
+				)
+			)
+		}
+
+		UEvent.emit(PlayersVehicleChangedEvent(currentVehicle))
+		playersVehicle = currentVehicle
 	}
 
 	companion object {

@@ -1,6 +1,6 @@
 package online.fivem.common.gtav
 
-object Peds {
+object NativePeds {
 	class Ped(
 		val name: String,
 		val hash: Int

@@ -6,6 +6,7 @@ private external val exports: dynamic
 
 object Exports {
 	private val exports = online.fivem.client.gtav.exports[GlobalConfig.MODULE_NAME]
+//	private val externalExports = online.fivem.client.gtav.exports
 
 	fun onNui(eventName: String, callback: (Any) -> Unit) {
 		exports.onNui(eventName, callback)
