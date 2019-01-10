@@ -71,16 +71,18 @@ class InternetRadio : AbstractModule() {
 			autoplay = true,
 			onplay = {
 				noisePlayer.stop()
+				options = null
 			},
 			onloaderror = {
 				if (attemptsLeft-- > 0) {
 					howler?.unload()
-					howler = Howl(options!!)
+					options?.let { howler = Howl(it) }
+
 				}
 			}
-		)
-
-		howler = Howl(options)
+		).also {
+			howler = Howl(it)
+		}
 	}
 
 	private fun disable() {
