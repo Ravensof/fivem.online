@@ -15,11 +15,7 @@ class ServerEventExchangerModule : AbstractModule() {
 
 	var key: Double? = null
 
-	@ExperimentalCoroutinesApi
-	override fun start(): Job? {
-
-		val pauseChannel = Channel<Boolean>()
-
+	override fun init() {
 		Natives.onNet(GlobalConfig.NET_EVENT_NAME) { netPacket: Any ->
 			try {
 				val packet = Serializer.unpack<NetPacket>(netPacket)
@@ -31,6 +27,12 @@ class ServerEventExchangerModule : AbstractModule() {
 				Console.error("wrong net packet format")
 			}
 		}
+	}
+
+	@ExperimentalCoroutinesApi
+	override fun start(): Job? {
+
+		val pauseChannel = Channel<Boolean>()
 
 		ServerEvent.on<EstablishConnectionEvent> {
 			key = it.key

@@ -32,9 +32,8 @@ class EventGenerator : AbstractModule() {
 	private var playerCoordinates: CoordinatesX? = null
 	private var playerSeatIndex: Int? = null
 	private var pauseMenuState: Int? = null
-	private var audioMusicLevelInMP: Int? =
-		null// = Client.getProfileSetting(ProfileSetting.AUDIO_MUSIC_LEVEL_IN_MP).orZero()
-	private var playerRadioStationName: RadioStation? = null //= Player.getRadioStation()
+	private var audioMusicLevelInMP: Int? = null
+	private var playerRadioStationName: RadioStation? = null
 
 	override fun start(): Job? {
 		TickExecutor.addTick(::checkPressedFlashKeys)

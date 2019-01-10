@@ -32,6 +32,6 @@ class CommandsModule : AbstractModule() {
 	)
 
 	companion object {
-		val executionQueue = Channel<Command>()
+		val executionQueue = Channel<Command>(32)
 	}
 }

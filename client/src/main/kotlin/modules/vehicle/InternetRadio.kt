@@ -20,13 +20,15 @@ class InternetRadio : AbstractModule() {
 
 	private val radioStationList = GlobalConfig.internetRadioStations
 
-	override fun start(): Job? {
+	override fun init() {
 		UEvent.on<PlayerRadioStationChangedEvent> { onPlayerVehicleRadioStationChanged(it.radioStation) }
 
 		UEvent.on<AudioMusicLevelInMPChangedEvent> {
 			onSettingsMusicLevelChanged(it.value)
 		}
+	}
 
+	override fun start(): Job? {
 		NuiEvent.emit(InternetRadioVolumeChangeEvent(this@InternetRadio.volume))
 
 		return super.start()

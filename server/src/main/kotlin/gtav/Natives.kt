@@ -16,9 +16,13 @@ object Natives {
 		return GetRegisteredCommands()
 	}
 
-//	fun registerCommand(commandName: String, restricted: Boolean = false, handler: (Int, Any, String)->Unit) {
-//		Exports.registerCommand(commandName, restricted, handler)
-//	}
+	fun registerCommand(
+		commandName: String,
+		restricted: Boolean = false,
+		handler: (Int, Array<String>, String) -> Unit
+	) {
+		RegisterCommand(commandName, handler, restricted)
+	}
 
 	fun loadResourceFile(resourceName: String, fileName: String): String? {
 		return LoadResourceFile(resourceName, fileName)
@@ -116,6 +120,10 @@ object Natives {
 
 	fun dropPlayer(playerSrc: Int, reason: String) {
 		DropPlayer(playerSrc, reason)
+	}
+
+	fun executeCommand(commandString: String) {
+		ExecuteCommand(commandString)
 	}
 
 	private fun getNumPlayerIdentifiers(playerSrc: PlayerSrc): Int {
@@ -257,7 +265,11 @@ private external fun GetPlayerPing(playerSrc: Int): Int
  */
 private external fun GetRegisteredCommands(): Array<Command>
 
-private external fun RegisterCommand(commandName: String, handler: () -> Unit, restricted: Boolean)
+private external fun RegisterCommand(
+	commandName: String,
+	handler: (Int, Array<String>, String) -> Unit,
+	restricted: Boolean
+)
 
 private external fun GetResourceByFindIndex(findIndex: Float): String
 

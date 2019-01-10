@@ -13,11 +13,14 @@ import online.fivem.common.entities.NuiPacket
 import online.fivem.common.events.ImReadyEvent
 
 class NuiEventExchangerModule : AbstractModule() {
-	override fun start(): Job? {
 
+	override fun init() {
 		Exports.onNui(GlobalConfig.NUI_EVENT_NAME) {
 			NuiEvent.handle(Serializer.unpack(it))
 		}
+	}
+
+	override fun start(): Job? {
 
 		GlobalScope.launch {
 			for (data in channel) {

@@ -2,7 +2,7 @@ package online.fivem.server.modules.basics
 
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import online.fivem.server.gtav.Exports
+import online.fivem.server.gtav.Natives.registerCommand
 
 private typealias Handler = (Int, Array<String>, String) -> Unit
 
@@ -13,8 +13,7 @@ object CommandEvent {
 	fun on(command: String, callback: Handler) {
 		handlers[command] = callback
 
-		Exports.registerCommand(command, false) { playerSrc, args, raw ->
-
+		registerCommand(command, false) { playerSrc, args, raw ->
 			handle(playerSrc, command, args, raw)
 		}
 	}
