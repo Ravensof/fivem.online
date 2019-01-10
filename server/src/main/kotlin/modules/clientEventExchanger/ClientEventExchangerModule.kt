@@ -22,8 +22,7 @@ class ClientEventExchangerModule : AbstractModule() {
 
 	private val playersList = mutableMapOf<Int, Double>()
 
-	override fun start(): Job? {
-
+	override fun init() {
 		Exports.on(NativeEvents.Server.PLAYER_DROPPED) { playerId: Int, _: String -> onPlayerDropped(playerId) }
 
 		Natives.onNet(GlobalConfig.NET_EVENT_NAME) { playerSrc: PlayerSrc, netPacket: Any ->
@@ -47,6 +46,9 @@ class ClientEventExchangerModule : AbstractModule() {
 
 			onClientReady(playerSrc)
 		}
+	}
+
+	override fun start(): Job? {
 
 		GlobalScope.launch {
 			//todo из-за одного клиента может остановиться передача данных. выделить на каждого по каналу?

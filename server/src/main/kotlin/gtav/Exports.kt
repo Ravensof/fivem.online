@@ -47,4 +47,8 @@ object Exports {
 	fun on(eventName: String, callback: Any) {
 		exports.on(eventName, callback)
 	}
+
+	fun registerCommand(command: String, isProtected: Boolean = true, callback: (Int, Array<String>, String) -> Unit) {
+		exports.registerCommand(command, isProtected, callback)
+	}
 }

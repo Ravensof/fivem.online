@@ -5,6 +5,7 @@ import online.fivem.common.common.Console
 import online.fivem.common.common.ModuleLoader
 import online.fivem.common.gtav.NativeEvents
 import online.fivem.server.gtav.Natives
+import online.fivem.server.modules.basics.BasicsModule
 import online.fivem.server.modules.clientEventExchanger.ClientEventExchangerModule
 import online.fivem.server.modules.session.SessionModule
 import online.fivem.server.modules.synchronization.SynchronizationModule
@@ -23,7 +24,10 @@ fun start() {
 
 	ModuleLoader().apply {
 
+		add(BasicsModule())
+
 		add(SessionModule())
+
 		add(SynchronizationModule())
 
 		add(Test())

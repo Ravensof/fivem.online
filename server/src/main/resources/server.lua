@@ -5,8 +5,6 @@
 -- Time: 15:33
 -- To change this template use File | Settings | File Templates.
 --
---TriggerEvent('log', {[''] = ''})
-
 
 exports("performHttpRequest", function(url, callback, httpMethod, data, headers)
     PerformHttpRequest(url, callback, httpMethod, data, headers)
@@ -24,4 +22,10 @@ exports("on", function(eventName, callback)
     AddEventHandler(eventName, function(...)
         callback(source, ...)
     end)
+end)
+
+exports("registerCommand", function(commandName, isProtected, callback)
+	RegisterCommand(commandName, function(source, args, rawCommand)
+		callback(source, args, rawCommand)
+	end, isProtected)
 end)

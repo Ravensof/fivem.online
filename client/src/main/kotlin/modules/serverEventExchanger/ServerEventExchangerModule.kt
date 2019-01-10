@@ -33,9 +33,9 @@ class ServerEventExchangerModule : AbstractModule() {
 		}
 
 		ServerEvent.on<EstablishConnectionEvent> {
+			key = it.key
 			ServerEvent.emit(ImReadyEvent())
 			GlobalScope.launch { pauseChannel.send(true) }
-			key = it.key
 		}
 
 		GlobalScope.launch {
