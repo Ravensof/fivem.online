@@ -22,8 +22,8 @@ open class UEvent {
 	}
 
 	inline fun <reified T : Any> on(noinline function: (T) -> Unit) {
-		@Suppress("UNCHECKED_CAST")
-		handlers.add(T::class to function as (Any) -> Unit)
+
+		handlers.add(T::class to function.unsafeCast<(Any) -> Unit>())
 
 		Console.info("$printType event ${T::class} registered")
 	}
@@ -36,8 +36,7 @@ open class UEvent {
 			unSubscribe(handler)
 		}
 
-		@Suppress("UNCHECKED_CAST")
-		handlers.add(T::class to handler as (Any) -> Unit)
+		handlers.add(T::class to handler.unsafeCast<(Any) -> Unit>())
 
 		Console.info("$printType event ${T::class} registered")
 	}

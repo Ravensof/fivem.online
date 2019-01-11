@@ -22,11 +22,9 @@ class SessionModule : AbstractModule() {
 	private val mySQL = MySQL.instance
 	private val players = mutableMapOf<PlayerSrc, Player>()
 
-	private var clientEventExchangerModule: ClientEventExchangerModule? = null
+	private val clientEventExchangerModule by moduleLoader.onReady<ClientEventExchangerModule>()
 
 	override fun init() {
-		moduleLoader.on<ClientEventExchangerModule> { clientEventExchangerModule = it }
-
 		Exports.on(NativeEvents.Server.PLAYER_CONNECTING, ::onClientConnecting)
 		Exports.on(NativeEvents.Server.PLAYER_DROPPED, ::onPlayerDropped)
 
@@ -34,7 +32,7 @@ class SessionModule : AbstractModule() {
 	}
 
 	override fun start(): Job? {
-		clientEventExchangerModule?.getConnectedClients()?.forEach {
+		clientEventExchangerModule.getConnectedClients().forEach {
 			onClientReady(it)
 		}
 
