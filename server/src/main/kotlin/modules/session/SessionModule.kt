@@ -4,6 +4,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
+import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.entities.PlayerSrc
 import online.fivem.common.events.ImReadyEvent
 import online.fivem.common.gtav.NativeEvents
@@ -13,6 +14,8 @@ import online.fivem.server.common.MySQL
 import online.fivem.server.entities.Player
 import online.fivem.server.gtav.Exports
 import online.fivem.server.gtav.Natives
+import online.fivem.server.modules.basics.BasicsModule
+import online.fivem.server.modules.basics.MySQLModule
 import online.fivem.server.modules.clientEventExchanger.ClientEvent
 import online.fivem.server.mysqlEntities.CharacterEntity
 import online.fivem.server.mysqlEntities.UserEntity
@@ -20,8 +23,9 @@ import online.fivem.server.mysqlTables.BlackListTable
 
 class SessionModule : AbstractModule() {
 
-	private val mySQL = MySQL.instance
+	private lateinit var mySQL: MySQL
 	private val players = mutableMapOf<PlayerSrc, Player>()
+	private val basicsModule by moduleLoader.onReady<BasicsModule>()
 
 	override fun init() {
 		Exports.on(NativeEvents.Server.PLAYER_CONNECTING, ::onClientConnecting)
@@ -29,11 +33,22 @@ class SessionModule : AbstractModule() {
 
 		ClientEvent.on<ImReadyEvent> { playerSrc, _ -> onClientReady(playerSrc) }
 
+		moduleLoader.on<MySQLModule> { mySQL = it.mySQL }
 		moduleLoader.add(SynchronizationModule())
 	}
 
 	fun getConnectedPlayers(): List<PlayerSrc> {
-		return Natives.getPlayers()
+		return players.map { it.key }
+	}
+
+	fun getPlayer(playerSrc: PlayerSrc): Player? {
+		players.forEach {
+			if (it.key == playerSrc) {
+				return it.value
+			}
+		}
+
+		return null
 	}
 
 	private fun onClientReady(playerSrc: PlayerSrc) {
@@ -57,7 +72,7 @@ class SessionModule : AbstractModule() {
 			).await().firstOrNull() ?: return@launch Natives.dropPlayer(playerSrc, "пользователь не создан")
 
 			val character =
-				mySQL.query<CharacterEntity>("SELECT id FROM characters WHERE user_id=${user.id} LIMIT 1").await().firstOrNull()
+				mySQL.query<CharacterEntity>("SELECT * FROM characters WHERE user_id=${user.id} LIMIT 1").await().firstOrNull()
 					?: return@launch Natives.dropPlayer(playerSrc, "пользователь не создан")
 
 			val sessionId = mySQL.query(
@@ -75,11 +90,22 @@ class SessionModule : AbstractModule() {
 				identifiers.steam.orEmpty(),
 				identifiers.license,
 				identifiers.ip
-			).await() ?: return@launch Natives.dropPlayer(playerSrc, UNKNOWN_ERROR)
+			).await() ?: return@launch Natives.dropPlayer(playerSrc, "$UNKNOWN_ERROR 20190113")
 
 			player.sessionId = sessionId
+			player.characterId = character.id
 
 			players[playerSrc] = player
+
+			basicsModule.spawn(
+				playerSrc,
+				CoordinatesX(
+					character.coord_x,
+					character.coord_y,
+					character.coord_z,
+					character.coord_rotation
+				), character.pedestrian
+			)
 		}
 	}
 

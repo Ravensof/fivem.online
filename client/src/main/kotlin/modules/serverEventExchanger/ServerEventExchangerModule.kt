@@ -18,13 +18,13 @@ class ServerEventExchangerModule : AbstractModule() {
 	var key: Double? = null
 
 	override fun init() {
-		Natives.onNet(GlobalConfig.NET_EVENT_NAME) { netPacket: Any ->
+		Natives.onNet(GlobalConfig.NET_EVENT_NAME) { netPacket: String ->
 			try {
-				val packet = Serializer.unpack<ServersNetPacket>(netPacket)
+				val packet = Serializer.unserialize<ServersNetPacket>(netPacket)
 
 				ServerEvent.handle(packet.data)
 			} catch (e: Throwable) {
-				Console.error("${e.message} ${JSON.stringify(netPacket)}")
+				Console.error("${e.message} $netPacket")
 			} catch (e: Serializer.DeserializationException) {
 				Console.error("wrong net packet format")
 			}

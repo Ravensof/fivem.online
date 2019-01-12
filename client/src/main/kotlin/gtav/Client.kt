@@ -486,8 +486,8 @@ object Client {
 	}
 
 	fun requestModel(hash: Int): Job {
-		RequestModel(hash)
 		return GlobalScope.launch {
+			RequestModel(hash)
 			while (!hasModelLoaded(hash)) {
 				delay(25)
 			}
@@ -529,7 +529,7 @@ object Client {
 		zPos: Number,
 		xAxis: Boolean = false,
 		yAxis: Boolean = false,
-		zAxis: Boolean = false
+		zAxis: Boolean = true
 	) {
 		SetEntityCoordsNoOffset(entity, xPos, yPos, zPos, xAxis, yAxis, zAxis)
 	}

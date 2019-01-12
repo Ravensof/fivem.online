@@ -46,9 +46,13 @@ open class MySQL {
 	}
 
 	private fun sQuery(query: String, vararg args: Any?): Deferred<String> {
+		@Suppress("NAME_SHADOWING")
+		val query = insertArgs(query, args)
+//		Console.debug(query)
+
 		return Exports.performHttpRequest(
 			url = ServerConfig.MYSQL_HTTP_API,
-			data = mapOf("request" to insertArgs(query, args)),
+			data = mapOf("request" to query),
 			httpRequestType = "POST"
 		)
 	}
@@ -81,13 +85,6 @@ open class MySQL {
 	class MySQLException(message: String) : Throwable(message)
 
 	companion object {
-
-		val instance by lazy {
-			MySQL().apply {
-				connect()
-			}
-		}
-
 		fun filter(value: String): String {
 			return "FROM_BASE64('${Base64.encode(value)}')"
 		}

@@ -39,7 +39,7 @@ class ModuleLoader {
 				val event = ModuleLoadedEvent(module)
 
 				UEvent.emit(event)
-				events.emit(event)
+				events.emit(module)
 			}
 			finally?.invoke()
 		}

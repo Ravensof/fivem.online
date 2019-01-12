@@ -1,5 +1,6 @@
 package online.fivem.client.modules.basics
 
+import kotlinx.coroutines.Job
 import online.fivem.client.gtav.Client
 import online.fivem.client.modules.eventGenerator.TickExecutor
 import online.fivem.client.modules.nuiEventExchanger.NuiEvent
@@ -18,8 +19,15 @@ class BasicsModule : AbstractModule() {
 
 		moduleLoader.apply {
 			add(JoinTransitionModule())
+			add(SpawnManagerModule())
 			add(SynchronizationModule())
 		}
+	}
+
+	override fun start(): Job? {
+		changeHeaderInMainMenu()
+
+		return super.start()
 	}
 
 	private fun onPauseMenuStateChanged(state: Int) {

@@ -7,6 +7,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
+import online.fivem.common.common.Console
 import online.fivem.common.common.Serializer
 import online.fivem.common.entities.NuiPacket
 import online.fivem.common.events.ImReadyEvent
@@ -49,9 +50,13 @@ class ClientEventExchangerModule : AbstractModule(), EventListener {
 
 	override fun handleEvent(event: Event) {
 		try {
-			val packet = Serializer.unpack<NuiPacket>(event.asDynamic().data as Any)
+			val data = event.asDynamic().data as Any
+			if (data is String) return
+
+			val packet = Serializer.unpack<NuiPacket>(data)
 			ClientEvent.handle(packet.data)
 		} catch (exception: Serializer.DeserializationException) {
+			Console.warn("wrong packet format")
 		}
 	}
 

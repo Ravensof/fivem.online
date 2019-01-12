@@ -30,11 +30,14 @@ class JoinTransitionModule : AbstractModule() {
 		return super.start()
 	}
 
-	fun startTransition() {
+	fun startTransition(): Job {
 		muteSound(MUTE_SOUND)
 
-		if (!Client.isPlayerSwitchInProgress()) {
-			switchingPlayerJob = Client.switchOutPlayer(Client.getPlayerPed())
+		return GlobalScope.launch {
+			if (!Client.isPlayerSwitchInProgress()) {
+				switchingPlayerJob = Client.switchOutPlayer(Client.getPlayerPed())
+				switchingPlayerJob?.join()
+			}
 		}
 	}
 
@@ -43,11 +46,9 @@ class JoinTransitionModule : AbstractModule() {
 			val execId = TickExecutor.addTick { clearScreen() }
 
 			switchingPlayerJob?.join()
-
 			muteSound(false)
 
 			Client.switchInPlayer(Client.getPlayerPed()).join()
-
 			TickExecutor.removeTick(execId)
 			Client.clearDrawOrigin()
 		}

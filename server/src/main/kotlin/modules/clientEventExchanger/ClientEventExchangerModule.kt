@@ -17,11 +17,13 @@ import online.fivem.common.gtav.NativeEvents
 import online.fivem.server.Strings
 import online.fivem.server.gtav.Exports
 import online.fivem.server.gtav.Natives
+import online.fivem.server.modules.session.SessionModule
 import kotlin.random.Random
 
 class ClientEventExchangerModule : AbstractModule() {
 
 	private val playersList = mutableMapOf<Int, Double>()
+	private val sessionModule by moduleLoader.onReady<SessionModule>()
 
 	override fun init() {
 		Exports.on(NativeEvents.Server.PLAYER_DROPPED) { playerId: Int, _: String -> onPlayerDropped(playerId) }
@@ -65,7 +67,7 @@ class ClientEventExchangerModule : AbstractModule() {
 				packet.playerSrc?.value?.let { playerSrc ->
 					emit(playerSrc, packet.data)
 				}.onNull {
-					Natives.getPlayers().forEach {
+					sessionModule.getConnectedPlayers().forEach {
 						emit(it.value, packet.data)
 					}
 				}
@@ -99,7 +101,7 @@ class ClientEventExchangerModule : AbstractModule() {
 		Natives.emitNet(
 			eventName = GlobalConfig.NET_EVENT_NAME,
 			playerSrc = playerSrc,
-			data = Serializer.prepare(
+			data = Serializer.serialize(
 				ServersNetPacket(data = data)
 			)
 		)
