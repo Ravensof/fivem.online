@@ -20,22 +20,14 @@ class SpawnManager : AbstractModule() {
 
 		fun spawnPlayer(coordinatesX: CoordinatesX, modelHash: Int?, callback: () -> Unit = {}) {
 			GlobalScope.launch {
-				Client.doScreenFadeOut(500)
-
-				while (Client.isScreenFadingOut()) {
-					delay(100)
-				}
+				Client.doScreenFadeOut(500).join()
 
 				val playerId = Client.getPlayerId()
 
 				freezePlayer(playerId, true)
 
 				modelHash?.let {
-					Client.requestModel(it)
-
-					while (!Client.hasModelLoaded(it)) {
-						delay(100)
-					}
+					Client.requestModel(it).join()
 
 					Client.setPlayerModel(playerId, it)
 					Client.setModelAsNoLongerNeeded(it)
@@ -43,7 +35,7 @@ class SpawnManager : AbstractModule() {
 
 				Client.requestCollisionAtCoordinates(coordinatesX)
 
-				val ped = Client.getPlayerPed() ?: 0
+				val ped = Client.getPlayerPed()
 
 				Client.setEntityCoordsNoOffset(ped, coordinatesX.x, coordinatesX.y, coordinatesX.z, zAxis = true)
 				Client.networkResurrectLocalPlayer(coordinatesX)
@@ -56,11 +48,7 @@ class SpawnManager : AbstractModule() {
 				}
 
 				Client.shutdownLoadingScreen()
-				Client.doScreenFadeIn(500)
-
-				while (Client.isScreenFadingIn()) {
-					delay(100)
-				}
+				Client.doScreenFadeIn(500).join()
 
 				freezePlayer(playerId, false)
 
@@ -73,7 +61,7 @@ class SpawnManager : AbstractModule() {
 		private fun freezePlayer(playerSrc: Int, freeze: Boolean) {
 			Client.setPlayerControl(playerSrc, !freeze, 0)
 
-			val ped = Client.getPlayerPed() ?: return
+			val ped = Client.getPlayerPed()
 
 			if (!freeze) {
 				if (!Client.isEntityVisible(ped)) {

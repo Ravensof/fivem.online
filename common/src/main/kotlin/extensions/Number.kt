@@ -2,17 +2,17 @@ package online.fivem.common.extensions
 
 operator fun Number.minus(number: Number): Number {
 	return when (this) {
-		is Int ->
-			this - number.toInt()
+		is Float ->
+			this - number.toFloat()
 
 		is Double ->
 			this - number.toDouble()
 
-		is Float ->
-			this - number.toFloat()
-
 		is Long ->
 			this - number.toLong()
+
+		is Int ->
+			this - number.toInt()
 
 		is Short ->
 			this - number.toShort()
@@ -23,17 +23,17 @@ operator fun Number.minus(number: Number): Number {
 
 operator fun Number.plus(number: Number): Number {
 	return when (this) {
-		is Int ->
-			this + number.toInt()
+		is Float ->
+			this + number.toFloat()
 
 		is Double ->
 			this + number.toDouble()
 
-		is Float ->
-			this + number.toFloat()
-
 		is Long ->
 			this + number.toLong()
+
+		is Int ->
+			this + number.toInt()
 
 		is Short ->
 			this + number.toShort()
@@ -44,17 +44,17 @@ operator fun Number.plus(number: Number): Number {
 
 operator fun Number.times(number: Number): Number {
 	return when (this) {
-		is Int ->
-			this * number.toInt()
+		is Float ->
+			this * number.toFloat()
 
 		is Double ->
 			this * number.toDouble()
 
-		is Float ->
-			this * number.toFloat()
-
 		is Long ->
 			this * number.toLong()
+
+		is Int ->
+			this * number.toInt()
 
 		is Short ->
 			this * number.toShort()
@@ -68,10 +68,10 @@ operator fun Number.compareTo(number: Number): Int {
 	val compare = fun() {}
 
 	return when (this) {
-		is Int ->
+		is Float ->
 			when {
-				this > number.toInt() -> -1
-				this == number.toInt() -> 0
+				this > number.toFloat() -> -1
+				this == number.toFloat() -> 0
 				else -> 1
 			}
 
@@ -82,17 +82,17 @@ operator fun Number.compareTo(number: Number): Int {
 				else -> 1
 			}
 
-		is Float ->
-			when {
-				this > number.toFloat() -> -1
-				this == number.toFloat() -> 0
-				else -> 1
-			}
-
 		is Long ->
 			when {
 				this > number.toLong() -> -1
 				this == number.toLong() -> 0
+				else -> 1
+			}
+
+		is Int ->
+			when {
+				this > number.toInt() -> -1
+				this == number.toInt() -> 0
 				else -> 1
 			}
 

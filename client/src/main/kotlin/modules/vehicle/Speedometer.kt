@@ -18,7 +18,7 @@ class Speedometer : AbstractModule() {
 	}
 
 	private fun updateJob(): Job = GlobalScope.launch {
-		val ped = Client.getPlayerPed() ?: return@launch
+		val ped = Client.getPlayerPed()
 		val vehicle = Client.getVehiclePedIsUsing(ped) ?: return@launch
 
 		while (isActive) {

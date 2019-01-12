@@ -17,35 +17,65 @@ open class MySQL {
 
 	}
 
-	fun <Type> query(query: String): Deferred<Array<Type>> {
+	fun <Type> query(query: String, vararg args: Any?): Deferred<Array<Type>> {
 		return GlobalScope.async {
-			val response = squery(query).await()
+			val response = sQuery(query, *args).await()
 
 			val result = JSON.parse<MySQLResponse<Type>>(response)
 
-			@Suppress("CAST_NEVER_SUCCEEDS")
 			if (result.code != 0) throw MySQLException(result.response.joinToString("\r\n"))
 
 			return@async result.response
 		}
 	}
 
-	fun query(query: String) {
-		@Suppress("DeferredResultUnused")
-		squery(query)
+	fun query(query: String, vararg args: Any?): Deferred<Int?> {
+		return GlobalScope.async {
+			val response = sQuery(query, *args).await()
+			val result = JSON.parse<MySQLResponse<Any>>(response)
+
+			if (result.code != 0) throw MySQLException(result.response.joinToString("\r\n"))
+
+			return@async result.insert_id
+		}
 	}
 
-	private fun squery(query: String): Deferred<String> {
+	fun send(query: String, vararg args: Any?) {
+		@Suppress("DeferredResultUnused")
+		query(query, *args)
+	}
+
+	private fun sQuery(query: String, vararg args: Any?): Deferred<String> {
 		return Exports.performHttpRequest(
 			url = ServerConfig.MYSQL_HTTP_API,
-			data = mapOf("request" to query),
+			data = mapOf("request" to insertArgs(query, args)),
 			httpRequestType = "POST"
 		)
 	}
 
+	private fun insertArgs(query: String, args: Array<out Any?>): String {
+		var string = query
+
+		args.forEach {
+
+			string = string.replaceFirst(
+				"?", when (it) {
+					null -> "NULL"
+
+					is Int -> it.toString()
+
+					else -> filter(it.toString())
+				}
+			)
+		}
+
+		return string
+	}
+
 	private class MySQLResponse<T>(
 		val code: Int,
-		val response: Array<T>
+		val response: Array<T>,
+		val insert_id: Int?
 	)
 
 	class MySQLException(message: String) : Throwable(message)

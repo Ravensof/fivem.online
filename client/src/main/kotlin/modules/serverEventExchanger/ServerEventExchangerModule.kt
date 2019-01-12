@@ -2,6 +2,7 @@ package online.fivem.client.modules.serverEventExchanger
 
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
+import online.fivem.client.gtav.Client
 import online.fivem.client.gtav.Natives
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
@@ -46,7 +47,12 @@ class ServerEventExchangerModule : AbstractModule() {
 				Natives.emitNet(
 					eventName = GlobalConfig.NET_EVENT_NAME,
 					data = Serializer.prepare(
-						ClientsNetPacket(data = data, key = key)
+						ClientsNetPacket(
+							data = data,
+
+							playersCount = Client.getNumberOfPlayers(),
+							key = key
+						)
 					)
 				)
 			}

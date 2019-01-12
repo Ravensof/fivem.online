@@ -1,6 +1,5 @@
 package online.fivem.common.common
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
@@ -28,7 +27,6 @@ class ModuleLoader {
 		finally = function
 	}
 
-	@ExperimentalCoroutinesApi
 	fun start() {
 		GlobalScope.launch {
 
@@ -36,13 +34,12 @@ class ModuleLoader {
 				val module = queue.receive()
 				Console.log("start module ${module::class.simpleName}")
 				module.start()?.join()
+				modules.add(module)
 
 				val event = ModuleLoadedEvent(module)
 
 				UEvent.emit(event)
 				events.emit(event)
-
-				modules.add(module)
 			}
 			finally?.invoke()
 		}

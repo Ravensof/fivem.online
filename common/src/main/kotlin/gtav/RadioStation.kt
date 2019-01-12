@@ -21,4 +21,6 @@ enum class RadioStation {
 	RADIO_18_90S_ROCK,    // Vinewood Boulevard Radio
 	RADIO_19_USER,        // Self Radio
 	RADIO_20_THELAB,      // The Lab
+
+	RADIO_22_DLC_BATTLE_MIX1_RADIO,//??
 }

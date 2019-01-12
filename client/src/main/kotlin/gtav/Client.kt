@@ -2,6 +2,10 @@
 
 package online.fivem.client.gtav
 
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import online.fivem.common.common.Console
 import online.fivem.common.common.Entity
 import online.fivem.common.entities.Coordinates
@@ -220,7 +224,7 @@ object Client {
 	}
 
 	fun getPassengerSeatOfPedInVehicle(): Int? {
-		val ped = Client.getPlayerPed() ?: return null
+		val ped = Client.getPlayerPed()
 		val vehicle = getVehiclePedIsUsing(ped) ?: return null
 
 		return getPassengerSeatOfPedInVehicle(vehicle, ped)
@@ -354,12 +358,26 @@ object Client {
 //		return LoadResourceFile(resourceName, fileName)
 //	}
 
-	fun doScreenFadeIn(duration: Int) {
-		DoScreenFadeIn(duration)
+	fun doScreenFadeIn(duration: Int): Job {
+		return GlobalScope.launch {
+			DoScreenFadeIn(duration)
+			while (!isScreenFadedIn()) {
+				delay(25)
+			}
+		}
 	}
 
-	fun doScreenFadeOut(duration: Int) {
-		DoScreenFadeOut(duration)
+	fun isScreenFadedIn(): Boolean {
+		return IsScreenFadedIn() == 1
+	}
+
+	fun doScreenFadeOut(duration: Int): Job {
+		return GlobalScope.launch {
+			DoScreenFadeOut(duration)
+			while (!isScreenFadedOut()) {
+				delay(25)
+			}
+		}
 	}
 
 	fun isScreenFadedOut(): Boolean {
@@ -427,6 +445,10 @@ object Client {
 		return IsEntityVisible(entity) == 1
 	}
 
+	fun getPlayerPed(): Entity {
+		return GetPlayerPed(-1)
+	}
+
 	fun getPlayerPed(id: Int = -1): Entity? {
 		return GetPlayerPed(id).takeIf { it != 0 }
 	}
@@ -463,8 +485,13 @@ object Client {
 		return PlayerId()
 	}
 
-	fun requestModel(hash: Int) {
+	fun requestModel(hash: Int): Job {
 		RequestModel(hash)
+		return GlobalScope.launch {
+			while (!hasModelLoaded(hash)) {
+				delay(25)
+			}
+		}
 	}
 
 	fun hasModelLoaded(hash: Int): Boolean {
@@ -539,8 +566,69 @@ object Client {
 	fun getRadioStation(): RadioStation? {
 		return GetPlayerRadioStationName()?.let { RadioStation.valueOf(it) }
 	}
+
+	fun setManualShutdownLoadingScreenNui(manualShutdown: Boolean) {
+		SetManualShutdownLoadingScreenNui(manualShutdown)
+	}
+
+	fun isPlayerSwitchInProgress(): Boolean {
+		return IsPlayerSwitchInProgress() == 1
+	}
+
+	fun switchOutPlayer(ped: Entity): Job {
+		return GlobalScope.launch {
+			SwitchOutPlayer(ped, 0, 1)
+			while (getPlayerSwitchState() != 5) {
+				delay(25)
+			}
+		}
+	}
+
+	fun switchInPlayer(ped: Entity): Job {
+		SwitchInPlayer(ped)
+		return GlobalScope.launch {
+			SwitchInPlayer(ped)
+			while (getPlayerSwitchState() != 12) {
+				delay(25)
+			}
+		}
+	}
+
+	fun setCloudHatOpacity(opacity: Number) {
+		SetCloudHatOpacity(opacity)
+	}
+
+	fun hideHudAndRadarThisFrame() {
+		HideHudAndRadarThisFrame()
+	}
+
+	fun setDrawOrigin(x: Number, y: Number, z: Number, p3: Int) {
+		SetDrawOrigin(x, y, z, p3)
+	}
+
+	fun getPlayerSwitchState(): Int {
+		return GetPlayerSwitchState().toInt()
+	}
+
+	fun shutdownLoadingScreenNui() {
+		ShutdownLoadingScreenNui()
+	}
+
+	fun getGameTimer(): Int {
+		return GetGameTimer()
+	}
+
+	fun clearDrawOrigin() {
+		ClearDrawOrigin()
+	}
+
+	fun getNumberOfPlayers(): Int {
+		return GetNumberOfPlayers()
+	}
 }
 
+
+private external fun SwitchInPlayer(ped: Entity)
 
 /**
  * Aborts the current message in the text chat.
@@ -2201,7 +2289,7 @@ private external fun AddTextEntry(entryKey: String, entryText: String)
  * Resets the screen's draw-origin which was changed by the function GRAPHICS::SET_DRAW_ORIGIN(...) back to x=0,y=0.
  * See GRAPHICS::SET_DRAW_ORIGIN(...) for further information.
  */
-//private external fun ClearDrawOrigin()
+private external fun ClearDrawOrigin()
 
 //private external fun ClearDrivebyTaskUnderneathDrivingTask(ped: number)
 
@@ -6004,7 +6092,7 @@ private external fun GetEntitySpeed(entity: Int): Double
 
 //private external fun GetFreeStackSlotsCount(threadId: number): number;
 
-//private external fun GetGameTimer(): number;
+private external fun GetGameTimer(): Int
 
 //private external fun GetGameplayCamCoord(): number[];
 
@@ -6937,7 +7025,7 @@ private external fun GetNumResourceMetadata(resourceName: String, metadataKey: S
 //private external fun GetNumberOfPhotos(): number;
 //private external fun N_0x473151ebc762c6da(): number;
 
-//private external fun GetNumberOfPlayers(): number;
+private external fun GetNumberOfPlayers(): Int
 
 //private external fun GetNumberOfStreamingRequests(): number;
 
@@ -9390,7 +9478,7 @@ private external fun HasModelLoaded(model: Int): Number
 /**
  * I think this works, but seems to prohibit switching to other weapons (or accessing the weapon wheel)
  */
-//private external fun HideHudAndRadarThisFrame()
+private external fun HideHudAndRadarThisFrame()
 
 //private external fun HideHudComponentThisFrame(id: number)
 
@@ -10586,7 +10674,7 @@ private external fun IsPedInAnyVehicle(ped: Entity, atGetIn: Boolean): Number
  */
 //private external fun IsScenarioTypeEnabled(scenarioType: string): number;
 
-//private external fun IsScreenFadedIn(): number;
+private external fun IsScreenFadedIn(): Any
 
 private external fun IsScreenFadedOut(): Any
 
@@ -21599,7 +21687,7 @@ private external fun SendNuiMessage(jsonString: String): Int
  */
 private external fun SetClockTime(hour: Short, minute: Short, second: Short)
 
-//private external fun SetCloudHatOpacity(opacity: number)
+private external fun SetCloudHatOpacity(opacity: Number)
 //private external fun N_0xf36199225d6d8c86(opacity: number)
 
 //private external fun SetCloudHatTransition(_type: string, transitionTime: number)
@@ -21873,7 +21961,7 @@ private external fun SetClockTime(hour: Short, minute: Short, second: Short)
  * This function also effects the drawing of texts and other UI-elements.
  * The effect can be reset by calling GRAPHICS::CLEAR_DRAW_ORIGIN().
  */
-//private external fun SetDrawOrigin(x: number, y: number, z: number, p3: number)
+private external fun SetDrawOrigin(x: Number, y: Number, z: Number, p3: Int)
 
 //private external fun SetDriveTaskCruiseSpeed(driver: number, cruiseSpeed: number)
 
@@ -22594,7 +22682,7 @@ private external fun SetFrontendRadioActive(active: Boolean)
  * you will have to manually invoke `SHUTDOWN_LOADING_SCREEN_NUI` whenever you want to hide the NUI loading screen.
  * @param manualShutdown TRUE to manually shut down the loading screen NUI.
  */
-//private external fun SetManualShutdownLoadingScreenNui(manualShutdown: boolean)
+private external fun SetManualShutdownLoadingScreenNui(manualShutdown: Boolean)
 
 /**
  * If toggle is true, the map is shown in full screen
@@ -26509,7 +26597,7 @@ private external fun ShutdownLoadingScreen()
 /**
  * Shuts down the `loadingScreen` NUI frame, similarly to `SHUTDOWN_LOADING_SCREEN`.
  */
-//private external fun ShutdownLoadingScreenNui()
+private external fun ShutdownLoadingScreenNui()
 
 /**
  * This is to make the player walk without accepting input from INPUT.
@@ -27385,7 +27473,7 @@ private external fun StopAudioScene(scene: String)
 /**
  * fucks up on mount chilliad
  */
-//private external fun SwitchOutPlayer(ped: number, flags: number, unknown: number)
+private external fun SwitchOutPlayer(ped: Entity, flags: Number, unknown: Number)
 /**
  * fucks up on mount chilliad
  */
@@ -28947,7 +29035,7 @@ private external fun GetPlayerRadioStationName(): String?
 
 //private external fun GetPlayerSprintTimeRemaining(player: number): number;
 
-//private external fun GetPlayerSwitchState(): number;
+private external fun GetPlayerSwitchState(): Number
 
 //private external fun GetPlayerSwitchType(): number;
 
@@ -29051,7 +29139,8 @@ external fun GetPlayerTeam(player: Int): Int
  * Returns true if the player is currently switching, false otherwise.
  * (When the camera is in the sky moving from Trevor to Franklin for example)
  */
-//private external fun IsPlayerSwitchInProgress(): number;
+private external fun IsPlayerSwitchInProgress(): Number
+
 /**
  * Returns true if the player is currently switching, false otherwise.
  * (When the camera is in the sky moving from Trevor to Franklin for example)

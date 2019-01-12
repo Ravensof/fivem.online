@@ -35,6 +35,11 @@ class ClientEventExchangerModule : AbstractModule() {
 				Strings.CLIENT_WRONG_PACKET_FORMAT
 			)
 
+			if (netPacket.playersCount == 1 && Natives.countPlayersOnline() > 1) return@onNet Natives.dropPlayer(
+				playerSrc,
+				Strings.CLIENT_SINGLE_SESSION
+			)
+
 			ClientEvent.handle(playerSrc, netPacket.data)
 		}
 
