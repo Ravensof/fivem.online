@@ -1,5 +1,6 @@
 package online.fivem.common.common
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
@@ -27,6 +28,7 @@ class ModuleLoader {
 		finally = function
 	}
 
+	@ExperimentalCoroutinesApi
 	fun start() {
 		GlobalScope.launch {
 
@@ -83,7 +85,7 @@ class ModuleLoader {
 			}
 
 			val module = thisRef.moduleLoader.modules.find { it::class == kClass }?.unsafeCast<T>()
-				?: throw Exception("module ${kClass.simpleName} used in ${property.name} have not been loaded")
+				?: throw Exception("module ${kClass.simpleName} used in ${thisRef::class.simpleName}/${property.name} have not been loaded")
 
 			value = module
 

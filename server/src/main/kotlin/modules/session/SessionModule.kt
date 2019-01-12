@@ -1,7 +1,6 @@
 package online.fivem.server.modules.session
 
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
@@ -14,7 +13,6 @@ import online.fivem.server.entities.Player
 import online.fivem.server.gtav.Exports
 import online.fivem.server.gtav.Natives
 import online.fivem.server.modules.clientEventExchanger.ClientEvent
-import online.fivem.server.modules.clientEventExchanger.ClientEventExchangerModule
 import online.fivem.server.mysqlTables.BlackListTable
 
 class SessionModule : AbstractModule() {
@@ -22,21 +20,11 @@ class SessionModule : AbstractModule() {
 	private val mySQL = MySQL.instance
 	private val players = mutableMapOf<PlayerSrc, Player>()
 
-	private val clientEventExchangerModule by moduleLoader.onReady<ClientEventExchangerModule>()
-
 	override fun init() {
 		Exports.on(NativeEvents.Server.PLAYER_CONNECTING, ::onClientConnecting)
 		Exports.on(NativeEvents.Server.PLAYER_DROPPED, ::onPlayerDropped)
 
 		ClientEvent.on<ImReadyEvent> { playerSrc, _ -> onClientReady(playerSrc) }
-	}
-
-	override fun start(): Job? {
-		clientEventExchangerModule.getConnectedClients().forEach {
-			onClientReady(it)
-		}
-
-		return super.start()
 	}
 
 	fun getConnectedPlayers(): List<PlayerSrc> {

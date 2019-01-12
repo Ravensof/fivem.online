@@ -7,7 +7,8 @@ import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
 import online.fivem.common.common.Serializer
-import online.fivem.common.entities.NetPacket
+import online.fivem.common.entities.ClientsNetPacket
+import online.fivem.common.entities.ServersNetPacket
 import online.fivem.common.events.EstablishConnectionEvent
 import online.fivem.common.events.ImReadyEvent
 
@@ -18,7 +19,7 @@ class ServerEventExchangerModule : AbstractModule() {
 	override fun init() {
 		Natives.onNet(GlobalConfig.NET_EVENT_NAME) { netPacket: Any ->
 			try {
-				val packet = Serializer.unpack<NetPacket>(netPacket)
+				val packet = Serializer.unpack<ServersNetPacket>(netPacket)
 
 				ServerEvent.handle(packet.data)
 			} catch (e: Throwable) {
@@ -45,7 +46,7 @@ class ServerEventExchangerModule : AbstractModule() {
 				Natives.emitNet(
 					eventName = GlobalConfig.NET_EVENT_NAME,
 					data = Serializer.prepare(
-						NetPacket(data = data, key = key)
+						ClientsNetPacket(data = data, key = key)
 					)
 				)
 			}
@@ -67,7 +68,7 @@ class ServerEventExchangerModule : AbstractModule() {
 	}
 
 	private fun startHandshaking() {
-		Natives.emitNet(GlobalConfig.NET_EVENT_ESTABLISHING_NAME, Serializer.prepare(NetPacket(data = ImReadyEvent())))
+		Natives.emitNet(GlobalConfig.NET_EVENT_ESTABLISHING_NAME, Serializer.prepare(ImReadyEvent()))
 	}
 
 	companion object {

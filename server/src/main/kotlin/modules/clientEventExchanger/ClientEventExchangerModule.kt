@@ -7,8 +7,9 @@ import kotlinx.coroutines.launch
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Serializer
-import online.fivem.common.entities.NetPacket
+import online.fivem.common.entities.ClientsNetPacket
 import online.fivem.common.entities.PlayerSrc
+import online.fivem.common.entities.ServersNetPacket
 import online.fivem.common.events.EstablishConnectionEvent
 import online.fivem.common.events.ImReadyEvent
 import online.fivem.common.extensions.onNull
@@ -26,7 +27,8 @@ class ClientEventExchangerModule : AbstractModule() {
 		Exports.on(NativeEvents.Server.PLAYER_DROPPED) { playerId: Int, _: String -> onPlayerDropped(playerId) }
 
 		Natives.onNet(GlobalConfig.NET_EVENT_NAME) { playerSrc: PlayerSrc, netPacket: Any ->
-			@Suppress("NAME_SHADOWING") val netPacket = Serializer.unpack<NetPacket>(netPacket)
+			@Suppress("NAME_SHADOWING")
+			val netPacket = Serializer.unpack<ClientsNetPacket>(netPacket)
 
 			if (playersList[playerSrc.value] != netPacket.key) return@onNet Natives.dropPlayer(
 				playerSrc,
@@ -37,14 +39,16 @@ class ClientEventExchangerModule : AbstractModule() {
 		}
 
 		Natives.onNet(GlobalConfig.NET_EVENT_ESTABLISHING_NAME) { playerSrc: PlayerSrc, netPacket: Any ->
-			@Suppress("NAME_SHADOWING") val netPacket = Serializer.unpack<NetPacket>(netPacket)
-
-			if (netPacket.data !is ImReadyEvent) return@onNet Natives.dropPlayer(
-				playerSrc,
-				Strings.CLIENT_WRONG_PACKET_FORMAT
-			)
-
-			onClientReady(playerSrc)
+			try {
+				@Suppress("NAME_SHADOWING")
+				val netPacket = Serializer.unpack<ImReadyEvent>(netPacket)
+				onClientReady(playerSrc)
+			} catch (e: Serializer.DeserializationException) {
+				Natives.dropPlayer(
+					playerSrc,
+					Strings.CLIENT_WRONG_PACKET_FORMAT
+				)
+			}
 		}
 	}
 
@@ -63,23 +67,12 @@ class ClientEventExchangerModule : AbstractModule() {
 			}
 		}
 
-		return super.start()//waitingForClients()
+		return super.start()
 	}
 
 	fun getConnectedClients(): List<PlayerSrc> {
 		return playersList.map { PlayerSrc(it.key) }
 	}
-
-//	private fun waitingForClients() = GlobalScope.launch {
-//		delay(5_000)
-//		val players = Natives.getPlayers()
-//
-//		players.forEach {
-//			if (!playersList.containsKey(it.value)) {
-//				Natives.dropPlayer(it, Strings.CLIENT_WASNT_CONNECT)
-//			}
-//		}
-//	}
 
 	private fun onPlayerDropped(playerId: Int) {
 		playersList.remove(playerId)
@@ -102,7 +95,7 @@ class ClientEventExchangerModule : AbstractModule() {
 			eventName = GlobalConfig.NET_EVENT_NAME,
 			playerSrc = playerSrc,
 			data = Serializer.prepare(
-				NetPacket(data = data)
+				ServersNetPacket(data = data)
 			)
 		)
 	}

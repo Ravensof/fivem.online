@@ -1,6 +1,6 @@
 package online.fivem.common.entities
 
-class NetPacket(
+class ClientsNetPacket(
 	val data: Any,
-	val key: Double? = null
+	val key: Double?
 )
