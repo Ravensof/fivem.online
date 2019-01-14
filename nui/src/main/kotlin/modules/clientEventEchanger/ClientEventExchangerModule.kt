@@ -1,7 +1,7 @@
 package online.fivem.nui.modules.clientEventEchanger
 
 import js.externals.jquery.jQuery
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
@@ -14,8 +14,10 @@ import online.fivem.common.events.ImReadyEvent
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.EventListener
 import kotlin.browser.window
+import kotlin.coroutines.CoroutineContext
 
-class ClientEventExchangerModule : AbstractModule(), EventListener {
+class ClientEventExchangerModule : AbstractModule(), EventListener, CoroutineScope {
+	override val coroutineContext: CoroutineContext = Job()
 
 	override fun start(): Job? {
 		window.addEventListener("message", this)
@@ -23,18 +25,18 @@ class ClientEventExchangerModule : AbstractModule(), EventListener {
 		val channel = Channel<Unit>()
 
 		ClientEvent.on<ImReadyEvent> {
-			GlobalScope.launch {
+			launch {
 				channel.send(Unit)
 			}
 		}
 
-		GlobalScope.launch {
+		launch {
 			for (data in ClientEventExchangerModule.channel) {
 				jQuery.post("http://${GlobalConfig.MODULE_NAME}/${GlobalConfig.NUI_EVENT_NAME}", data)
 			}
 		}
 
-		return GlobalScope.launch {
+		return launch {
 			ClientEvent.emit(ImReadyEvent())
 
 			channel.receive()

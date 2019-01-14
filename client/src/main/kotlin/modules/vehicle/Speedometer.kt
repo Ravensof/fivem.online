@@ -24,8 +24,12 @@ class Speedometer : AbstractModule(), CoroutineScope {
 		val ped = Client.getPlayerPed()
 		val vehicle = Client.getVehiclePedIsUsing(ped) ?: return@launch
 
+		var speed: Double
+
 		while (isActive) {
-			if (!vehicleHasSpeedo && Client.getVehicleDashboardSpeed(vehicle) > 0) {
+			speed = Client.getVehicleDashboardSpeed(vehicle)
+
+			if (!vehicleHasSpeedo && speed > 0) {
 				vehicleHasSpeedo = true
 				NuiEvent.emit(SpeedometerEnableEvent())
 			}
@@ -35,7 +39,7 @@ class Speedometer : AbstractModule(), CoroutineScope {
 					SpeedometerUpdateEvent(
 						currentGear = Client.getVehicleCurrentGear(vehicle),
 						currentRpm = Client.getVehicleCurrentRpm(vehicle),
-						dashboardSpeed = Client.getVehicleDashboardSpeed(vehicle),
+						dashboardSpeed = speed,
 						turboPressure = Client.getVehicleTurboPressure(vehicle),
 						handbrake = Client.getVehicleHandbrake(vehicle),
 
@@ -64,7 +68,7 @@ class Speedometer : AbstractModule(), CoroutineScope {
 	}
 
 	companion object {
-		private const val TARGET_FPS = 10
+		private const val TARGET_FPS = 5
 		private const val UPDATE_RATE = 1_000L / TARGET_FPS
 	}
 }

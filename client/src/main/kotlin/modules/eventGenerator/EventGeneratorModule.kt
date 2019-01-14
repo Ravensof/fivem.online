@@ -1,24 +1,22 @@
 package online.fivem.client.modules.eventGenerator
 
 import kotlinx.coroutines.*
+import online.fivem.client.extensions.getPassengerSeatOfPedInVehicle
+import online.fivem.client.extensions.isPedAtGetInAnyVehicle
 import online.fivem.client.gtav.Client
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.UEvent
-import online.fivem.common.entities.Coordinates
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.events.*
 import online.fivem.common.extensions.orZero
 import online.fivem.common.gtav.NativeControls
 import online.fivem.common.gtav.ProfileSetting
 import online.fivem.common.gtav.RadioStation
+import kotlin.coroutines.CoroutineContext
 import kotlin.js.Date
 
-class EventGenerator : AbstractModule() {
-
-	private lateinit var job50: Job
-	private lateinit var job500: Job
-	private lateinit var job1000: Job
-	private lateinit var jobKeyScan: Job
+class EventGeneratorModule : AbstractModule(), CoroutineScope {
+	override val coroutineContext: CoroutineContext = Job()
 
 	private var playerPed = 0
 	private var playerPedHealth: Int = 0
@@ -35,31 +33,41 @@ class EventGenerator : AbstractModule() {
 	private var audioMusicLevelInMP: Int? = null
 	private var playerRadioStationName: RadioStation? = null
 
+	var accelerationThreshold: Double = 50.0
+		set(value) {
+			if (value > field) {
+				field = value
+			}
+		}
+	private var iPlayerSpeed = 0.0
+	private var iPlayerAcceleration = 0.0
+	private var iPlayerAccelerationModule = 0.0
+	private var iLastSpeedCheck = 0.0
+	private var isAccelerationThresholdAcchieved = false
+
 	override fun start(): Job? {
 		TickExecutor.addTick(::checkPressedFlashKeys)
 
-		jobKeyScan = repeatJob(KEY_SCAN_TIME) {
+		repeatJob(KEY_SCAN_TIME) {
 			checkPressedKeys()
 		}
 
-		job50 = repeatJob(50) {
+		repeatJob(50) {
 			checkVehicleHealth()
+			checkAcceleration()
 		}
 
-		job500 = repeatJob(500) {
-
+		repeatJob(500) {
 			checkPlayerSeatIndex(Client.getPassengerSeatOfPedInVehicle())
 			checkPauseMenuState(Client.getPauseMenuState())
 			checkIsPlayerInVehicle()
 			checkRadio()
 		}
 
-		job1000 = repeatJob(1_000) {
-			checkPlayersPed(Client.getPlayerPed().orZero())
+		repeatJob(1_000) {
+			checkPlayersPed(Client.getPlayerPed())
 
 			checkAudioMusicLevelInMP(Client.getProfileSetting(ProfileSetting.AUDIO_MUSIC_LEVEL_IN_MP).orZero())
-			Client.getEntityCoords(playerPed)?.let { updateCoordinates(it, Client.getEntityHeading(playerPed)) }
-
 			checkFadeInOut(Client.isScreenFadedOut())
 		}
 
@@ -67,11 +75,56 @@ class EventGenerator : AbstractModule() {
 	}
 
 	override fun stop(): Job? {
-		jobKeyScan.cancel()
-		job1000.cancel()
-		job500.cancel()
+		cancel()
 
 		return super.stop()
+	}
+
+	private fun checkAcceleration() {
+		val currentCoordinates = Client.getEntityCoords(playerPed) ?: return
+
+		playerCoordinates?.let {
+			val dateNow = Date.now() / 1_000
+			val dt = dateNow - iLastSpeedCheck
+			val iSpeed = Client.getEntitySpeed(playerPed)
+
+			iLastSpeedCheck = dateNow
+
+			iPlayerAcceleration = (iSpeed - iPlayerSpeed) / dt
+			iPlayerSpeed = iSpeed
+
+			iPlayerAccelerationModule = if (iPlayerAcceleration >= 0) iPlayerAcceleration else -iPlayerAcceleration
+
+			if (iPlayerAccelerationModule >= accelerationThreshold) {
+				if (!isAccelerationThresholdAcchieved) {
+					isAccelerationThresholdAcchieved = true
+
+					if (!Client.isPedAtGetInAnyVehicle(playerPed)) {
+						UEvent.emit(
+							AccelerationThresholdAchievedEvent(
+								iPlayerAcceleration,
+								iPlayerAccelerationModule
+							)
+						)
+					}
+				}
+			} else {
+				isAccelerationThresholdAcchieved = false
+			}
+		}
+
+		if (playerCoordinates != currentCoordinates) {
+			val rotation = Client.getEntityHeading(playerPed)
+			val coordinates = CoordinatesX(currentCoordinates, rotation)
+
+			playerCoordinates = coordinates
+
+			UEvent.emit(
+				PlayerCoordinatesChangedEvent(
+					coordinates
+				)
+			)
+		}
 	}
 
 	private fun checkFadeInOut(isFadeOut: Boolean) {
@@ -94,7 +147,11 @@ class EventGenerator : AbstractModule() {
 		val pedHealthDiff = currentPedHealth - playerPedHealth
 
 		if (pedHealthDiff > 0) {
-			UEvent.emit(PlayersPedHealthChangedEvent(currentPedHealth, pedHealthDiff))
+			if (currentPedHealth == 0) {
+				UEvent.emit(PlayerPedUnconsciousEvent(pedHealthDiff))
+			} else {
+				UEvent.emit(PlayersPedHealthChangedEvent(currentPedHealth, pedHealthDiff))
+			}
 		}
 
 		if (playersVehicle == null) {
@@ -133,17 +190,7 @@ class EventGenerator : AbstractModule() {
 		vehiclePetrolTankHealth = petrolTankHealth
 	}
 
-	private fun updateCoordinates(coordinates: Coordinates, rotation: Float) {
-		if (playerCoordinates != coordinates) {
-			UEvent.emit(
-				PlayerCoordinatesChangedEvent(
-					CoordinatesX(coordinates, rotation)
-				)
-			)
-		}
-	}
-
-	private fun repeatJob(timeMillis: Long, function: () -> Unit): Job = GlobalScope.launch {
+	private fun repeatJob(timeMillis: Long, function: () -> Unit): Job = launch {
 		var startTime: Double
 		var endTime: Double
 
@@ -247,7 +294,8 @@ class EventGenerator : AbstractModule() {
 	}
 
 	private fun checkRadio() {
-		val currentRadio = Client.getRadioStation().takeIf { playersVehicle != null }
+		val currentRadio =
+			if (playersVehicle?.let { Client.isVehicleDriveable(it) } == true) Client.getRadioStation() else null
 
 		if (currentRadio != playerRadioStationName) {
 			UEvent.emit(PlayerRadioStationChangedEvent(currentRadio))
@@ -263,7 +311,7 @@ class EventGenerator : AbstractModule() {
 	}
 
 	private fun checkIsPlayerInVehicle() {
-		val currentVehicle = Client.getVehiclePedIsUsing(playerPed)
+		val currentVehicle = if (Client.isPedInAnyVehicle(playerPed)) Client.getVehiclePedIsUsing(playerPed) else null
 
 		if (currentVehicle == playersVehicle) return
 

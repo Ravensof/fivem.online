@@ -1,6 +1,6 @@
 package online.fivem.common.events
 
-class PlayersPedHealthChangedEvent(
+open class PlayersPedHealthChangedEvent(
 	val health: Int,
 	val diff: Int
 )

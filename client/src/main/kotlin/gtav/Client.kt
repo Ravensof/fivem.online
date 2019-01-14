@@ -2,20 +2,60 @@
 
 package online.fivem.client.gtav
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import online.fivem.common.common.Console
+import kotlinx.coroutines.*
 import online.fivem.common.common.Entity
 import online.fivem.common.entities.Coordinates
-import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.entities.Time
 import online.fivem.common.gtav.NativeControls
 import online.fivem.common.gtav.ProfileSetting
 import online.fivem.common.gtav.RadioStation
 
 object Client {
+
+//	fun FindFirstVehicle(outEntity: Number): Number{
+//
+//	}
+//
+//	fun FindNextVehicle(findHandle: Number, outEntity: Number): Number{
+//
+//	}
+
+	fun doesEntityExist(entity: Entity): Boolean {
+		return DoesEntityExist(entity) == 1
+	}
+
+	fun isVehicleDriveable(vehicle: Entity, isOnFireCheck: Boolean = false): Boolean {
+		return IsVehicleDriveable(vehicle, isOnFireCheck) == 1
+	}
+
+	/**
+	 * Dirt level 0..15
+	 */
+	fun getVehicleDirtLevel(vehicle: Entity): Int {
+		return GetVehicleDirtLevel(vehicle)
+	}
+
+	fun createVehicle(
+		modelHash: Int,
+		x: Number,
+		y: Number,
+		z: Number,
+		heading: Number,
+		isNetwork: Boolean = true,
+		thisScriptCheck: Boolean = false
+	): Deferred<Int> {
+		return GlobalScope.async {
+			requestModel(modelHash)
+			while (!hasModelLoaded(modelHash)) {
+				delay(100)
+			}
+			return@async CreateVehicle(modelHash, x, y, z, heading, isNetwork, thisScriptCheck)
+		}
+	}
+
+	fun setPedAsCop(ped: Entity) {
+		SetPedAsCop(ped, true)
+	}
 
 	fun getHashKey(string: String): Number {
 		return GetHashKey(string)
@@ -62,11 +102,8 @@ object Client {
 		return GetResourceMetadata(resourceName, metadataKey, index)
 	}
 
-	fun getProfileSetting(profileSetting: ProfileSetting): Int? {//todo проверить вывод, nullable?
-		return Console.checkValue(
-			"Client.getProfileSetting(profileSetting: ProfileSetting)",
-			GetProfileSetting(profileSetting.id)
-		) { it == null }
+	fun getProfileSetting(profileSetting: ProfileSetting): Int {
+		return GetProfileSetting(profileSetting.id)
 	}
 
 	fun addTextEntry(entryKey: String, entryText: String) {
@@ -184,17 +221,12 @@ object Client {
 		return GetVehicleEngineHealth(vehicle).toDouble()
 	}
 
+	/**
+	 * meters per second
+	 */
 	fun getEntitySpeed(entity: Entity): Double {
 		return GetEntitySpeed(entity)
 	}
-
-//	fun getEntitySpeedKmH(entity: Int): Double {
-//		return getEntitySpeed(entity) * 3.6
-//	}
-//
-//	fun getEntitySpeedMpH(entity: Int): Double {
-//		return getEntitySpeed(entity) * 2.236936
-//	}
 
 	fun getPedInVehicleSeat(vehicle: Entity, index: Int): Entity {//todo check
 		return GetPedInVehicleSeat(vehicle, index)
@@ -221,13 +253,6 @@ object Client {
 		}
 
 		return null
-	}
-
-	fun getPassengerSeatOfPedInVehicle(): Int? {
-		val ped = Client.getPlayerPed()
-		val vehicle = getVehiclePedIsUsing(ped) ?: return null
-
-		return getPassengerSeatOfPedInVehicle(vehicle, ped)
 	}
 
 	/**
@@ -534,9 +559,6 @@ object Client {
 		SetEntityCoordsNoOffset(entity, xPos, yPos, zPos, xAxis, yAxis, zAxis)
 	}
 
-	fun networkResurrectLocalPlayer(coordinatesX: CoordinatesX, changeTime: Boolean = true) =
-		networkResurrectLocalPlayer(coordinatesX.x, coordinatesX.y, coordinatesX.z, coordinatesX.rotation, changeTime)
-
 	fun networkResurrectLocalPlayer(
 		x: Number,
 		y: Number,
@@ -585,7 +607,6 @@ object Client {
 	}
 
 	fun switchInPlayer(ped: Entity): Job {
-		SwitchInPlayer(ped)
 		return GlobalScope.launch {
 			SwitchInPlayer(ped)
 			while (getPlayerSwitchState() != 12) {
@@ -625,8 +646,9 @@ object Client {
 	fun getNumberOfPlayers(): Int {
 		return GetNumberOfPlayers()
 	}
-}
 
+	class ModelLoadingTimeoutException(message: String) : Exception(message)
+}
 
 private external fun SwitchInPlayer(ped: Entity)
 
@@ -2990,7 +3012,15 @@ private external fun ClearPlayerWantedLevel(player: Int)
 /**
  * thisScriptCheck - can be destroyed if it belongs to the calling script.
  */
-//private external fun CreateVehicle(modelHash: string | number, x: number, y: number, z: number, heading: number, isNetwork: boolean, thisScriptCheck: boolean): number;
+private external fun CreateVehicle(
+	modelHash: Int,
+	x: Number,
+	y: Number,
+	z: Number,
+	heading: Number,
+	isNetwork: Boolean,
+	thisScriptCheck: Boolean
+): Int
 
 /**
  * Now has 8 params.
@@ -3611,7 +3641,7 @@ private external fun DoScreenFadeOut(duration: Int)
 
 //private external fun DoesEntityBelongToThisScript(entity: number, p2: boolean): number;
 
-//private external fun DoesEntityExist(entity: number): number;
+private external fun DoesEntityExist(entity: Entity): Number
 
 //private external fun DoesEntityHaveDrawable(entity: number): number;
 
@@ -4871,17 +4901,17 @@ private external fun DoScreenFadeOut(duration: Int)
 
 //private external fun FindFirstPickup(outEntity: number): number;
 
-//private external fun FindFirstVehicle(outEntity: number): number;
+private external fun FindFirstVehicle(outEntity: Number): Number
 
 //private external fun FindKvp(handle: number): string;
 
 //private external fun FindNextObject(findHandle: number, outEntity: number): number;
 
-//private external fun FindNextPed(findHandle: number, outEntity: number): number;
+//private external fun FindNextPed(findHandle: Number, outEntity: Number): Number
 
 //private external fun FindNextPickup(findHandle: number, outEntity: number): number;
 
-//private external fun FindNextVehicle(findHandle: number, outEntity: number): number;
+private external fun FindNextVehicle(findHandle: Number, outEntity: Number): Number
 
 //private external fun FindRadioStationIndex(station: number): number;
 
@@ -7494,7 +7524,7 @@ private external fun GetPedInVehicleSeat(vehicle: Int, index: Int): Int
 /**
  * gtaforums.com/topic/799843-stats-profile-settings/
  */
-private external fun GetProfileSetting(profileSettingId: Int): Int?
+private external fun GetProfileSetting(profileSettingId: Int): Int
 
 /**
  * only documented to be continued...
@@ -8296,7 +8326,7 @@ private external fun GetVehicleBodyHealth(vehicle: Int): Number
  * }
  * }
  */
-//private external fun GetVehicleBodyHealth_2(vehicle: number): number;
+//private external fun GetVehicleBodyHealth_2(vehicle: Entity): Number
 
 /**
  * iVar3 = get_vehicle_cause_of_destruction(uLocal_248[iVar2]);
@@ -8400,12 +8430,12 @@ private external fun GetVehicleDashboardSpeed(vehicle: Int): Double
  * PC scripts:
  * v_5 -- [[{3}]]  = VEHICLE::GET_VEHICLE_DEFORMATION_AT_POS(a_0._f1, 1.21, 6.15, 0.3);
  */
-//private external fun GetVehicleDeformationAtPos(vehicle: number, offsetX: number, offsetY: number, offsetZ: number): number[];
+//private external fun GetVehicleDeformationAtPos(vehicle: number, offsetX: number, offsetY: number, offsetZ: number): number[];//
 
 /**
  * Dirt level 0..15
  */
-//private external fun GetVehicleDirtLevel(vehicle: number): number;
+private external fun GetVehicleDirtLevel(vehicle: Entity): Int
 
 /**
  * example in vb:
@@ -8692,7 +8722,7 @@ private external fun GetVehicleMaxNumberOfPassengers(vehicle: Int): Int
  */
 //private external fun GetVehicleNeonLightsColour(vehicle: number): [number, number, number];
 
-private external fun GetVehicleNextGear(vehicle: Int): Int
+//private external fun GetVehicleNextGear(vehicle: Int): Int
 
 /**
  * Calling this with an invalid node id, will crash the game.
@@ -10951,7 +10981,7 @@ private external fun IsScreenFadingOut(): Any
  * p1 is always 0 in the scripts.
  * p1 = check if vehicle is on fire
  */
-//private external fun IsVehicleDriveable(vehicle: number, isOnFireCheck: boolean): number;
+private external fun IsVehicleDriveable(vehicle: Entity, isOnFireCheck: Boolean): Number
 
 //private external fun IsVehicleEngineStarting(vehicle: number): number;
 
@@ -23456,7 +23486,7 @@ private external fun SetNuiFocus(hasFocus: Boolean, hasCursor: Boolean)
 /**
  * Turns the desired ped into a cop. If you use this on the player ped, you will become almost invisible to cops dispatched for you. You will also report your own crimes, get a generic cop voice, get a cop-vision-cone on the radar, and you will be unable to shoot at other cops. SWAT and Army will still shoot at you. Toggling ped as "false" has no effect; you must change p0's ped model to disable the effect.
  */
-//private external fun SetPedAsCop(ped: number, toggle: boolean)
+private external fun SetPedAsCop(ped: Entity, toggle: Boolean)
 
 //private external fun SetPedAsEnemy(ped: number, toggle: boolean)
 

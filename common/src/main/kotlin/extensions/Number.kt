@@ -64,9 +64,6 @@ operator fun Number.times(number: Number): Number {
 }
 
 operator fun Number.compareTo(number: Number): Int {
-
-	val compare = fun() {}
-
 	return when (this) {
 		is Float ->
 			when {
@@ -108,5 +105,26 @@ operator fun Number.compareTo(number: Number): Int {
 			this == number.toDouble() -> 0
 			else -> 1
 		}
+	}
+}
+
+operator fun Number.div(number: Number): Number {
+	return when (this) {
+		is Float ->
+			this / number.toFloat()
+
+		is Double ->
+			this / number.toDouble()
+
+		is Long ->
+			this / number.toLong()
+
+		is Int ->
+			this / number.toInt()
+
+		is Short ->
+			this / number.toShort()
+
+		else -> (this.toDouble() / number.toDouble())
 	}
 }

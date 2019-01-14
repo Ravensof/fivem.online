@@ -6,20 +6,22 @@ import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
 import online.fivem.common.entities.CoordinatesX
-import online.fivem.common.entities.PlayerSrc
 import online.fivem.common.events.SynchronizeEvent
 import online.fivem.common.events.net.RequestPackEvent
 import online.fivem.common.extensions.isNotEmpty
 import online.fivem.server.ServerConfig
 import online.fivem.server.common.MySQL
+import online.fivem.server.entities.Player
 import online.fivem.server.modules.basics.MySQLModule
 import online.fivem.server.modules.clientEventExchanger.ClientEvent
+import kotlin.coroutines.CoroutineContext
 
-class SynchronizationModule : AbstractModule() {
+class SynchronizationModule : AbstractModule(), CoroutineScope {
+	override val coroutineContext: CoroutineContext = Job()
 
 	private val requestJob by lazy { requestJob() }
 	private val synchronizationJob by lazy { synchronizationJob() }
-	private val syncDataChannel = Channel<Pair<PlayerSrc, Array<*>>>(GlobalConfig.MAX_PLAYERS)
+	private val syncDataChannel = Channel<Pair<Player, Array<*>>>(GlobalConfig.MAX_PLAYERS)
 
 	private val sessionModule by moduleLoader.onReady<SessionModule>()
 
@@ -27,11 +29,14 @@ class SynchronizationModule : AbstractModule() {
 
 	override fun init() {
 		ClientEvent.on<SynchronizeEvent> { playerSrc, synchronizeEvent ->
-			GlobalScope.launch {
+			launch {
 				if (syncDataChannel.isFull) {
 					Console.warn("synchronization DataChannel is full")
 				}
-				syncDataChannel.send(playerSrc to synchronizeEvent.data)
+				val player = sessionModule.getPlayer(playerSrc)
+					?: return@launch Console.warn("user with playerSrc=${playerSrc.value} not found in session module")
+
+				syncDataChannel.send(player to synchronizeEvent.data)
 			}
 		}
 		moduleLoader.on<MySQLModule> { mySQL = it.mySQL }
@@ -53,7 +58,7 @@ class SynchronizationModule : AbstractModule() {
 		return super.stop()
 	}
 
-	private fun requestJob() = GlobalScope.launch {
+	private fun requestJob() = launch {
 		while (isActive) {
 			val players = sessionModule.getConnectedPlayers()
 
@@ -71,12 +76,9 @@ class SynchronizationModule : AbstractModule() {
 		}
 	}
 
-	private fun synchronizationJob() = GlobalScope.launch {
+	private fun synchronizationJob() = launch {
 		for (obj in syncDataChannel) {
-			val playerSrc = obj.first
-
-			val player = sessionModule.getPlayer(playerSrc)
-				?: return@launch Console.warn("user with playerSrc=${playerSrc.value} not found in session module")
+			val player = obj.first
 
 			obj.second.forEach { data ->
 				when (data) {

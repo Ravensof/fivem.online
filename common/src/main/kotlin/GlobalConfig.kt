@@ -35,9 +35,7 @@ object GlobalConfig {
 	)
 
 	object BlackOut {
-		const val blackOutTime: Long = 2_000
-		const val blackOutFromDamage: Boolean = true
-		const val blackoutDamageRequired: Int = 25
+		const val blackOutTime: Long = 15_000
 	}
 
 	const val SHOW_CONSOLE_ERROR = true

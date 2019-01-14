@@ -3,7 +3,7 @@ package online.fivem.client
 import online.fivem.client.gtav.Natives
 import online.fivem.client.modules.basics.BasicsModule
 import online.fivem.client.modules.controlManager.ControlManagerModule
-import online.fivem.client.modules.eventGenerator.EventGenerator
+import online.fivem.client.modules.eventGenerator.EventGeneratorModule
 import online.fivem.client.modules.nuiEventExchanger.NuiEvent
 import online.fivem.client.modules.nuiEventExchanger.NuiEventExchangerModule
 import online.fivem.client.modules.serverEventExchanger.ServerEventExchangerModule
@@ -37,7 +37,7 @@ fun start() {
 
 		add(ControlManagerModule())
 
-		add(EventGenerator())
+		add(EventGeneratorModule())
 
 		add(ServerEventExchangerModule())//last
 

@@ -3,7 +3,7 @@ package online.fivem.server.modules.basics
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.entities.PlayerSrc
-import online.fivem.common.events.net.SpawnEvent
+import online.fivem.common.events.net.SpawnPlayerEvent
 import online.fivem.server.modules.clientEventExchanger.ClientEvent
 
 class BasicsModule : AbstractModule() {
@@ -13,6 +13,6 @@ class BasicsModule : AbstractModule() {
 	}
 
 	fun spawn(playerSrc: PlayerSrc, coordinatesX: CoordinatesX, pedHash: Int) {
-		ClientEvent.emit(SpawnEvent(coordinatesX, pedHash), playerSrc)
+		ClientEvent.emit(SpawnPlayerEvent(coordinatesX, pedHash), playerSrc)
 	}
 }

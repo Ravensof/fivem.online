@@ -1,7 +1,10 @@
 package online.fivem.client.modules.basics
 
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
+import online.fivem.client.extensions.createVehicle
 import online.fivem.client.gtav.Client
 import online.fivem.client.modules.serverEventExchanger.ServerEvent
 import online.fivem.common.common.AbstractModule
@@ -9,20 +12,32 @@ import online.fivem.common.common.Console
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.events.SynchronizeEvent
 import online.fivem.common.events.net.RequestPackEvent
-import online.fivem.common.events.net.SpawnEvent
+import online.fivem.common.events.net.SpawnPlayerEvent
+import online.fivem.common.events.net.SpawnVehicleEvent
+import kotlin.coroutines.CoroutineContext
 
-class SynchronizationModule : AbstractModule() {
+class SynchronizationModule : AbstractModule(), CoroutineScope {
+	override val coroutineContext: CoroutineContext = Job()
 
 	private val spawnManager by moduleLoader.onReady<SpawnManagerModule>()
 	private val joinTransition by moduleLoader.onReady<JoinTransitionModule>()
 
 	override fun init() {
 		ServerEvent.on<RequestPackEvent> { onServerRequest(it.kClasses) }
-		ServerEvent.on<SpawnEvent> { onSpawn(it.coordinatesX, it.model) }
+		ServerEvent.on<SpawnPlayerEvent> { onPlayerSpawn(it.coordinatesX, it.model) }
+		ServerEvent.on<SpawnVehicleEvent> { onVehicleSpawn(it) }
 	}
 
-	private fun onSpawn(coordinatesX: CoordinatesX, model: Int) {
-		GlobalScope.launch {
+	private fun onVehicleSpawn(event: SpawnVehicleEvent) {
+		launch {
+			val vehicle = withTimeout(5_000) { Client.createVehicle(event.vehicleModel, event.coordinatesX).await() }
+
+			Client.setVehicleOilLevel(vehicle, event.vehicleId)
+		}
+	}
+
+	private fun onPlayerSpawn(coordinatesX: CoordinatesX, model: Int) {
+		launch {
 			joinTransition.startTransition().join()
 			spawnManager.spawnPlayer(coordinatesX, model).join()
 			joinTransition.endTransition()
