@@ -1,6 +1,9 @@
 package online.fivem.nui.modules.vehicle
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Html
 import online.fivem.common.entities.InternetRadioStation
@@ -12,8 +15,10 @@ import online.fivem.nui.extensions.nuiLink
 import online.fivem.nui.external.Howl
 import online.fivem.nui.external.HowlOptions
 import online.fivem.nui.modules.clientEventEchanger.ClientEvent
+import kotlin.coroutines.CoroutineContext
 
-class InternetRadio : AbstractModule() {
+class InternetRadio : AbstractModule(), CoroutineScope {
+	override val coroutineContext: CoroutineContext = Job()
 
 	private var howler: Howl? = null
 	private val noisePlayer = Howl(
@@ -76,8 +81,10 @@ class InternetRadio : AbstractModule() {
 			onloaderror = {
 				if (attemptsLeft-- > 0) {
 					howler?.unload()
-					options?.let { howler = Howl(it) }
-
+					launch {
+						delay(250)
+						options?.let { howler = Howl(it) }
+					}
 				}
 			}
 		).also {
@@ -92,6 +99,6 @@ class InternetRadio : AbstractModule() {
 
 	companion object {
 		private val NOISE_RESOURCE = Html.nuiLink("radio/noise.mp3")
-		private const val MAX_RECONNECTING_ATTEMPTS = 5000
+		private const val MAX_RECONNECTING_ATTEMPTS = 500
 	}
 }

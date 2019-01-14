@@ -33,7 +33,7 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 	private var audioMusicLevelInMP: Int? = null
 	private var playerRadioStationName: RadioStation? = null
 
-	var accelerationThreshold: Double = 50.0
+	var accelerationThreshold: Double = 100.0
 		set(value) {
 			if (value > field) {
 				field = value
@@ -295,7 +295,7 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 
 	private fun checkRadio() {
 		val currentRadio =
-			if (playersVehicle?.let { Client.isVehicleDriveable(it) } == true) Client.getRadioStation() else null
+			if (playersVehicle?.let { Client.getIsVehicleEngineRunning(it) } == true) Client.getRadioStation() else null
 
 		if (currentRadio != playerRadioStationName) {
 			UEvent.emit(PlayerRadioStationChangedEvent(currentRadio))
