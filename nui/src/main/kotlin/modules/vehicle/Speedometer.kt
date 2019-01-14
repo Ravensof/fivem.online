@@ -1,7 +1,7 @@
 package online.fivem.nui.modules.vehicle
 
 import js.externals.jquery.jQuery
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -16,9 +16,12 @@ import online.fivem.nui.extensions.toHTMLCanvasElement
 import online.fivem.nui.extensions.toHTMLImageElement
 import online.fivem.nui.modules.clientEventEchanger.ClientEvent
 import org.w3c.dom.HTMLImageElement
+import kotlin.coroutines.CoroutineContext
 import kotlin.js.Date
 
-class Speedometer : AbstractModule() {
+class Speedometer : AbstractModule(), CoroutineScope {
+
+	override val coroutineContext: CoroutineContext = Job()
 
 	private val speedometerArrow: HTMLImageElement by lazy {
 		jQuery("<img src=\"$RESOURCES_DIR/arrow-speedometer.svg\"/>").toHTMLImageElement()
@@ -49,7 +52,7 @@ class Speedometer : AbstractModule() {
 	private val speedometerInterpolatorChannel = Channel<SpeedometerData>(1)
 
 	private val drawInterpolatorJob by lazy {
-		GlobalScope.launch {
+		launch {
 
 			var lastSpeed = 0.0
 			var lastRpm = 0.0
@@ -92,13 +95,11 @@ class Speedometer : AbstractModule() {
 		}
 	}
 
-	override fun start(): Job? {
-		jQuery("#content").append(speedometerBlock)
-
+	override fun init() {
 		ClientEvent.on<SpeedometerUpdateEvent> {
 			if (speedometerInterpolatorChannel.isFull) return@on
 
-			GlobalScope.launch {
+			launch {
 				speedometerInterpolatorChannel.send(
 					SpeedometerData(
 						speed = it.dashboardSpeed * 2.236936 * 180 / 150,
@@ -115,7 +116,10 @@ class Speedometer : AbstractModule() {
 		ClientEvent.on<SpeedometerDisableEvent> {
 			speedometerBlock.hide()
 		}
+	}
 
+	override fun start(): Job? {
+		jQuery("#content").append(speedometerBlock)
 		drawInterpolatorJob.start()
 
 		return super.start()

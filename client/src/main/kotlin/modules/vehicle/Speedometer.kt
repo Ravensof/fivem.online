@@ -6,8 +6,11 @@ import online.fivem.client.modules.nuiEventExchanger.NuiEvent
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.UEvent
 import online.fivem.common.events.*
+import kotlin.coroutines.CoroutineContext
 
-class Speedometer : AbstractModule() {
+class Speedometer : AbstractModule(), CoroutineScope {
+
+	override val coroutineContext: CoroutineContext = Job()
 
 	private var vehicleHasSpeedo = false
 	private var updateJob: Job? = null
@@ -17,7 +20,7 @@ class Speedometer : AbstractModule() {
 		UEvent.on<PlayerLeftVehicleEvent> { onPlayerLeftVehicle() }
 	}
 
-	private fun updateJob(): Job = GlobalScope.launch {
+	private fun updateJob(): Job = launch {
 		val ped = Client.getPlayerPed()
 		val vehicle = Client.getVehiclePedIsUsing(ped) ?: return@launch
 
