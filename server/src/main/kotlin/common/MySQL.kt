@@ -1,13 +1,14 @@
 package online.fivem.server.common
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import online.fivem.common.external.Base64
 import online.fivem.server.ServerConfig
 import online.fivem.server.gtav.Exports
+import kotlin.coroutines.CoroutineContext
 
-open class MySQL {
+open class MySQL(override val coroutineContext: CoroutineContext) : CoroutineScope {
 
 	fun connect() {
 
@@ -18,7 +19,7 @@ open class MySQL {
 	}
 
 	fun <Type> query(query: String, vararg args: Any?): Deferred<Array<Type>> {
-		return GlobalScope.async {
+		return async {
 			val response = sQuery(query, *args).await()
 
 			val result = JSON.parse<MySQLResponse<Type>>(response)
@@ -30,7 +31,7 @@ open class MySQL {
 	}
 
 	fun query(query: String, vararg args: Any?): Deferred<Int?> {
-		return GlobalScope.async {
+		return async {
 			val response = sQuery(query, *args).await()
 			val result = JSON.parse<MySQLResponse<Any>>(response)
 
@@ -51,6 +52,7 @@ open class MySQL {
 //		Console.debug(query)
 
 		return Exports.performHttpRequest(
+			coroutineScope = this,
 			url = ServerConfig.MYSQL_HTTP_API,
 			data = mapOf("request" to query),
 			httpRequestType = "POST"

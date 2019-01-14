@@ -1,7 +1,7 @@
 package online.fivem.server.gtav
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
@@ -15,6 +15,7 @@ object Exports {
 	private val exports = online.fivem.server.gtav.exports[GlobalConfig.MODULE_NAME]
 
 	fun performHttpRequest(
+		coroutineScope: CoroutineScope,
 		url: String,
 		httpRequestType: String = "GET",
 		data: Map<String, String>? = null,
@@ -27,13 +28,13 @@ object Exports {
 		val channel = Channel<String>()
 
 		exports.performHttpRequest(url, { _: Int, response: String, _: Any ->
-			GlobalScope.launch {
+			coroutineScope.launch {
 				channel.send(response)
 			}
 			Unit
 		}, httpRequestType, postData, headers)
 
-		return GlobalScope.async {
+		return coroutineScope.async {
 			channel.receive()
 		}
 	}
