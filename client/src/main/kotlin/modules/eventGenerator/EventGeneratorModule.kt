@@ -96,21 +96,22 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 			iPlayerAccelerationModule = if (iPlayerAcceleration >= 0) iPlayerAcceleration else -iPlayerAcceleration
 
 			if (iPlayerAccelerationModule >= accelerationThreshold) {
-				if (!isAccelerationThresholdAcchieved) {
-					isAccelerationThresholdAcchieved = true
+//				if (!isAccelerationThresholdAcchieved) {
+//					isAccelerationThresholdAcchieved = true
 
-					if (!Client.isPedAtGetInAnyVehicle(playerPed)) {
-						UEvent.emit(
-							AccelerationThresholdAchievedEvent(
-								iPlayerAcceleration,
-								iPlayerAccelerationModule
-							)
+				if (!Client.isPedAtGetInAnyVehicle(playerPed)) {
+					UEvent.emit(
+						AccelerationThresholdAchievedEvent(
+							iPlayerAcceleration,
+							iPlayerAccelerationModule,
+							dt
 						)
-					}
+					)
 				}
-			} else {
-				isAccelerationThresholdAcchieved = false
-			}
+//				}
+			} //else {
+//				isAccelerationThresholdAcchieved = false
+//			}
 		}
 
 		if (playerCoordinates != currentCoordinates) {
@@ -145,12 +146,17 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 	private fun checkVehicleHealth() {
 		val currentPedHealth = Client.getEntityHealth(playerPed)
 		val pedHealthDiff = currentPedHealth - playerPedHealth
+		playerPedHealth = currentPedHealth
 
-		if (pedHealthDiff > 0) {
+		if (pedHealthDiff != 0) {
 			if (currentPedHealth == 0) {
 				UEvent.emit(PlayerPedUnconsciousEvent(pedHealthDiff))
 			} else {
-				UEvent.emit(PlayersPedHealthChangedEvent(currentPedHealth, pedHealthDiff))
+				if (pedHealthDiff > 0) {
+					UEvent.emit(PlayersPedHealthIncreasedEvent(currentPedHealth, pedHealthDiff))
+				} else {
+					UEvent.emit(PlayersPedHealthDropppedEvent(currentPedHealth, pedHealthDiff))
+				}
 			}
 		}
 

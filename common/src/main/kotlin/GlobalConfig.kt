@@ -35,7 +35,8 @@ object GlobalConfig {
 	)
 
 	object BlackOut {
-		const val blackOutTime: Long = 15_000
+		const val blackOutTimeFromCommas: Long = 30_000
+		const val extraBlackOutTime: Long = 15_000
 	}
 
 	const val SHOW_CONSOLE_ERROR = true
