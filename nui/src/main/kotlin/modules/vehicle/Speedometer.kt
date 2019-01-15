@@ -51,8 +51,48 @@ class Speedometer : AbstractModule(), CoroutineScope {
 
 	private val speedometerInterpolatorChannel = Channel<SpeedometerData>(1)
 
-	private val drawInterpolatorJob by lazy {
-		launch {
+	private var drawInterpolatorJob: Job? = null
+
+	override fun init() {
+		ClientEvent.on<SpeedometerUpdateEvent> {
+			if (speedometerInterpolatorChannel.isFull) return@on
+
+			launch {
+				speedometerInterpolatorChannel.send(
+					SpeedometerData(
+						speed = it.dashboardSpeed * 2.236936 * 180 / 150,
+						rpm = it.currentRpm * 180
+					)
+				)
+			}
+		}
+
+		ClientEvent.on<SpeedometerEnableEvent> {
+			runSpeedometer()
+			speedometerBlock.show()
+		}
+
+		ClientEvent.on<SpeedometerDisableEvent> {
+			speedometerBlock.hide()
+			drawInterpolatorJob?.cancel()
+		}
+	}
+
+	override fun start(): Job? {
+		jQuery("#content").append(speedometerBlock)
+
+		return super.start()
+	}
+
+	override fun stop(): Job? {
+		drawInterpolatorJob?.cancel()
+		speedometerInterpolatorChannel.close()
+
+		return super.stop()
+	}
+
+	private fun runSpeedometer() {
+		drawInterpolatorJob = launch {
 
 			var lastSpeed = 0.0
 			var lastRpm = 0.0
@@ -93,43 +133,6 @@ class Speedometer : AbstractModule(), CoroutineScope {
 				lastUpdate = Date.now()
 			}
 		}
-	}
-
-	override fun init() {
-		ClientEvent.on<SpeedometerUpdateEvent> {
-			if (speedometerInterpolatorChannel.isFull) return@on
-
-			launch {
-				speedometerInterpolatorChannel.send(
-					SpeedometerData(
-						speed = it.dashboardSpeed * 2.236936 * 180 / 150,
-						rpm = it.currentRpm * 180
-					)
-				)
-			}
-		}
-
-		ClientEvent.on<SpeedometerEnableEvent> {
-			speedometerBlock.show()
-		}
-
-		ClientEvent.on<SpeedometerDisableEvent> {
-			speedometerBlock.hide()
-		}
-	}
-
-	override fun start(): Job? {
-		jQuery("#content").append(speedometerBlock)
-		drawInterpolatorJob.start()
-
-		return super.start()
-	}
-
-	override fun stop(): Job? {
-		drawInterpolatorJob.cancel()
-		speedometerInterpolatorChannel.close()
-
-		return super.stop()
 	}
 
 	private fun drawRotatedImage(
