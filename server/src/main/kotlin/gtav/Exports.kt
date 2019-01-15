@@ -48,4 +48,20 @@ object Exports {
 	fun on(eventName: String, callback: Any) {
 		exports.on(eventName, callback)
 	}
+
+	fun setHttpHandler(handler: (Request, Response) -> String) {
+		exports.setHttpHandler(handler)
+	}
+
+	interface Request {
+		val path: String
+		val method: String
+
+		fun setDataHandler(handler: (String) -> Unit)
+	}
+
+	interface Response {
+		fun send(data: String)
+		fun writeHead(head: String)
+	}
 }

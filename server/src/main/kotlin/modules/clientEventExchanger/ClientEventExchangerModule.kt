@@ -1,11 +1,10 @@
 package online.fivem.server.modules.clientEventExchanger
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.launch
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
+import online.fivem.common.common.Console
 import online.fivem.common.common.Serializer
 import online.fivem.common.entities.ClientsNetPacket
 import online.fivem.common.entities.PlayerSrc
@@ -17,13 +16,19 @@ import online.fivem.common.gtav.NativeEvents
 import online.fivem.server.Strings
 import online.fivem.server.gtav.Exports
 import online.fivem.server.gtav.Natives
-import online.fivem.server.modules.session.SessionModule
+import kotlin.coroutines.CoroutineContext
 import kotlin.random.Random
 
-class ClientEventExchangerModule : AbstractModule() {
+private typealias Data = Any
+
+class ClientEventExchangerModule : AbstractModule(), CoroutineScope {
+
+	override val coroutineContext: CoroutineContext = Job()
+
+	private val playersSendChannels = createChannels<Data>()
+	private val playersReceiveChannels = createChannels<Packet>()
 
 	private val playersList = mutableMapOf<Int, Double>()
-	private val sessionModule by moduleLoader.onReady<SessionModule>()
 
 	override fun init() {
 		Exports.on(NativeEvents.Server.PLAYER_DROPPED) { playerId: Int, _: String -> onPlayerDropped(playerId) }
@@ -42,7 +47,18 @@ class ClientEventExchangerModule : AbstractModule() {
 				Strings.CLIENT_SINGLE_SESSION
 			)
 
-			ClientEvent.handle(playerSrc, netPacket.data)
+			launch {
+				val channel = playersReceiveChannels[playerSrc.value]
+				if (channel.isFull) {
+					Console.warn("ClientEventExchanger: receive channel for player ${playerSrc.value} is full")
+
+					if (GlobalConfig.KICK_FOR_PACKET_OVERFLOW) return@launch Natives.dropPlayer(
+						playerSrc,
+						Strings.CLIENT_PACKETS_OVERFLOW
+					)
+				}
+				channel.send(Packet(playerSrc, netPacket.data))
+			}
 		}
 
 		Natives.onNet(GlobalConfig.NET_EVENT_ESTABLISHING_NAME) { playerSrc: PlayerSrc, netPacket: Any ->
@@ -59,16 +75,45 @@ class ClientEventExchangerModule : AbstractModule() {
 		}
 	}
 
+	@ExperimentalCoroutinesApi
 	override fun start(): Job? {
+		playersSendChannels.forEachIndexed { playerSrc, channel ->
+			launch {
+				for (data in channel) {
+					emit(playerSrc, data)
+				}
+			}
+		}
 
-		GlobalScope.launch {
-			//todo из-за одного клиента может остановиться передача данных. выделить на каждого по каналу?
+		playersReceiveChannels.forEach { channel ->
+			launch {
+				for (packet in channel) {
+					ClientEvent.handle(packet.playerSrc!!, packet)
+				}
+			}
+		}
+
+		launch {
 			for (packet in channel) {
 				packet.playerSrc?.value?.let { playerSrc ->
-					emit(playerSrc, packet.data)
+
+					val channel = playersSendChannels[playerSrc]
+
+					if (channel.isFull) {
+						Console.warn("ClientEventExchanger: emit channel for player $playerSrc is full")
+					}
+
+					channel.send(packet.data)
+
 				}.onNull {
-					sessionModule.getConnectedPlayers().forEach {
-						emit(it.value, packet.data)
+					playersList.forEach {
+						val channel = playersSendChannels[it.key]
+
+						if (channel.isFull) {
+							Console.warn("ClientEventExchanger: emit channel for player ${it.key} is full")
+						}
+
+						channel.send(packet.data)
 					}
 				}
 			}
@@ -77,8 +122,10 @@ class ClientEventExchangerModule : AbstractModule() {
 		return super.start()
 	}
 
-	fun getConnectedClients(): List<PlayerSrc> {
-		return playersList.map { PlayerSrc(it.key) }
+	override fun stop(): Job? {
+		cancel()
+
+		return super.stop()
 	}
 
 	private fun onPlayerDropped(playerId: Int) {
@@ -94,6 +141,7 @@ class ClientEventExchangerModule : AbstractModule() {
 		val key = Random.nextDouble()
 
 		playersList[playerSrc.value] = key
+
 		emit(playerSrc.value, EstablishConnectionEvent(key))
 	}
 
@@ -107,12 +155,24 @@ class ClientEventExchangerModule : AbstractModule() {
 		)
 	}
 
+	private fun <T> createChannels(): List<Channel<T>> {
+		val list = mutableListOf<Channel<T>>()
+
+		for (i in 0 until GlobalConfig.MAX_PLAYERS) {
+			list.add(Channel(PLAYERS_CHANNEL_SIZE))
+		}
+
+		return list
+	}
+
 	class Packet(
 		val playerSrc: PlayerSrc? = null,
-		val data: Any
+		val data: Data
 	)
 
 	companion object {
-		val channel = Channel<Packet>()
+		private const val PLAYERS_CHANNEL_SIZE = 128
+
+		val channel = Channel<Packet>(PLAYERS_CHANNEL_SIZE)
 	}
 }

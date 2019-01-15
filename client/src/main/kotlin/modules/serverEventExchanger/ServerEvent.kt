@@ -1,14 +1,13 @@
 package online.fivem.client.modules.serverEventExchanger
 
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import online.fivem.common.common.UEvent
 
-object ServerEvent : UEvent() {
+object ServerEvent : UEvent(Job()) {
 
 	override fun emit(data: Any): Job {
-		return GlobalScope.launch {
+		return launch {
 			ServerEventExchangerModule.channel.send(data)
 		}
 	}

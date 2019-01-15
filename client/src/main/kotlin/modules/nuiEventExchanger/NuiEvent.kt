@@ -1,16 +1,15 @@
 package online.fivem.client.modules.nuiEventExchanger
 
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import online.fivem.common.common.UEvent
 
-object NuiEvent : UEvent() {
+object NuiEvent : UEvent(Job()) {
 
 	override val printType = "nui"
 
 	override fun emit(data: Any): Job {
-		return GlobalScope.launch {
+		return launch {
 			NuiEventExchangerModule.channel.send(data)
 		}
 	}

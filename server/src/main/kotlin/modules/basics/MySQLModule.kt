@@ -7,9 +7,7 @@ import online.fivem.server.common.MySQL
 import kotlin.coroutines.CoroutineContext
 
 class MySQLModule : AbstractModule(), CoroutineScope {
-	/**
-	 * Context of this scope.
-	 */
+
 	override val coroutineContext: CoroutineContext = Job()
 
 	val mySQL = MySQL(coroutineContext)

@@ -13,8 +13,7 @@ import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.events.PlayerSpawnedEvent
 import kotlin.coroutines.CoroutineContext
 
-class SpawnManagerModule : AbstractModule(), CoroutineScope {
-	override val coroutineContext: CoroutineContext = Job()
+class SpawnManagerModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
 
 	override fun start(): Job? {
 		return super.start()

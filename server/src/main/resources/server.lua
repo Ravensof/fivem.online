@@ -23,3 +23,7 @@ exports("on", function(eventName, callback)
         callback(source, ...)
     end)
 end)
+
+exports("setHttpHandler", function(handler)
+	SetHttpHandler(handler)
+end)

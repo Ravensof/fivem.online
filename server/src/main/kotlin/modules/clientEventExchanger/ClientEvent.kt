@@ -1,20 +1,25 @@
 package online.fivem.server.modules.clientEventExchanger
 
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import online.fivem.common.common.Console
 import online.fivem.common.entities.PlayerSrc
+import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.KClass
 
-open class ClientEvent {
+open class ClientEvent : CoroutineScope {
+	/**
+	 * Context of this scope.
+	 */
+	override val coroutineContext: CoroutineContext = Job()
 
 	open val printType = "net"
 
 	val handlers = mutableListOf<Pair<KClass<*>, (PlayerSrc, Any) -> Unit>>()
 
 	fun emit(data: Any, playerSrc: PlayerSrc? = null): Job {
-		return GlobalScope.launch {
+		return launch {
 			ClientEventExchangerModule.channel.send(
 				ClientEventExchangerModule.Packet(
 					playerSrc = playerSrc,
@@ -55,7 +60,7 @@ open class ClientEvent {
 	}
 
 	fun handle(playerSrc: PlayerSrc, data: Any): Job {
-		return GlobalScope.launch {
+		return launch {
 			handlers.forEach {
 				if (it.first.isInstance(data)) {
 					it.second(playerSrc, data)

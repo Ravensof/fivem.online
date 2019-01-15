@@ -1,22 +1,24 @@
 package online.fivem.client.modules.basics
 
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import online.fivem.client.gtav.Client
-import online.fivem.client.modules.eventGenerator.TickExecutor
+import online.fivem.client.modules.eventGenerator.TickExecutorModule
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.gtav.NativeAudioScenes
+import kotlin.coroutines.CoroutineContext
 
-class JoinTransitionModule : AbstractModule() {
+class JoinTransitionModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
 
 	private var switchingPlayerJob: Job? = null
+	private val tickExecutor by moduleLoader.onReady<TickExecutorModule>()
 
 	override fun init() {
 		Client.setManualShutdownLoadingScreenNui(true)
 		startTransition()
 
-		GlobalScope.launch {
+		launch {
 			switchingPlayerJob?.join()
 
 			Client.shutdownLoadingScreen()
@@ -33,7 +35,7 @@ class JoinTransitionModule : AbstractModule() {
 	fun startTransition(): Job {
 		muteSound(MUTE_SOUND)
 
-		return GlobalScope.launch {
+		return launch {
 			if (!Client.isPlayerSwitchInProgress()) {
 				switchingPlayerJob = Client.switchOutPlayer(Client.getPlayerPed())
 				switchingPlayerJob?.join()
@@ -42,14 +44,14 @@ class JoinTransitionModule : AbstractModule() {
 	}
 
 	fun endTransition(): Job {
-		return GlobalScope.launch {
-			val execId = TickExecutor.addTick { clearScreen() }
+		return launch {
+			val execId = tickExecutor.addTick { clearScreen() }
 
 			switchingPlayerJob?.join()
 			muteSound(false)
 
 			Client.switchInPlayer(Client.getPlayerPed()).join()
-			TickExecutor.removeTick(execId)
+			tickExecutor.removeTick(execId)
 			Client.clearDrawOrigin()
 		}
 	}

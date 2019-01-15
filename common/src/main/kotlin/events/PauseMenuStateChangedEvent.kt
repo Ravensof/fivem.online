@@ -1,5 +1,5 @@
 package online.fivem.common.events
 
-class PauseMenuStateChangedEvent(
+open class PauseMenuStateChangedEvent(
 	val pauseMenuState: Int
 )

@@ -1,24 +1,32 @@
 package online.fivem.common.common
 
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import online.fivem.common.events.ModuleLoadedEvent
+import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
-class ModuleLoader {
+class ModuleLoader : CoroutineScope {
+
+	override val coroutineContext: CoroutineContext = Job()
+
 	private val queue = Channel<AbstractModule>(128)
 	private var finally: (() -> Unit)? = null
 
 	private val modules = mutableListOf<AbstractModule>()
 
-	private val events = Event()
+	private val events = Event(coroutineContext)
 
 	fun add(module: AbstractModule) {
 		module.moduleLoader = this@ModuleLoader
 		module.init()
-		GlobalScope.launch {
+		launch {
+			if (queue.isFull) {
+				Console.warn("ModuleLoader`s queue is full")
+			}
 			queue.send(module)
 		}
 	}
@@ -28,7 +36,7 @@ class ModuleLoader {
 	}
 
 	fun start() {
-		GlobalScope.launch {
+		launch {
 
 			while (!queue.isEmpty) {
 				val module = queue.receive()
@@ -46,7 +54,7 @@ class ModuleLoader {
 	}
 
 	fun stop() {
-		GlobalScope.launch {
+		launch {
 			modules.asReversed().forEach {
 				Console.log("stop module ${it::class.simpleName}")
 				modules.remove(it)
@@ -110,7 +118,7 @@ class ModuleLoader {
 //		}
 //	}
 
-	private class Event : UEvent() {
+	private class Event(coroutineContext: CoroutineContext) : UEvent(coroutineContext) {
 		fun <T : AbstractModule> on(kClass: KClass<T>, function: (T) -> Unit) {
 			handlers.add(kClass to function.unsafeCast<(Any) -> Unit>())
 		}

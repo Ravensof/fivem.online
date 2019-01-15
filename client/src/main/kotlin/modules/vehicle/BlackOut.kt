@@ -12,7 +12,6 @@ import online.fivem.common.common.UEvent
 import online.fivem.common.events.AccelerationThresholdAchievedEvent
 import online.fivem.common.events.PlayerPedUnconsciousEvent
 import kotlin.coroutines.CoroutineContext
-import kotlin.js.Date
 
 class BlackOut : AbstractModule(), CoroutineScope {
 	override val coroutineContext: CoroutineContext = Job()
@@ -22,16 +21,13 @@ class BlackOut : AbstractModule(), CoroutineScope {
 	override fun init() {
 		UEvent.on<PlayerPedUnconsciousEvent> {
 			Console.debug("blackout from commas")
-			blackOut(0)//GlobalConfig.BlackOut.blackOutTimeFromCommas)
+			blackOut(0)//GlobalConfig.BlackOut.BLACKOUT_TIME_FROM_COMMAS)
 		}
+
 		UEvent.on<AccelerationThresholdAchievedEvent> {
 			Console.debug("blackout from ${it.accelerationModule.toInt()} m/s")
 			blackOut(0)
 		}
-	}
-
-	override fun start(): Job? {
-		return super.start()
 	}
 
 	private fun addBlackOut(timeMillis: Long) {
@@ -40,18 +36,19 @@ class BlackOut : AbstractModule(), CoroutineScope {
 
 	private fun blackOut(timeMillis: Long): Job = launch {
 		if (timeLeft > 0) return@launch addBlackOut(timeMillis)
-		timeLeft += GlobalConfig.BlackOut.extraBlackOutTime + timeMillis
+		timeLeft += GlobalConfig.BlackOut.EXTRA_BLACKOUT_TIME + timeMillis
 
 		Client.doScreenFadeOut(100).join()
 
 		var time: Long
-		val blackoutBegin = Date.now()
+
 		while (timeLeft > 0) {
 			time = timeLeft
+			Client.setPedToRagdoll(Client.getPlayerPed(), time.toInt() + GlobalConfig.BlackOut.WAKING_UP_TIME)
 			delay(time)
 			timeLeft -= time
 		}
 
-		Client.doScreenFadeIn((Date.now() - blackoutBegin).toInt() / 10)
+		Client.doScreenFadeIn(GlobalConfig.BlackOut.WAKING_UP_TIME)
 	}
 }

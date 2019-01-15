@@ -5,6 +5,7 @@ package online.fivem.client.gtav
 import kotlinx.coroutines.*
 import online.fivem.common.common.Entity
 import online.fivem.common.entities.Coordinates
+import online.fivem.common.entities.ScreenResolution
 import online.fivem.common.entities.Time
 import online.fivem.common.gtav.NativeControls
 import online.fivem.common.gtav.ProfileSetting
@@ -19,6 +20,16 @@ object Client {
 //	fun FindNextVehicle(findHandle: Number, outEntity: Number): Number{
 //
 //	}
+
+	fun getScreenResolution(): ScreenResolution {
+		val screenResolution = GetScreenResolution()
+
+		return ScreenResolution(screenResolution[0], screenResolution[1])
+	}
+
+	fun drawRect(x: Double, y: Double, width: Double, height: Double, r: Short, g: Short, b: Short, a: Short = 255) {
+		DrawRect(x, y, width, height, r, g, b, a)
+	}
 
 	fun doesEntityExist(entity: Entity): Boolean {
 		return DoesEntityExist(entity) == 1
@@ -439,7 +450,7 @@ object Client {
 
 	fun setPedToRagdoll(
 		ped: Entity,
-		time1: Int = 1000,
+		time1: Int,
 		time2: Int = 1000,
 		ragdollType: Short = 0,
 		p4: Boolean = false,
@@ -4226,7 +4237,16 @@ private external fun DoesEntityExist(entity: Entity): Number
  * -A: Alpha part of the color. (0-255, 0 means totally transparent, 255 means totally opaque)
  * The total number of rectangles to be drawn in one frame is apparently limited to 399.
  */
-//private external fun DrawRect(x: number, y: number, width: number, height: number, r: number, g: number, b: number, a: number)
+private external fun DrawRect(
+	x: Double,
+	y: Double,
+	width: Double,
+	height: Double,
+	r: Short,
+	g: Short,
+	b: Short,
+	a: Short
+)
 
 /**
  * GTA V Scaleforms Decompiled
@@ -7920,7 +7940,7 @@ private external fun GetResourceMetadata(
  * GET_SCREEN_RESOLUTION(&amp;screenresx,&amp;screenresy);
  * Hardcoded to always return 1280 x 720
  */
-//private external fun GetScreenResolution(): [number, number];
+private external fun GetScreenResolution(): Array<Int>
 
 /**
  * Gets the status of a script-assigned task. The hash does not seem to match the actual native name, but is assigned hardcoded from the executable during task creation.

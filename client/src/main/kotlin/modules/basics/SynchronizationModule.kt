@@ -1,7 +1,6 @@
 package online.fivem.client.modules.basics
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import online.fivem.client.extensions.createVehicle
@@ -13,11 +12,9 @@ import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.events.SynchronizeEvent
 import online.fivem.common.events.net.RequestPackEvent
 import online.fivem.common.events.net.SpawnPlayerEvent
-import online.fivem.common.events.net.SpawnVehicleEvent
 import kotlin.coroutines.CoroutineContext
 
-class SynchronizationModule : AbstractModule(), CoroutineScope {
-	override val coroutineContext: CoroutineContext = Job()
+class SynchronizationModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
 
 	private val spawnManager by moduleLoader.onReady<SpawnManagerModule>()
 	private val joinTransition by moduleLoader.onReady<JoinTransitionModule>()
