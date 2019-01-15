@@ -11,15 +11,65 @@ import online.fivem.common.gtav.NativeControls
 import online.fivem.common.gtav.ProfileSetting
 import online.fivem.common.gtav.RadioStation
 
+typealias Handle = Int
+
 object Client {
 
-//	fun FindFirstVehicle(outEntity: Number): Number{
-//
-//	}
-//
-//	fun FindNextVehicle(findHandle: Number, outEntity: Number): Number{
-//
-//	}
+	fun endFindPickup(findHandle: Handle) {
+		EndFindPickup(findHandle)
+	}
+
+	fun findFirstPickup(): Pair<Handle, Entity> {
+		val data = FindFirstPickup()
+		return data[0] to data[1]
+	}
+
+	fun findNextPickup(findHandle: Handle): Pair<Boolean, Int> {
+		val data = FindNextPickup(findHandle)
+		return (data[0] == 1) to data[1] as Int
+	}
+
+	fun endFindPed(findHandle: Handle) {
+		EndFindPed(findHandle)
+	}
+
+	fun findFirstPed(): Pair<Handle, Entity> {
+		val data = FindFirstPed()
+		return data[0] to data[1]
+	}
+
+	fun findNextPed(findHandle: Handle): Pair<Boolean, Int> {
+		val data = FindNextPed(findHandle)
+		return (data[0] == 1) to data[1] as Int
+	}
+
+	fun endFindObject(findHandle: Handle) {
+		EndFindObject(findHandle)
+	}
+
+	fun findFirstObject(): Pair<Handle, Entity> {
+		val data = FindFirstObject()
+		return data[0] to data[1]
+	}
+
+	fun findNextObject(findHandle: Handle): Pair<Boolean, Int> {
+		val data = FindNextObject(findHandle)
+		return (data[0] == 1) to data[1] as Int
+	}
+
+	fun endFindVehicle(findHandle: Handle) {
+		EndFindVehicle(findHandle)
+	}
+
+	fun findFirstVehicle(): Pair<Handle, Entity> {
+		val data = FindFirstVehicle()
+		return data[0] to data[1]
+	}
+
+	fun findNextVehicle(findHandle: Handle): Pair<Boolean, Int> {
+		val data = FindNextVehicle(findHandle)
+		return (data[0] == 1) to data[1] as Int
+	}
 
 	fun getScreenResolution(): ScreenResolution {
 		val screenResolution = GetScreenResolution()
@@ -159,8 +209,9 @@ object Client {
 	}
 
 
-	fun getVehiclePedIsUsing(ped: Entity): Int? {
+	fun getVehiclePedIsUsing(ped: Entity, atGetIn: Boolean = false): Int? {
 		return GetVehiclePedIsUsing(ped).takeIf { it != 0 }
+		return if (isPedInAnyVehicle(ped, atGetIn)) GetVehiclePedIsUsing(ped) else null
 	}
 
 	fun getVehicleCurrentGear(vehicle: Entity): Int {
@@ -199,8 +250,8 @@ object Client {
 		return GetVehicleNumberPlateText(vehicle)
 	}
 
-	fun getVehicleOilLevel(vehicle: Entity): Double {
-		return GetVehicleOilLevel(vehicle).toDouble()
+	fun getVehicleOilLevel(vehicle: Entity): Number? {
+		return if (getVehicleIndexFromEntityIndex(vehicle) != 0) GetVehicleOilLevel(vehicle) else null
 	}
 
 	fun getVehiclePetrolTankHealth(vehicle: Entity): Double {
@@ -4535,13 +4586,13 @@ private external fun DrawRect(
 
 //private external fun EndFindKvp(handle: number)
 
-//private external fun EndFindObject(findHandle: number)
+private external fun EndFindObject(findHandle: Number)
 
-//private external fun EndFindPed(findHandle: number)
+private external fun EndFindPed(findHandle: Number)
 
-//private external fun EndFindPickup(findHandle: number)
+private external fun EndFindPickup(findHandle: Number)
 
-//private external fun EndFindVehicle(findHandle: number)
+private external fun EndFindVehicle(findHandle: Number)
 
 //private external fun EndReplayStats()
 
@@ -4915,23 +4966,23 @@ private external fun DrawRect(
  */
 //private external fun FindAnimEventPhase(animDictionary: string, animName: string, p2: string): [number, number, number];
 
-//private external fun FindFirstObject(outEntity: number): number;
+private external fun FindFirstObject(): Array<Int>
 
-//private external fun FindFirstPed(outEntity: number): number;
+private external fun FindFirstPed(): Array<Int>
 
-//private external fun FindFirstPickup(outEntity: number): number;
+private external fun FindFirstPickup(): Array<Int>
 
-private external fun FindFirstVehicle(outEntity: Number): Number
+private external fun FindFirstVehicle(): Array<Int>
 
 //private external fun FindKvp(handle: number): string;
 
-//private external fun FindNextObject(findHandle: number, outEntity: number): number;
+private external fun FindNextObject(findHandle: Number): Array<Any>
 
-//private external fun FindNextPed(findHandle: Number, outEntity: Number): Number
+private external fun FindNextPed(findHandle: Number): Array<Any>
 
-//private external fun FindNextPickup(findHandle: number, outEntity: number): number;
+private external fun FindNextPickup(findHandle: Number): Array<Any>
 
-private external fun FindNextVehicle(findHandle: Number, outEntity: Number): Number
+private external fun FindNextVehicle(findHandle: Number): Array<Any>
 
 //private external fun FindRadioStationIndex(station: number): number;
 

@@ -16,6 +16,7 @@ import online.fivem.common.gtav.ProfileSetting
 import online.fivem.common.gtav.RadioStation
 import kotlin.coroutines.CoroutineContext
 import kotlin.js.Date
+import kotlin.math.absoluteValue
 
 class EventGeneratorModule : AbstractModule(), CoroutineScope {
 	override val coroutineContext: CoroutineContext = Job()
@@ -45,7 +46,6 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 	private var iPlayerAcceleration = 0.0
 	private var iPlayerAccelerationModule = 0.0
 	private var iLastSpeedCheck = 0.0
-//	private var isAccelerationThresholdAchieved = false
 
 	override fun init() {
 		moduleLoader.add(TickExecutorModule())
@@ -95,12 +95,9 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 			iPlayerAcceleration = (iSpeed - iPlayerSpeed) / dt
 			iPlayerSpeed = iSpeed
 
-			iPlayerAccelerationModule = if (iPlayerAcceleration >= 0) iPlayerAcceleration else -iPlayerAcceleration
+			iPlayerAccelerationModule = iPlayerAcceleration.absoluteValue
 
 			if (iPlayerAccelerationModule >= accelerationThreshold) {
-//				if (!isAccelerationThresholdAchieved) {
-//					isAccelerationThresholdAchieved = true
-
 				if (!Client.isPedAtGetInAnyVehicle(playerPed)) {
 					UEvent.emit(
 						AccelerationThresholdAchievedEvent(
@@ -110,10 +107,7 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 						)
 					)
 				}
-//				}
-			} //else {
-//				isAccelerationThresholdAchieved = false
-//			}
+			}
 		}
 
 		if (playerCoordinates != currentCoordinates) {

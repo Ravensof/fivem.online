@@ -30,7 +30,7 @@ class SpawnManagerModule(override val coroutineContext: CoroutineContext) : Abst
 
 			modelHash?.let {
 				Console.debug("withTimeout(5_000) { Client.requestModel(it).join() }")
-				withTimeout(5_000) { Client.requestModel(it).join() }//todo test
+				withTimeout(15_000) { Client.requestModel(it).join() }//todo test
 
 				Client.setPlayerModel(playerId, it)
 				Client.setModelAsNoLongerNeeded(it)
@@ -53,7 +53,7 @@ class SpawnManagerModule(override val coroutineContext: CoroutineContext) : Abst
 			Client.shutdownLoadingScreen()
 
 			Console.debug("withTimeout(5_000) { Client.doScreenFadeIn(500).join() }")
-			withTimeout(5_000) { Client.doScreenFadeIn(500).join() }//todo test
+			withTimeout(15_000) { Client.doScreenFadeIn(500).join() }//todo test
 
 			freezePlayer(playerId, false)
 

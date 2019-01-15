@@ -6,6 +6,7 @@ import online.fivem.client.modules.nuiEventExchanger.NuiEvent
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.UEvent
 import online.fivem.common.events.*
+import online.fivem.common.extensions.orZero
 import kotlin.coroutines.CoroutineContext
 
 class Speedometer : AbstractModule(), CoroutineScope {
@@ -45,7 +46,7 @@ class Speedometer : AbstractModule(), CoroutineScope {
 
 						engineTemperature = Client.getVehicleEngineTemperature(vehicle),
 						fuelLevel = Client.getVehicleFuelLevel(vehicle),
-						oilLevel = Client.getVehicleOilLevel(vehicle),
+						oilLevel = Client.getVehicleOilLevel(vehicle)?.toDouble().orZero(),
 						petrolTankHealth = Client.getVehiclePetrolTankHealth(vehicle),
 						engineRunning = Client.getIsVehicleEngineRunning(vehicle),
 						engineOn = Client.isVehicleEngineOn(vehicle),

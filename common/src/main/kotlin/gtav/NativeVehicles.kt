@@ -8,7 +8,7 @@ https://wiki.gtanet.work/index.php?title=Vehicle_Models
 
  */
 
-enum class Vehicles(val hash: Int, val category: Category) {
+enum class NativeVehicles(val hash: Int, val category: Category) {
 
 	DINGHY(1033245328, Category.BOATS),
 	DINGHY2(276773164, Category.BOATS),
