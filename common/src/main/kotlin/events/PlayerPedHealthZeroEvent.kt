@@ -1,5 +1,5 @@
 package online.fivem.common.events
 
-class PlayerPedUnconsciousEvent(
+class PlayerPedHealthZeroEvent(
 	lastHealth: Int
 ) : PlayersPedHealthDropppedEvent(0, lastHealth)

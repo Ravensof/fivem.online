@@ -88,7 +88,7 @@ class ClientEventExchangerModule : AbstractModule(), CoroutineScope {
 		playersReceiveChannels.forEach { channel ->
 			launch {
 				for (packet in channel) {
-					ClientEvent.handle(packet.playerSrc!!, packet)
+					ClientEvent.handle(packet.playerSrc!!, packet.data)
 				}
 			}
 		}

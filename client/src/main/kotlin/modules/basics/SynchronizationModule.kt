@@ -12,6 +12,7 @@ import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.events.SynchronizeEvent
 import online.fivem.common.events.net.RequestPackEvent
 import online.fivem.common.events.net.SpawnPlayerEvent
+import online.fivem.common.events.net.SpawnVehicleEvent
 import kotlin.coroutines.CoroutineContext
 
 class SynchronizationModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {

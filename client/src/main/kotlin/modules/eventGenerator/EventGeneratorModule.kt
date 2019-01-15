@@ -48,6 +48,7 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 //	private var isAccelerationThresholdAchieved = false
 
 	override fun init() {
+		moduleLoader.add(TickExecutorModule())
 		moduleLoader.add(KeysHandlerModule(coroutineContext))
 	}
 
@@ -151,7 +152,7 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 
 		if (pedHealthDiff != 0) {
 			if (currentPedHealth == 0) {
-				UEvent.emit(PlayerPedUnconsciousEvent(pedHealthDiff))
+				UEvent.emit(PlayerPedHealthZeroEvent(pedHealthDiff))
 			} else {
 				if (pedHealthDiff > 0) {
 					UEvent.emit(PlayersPedHealthIncreasedEvent(currentPedHealth, pedHealthDiff))
