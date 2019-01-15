@@ -3,6 +3,7 @@
 package online.fivem.client.gtav
 
 import kotlinx.coroutines.*
+import online.fivem.common.GlobalConfig
 import online.fivem.common.common.Entity
 import online.fivem.common.entities.Coordinates
 import online.fivem.common.entities.ScreenResolution
@@ -441,9 +442,9 @@ object Client {
 		SetNuiFocus(hasFocus, hasCursor)
 	}
 
-//	fun loadResourceFile(resourceName: String = GlobalConfig.MODULE_NAME, fileName: String): String {
-//		return LoadResourceFile(resourceName, fileName)
-//	}
+	fun loadResourceFile(resourceName: String = GlobalConfig.MODULE_NAME, fileName: String): String {
+		return LoadResourceFile(resourceName, fileName)
+	}
 
 	fun doScreenFadeIn(duration: Int): Job {
 		return GlobalScope.launch {
@@ -501,14 +502,14 @@ object Client {
 
 	fun setPedToRagdoll(
 		ped: Entity,
-		time1: Int,
+		time1: Int = 1000,
 		time2: Int = 1000,
 		ragdollType: Short = 0,
 		p4: Boolean = false,
 		p5: Boolean = false,
 		p6: Boolean = false
 	): Number {
-		return SetPedToRagdoll(ped, time1, time2, ragdollType, p4, p5, p6)
+		return SetPedToRagdoll(ped, time1 * 1_000, time2, ragdollType, p4, p5, p6)
 	}
 
 	fun setEntityCoords(
