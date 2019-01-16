@@ -40,6 +40,7 @@ object Natives {
 		return SaveResourceFile(GlobalConfig.MODULE_NAME, fileName, data, data.length) == 1
 	}
 
+	//наверное, возвращает сколько всего игроков, включая подключающихся. != кол-ву игроков в одной сессии
 	fun countPlayersOnline(): Int {
 		return GetNumPlayerIndices()
 	}

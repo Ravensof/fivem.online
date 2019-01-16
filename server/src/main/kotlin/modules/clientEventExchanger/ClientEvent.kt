@@ -9,9 +9,7 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.KClass
 
 open class ClientEvent : CoroutineScope {
-	/**
-	 * Context of this scope.
-	 */
+
 	override val coroutineContext: CoroutineContext = Job()
 
 	open val printType = "net"

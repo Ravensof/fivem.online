@@ -2,6 +2,8 @@ package online.fivem.client.modules.eventGenerator
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import online.fivem.client.extensions.isDisabledControlJustPressed
+import online.fivem.client.extensions.isDisabledControlPressed
 import online.fivem.client.gtav.Client
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.UEvent

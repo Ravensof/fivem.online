@@ -2,8 +2,6 @@ package online.fivem.client.modules.basics
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeout
-import online.fivem.client.extensions.createVehicle
 import online.fivem.client.gtav.Client
 import online.fivem.client.modules.serverEventExchanger.ServerEvent
 import online.fivem.common.common.AbstractModule
@@ -12,7 +10,6 @@ import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.events.SynchronizeEvent
 import online.fivem.common.events.net.RequestPackEvent
 import online.fivem.common.events.net.SpawnPlayerEvent
-import online.fivem.common.events.net.SpawnVehicleEvent
 import kotlin.coroutines.CoroutineContext
 
 class SynchronizationModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
@@ -23,16 +20,16 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 	override fun init() {
 		ServerEvent.on<RequestPackEvent> { onServerRequest(it.kClasses) }
 		ServerEvent.on<SpawnPlayerEvent> { onPlayerSpawn(it.coordinatesX, it.model) }
-		ServerEvent.on<SpawnVehicleEvent> { onVehicleSpawn(it) }
+//		ServerEvent.on<SpawnVehicleEvent> { onVehicleSpawn(it) }
 	}
 
-	private fun onVehicleSpawn(event: SpawnVehicleEvent) {
-		launch {
-			val vehicle = withTimeout(5_000) { Client.createVehicle(event.vehicleModel, event.coordinatesX).await() }
-
-			Client.setVehicleOilLevel(vehicle, event.vehicleId)
-		}
-	}
+//	private fun onVehicleSpawn(event: SpawnVehicleEvent) {
+//		launch {
+//			val vehicle = withTimeout(5_000) { Client.createVehicle(event.vehicleModel, event.coordinatesX).await() }
+//
+//			Client.setVehicleOilLevel(vehicle, event.vehicleId)
+//		}
+//	}
 
 	private fun onPlayerSpawn(coordinatesX: CoordinatesX, model: Int) {
 		launch {

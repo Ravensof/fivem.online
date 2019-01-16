@@ -47,6 +47,8 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 	private var iPlayerAccelerationModule = 0.0
 	private var iLastSpeedCheck = 0.0
 
+	private var isPedAtGetInAnyVehicle: Boolean? = null
+
 	override fun init() {
 		moduleLoader.add(TickExecutorModule())
 		moduleLoader.add(KeysHandlerModule(coroutineContext))
@@ -63,6 +65,7 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 			checkPlayerSeatIndex(Client.getPassengerSeatOfPedInVehicle())
 			checkPauseMenuState(Client.getPauseMenuState())
 			checkIsPlayerInVehicle()
+			checkPlayerTryingTogetAnyVehicle()
 			checkRadio()
 		}
 
@@ -80,6 +83,20 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 		cancel()
 
 		return super.stop()
+	}
+
+	private fun checkPlayerTryingTogetAnyVehicle() {
+		val isPedAtGetInAnyVehicleRightNow = Client.isPedAtGetInAnyVehicle(playerPed)
+
+		if (isPedAtGetInAnyVehicleRightNow != isPedAtGetInAnyVehicle) {
+			if (isPedAtGetInAnyVehicleRightNow) {
+				val vehicle = Client.getVehiclePedIsUsing(playerPed) ?: return
+				UEvent.emit(PlayerTryingToGetVehicle(vehicle))
+			} else {
+				UEvent.emit(PlayerCancelsTryingToGetVehicle())
+			}
+			isPedAtGetInAnyVehicle = isPedAtGetInAnyVehicleRightNow
+		}
 	}
 
 	private fun checkAcceleration() {

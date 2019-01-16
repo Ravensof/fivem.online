@@ -10,8 +10,6 @@ object GlobalConfig {
 	const val MAX_PLAYERS = 32
 	const val APP_VERSION = 190107
 
-	const val KICK_FOR_PACKET_OVERFLOW = true
-
 	val internetRadioStations = mapOf(
 		//		RadioStations.RADIO_01_CLASS_ROCK.name to RadioStation(),  // Los Santos Rock Radio
 		RadioStation.RADIO_02_POP.name to InternetRadioStation(

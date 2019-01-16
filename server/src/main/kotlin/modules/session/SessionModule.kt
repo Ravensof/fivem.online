@@ -9,7 +9,6 @@ import online.fivem.common.entities.PlayerSrc
 import online.fivem.common.events.ImReadyEvent
 import online.fivem.common.gtav.NativeEvents
 import online.fivem.server.Strings
-import online.fivem.server.Strings.UNKNOWN_ERROR
 import online.fivem.server.common.MySQL
 import online.fivem.server.entities.Player
 import online.fivem.server.gtav.Exports
@@ -69,11 +68,11 @@ class SessionModule : AbstractModule() {
 					|LIMIT 1""".trimMargin(),
 				identifiers.steam,
 				identifiers.license
-			).await().firstOrNull() ?: return@launch Natives.dropPlayer(playerSrc, "пользователь не создан")
+			).await().firstOrNull() ?: return@launch Natives.dropPlayer(playerSrc, Strings.NO_SUCH_USER)
 
 			val character =
 				mySQL.query<CharacterEntity>("SELECT * FROM characters WHERE user_id=${user.id} LIMIT 1").await().firstOrNull()
-					?: return@launch Natives.dropPlayer(playerSrc, "пользователь не создан")
+					?: return@launch Natives.dropPlayer(playerSrc, Strings.NO_SUCH_CHARACTER)
 
 			val sessionId = mySQL.query(
 				"""
@@ -90,7 +89,7 @@ class SessionModule : AbstractModule() {
 				identifiers.steam.orEmpty(),
 				identifiers.license,
 				identifiers.ip
-			).await() ?: return@launch Natives.dropPlayer(playerSrc, "$UNKNOWN_ERROR 20190113")
+			).await() ?: return@launch Natives.dropPlayer(playerSrc, Strings.SESSION_HAVE_NOT_BEEN_CREATED)
 
 			player.sessionId = sessionId
 			player.characterId = character.id

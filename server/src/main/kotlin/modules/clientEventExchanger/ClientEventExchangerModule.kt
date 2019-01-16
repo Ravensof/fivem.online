@@ -13,6 +13,7 @@ import online.fivem.common.events.EstablishConnectionEvent
 import online.fivem.common.events.ImReadyEvent
 import online.fivem.common.extensions.onNull
 import online.fivem.common.gtav.NativeEvents
+import online.fivem.server.ServerConfig
 import online.fivem.server.Strings
 import online.fivem.server.gtav.Exports
 import online.fivem.server.gtav.Natives
@@ -52,7 +53,7 @@ class ClientEventExchangerModule : AbstractModule(), CoroutineScope {
 				if (channel.isFull) {
 					Console.warn("ClientEventExchanger: receive channel for player ${playerSrc.value} is full")
 
-					if (GlobalConfig.KICK_FOR_PACKET_OVERFLOW) return@launch Natives.dropPlayer(
+					if (ServerConfig.KICK_FOR_PACKET_OVERFLOW) return@launch Natives.dropPlayer(
 						playerSrc,
 						Strings.CLIENT_PACKETS_OVERFLOW
 					)

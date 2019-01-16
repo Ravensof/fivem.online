@@ -11,12 +11,22 @@ import online.fivem.common.common.Console
 import online.fivem.common.common.UEvent
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.events.PlayerSpawnedEvent
+import online.fivem.common.events.net.SpawnVehicleEvent
 import kotlin.coroutines.CoroutineContext
 
 class SpawnManagerModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
 
 	override fun start(): Job? {
 		return super.start()
+	}
+
+	private fun vehicleSpawn(event: SpawnVehicleEvent) {
+		launch {
+			//			val vehicle = withTimeout(5_000) { Client.createVehicle(event.vehicleModel, event.coordinatesX).await() }
+//
+//			Client.setVehicleOilLevel(vehicle, event.vehicleId)
+//			Client.setVehicleWheelHealth(vehicle)
+		}
 	}
 
 	fun spawnPlayer(coordinatesX: CoordinatesX, modelHash: Int?): Job = launch {

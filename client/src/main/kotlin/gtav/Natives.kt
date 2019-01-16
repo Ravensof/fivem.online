@@ -11,68 +11,72 @@ object Natives {
 		Exports.emitNet(eventName, data)
 	}
 
-//	fun <T>invokeNative(hash: String,vararg args: InputArgument): T {
-//		return Citizen.invokeNative(hash, *args)
-//	}
+	fun <T> invokeNative(hash: Int, vararg args: InputArgument): T {
+		return Citizen.invokeNative(hash.toString(), *args)
+	}
+
+	fun <T> invokeNative(hash: String, vararg args: InputArgument): T {
+		return Citizen.invokeNative(hash, *args)
+	}
 }
 
-//private external interface IntPtrInitialized
-//private external interface FloatPtrInitialized
-//private external interface IntPtr
-//private external interface FloatPtr
-//private external interface VectorPtr
-//private external interface ReturnResultAnyway
-//private external interface ResultAsInteger
-//private external interface ResultAsFloat
-//private external interface ResultAsString
-//private external interface ResultAsVector
-//
-//private typealias InputArgument = Any
-//
-////string |
-////number |
-////IntPtrInitialized |
-////FloatPtrInitialized |
-////IntPtr |
-////FloatPtr |
-////VectorPtr |
-////ReturnResultAnyway |
-////ResultAsInteger |
-////ResultAsFloat |
-////ResultAsString |
-////ResultAsVector;
-//
-//private external interface CitizenInterface {
-//	fun trace(vararg args: Array<String>)
-//	fun setTickFunction(callback: () -> Unit)
-//	fun setEventFunction(callback: () -> Unit)
-//
-//	fun setCallRefFunction(callback: () -> Unit)
-//	fun setDeleteRefFunction(callback: () -> Unit)
-//	fun setDuplicateRefFunction(callback: () -> Unit)
-//	fun canonicalizeRef(ref: Float/*number*/): String
-//	fun invokeFunctionReference(ref: String, args: Array<Int>): Array<Int>
-//
-//	fun getTickCount(): Float//number
-//	fun <T> invokeNative(hash: String, vararg args: InputArgument): T
-//	fun startProfiling(name: String?)
-//	fun stopProfiling(name: String?)
-//
-//	fun pointerValueIntInitialized(): IntPtrInitialized
-//	fun pointerValueFloatInitialized(): FloatPtrInitialized
-//	fun pointerValueInt(): IntPtr
-//	fun pointerValueFloat(): FloatPtr
-//	fun pointerValueVector(): VectorPtr
-//	fun returnResultAnyway(): ReturnResultAnyway
-//	fun resultAsInteger(): ResultAsInteger
-//	fun resultAsFloat(): ResultAsFloat
-//	fun resultAsString(): ResultAsString
-//	fun resultAsVector(): ResultAsVector
-//
-//	fun makeRefFunction(refFunction: () -> Unit): String
-//}
-//
-//private external val Citizen: CitizenInterface
+private external interface IntPtrInitialized
+private external interface FloatPtrInitialized
+private external interface IntPtr
+private external interface FloatPtr
+private external interface VectorPtr
+private external interface ReturnResultAnyway
+private external interface ResultAsInteger
+private external interface ResultAsFloat
+private external interface ResultAsString
+private external interface ResultAsVector
+
+private typealias InputArgument = Any
+
+//string |
+//number |
+//IntPtrInitialized |
+//FloatPtrInitialized |
+//IntPtr |
+//FloatPtr |
+//VectorPtr |
+//ReturnResultAnyway |
+//ResultAsInteger |
+//ResultAsFloat |
+//ResultAsString |
+//ResultAsVector;
+
+private external interface CitizenInterface {
+	fun trace(vararg args: Array<String>)
+	fun setTickFunction(callback: () -> Unit)
+	fun setEventFunction(callback: () -> Unit)
+
+	fun setCallRefFunction(callback: () -> Unit)
+	fun setDeleteRefFunction(callback: () -> Unit)
+	fun setDuplicateRefFunction(callback: () -> Unit)
+	fun canonicalizeRef(ref: Float/*number*/): String
+	fun invokeFunctionReference(ref: String, args: Array<Int>): Array<Int>
+
+	fun getTickCount(): Float//number
+	fun <T> invokeNative(hash: String, vararg args: InputArgument): T
+	fun startProfiling(name: String?)
+	fun stopProfiling(name: String?)
+
+	fun pointerValueIntInitialized(): IntPtrInitialized
+	fun pointerValueFloatInitialized(): FloatPtrInitialized
+	fun pointerValueInt(): IntPtr
+	fun pointerValueFloat(): FloatPtr
+	fun pointerValueVector(): VectorPtr
+	fun returnResultAnyway(): ReturnResultAnyway
+	fun resultAsInteger(): ResultAsInteger
+	fun resultAsFloat(): ResultAsFloat
+	fun resultAsString(): ResultAsString
+	fun resultAsVector(): ResultAsVector
+
+	fun makeRefFunction(refFunction: () -> Unit): String
+}
+
+private external val Citizen: CitizenInterface
 
 private external fun on(eventName: String, callback: Any)
 

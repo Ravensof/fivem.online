@@ -7,6 +7,9 @@ object Strings {
 	const val CLIENT_WASNT_CONNECT = "client didn't connect on time"
 	const val CLIENT_SINGLE_SESSION = "you're in single session"
 	const val CLIENT_PACKETS_OVERFLOW = "packets overflow"
+	const val NO_SUCH_USER = "no such user"
+	const val NO_SUCH_CHARACTER = "no such character"
+	const val SESSION_HAVE_NOT_BEEN_CREATED = "session have not been created"
 
 	const val UNKNOWN_ERROR = "unknown error"
 }

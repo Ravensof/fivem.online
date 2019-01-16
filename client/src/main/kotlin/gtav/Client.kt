@@ -16,6 +16,206 @@ typealias Handle = Int
 
 object Client {
 
+	fun getFrameTime(): Double {
+		return GetFrameTime().toDouble()
+	}
+
+	fun getControlNormal(inputGroup: Int, control: Int): Int {
+		return GetControlNormal(inputGroup, control)
+	}
+
+	fun setEntityMaxSpeed(entity: Entity, speed: Number) {
+		SetEntityMaxSpeed(entity, speed)
+	}
+
+	fun getVehicleHandlingFloat(vehicle: Entity, _class: String, fieldName: String): Double {
+		return GetVehicleHandlingFloat(vehicle, _class, fieldName).toDouble()
+	}
+
+	fun getVehiclePedIsIn(ped: Entity, lastVehicle: Boolean): Entity {
+		return GetVehiclePedIsIn(ped, lastVehicle)
+	}
+
+	fun drawText(x: Number, y: Number) {
+		DrawText(x, y)
+	}
+
+	fun addTextComponentString(text: String) {
+		AddTextComponentString(text)
+	}
+
+	fun addTextComponentString3(p0: String) {
+		AddTextComponentString3(p0)
+	}
+
+	fun setTextEntry(text: String) {
+		SetTextEntry(text)
+	}
+
+	fun setTextOutline() {
+		SetTextOutline()
+	}
+
+	fun setTextDropShadow() {
+		SetTextDropShadow()
+	}
+
+	fun setTextEdge(p0: Number, r: Int, g: Int, b: Int, a: Int) {
+		SetTextEdge(p0, r, g, b, a)
+	}
+
+	fun setTextDropshadow(distance: Number, r: Int, g: Int, b: Int, a: Int) {
+		SetTextDropshadow(distance, r, g, b, a)
+	}
+
+	fun setTextColour(red: Int, green: Int, blue: Int, alpha: Int) {
+		SetTextColour(red, green, blue, alpha)
+	}
+
+	fun setTextScale(scale: Double, size: Double) {
+		SetTextScale(scale, size)
+	}
+
+	fun setTextProportional(p0: Boolean) {
+		SetTextProportional(p0)
+	}
+
+	fun setTextFont(fontType: Int) {
+		SetTextFont(fontType)
+	}
+
+	fun setVehicleHighGear(vehicle: Entity, gear: Int) {
+		SetVehicleHighGear(vehicle, gear)
+	}
+
+	fun getVehicleHighGear(vehicle: Entity): Int {
+		return GetVehicleHighGear(vehicle)
+	}
+
+	fun startScreenEffect(effectName: String, milliseconds: Int = 0, looped: Boolean = false) {
+		StartScreenEffect(effectName, milliseconds, looped)
+	}
+
+	fun setVehicleBoostActive(vehicle: Entity, Toggle: Boolean) {
+		SetVehicleBoostActive(vehicle, Toggle)
+	}
+
+	fun setVehicleForwardSpeed(vehicle: Entity, speed: Number) {
+		SetVehicleForwardSpeed(vehicle, speed)
+	}
+
+	fun getPedUsingVehicleDoor(vehicle: Entity, index: Int): Entity {
+		return GetPedUsingVehicleDoor(vehicle, index)
+	}
+
+	fun getNumberOfVehicleDoors(vehicle: Entity): Int {
+		return GetNumberOfVehicleDoors(vehicle)
+	}
+
+	/**
+	 * doorIndex:
+	 * 0 = Front Right Door
+	 * 1 = Front Left Door
+	 * 2 = Back Right Door
+	 * 3 = Back Left Door
+	 * 4 = Hood
+	 * 5 = Trunk
+	 * Changed last paramater from CreateDoorObject To NoDoorOnTheFloor because when on false, the door object is created,and not created when on true...the former parameter name was counter intuitive...(by Calderon)
+	 */
+	fun setVehicleDoorBroken(vehicle: Entity, doorIndex: Int, deleteDoor: Boolean) {
+		SetVehicleDoorBroken(vehicle, doorIndex, deleteDoor)
+	}
+
+	fun isVehicleDoorDamaged(vehicle: Entity, index: Int): Boolean {
+		return IsVehicleDoorDamaged(vehicle, index) == 1
+	}
+
+	fun setVehicleClutch(vehicle: Entity, clutch: Number) {
+		SetVehicleClutch(vehicle, clutch)
+	}
+
+	fun getVehicleClutch(vehicle: Entity): Number {
+		return GetVehicleClutch(vehicle)
+	}
+
+	fun setVehicleAsNoLongerNeeded(vehicle: Entity) {
+		SetVehicleAsNoLongerNeeded(vehicle)
+	}
+
+	fun isVehicleWanted(vehicle: Entity): Boolean {
+		return IsVehicleWanted(vehicle) == 1
+	}
+
+	fun isVehicleEngineStarting(vehicle: Entity): Boolean {
+		return IsVehicleEngineStarting(vehicle) == 1
+	}
+
+	fun isVehicleAlarmSet(vehicle: Entity): Boolean {
+		return IsVehicleAlarmSet(vehicle) == 1
+	}
+
+	//every frame
+	fun setVehicleWheelXOffset(vehicle: Entity, wheelIndex: Int, offset: Number) {
+		SetVehicleWheelXOffset(vehicle, wheelIndex, offset)
+	}
+
+	//every frame
+	fun setVehicleWheelXrot(vehicle: Entity, wheelIndex: Int, value: Number) {
+		SetVehicleWheelXrot(vehicle, wheelIndex, value)
+	}
+
+	fun getVehicleWheelXOffset(vehicle: Entity, wheelIndex: Int): Number {
+		return GetVehicleWheelXOffset(vehicle, wheelIndex)
+	}
+
+	fun getVehicleWheelXrot(vehicle: Entity, wheelIndex: Int): Number {
+		return GetVehicleWheelXrot(vehicle, wheelIndex)
+	}
+
+	fun getVehicleNumberOfWheels(vehicle: Entity): Int {
+		return GetVehicleNumberOfWheels(vehicle)
+	}
+
+	fun getVehicleAlarmTimeLeft(vehicle: Entity): Int {
+		return GetVehicleAlarmTimeLeft(vehicle)
+	}
+
+	fun setVehicleAlarm(vehicle: Entity, state: Boolean) {
+		SetVehicleAlarm(vehicle, state)
+	}
+
+	fun setVehicleAlarmTimeLeft(vehicle: Entity, time: Int) {
+		SetVehicleAlarmTimeLeft(vehicle, time)
+	}
+
+	fun setNetworkIdCanMigrate(netId: Int, toggle: Boolean) {
+		SetNetworkIdCanMigrate(netId, toggle)
+	}
+
+	fun networkGetNetworkIdFromEntity(entity: Entity): Int {
+		return NetworkGetNetworkIdFromEntity(entity)
+	}
+
+	fun setVehicleHasBeenOwnedByPlayer(vehicle: Entity, owned: Boolean = true) {
+		SetVehicleHasBeenOwnedByPlayer(vehicle, owned)
+	}
+
+	fun setVehicleOnGroundProperly(vehicle: Entity): Number {
+		return SetVehicleOnGroundProperly(vehicle)
+	}
+
+	fun getVehicleWheelSpeed(vehicle: Entity, wheelIndex: Int): Number {
+		return GetVehicleWheelSpeed(vehicle, wheelIndex)
+	}
+
+	fun getVehicleWheelHealth(vehicle: Entity, wheelIndex: Int): Number {
+		return GetVehicleWheelHealth(vehicle, wheelIndex)
+	}
+
+	fun setVehicleWheelHealth(vehicle: Entity, wheelIndex: Int, health: Number) {
+		SetVehicleWheelHealth(vehicle, wheelIndex, health)
+	}
+
 	fun endFindPickup(findHandle: Handle) {
 		EndFindPickup(findHandle)
 	}
@@ -97,6 +297,10 @@ object Client {
 		return GetVehicleDirtLevel(vehicle)
 	}
 
+	fun setVehicleDirtLevel(vehicle: Entity, dirtLevel: Int) {
+		SetVehicleDirtLevel(vehicle, dirtLevel)
+	}
+
 	fun createVehicle(
 		modelHash: Int,
 		x: Number,
@@ -119,7 +323,7 @@ object Client {
 		SetPedAsCop(ped, true)
 	}
 
-	fun getHashKey(string: String): Number {
+	fun getHashKey(string: String): Int {
 		return GetHashKey(string)
 	}
 
@@ -209,10 +413,8 @@ object Client {
 		return GetEntityHeading(entity)
 	}
 
-
-	fun getVehiclePedIsUsing(ped: Entity, atGetIn: Boolean = false): Int? {
+	fun getVehiclePedIsUsing(ped: Entity): Int? {
 		return GetVehiclePedIsUsing(ped).takeIf { it != 0 }
-		return if (isPedInAnyVehicle(ped, atGetIn)) GetVehiclePedIsUsing(ped) else null
 	}
 
 	fun getVehicleCurrentGear(vehicle: Entity): Int {
@@ -223,6 +425,10 @@ object Client {
 		return GetVehicleCurrentRpm(vehicle)
 	}
 
+	fun setVehicleCurrentRpm(vehicle: Entity, rpm: Double) {
+		SetVehicleCurrentRpm(vehicle, rpm)
+	}
+
 	fun getVehicleDashboardSpeed(vehicle: Entity): Double {
 		return GetVehicleDashboardSpeed(vehicle)
 	}
@@ -231,12 +437,20 @@ object Client {
 		return GetVehicleEngineTemperature(vehicle)
 	}
 
+	fun setVehicleEngineTemperature(vehicle: Entity, temperature: Int) {
+		SetVehicleEngineTemperature(vehicle, temperature)
+	}
+
 	fun getVehicleFuelLevel(vehicle: Entity): Double {
 		return GetVehicleFuelLevel(vehicle).toDouble()
 	}
 
 	fun getVehicleHandbrake(vehicle: Entity): Boolean {
 		return GetVehicleHandbrake(vehicle) == 1
+	}
+
+	fun setVehicleHandbrake(vehicle: Entity, toggle: Boolean) {
+		SetVehicleHandbrake(vehicle, toggle)
 	}
 
 	fun getVehicleIndexFromEntityIndex(entity: Entity): Int {
@@ -259,8 +473,12 @@ object Client {
 		return GetVehiclePetrolTankHealth(vehicle).toDouble()
 	}
 
-	fun getVehicleTurboPressure(vehicle: Entity): Int {
+	fun getVehicleTurboPressure(vehicle: Entity): Number {//todo узнать возвращаемый тип
 		return GetVehicleTurboPressure(vehicle)
+	}
+
+	fun setVehicleTurboPressure(vehicle: Entity, pressure: Number) {
+		SetVehicleTurboPressure(vehicle, pressure)
 	}
 
 	fun getIsVehicleEngineRunning(vehicle: Entity): Boolean {
@@ -343,7 +561,7 @@ object Client {
 	 * 0, 1 and 2 used in the scripts.
 	 */
 
-	private val defaultControlGroup = NativeControls.Groups.MOVE
+	val defaultControlGroup = NativeControls.Groups.MOVE
 
 	fun isControlEnabled(
 		inputGroup: NativeControls.Groups = defaultControlGroup,
@@ -406,32 +624,32 @@ object Client {
 	}
 
 	fun disableControlAction(
-		inputGroup: NativeControls.Groups = defaultControlGroup,
-		control: NativeControls.Keys,
+		inputGroup: Int,
+		control: Int,
 		disable: Boolean = true
 	) {
-		DisableControlAction(inputGroup.index, control.index, disable)
+		DisableControlAction(inputGroup, control, disable)
 	}
 
 	fun isDisabledControlJustPressed(
-		inputGroup: NativeControls.Groups = defaultControlGroup,
-		control: NativeControls.Keys
+		inputGroup: Int,
+		control: Int
 	): Boolean {
-		return IsDisabledControlJustPressed(inputGroup.index, control.index) == 1
+		return IsDisabledControlJustPressed(inputGroup, control) == 1
 	}
 
 	fun isDisabledControlJustReleased(
-		inputGroup: NativeControls.Groups = defaultControlGroup,
-		control: NativeControls.Keys
+		inputGroup: Int,
+		control: Int
 	): Boolean {
-		return IsDisabledControlJustReleased(inputGroup.index, control.index) == 1
+		return IsDisabledControlJustReleased(inputGroup, control) == 1
 	}
 
 	fun isDisabledControlPressed(
-		inputGroup: NativeControls.Groups = defaultControlGroup,
-		control: NativeControls.Keys
+		inputGroup: Int,
+		control: Int
 	): Boolean {
-		return IsDisabledControlPressed(inputGroup.index, control.index) == 1
+		return IsDisabledControlPressed(inputGroup, control) == 1
 	}
 
 	fun getEntityHeightAboveGround(entity: Entity): Float {
@@ -1218,7 +1436,7 @@ private external fun SwitchInPlayer(ped: Entity)
  * did you even check the disassembly?
  * &gt; Do you even lift bro? The PLAYER_NAME and WEBSITE natives are the correct names, it doesn't matter if they're filtered or not. Blame R* for that matter. Hashes don't lie, and it's extremely unlikely the validated names are collisions (what are the odds??)
  */
-//private external fun AddTextComponentString3(p0: string)
+private external fun AddTextComponentString3(p0: String)
 
 //private external fun AddTextComponentSubstringBlipName(blip: number)
 //private external fun N_0x80ead8e2e1d5d52e(blip: number)
@@ -1290,7 +1508,7 @@ private external fun SwitchInPlayer(ped: Entity)
  * This native (along with 0x5F68520888E69014 and 0x94CF4AC034C9C986) do not actually filter anything. They simply add the provided text (as of 944)
  * Used to be known as _ADD_TEXT_COMPONENT_STRING
  */
-//private external fun AddTextComponentString(text: string)
+private external fun AddTextComponentString(text: String)
 
 //private external fun AddTextComponentSubstringTextLabel(labelName: string)
 //private external fun AddTextComponentItemString(labelName: string)
@@ -1903,7 +2121,7 @@ private external fun AddTextEntry(entryKey: String, entryText: String)
  * ESMINDOLLA - cash (negative)
  * Used to be known as _SET_TEXT_ENTRY
  */
-//private external fun SetTextEntry(text: string)
+private external fun SetTextEntry(text: String)
 
 /**
  * nothin doin.
@@ -4717,7 +4935,7 @@ private external fun EndFindVehicle(findHandle: Number)
  * After applying the properties to the text (See UI::SET_TEXT_), this will draw the text in the applied position. Also 0.0f &lt; x, y &lt; 1.0f, percentage of the axis.
  * Used to be known as _DRAW_TEXT
  */
-//private external fun DrawText(x: number, y: number)
+private external fun DrawText(x: Number, y: Number)
 
 /**
  * Used with _BEGIN_TEXT_COMMAND_WIDTH.
@@ -5581,7 +5799,7 @@ private external fun FreezeEntityPosition(entity: Entity, toggle: Boolean)
  * Returns the value of CONTROLS::GET_CONTROL_VALUE Normalized (ie a real number value between -1 and 1)
  * 0, 1 and 2 used in the scripts. 0 is by far the most common of them.
  */
-//private external fun GetControlNormal(inputGroup: number, control: number): number;
+private external fun GetControlNormal(inputGroup: Int, control: Int): Int
 
 /**
  * 0, 1 and 2 used in the scripts. 0 is by far the most common of them.
@@ -6190,7 +6408,7 @@ private external fun GetEntitySpeed(entity: Int): Double
 
 //private external fun GetFrameCount(): number;
 
-//private external fun GetFrameTime(): number;
+private external fun GetFrameTime(): Number
 
 //private external fun GetFreeStackSlotsCount(threadId: number): number;
 
@@ -6297,7 +6515,7 @@ private external fun GetGameTimer(): Int
  * As a result, it makes this native case-insensitive.
  * For example: "zentorno", "ZENTORNO" and "Zentorno" produce the same hash.
  */
-private external fun GetHashKey(_string: String): Number
+private external fun GetHashKey(_string: String): Int
 
 //private external fun GetHashNameForComponent(entity: number, componentId: number, drawableVariant: number, textureVariant: number): number;
 
@@ -7136,7 +7354,7 @@ private external fun GetNumberOfPlayers(): Int
  */
 //private external fun GetNumberOfVehicleColours(vehicle: number): number;
 
-//private external fun GetNumberOfVehicleDoors(vehicle: number): number;
+private external fun GetNumberOfVehicleDoors(vehicle: Entity): Int
 
 /**
  * Returns the number of *types* of licence plates, enumerated below in SET_VEHICLE_NUMBER_PLATE_TEXT_INDEX.
@@ -7512,7 +7730,7 @@ private external fun GetPedInVehicleSeat(vehicle: Int, index: Int): Int
 /**
  * Quick disassembly and test seems to indicate that this native gets the Ped currently using the specified door.
  */
-//private external fun GetPedUsingVehicleDoor(vehicle: number, doorIndex: number): number;
+private external fun GetPedUsingVehicleDoor(vehicle: Entity, doorIndex: Int): Entity
 /**
  * Quick disassembly and test seems to indicate that this native gets the Ped currently using the specified door.
  */
@@ -8357,7 +8575,7 @@ private external fun GetScreenResolution(): Array<Int>
 
 //private external fun GetVehicleAcceleration(vehicle: number): number;
 
-//private external fun GetVehicleAlarmTimeLeft(vehicle: number): number;
+private external fun GetVehicleAlarmTimeLeft(vehicle: Entity): Int
 
 /**
  * Returns attached vehicle (Vehicle in parameter must be cargobob)
@@ -8466,7 +8684,7 @@ private external fun GetVehicleBodyHealth(vehicle: Int): Number
 
 //private external fun GetVehicleClassMaxTraction(vehicleClass: number): number;
 
-//private external fun GetVehicleClutch(vehicle: number): number;
+private external fun GetVehicleClutch(vehicle: Entity): Number
 
 /**
  * What's this for? Primary and Secondary RGB have their own natives and this one doesn't seem specific.
@@ -8521,9 +8739,9 @@ private external fun GetVehicleDirtLevel(vehicle: Entity): Int
 /**
  * 2 seems to disable getting vehicle in modshop
  */
-//private external fun GetVehicleDoorLockStatus(vehicle: number): number;
+//private external fun GetVehicleDoorLockStatus(vehicle: Entity): Number
 
-//private external fun GetVehicleDoorsLockedForPlayer(vehicle: number, player: number): number;
+//private external fun GetVehicleDoorsLockedForPlayer(vehicle: Entity, player: Int): Number
 
 /**
  * Returns 1000.0 if the function is unable to get the address of the specified vehicle or if it's not a vehicle.
@@ -8569,7 +8787,7 @@ private external fun GetVehicleHandbrake(vehicle: Int): Int
  * @param fieldName The field name to get. These match the keys in `handling.meta`.
  * @return A floating-point value.
  */
-//private external fun GetVehicleHandlingFloat(vehicle: number, _class: string, fieldName: string): number;
+private external fun GetVehicleHandlingFloat(vehicle: Entity, _class: String, fieldName: String): Number
 
 /**
  * Returns the effective handling data of a vehicle as an integer value.
@@ -8591,7 +8809,7 @@ private external fun GetVehicleHandbrake(vehicle: Int): Int
  */
 //private external fun GetVehicleHandlingVector(vehicle: number, _class: string, fieldName: string): number[];
 
-//private external fun GetVehicleHighGear(vehicle: number): number;
+private external fun GetVehicleHighGear(vehicle: Entity): Int
 
 /**
  * Seems to get the hash of the vehicle's currently installed horn?
@@ -8849,7 +9067,7 @@ private external fun GetVehicleMaxNumberOfPassengers(vehicle: Int): Int
  */
 //private external fun GetVehicleNumberOfPassengers(vehicle: number): number;
 
-//private external fun GetVehicleNumberOfWheels(vehicle: number): number;
+private external fun GetVehicleNumberOfWheels(vehicle: Entity): Int
 
 /**
  * Returns the license plate text from a vehicle.  8 chars maximum.
@@ -8881,7 +9099,7 @@ private external fun GetVehicleOilLevel(vehicle: Int): Number
  * Gets the vehicle the specified Ped is/was in depending on bool value.
  * [False = CurrentVehicle, True = LastVehicle]
  */
-//private external fun GetVehiclePedIsIn(ped: number, lastVehicle: boolean): number;
+private external fun GetVehiclePedIsIn(ped: Entity, lastVehicle: Boolean): Entity
 
 /**
  * Should be renamed GET_CAR_PED_IS_TRYING_TO_ENTER...
@@ -8923,7 +9141,7 @@ private external fun GetVehiclePetrolTankHealth(vehicle: Int): Number
  */
 //private external fun GetVehicleTrailerVehicle(vehicle: number, trailer: number): number;
 
-private external fun GetVehicleTurboPressure(vehicle: Int): Int
+private external fun GetVehicleTurboPressure(vehicle: Int): Number
 
 //private external fun GetVehicleTyreSmokeColor(vehicle: number): [number, number, number];
 
@@ -8933,14 +9151,14 @@ private external fun GetVehicleTurboPressure(vehicle: Int): Int
 
 //private external fun GetVehicleWaypointTargetPoint(p0: number): number;
 
-//private external fun GetVehicleWheelHealth(vehicle: number, wheelIndex: number): number;
+private external fun GetVehicleWheelHealth(vehicle: Entity, wheelIndex: Int): Number
 
 /**
  * Gets speed of a wheel at the tyre.
  * Max number of wheels can be retrieved with the native GET_VEHICLE_NUMBER_OF_WHEELS.
  * @return An integer.
  */
-//private external fun GetVehicleWheelSpeed(vehicle: number, wheelIndex: number): number;
+private external fun GetVehicleWheelSpeed(vehicle: Entity, wheelIndex: Int): Number
 
 /**
  * Returns an int
@@ -8960,9 +9178,9 @@ private external fun GetVehicleTurboPressure(vehicle: Int): Int
 /**
  * Returns the offset of the specified wheel relative to the wheel's axle center.
  */
-//private external fun GetVehicleWheelXOffset(vehicle: number, wheelIndex: number): number;
+private external fun GetVehicleWheelXOffset(vehicle: Entity, wheelIndex: Int): Number
 
-//private external fun GetVehicleWheelXrot(vehicle: number, wheelIndex: number): number;
+private external fun GetVehicleWheelXrot(vehicle: Entity, wheelIndex: Int): Number
 
 //private external fun GetVehicleWindowTint(vehicle: number): number;
 
@@ -11009,7 +11227,7 @@ private external fun IsScreenFadingOut(): Any
 
 //private external fun IsVehicleAlarmActivated(vehicle: number): number;
 
-//private external fun IsVehicleAlarmSet(vehicle: number): number;
+private external fun IsVehicleAlarmSet(vehicle: Entity): Number
 
 //private external fun IsVehicleAttachedToCargobob(cargobob: number, vehicleAttached: number): number;
 
@@ -11035,7 +11253,7 @@ private external fun IsScreenFadingOut(): Any
 /**
  * doorID starts at 0, not seeming to skip any numbers. Four door vehicles intuitively range from 0 to 3.
  */
-//private external fun IsVehicleDoorDamaged(veh: number, doorID: number): number;
+private external fun IsVehicleDoorDamaged(veh: Entity, doorID: Int): Number
 
 /**
  * doorIndex:
@@ -11055,7 +11273,7 @@ private external fun IsScreenFadingOut(): Any
  */
 private external fun IsVehicleDriveable(vehicle: Entity, isOnFireCheck: Boolean): Number
 
-//private external fun IsVehicleEngineStarting(vehicle: number): number;
+private external fun IsVehicleEngineStarting(vehicle: Entity): Number
 
 //private external fun IsVehicleExtraTurnedOn(vehicle: number, extraId: number): number;
 
@@ -11186,7 +11404,7 @@ private external fun IsVehicleDriveable(vehicle: Entity, isOnFireCheck: Boolean)
  */
 //private external fun IsVehicleVisible(vehicle: number): number;
 
-//private external fun IsVehicleWanted(vehicle: number): number;
+private external fun IsVehicleWanted(vehicle: Entity): Number
 
 //private external fun IsVehicleWindowIntact(vehicle: number, windowIndex: number): number;
 
@@ -18091,7 +18309,7 @@ private external fun LoadResourceFile(resourceName: String, fileName: String): S
  */
 //private external fun NetworkGetMaxFriends(): number;
 
-//private external fun NetworkGetNetworkIdFromEntity(entity: number): number;
+private external fun NetworkGetNetworkIdFromEntity(entity: Entity): Int
 
 /**
  * Returns the amount of players connected in the current session. Only works when connected to a session/server.
@@ -22293,7 +22511,7 @@ private external fun SetEntityHealth(entity: Int, health: Int)
  */
 //private external fun SetEntityMaxHealth(entity: number, value: number)
 
-//private external fun SetEntityMaxSpeed(entity: number, speed: number)
+private external fun SetEntityMaxSpeed(entity: Entity, speed: Number)
 
 //private external fun SetEntityMotionBlur(entity: number, toggle: boolean)
 
@@ -23031,7 +23249,7 @@ private external fun SetModelAsNoLongerNeeded(model: Int)
 /**
  * Whether or not another player is allowed to take control of the entity
  */
-//private external fun SetNetworkIdCanMigrate(netId: number, toggle: boolean)
+private external fun SetNetworkIdCanMigrate(netId: Int, toggle: Boolean)
 
 //private external fun SetNetworkIdExistsOnAllMachines(netId: number, toggle: boolean)
 
@@ -25231,22 +25449,22 @@ private external fun SetPlayerModel(player: Int, model: Int)
  */
 //private external fun SetTextChatUnk(p0: boolean)
 
-//private external fun SetTextColour(red: number, green: number, blue: number, alpha: number)
+private external fun SetTextColour(red: Int, green: Int, blue: Int, alpha: Int)
 
-//private external fun SetTextDropShadow()
+private external fun SetTextDropShadow()
 
 /**
  * distance - shadow distance in pixels, both horizontal and vertical
  * r, g, b, a
  */
-//private external fun SetTextDropshadow(distance: number, r: number, g: number, b: number, a: number)
+private external fun SetTextDropshadow(distance: Number, r: Int, g: Int, b: Int, a: Int)
 
-//private external fun SetTextEdge(p0: number, r: number, g: number, b: number, a: number)
+private external fun SetTextEdge(p0: Number, r: Int, g: Int, b: Int, a: Int)
 
 /**
  * fonts that mess up your text where made for number values/misc stuff
  */
-//private external fun SetTextFont(fontType: number)
+private external fun SetTextFont(fontType: Int)
 
 /**
  * Types -
@@ -25271,9 +25489,9 @@ private external fun SetPlayerModel(player: Int, model: Int)
  */
 //private external fun SetTextLeading(p0: boolean)
 
-//private external fun SetTextOutline()
+private external fun SetTextOutline()
 
-//private external fun SetTextProportional(p0: boolean)
+private external fun SetTextProportional(p0: Boolean)
 
 //private external fun SetTextRenderId(renderId: number)
 
@@ -25282,7 +25500,7 @@ private external fun SetPlayerModel(player: Int, model: Int)
 /**
  * Size range : 0f to 1.0f
  */
-//private external fun SetTextScale(scale: number, size: number)
+private external fun SetTextScale(scale: Number, size: Number)
 
 /**
  * It sets the text in a specified box and wraps the text if it exceeds the boundries. Both values are for X axis. Useful when positioning text set to center or aligned to the right.
@@ -25430,9 +25648,9 @@ private external fun SetPlayerModel(player: Int, model: Int)
  */
 //private external fun SetVehRadioStation(vehicle: number, radioStation: string)
 
-//private external fun SetVehicleAlarm(vehicle: number, state: boolean)
+private external fun SetVehicleAlarm(vehicle: Entity, state: Boolean)
 
-//private external fun SetVehicleAlarmTimeLeft(vehicle: number, time: number)
+private external fun SetVehicleAlarmTimeLeft(vehicle: Entity, time: Int)
 
 /**
  * Makes the vehicle accept no passengers.
@@ -25442,7 +25660,7 @@ private external fun SetPlayerModel(player: Int, model: Int)
 /**
  * This is an alias of SET_ENTITY_AS_NO_LONGER_NEEDED.
  */
-//private external fun SetVehicleAsNoLongerNeeded(vehicle: number)
+private external fun SetVehicleAsNoLongerNeeded(vehicle: Entity)
 
 /**
  * Disables the vehicle from being repaired when a vehicle extra is enabled.
@@ -25466,7 +25684,7 @@ private external fun SetPlayerModel(player: Int, model: Int)
  * SET_VEHICLE_BOOST_ACTIVE(vehicle, 0, 0);
  * Will give a boost-soundeffect.
  */
-//private external fun SetVehicleBoostActive(vehicle: number, Toggle: boolean)
+private external fun SetVehicleBoostActive(vehicle: Entity, Toggle: Boolean)
 
 //private external fun SetVehicleBrakeLights(vehicle: number, toggle: boolean)
 
@@ -25500,7 +25718,7 @@ private external fun SetPlayerModel(player: Int, model: Int)
  */
 //private external fun GetVehicleDeformationGetTree(vehicle: number, p1: number)
 
-//private external fun SetVehicleClutch(vehicle: number, clutch: number)
+private external fun SetVehicleClutch(vehicle: Entity, clutch: Number)
 
 /**
  * dont be a dick
@@ -25539,7 +25757,7 @@ private external fun SetPlayerModel(player: Int, model: Int)
  */
 //private external fun N_0x068f64f2470f9656(vehicle: number, toggle: boolean)
 
-//private external fun SetVehicleCurrentRpm(vehicle: number, rpm: number)
+private external fun SetVehicleCurrentRpm(vehicle: Entity, rpm: Number)
 
 /**
  * p1, p2, p3 are RGB values for color (255,0,0 for Red, ect)
@@ -25578,7 +25796,7 @@ private external fun SetPlayerModel(player: Int, model: Int)
  * You can see why here: pastebin.com/Wbn34fGD
  * Also, R* does (float)(rand() % 15) to get a random dirt level when generating a vehicle.
  */
-//private external fun SetVehicleDirtLevel(vehicle: number, dirtLevel: number)
+private external fun SetVehicleDirtLevel(vehicle: Entity, dirtLevel: Int)
 
 /**
  * doorIndex:
@@ -25590,7 +25808,7 @@ private external fun SetPlayerModel(player: Int, model: Int)
  * 5 = Trunk
  * Changed last paramater from CreateDoorObject To NoDoorOnTheFloor because when on false, the door object is created,and not created when on true...the former parameter name was counter intuitive...(by Calderon)
  */
-//private external fun SetVehicleDoorBroken(vehicle: number, doorIndex: number, deleteDoor: boolean)
+private external fun SetVehicleDoorBroken(vehicle: Entity, doorIndex: Int, deleteDoor: Boolean)
 
 /**
  * Keeps Vehicle Doors/Hood/Trunk from breaking off
@@ -25726,7 +25944,7 @@ private external fun SetPlayerModel(player: Int, model: Int)
  */
 //private external fun SetVehicleEnginePowerMultiplier(vehicle: number, value: number)
 
-//private external fun SetVehicleEngineTemperature(vehicle: number, temperature: number)
+private external fun SetVehicleEngineTemperature(vehicle: Entity, temperature: Int)
 
 /**
  * &lt;1.0 - Decreased torque
@@ -25804,7 +26022,7 @@ private external fun SetPlayerModel(player: Int, model: Int)
  * You can convert meters/s to mph here:
  * http://www.calculateme.com/Speed/MetersperSecond/ToMilesperHour.htm
  */
-//private external fun SetVehicleForwardSpeed(vehicle: number, speed: number)
+private external fun SetVehicleForwardSpeed(vehicle: Entity, speed: Number)
 
 /**
  * Seems to be related to the metal parts, not tyres (like i was expecting lol)
@@ -25836,7 +26054,7 @@ private external fun SetVehicleFuelLevel(vehicle: Int, level: Number)
  */
 //private external fun N_0x260be8f09e326a20(vehicle: number, distance: number, killEngine: number, unknown: boolean)
 
-//private external fun SetVehicleHandbrake(vehicle: number, toggle: boolean)
+private external fun SetVehicleHandbrake(vehicle: Entity, toggle: Boolean)
 
 /**
  * Sets a handling override for a specific vehicle. Certain handling flags can only be set globally using `SET_HANDLING_FIELD`, this might require some experimentation.
@@ -25876,14 +26094,14 @@ private external fun SetVehicleFuelLevel(vehicle: Int, level: Number)
  */
 //private external fun SetVehicleHandlingVector(vehicle: number, _class: string, fieldName: string)
 
-//private external fun SetVehicleHasBeenOwnedByPlayer(vehicle: number, owned: boolean)
+private external fun SetVehicleHasBeenOwnedByPlayer(vehicle: Entity, owned: Boolean)
 
 /**
  * if true, axles won't bend.
  */
 //private external fun SetVehicleHasStrongAxles(vehicle: number, toggle: boolean)
 
-//private external fun SetVehicleHighGear(vehicle: number, gear: number)
+private external fun SetVehicleHighGear(vehicle: Entity, gear: Int)
 
 /**
  * console hash: 0x71CDD52F
@@ -26131,7 +26349,7 @@ private external fun SetVehicleOilLevel(vehicle: Int, level: Number)
  * Sets a vehicle on the ground on all wheels.  Returns whether or not the operation was successful.
  * sfink: This has an additional param(Vehicle vehicle, float p1) which is always set to 5.0f in the b944 scripts.
  */
-//private external fun SetVehicleOnGroundProperly(vehicle: number): number;
+private external fun SetVehicleOnGroundProperly(vehicle: Entity): Number
 
 /**
  * Tested on the player's current vehicle. Unless you kill the driver, the vehicle doesn't loose control, however, if enabled, explodeOnImpact is still active. The moment you crash, boom.
@@ -26249,7 +26467,7 @@ private external fun SetVehicleOilLevel(vehicle: Int, level: Number)
  */
 //private external fun SetVehicleTimedExplosion(vehicle: number, ped: number, toggle: boolean)
 
-//private external fun SetVehicleTurboPressure(vehicle: number, pressure: number)
+private external fun SetVehicleTurboPressure(vehicle: Entity, pressure: Number)
 
 /**
  * "To burst tyres VEHICLE::SET_VEHICLE_TYRE_BURST(vehicle, 0, true, 1000.0)
@@ -26300,7 +26518,7 @@ private external fun SetVehicleOilLevel(vehicle: Int, level: Number)
  */
 //private external fun SetVehicleUndriveable(vehicle: number, toggle: boolean)
 
-//private external fun SetVehicleWheelHealth(vehicle: number, wheelIndex: number, health: number)
+private external fun SetVehicleWheelHealth(vehicle: Number, wheelIndex: Int, health: Number)
 
 /**
  * 0: Sport
@@ -26325,9 +26543,9 @@ private external fun SetVehicleOilLevel(vehicle: Int, level: Number)
  * end
  * ```
  */
-//private external fun SetVehicleWheelXOffset(vehicle: number, wheelIndex: number, offset: number)
+private external fun SetVehicleWheelXOffset(vehicle: Entity, wheelIndex: Int, offset: Number)
 
-//private external fun SetVehicleWheelXrot(vehicle: number, wheelIndex: number, value: number)
+private external fun SetVehicleWheelXrot(vehicle: Entity, wheelIndex: Int, value: Number)
 
 //private external fun SetVehicleWheelsCanBreak(vehicle: number, enabled: boolean): number;
 
@@ -27051,7 +27269,7 @@ private external fun StartAudioScene(scene: String): Int?
  * if loop is true, the effect wont stop until you call _STOP_SCREEN_EFFECT on it. (only loopable effects)
  * Example and list of screen FX: www.pastebin.com/dafBAjs0
  */
-//private external fun StartScreenEffect(effectName: string, duration: number, looped: boolean)
+private external fun StartScreenEffect(effectName: String, duration: Int, looped: Boolean)
 
 //private external fun StartScriptConversation(p0: boolean, p1: boolean, p2: boolean, p3: boolean)
 
