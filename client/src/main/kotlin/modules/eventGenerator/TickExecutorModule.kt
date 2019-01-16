@@ -1,16 +1,16 @@
 package online.fivem.client.modules.eventGenerator
 
 import kotlinx.coroutines.Job
+import online.fivem.client.common.Stack
 import online.fivem.client.gtav.Natives.setTick
 import online.fivem.common.common.AbstractModule
 
 class TickExecutorModule : AbstractModule() {
 
-	private var index = 0
-	private val tickFunctions = mutableMapOf<Int, () -> Unit>()
+	private val tickFunctions = Stack<() -> Unit>()
 
 	override fun init() {
-		setTick { tickFunctions.forEach { it.value() } }
+		setTick { tickFunctions.stack.forEach { it() } }
 	}
 
 	override fun stop(): Job? {
@@ -19,12 +19,11 @@ class TickExecutorModule : AbstractModule() {
 		return super.stop()
 	}
 
-	fun addTick(function: () -> Unit): Int {
-		tickFunctions[++index] = function
-		return index
+	fun add(function: () -> Unit): Int {
+		return tickFunctions.add(function)
 	}
 
-	fun removeTick(index: Int) {
+	fun remove(index: Int) {
 		tickFunctions.remove(index)
 	}
 }

@@ -22,7 +22,7 @@ class KeysHandlerModule(override val coroutineContext: CoroutineContext) : Abstr
 	private var executorId = -1
 
 	override fun start(): Job? {
-		executorId = tickExecutor.addTick(::checkPressedFlashKeys)
+		executorId = tickExecutor.add(::checkPressedFlashKeys)
 
 		repeatJob(KEY_SCAN_TIME) {
 			checkPressedKeys()
@@ -32,7 +32,7 @@ class KeysHandlerModule(override val coroutineContext: CoroutineContext) : Abstr
 	}
 
 	override fun stop(): Job? {
-		tickExecutor.removeTick(executorId)
+		tickExecutor.remove(executorId)
 
 		return super.stop()
 	}

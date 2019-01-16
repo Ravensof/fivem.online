@@ -127,6 +127,14 @@ class Vehicle(
 			Client.setVehicleTurboPressure(vehicle, value)
 		}
 
+	var maxSpeed: Double
+		get() {
+			return Client.getVehicleMaxSpeed(vehicle)
+		}
+		set(value) {
+			Client.setEntityMaxSpeed(vehicle, value)
+		}
+
 	val isEngineStarting: Boolean
 		get() {
 			return Client.isVehicleEngineStarting(vehicle)
@@ -211,8 +219,8 @@ class Vehicle(
 				Client.setVehicleWheelXOffset(vehicle, index, value)
 
 				if (tickExecutor == null) return
-				tickExecutor.removeTick(xOffsetExecId)
-				xOffsetExecId = tickExecutor.addTick { Client.setVehicleWheelXOffset(vehicle, index, value) }
+				tickExecutor.remove(xOffsetExecId)
+				xOffsetExecId = tickExecutor.add { Client.setVehicleWheelXOffset(vehicle, index, value) }
 			}
 
 		var xRotation: Number
@@ -223,8 +231,8 @@ class Vehicle(
 				Client.setVehicleWheelXrot(vehicle, index, value)
 
 				if (tickExecutor == null) return
-				tickExecutor.removeTick(xRotationExecId)
-				xRotationExecId = tickExecutor.addTick { Client.setVehicleWheelXrot(vehicle, index, value) }
+				tickExecutor.remove(xRotationExecId)
+				xRotationExecId = tickExecutor.add { Client.setVehicleWheelXrot(vehicle, index, value) }
 			}
 
 

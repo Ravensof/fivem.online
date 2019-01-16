@@ -21,7 +21,6 @@ fun Client.createVehicle(
 	thisScriptCheck
 )
 
-
 fun Client.getPassengerSeatOfPedInVehicle(): Int? {
 	val ped = Client.getPlayerPed()
 	val vehicle = Client.getVehiclePedIsUsing(ped) ?: return null
@@ -79,4 +78,25 @@ fun Client.isDisabledControlPressed(
 	control: NativeControls.Keys
 ): Boolean {
 	return isDisabledControlPressed(inputGroup.index, control.index)
+}
+
+fun Client.drawScreenText2D(x: Double, y: Double, message: String, dropShadow: Boolean, outline: Boolean = false) {
+	setTextFont(0)
+	setTextProportional(true)
+	setTextScale(0.0, 0.3)
+	setTextColour(180, 20, 20, 255)
+	setTextDropshadow(0, 0, 0, 0, 255)
+	setTextEdge(1, 0, 0, 0, 255)
+
+	if (dropShadow) {
+		setTextDropShadow()
+	}
+
+	if (outline) {
+		setTextOutline()
+	}
+
+	setTextEntry("STRING")
+	addTextComponentString(message)
+	drawText(x, y)
 }

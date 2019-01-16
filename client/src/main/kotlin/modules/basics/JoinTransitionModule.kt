@@ -45,13 +45,13 @@ class JoinTransitionModule(override val coroutineContext: CoroutineContext) : Ab
 
 	fun endTransition(): Job {
 		return launch {
-			val execId = tickExecutor.addTick { clearScreen() }
+			val execId = tickExecutor.add { clearScreen() }
 
 			switchingPlayerJob?.join()
 			muteSound(false)
 
 			Client.switchInPlayer(Client.getPlayerPed()).join()
-			tickExecutor.removeTick(execId)
+			tickExecutor.remove(execId)
 			Client.clearDrawOrigin()
 		}
 	}

@@ -41,10 +41,10 @@ class BasicsModule : AbstractModule(), CoroutineScope {
 		if (state != 0 && menuStateChangeExecutorId != -1) return
 
 		if (state == 0) {
-			tickExecutor.removeTick(menuStateChangeExecutorId)
+			tickExecutor.remove(menuStateChangeExecutorId)
 			menuStateChangeExecutorId = -1
 		} else {
-			menuStateChangeExecutorId = tickExecutor.addTick(::changeHeaderInMainMenu)
+			menuStateChangeExecutorId = tickExecutor.add(::changeHeaderInMainMenu)
 		}
 	}
 

@@ -44,7 +44,7 @@ class BlackOut : AbstractModule(), CoroutineScope {
 		var time: Long
 		val playerPed = Client.getPlayerPed()
 
-		val execId = tickExecutor.addTick { Client.setPedToRagdoll(playerPed) }
+		val execId = tickExecutor.add { Client.setPedToRagdoll(playerPed) }
 		while (timeLeft > 0) {
 			time = timeLeft
 			Client.setPedToRagdoll(playerPed, time.toInt() + GlobalConfig.BlackOut.WAKING_UP_TIME)
@@ -53,6 +53,6 @@ class BlackOut : AbstractModule(), CoroutineScope {
 		}
 
 		Client.doScreenFadeIn(GlobalConfig.BlackOut.WAKING_UP_TIME).join()
-		tickExecutor.removeTick(execId)
+		tickExecutor.remove(execId)
 	}
 }

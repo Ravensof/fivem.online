@@ -7,13 +7,18 @@ class Stack<Type> {
 
 	val stack = _stack.map { it.value }
 
-	fun add(data: Type) {
+	fun add(data: Type): Int {
 		val index = ++this.index
 
 		_stack[index] = data
+		return index
 	}
 
 	fun remove(index: Int) {
 		_stack.remove(index)
+	}
+
+	fun clear() {
+		_stack.clear()
 	}
 }

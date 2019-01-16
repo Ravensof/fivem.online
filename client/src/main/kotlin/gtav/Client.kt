@@ -24,6 +24,10 @@ object Client {
 		return GetControlNormal(inputGroup, control)
 	}
 
+	fun getVehicleMaxSpeed(vehicle: Entity): Double {
+		return GetVehicleMaxSpeed(vehicle).toDouble()
+	}
+
 	fun setEntityMaxSpeed(entity: Entity, speed: Number) {
 		SetEntityMaxSpeed(entity, speed)
 	}
@@ -8851,7 +8855,7 @@ private external fun GetVehicleIndexFromEntityIndex(entity: Int): Int
 
 private external fun GetVehicleMaxNumberOfPassengers(vehicle: Int): Int
 
-//private external fun GetVehicleMaxSpeed(vehicle: number): number;
+private external fun GetVehicleMaxSpeed(vehicle: Entity): Number
 //private external fun N_0x53af99baa671ca47(vehicle: number): number;
 
 //private external fun GetVehicleMaxTraction(vehicle: number): number;
