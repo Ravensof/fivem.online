@@ -1,5 +1,9 @@
 package online.fivem.common.extensions
 
+fun Number?.orZero(): Number {
+	return this ?: 0
+}
+
 operator fun Number.minus(number: Number): Number {
 	return when (this) {
 		is Float ->

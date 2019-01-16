@@ -10,7 +10,7 @@ class TickExecutorModule : AbstractModule() {
 	private val tickFunctions = Stack<() -> Unit>()
 
 	override fun init() {
-		setTick { tickFunctions.stack.forEach { it() } }
+		setTick { tickFunctions.forEach { it() } }
 	}
 
 	override fun stop(): Job? {

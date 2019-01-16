@@ -121,7 +121,7 @@ class Vehicle(
 	//steeringScale set get
 	var turboPressure: Number
 		get() {
-			return Client.getVehicleTurboPressure(vehicle)
+			return Client.getVehicleTurboPressure(vehicle).orZero()
 		}
 		set(value) {
 			Client.setVehicleTurboPressure(vehicle, value)
@@ -157,6 +157,30 @@ class Vehicle(
 		}
 		set(value) {
 			Client.setVehicleDirtLevel(vehicle, value)
+		}
+
+	var engineHealth: Double
+		get() {
+			return Client.getVehicleEngineHealth(vehicle)
+		}
+		set(value) {
+			Client.setVehicleEngineHealth(vehicle, value)
+		}
+
+	var bodyHealth: Int
+		get() {
+			return Client.getVehicleBodyHealth(vehicle)
+		}
+		set(value) {
+			Client.setVehicleBodyHealth(vehicle, value)
+		}
+
+	var petrolTankHealth: Double
+		get() {
+			return Client.getVehiclePetrolTankHealth(vehicle)
+		}
+		set(value) {
+			Client.setVehiclePetrolTankHealth(vehicle, value)
 		}
 
 	init {

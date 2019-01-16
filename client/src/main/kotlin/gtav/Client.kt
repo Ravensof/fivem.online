@@ -16,6 +16,80 @@ typealias Handle = Int
 
 object Client {
 
+	fun setVehiclePetrolTankHealth(vehicle: Entity, health: Double) {
+		SetVehiclePetrolTankHealth(vehicle, health)
+	}
+
+	fun setVehicleBodyHealth(vehicle: Entity, value: Int) {
+		SetVehicleBodyHealth(vehicle, value)
+	}
+
+	fun setVehicleEngineHealth(vehicle: Entity, health: Double) {
+		SetVehicleEngineHealth(vehicle, health)
+	}
+
+	fun setVehicleUndriveable(vehicle: Entity, toggle: Boolean) {
+		SetVehicleUndriveable(vehicle, toggle)
+	}
+
+	fun getEntityRoll(entity: Entity): Double {
+		return GetEntityRoll(entity)
+	}
+
+	fun setVehicleEngineTorqueMultiplier(vehicle: Entity, value: Double) {
+		SetVehicleEngineTorqueMultiplier(vehicle, value)
+	}
+
+	fun setVehicleHandlingFloat(vehicle: Entity, _class: String, fieldName: String, value: Double) {
+		SetVehicleHandlingFloat(vehicle, _class, fieldName, value)
+	}
+
+	fun getDisabledControlNormal(inputGroup: Int, control: Int): Int {
+		return GetDisabledControlNormal(inputGroup, control)
+	}
+
+	fun setVehicleBrakeLights(vehicle: Entity, toggle: Boolean) {
+		SetVehicleBrakeLights(vehicle, toggle)
+	}
+
+	fun getEntitySpeedVector(entity: Entity, relative: Boolean): Coordinates {
+		GetEntitySpeedVector(entity, relative).let {
+			return Coordinates(it[0], it[1], it[2])
+		}
+	}
+
+	fun getControlValue(inputGroup: Int, control: Int): Int {
+		return GetControlValue(inputGroup, control)
+	}
+
+	fun setVehicleTyreBurst(vehicle: Entity, index: Int, onRim: Boolean, p3: Number) {
+		SetVehicleTyreBurst(vehicle, index, onRim, p3)
+	}
+
+	fun getVehicleTyresCanBurst(vehicle: Entity): Boolean {
+		return GetVehicleTyresCanBurst(vehicle) == 1
+	}
+
+	fun drawNotification(blink: Boolean, showInBrief: Boolean): Number {
+		return DrawNotification(blink, showInBrief)
+	}
+
+	fun getVehicleClass(vehicle: Entity): Int {
+		return GetVehicleClass(vehicle)
+	}
+
+	fun setNotificationTextEntry(text: String) {
+		SetNotificationTextEntry(text)
+	}
+
+	fun isToggleModOn(vehicle: Entity, modType: Int): Boolean {
+		return IsToggleModOn(vehicle, modType) == 1
+	}
+
+	fun toggleVehicleMod(vehicle: Entity, modType: Int, toggle: Boolean) {
+		ToggleVehicleMod(vehicle, modType, toggle)
+	}
+
 	fun getFrameTime(): Double {
 		return GetFrameTime().toDouble()
 	}
@@ -477,8 +551,8 @@ object Client {
 		return GetVehiclePetrolTankHealth(vehicle).toDouble()
 	}
 
-	fun getVehicleTurboPressure(vehicle: Entity): Number {//todo узнать возвращаемый тип
-		return GetVehicleTurboPressure(vehicle)
+	fun getVehicleTurboPressure(vehicle: Entity): Number? {//todo узнать возвращаемый тип
+		return if (doesEntityExist(vehicle)) GetVehicleTurboPressure(vehicle) else null
 	}
 
 	fun setVehicleTurboPressure(vehicle: Entity, pressure: Number) {
@@ -671,7 +745,7 @@ object Client {
 	fun doScreenFadeIn(duration: Int): Job {
 		return GlobalScope.launch {
 			DoScreenFadeIn(duration)
-			while (!isScreenFadedIn()) {
+			while (!isScreenFadedIn() && !isScreenFadingOut()) {//todo test
 				delay(25)
 			}
 		}
@@ -684,7 +758,7 @@ object Client {
 	fun doScreenFadeOut(duration: Int): Job {
 		return GlobalScope.launch {
 			DoScreenFadeOut(duration)
-			while (!isScreenFadedOut()) {
+			while (!isScreenFadedOut() && !isScreenFadingIn()) {//todo
 				delay(25)
 			}
 		}
@@ -4230,7 +4304,7 @@ private external fun DoesEntityExist(entity: Entity): Number
  * showInBrief==true: the notification will appear in the "Brief/Info" -&gt; "Notifications" tab in the pause menu.
  * showInBrief==false: the notification will NOT appear in the pause menu.
  */
-//private external fun DrawNotification(blink: boolean, showInBrief: boolean): number;
+private external fun DrawNotification(blink: Boolean, showInBrief: Boolean): Number
 
 /**
  * This function and the one below it are for after you receive an invite, not sending it.
@@ -5808,7 +5882,7 @@ private external fun GetControlNormal(inputGroup: Int, control: Int): Int
 /**
  * 0, 1 and 2 used in the scripts. 0 is by far the most common of them.
  */
-//private external fun GetControlValue(inputGroup: number, control: number): number;
+private external fun GetControlValue(inputGroup: Int, control: Int): Int
 
 /**
  * 0 -&gt; up
@@ -5994,7 +6068,7 @@ private external fun GetCurrentResourceName(): String
  * control - c# works with (int)GTA.Control.CursorY / (int)GTA.Control.CursorX and returns the mouse movement (additive).
  * 0, 1 and 2 used in the scripts. 0 is by far the most common of them.
  */
-//private external fun GetDisabledControlNormal(inputGroup: number, control: number): number;
+private external fun GetDisabledControlNormal(inputGroup: Int, control: Int): Int
 
 /**
  * Returns model name of vehicle in all caps. Needs to be displayed through localizing text natives to get proper display name.
@@ -6283,7 +6357,7 @@ private external fun GetEntityHeightAboveGround(entity: Int): Float
  * Displays the current ROLL axis of the entity [-180.0000/180.0000+]
  * (Sideways Roll) such as a vehicle tipped on its side
  */
-//private external fun GetEntityRoll(entity: number): number;
+private external fun GetEntityRoll(entity: Entity): Double
 
 /**
  * rotationOrder refers to the order yaw pitch roll is applied
@@ -6326,7 +6400,7 @@ private external fun GetEntitySpeed(entity: Int): Double
 /**
  * Relative can be used for getting speed relative to the frame of the vehicle, to determine for example, if you are going in reverse (-y speed) or not (+y speed).
  */
-//private external fun GetEntitySpeedVector(entity: number, relative: boolean): number[];
+private external fun GetEntitySpeedVector(entity: Entity, relative: Boolean): Array<Number>
 
 /**
  * Get how much of the entity is submerged.  1.0f is whole entity.
@@ -8661,7 +8735,7 @@ private external fun GetVehicleBodyHealth(vehicle: Int): Number
  * std::sprintf(buffer, "VEH_CLASS_%i", VEHICLE::GET_VEHICLE_CLASS(vehicle));
  * char* className = UI::_GET_LABEL_TEXT(buffer);
  */
-//private external fun GetVehicleClass(vehicle: number): number;
+private external fun GetVehicleClass(vehicle: Entity): Int
 
 /**
  * For a full enum, see here : pastebin.com/i2GGAjY0
@@ -9149,7 +9223,7 @@ private external fun GetVehicleTurboPressure(vehicle: Int): Number
 
 //private external fun GetVehicleTyreSmokeColor(vehicle: number): [number, number, number];
 
-//private external fun GetVehicleTyresCanBurst(vehicle: number): number;
+private external fun GetVehicleTyresCanBurst(vehicle: Entity): Number
 
 //private external fun GetVehicleWaypointProgress(vehicle: number): number;
 
@@ -11205,7 +11279,7 @@ private external fun IsScreenFadingOut(): Any
  */
 //private external fun SubtractAFromBAndCheckIfNegative(timeA: number, timeB: number): number;
 
-//private external fun IsToggleModOn(vehicle: number, modType: number): number;
+private external fun IsToggleModOn(vehicle: Entity, modType: Int): Number
 
 /**
  * returns whether or not a ped is visible within your FOV, not this check auto's to false after a certain distance.
@@ -23484,11 +23558,7 @@ private external fun SetNetworkIdCanMigrate(netId: Int, toggle: Boolean)
  * }
  */
 
-private external fun SetNotificationTextEntry(text: String)//todo test
-
-fun Client.setNotificationTextEntry(text: String) {
-	SetNotificationTextEntry(text)
-}
+private external fun SetNotificationTextEntry(text: String)
 
 private external fun SetNuiFocus(hasFocus: Boolean, hasCursor: Boolean)
 
@@ -25681,7 +25751,7 @@ private external fun SetVehicleAsNoLongerNeeded(vehicle: Entity)
 /**
  * p2 often set to 1000.0 in the decompiled scripts.
  */
-//private external fun SetVehicleBodyHealth(vehicle: number, value: number)
+private external fun SetVehicleBodyHealth(vehicle: Entity, value: Int)
 
 /**
  * SET_VEHICLE_BOOST_ACTIVE(vehicle, 1, 0);
@@ -25690,7 +25760,7 @@ private external fun SetVehicleAsNoLongerNeeded(vehicle: Entity)
  */
 private external fun SetVehicleBoostActive(vehicle: Entity, Toggle: Boolean)
 
-//private external fun SetVehicleBrakeLights(vehicle: number, toggle: boolean)
+private external fun SetVehicleBrakeLights(vehicle: Entity, toggle: Boolean)
 
 /**
  * On accelerating, spins the driven wheels with the others braked, so you don't go anywhere.
@@ -25921,7 +25991,7 @@ private external fun SetVehicleDoorBroken(vehicle: Entity, doorIndex: Int, delet
  * 300: Engine is smoking and losing functionality
  * 1000: Engine is perfect
  */
-//private external fun SetVehicleEngineHealth(vehicle: number, health: number)
+private external fun SetVehicleEngineHealth(vehicle: Entity, health: Double)
 
 /**
  * Starts or stops the engine on the specified vehicle.
@@ -25958,7 +26028,7 @@ private external fun SetVehicleEngineTemperature(vehicle: Entity, temperature: I
  * value - is between 0.2 and 1.8 in the decompiled scripts.
  * This needs to be called every frame to take effect.
  */
-//private external fun SetVehicleEngineTorqueMultiplier(vehicle: number, value: number)
+private external fun SetVehicleEngineTorqueMultiplier(vehicle: Entity, value: Double)
 
 /**
  * formerly known as _SET_VEHICLE_PAINT_FADE
@@ -26078,7 +26148,7 @@ private external fun SetVehicleHandbrake(vehicle: Entity, toggle: Boolean)
  * @param fieldName The field name to set. These match the keys in `handling.meta`.
  * @param value The floating-point value to set.
  */
-//private external fun SetVehicleHandlingFloat(vehicle: number, _class: string, fieldName: string, value: number)
+private external fun SetVehicleHandlingFloat(vehicle: Entity, _class: String, fieldName: String, value: Double)
 
 /**
  * Sets a handling override for a specific vehicle. Certain handling flags can only be set globally using `SET_HANDLING_INT`, this might require some experimentation.
@@ -26366,7 +26436,7 @@ private external fun SetVehicleOnGroundProperly(vehicle: Entity): Number
  * 1000 is max health
  * Begins leaking gas at around 650 health
  */
-//private external fun SetVehiclePetrolTankHealth(vehicle: number, health: number)
+private external fun SetVehiclePetrolTankHealth(vehicle: Entity, health: Double)
 
 //private external fun SetVehiclePopulationBudget(p0: number)
 
@@ -26486,7 +26556,7 @@ private external fun SetVehicleTurboPressure(vehicle: Entity, pressure: Number)
  * '45 = 6 wheels trailer mid wheel left
  * '47 = 6 wheels trailer mid wheel right
  */
-//private external fun SetVehicleTyreBurst(vehicle: number, index: number, onRim: boolean, p3: number)
+private external fun SetVehicleTyreBurst(vehicle: Entity, index: Int, onRim: Boolean, p3: Number)
 
 /**
  * tyreIndex = 0 to 4 on normal vehicles
@@ -26520,7 +26590,7 @@ private external fun SetVehicleTurboPressure(vehicle: Entity, pressure: Number)
 /**
  * Player won't be able to drive the car or enter it, unless you task him to get into any other seat than the driver one.
  */
-//private external fun SetVehicleUndriveable(vehicle: number, toggle: boolean)
+private external fun SetVehicleUndriveable(vehicle: Entity, toggle: Boolean)
 
 private external fun SetVehicleWheelHealth(vehicle: Number, wheelIndex: Int, health: Number)
 
@@ -28922,7 +28992,7 @@ private external fun SwitchOutPlayer(ped: Entity, flags: Number, unknown: Number
  * UNK21
  * Xenon Headlights
  */
-//private external fun ToggleVehicleMod(vehicle: number, modType: number, toggle: boolean)
+private external fun ToggleVehicleMod(vehicle: Entity, modType: Int, toggle: Boolean)
 
 //private external fun TrackObjectVisibility(p0: number)
 

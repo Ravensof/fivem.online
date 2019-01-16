@@ -14,8 +14,8 @@ import online.fivem.common.events.AccelerationThresholdAchievedEvent
 import online.fivem.common.events.PlayerPedHealthZeroEvent
 import kotlin.coroutines.CoroutineContext
 
-class BlackOut : AbstractModule(), CoroutineScope {
-	override val coroutineContext: CoroutineContext = Job()
+class BlackOut(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
+
 	private val tickExecutor by moduleLoader.onReady<TickExecutorModule>()
 	private var timeLeft: Long = 0
 
@@ -26,7 +26,7 @@ class BlackOut : AbstractModule(), CoroutineScope {
 		}
 
 		UEvent.on<AccelerationThresholdAchievedEvent> {
-			Console.debug("blackout from ${it.accelerationModule.toInt()} m/s")//1176
+			Console.debug("blackout from ${it.accelerationModule.toInt()} m/s^2")//1176
 			blackOut(0)
 		}
 	}

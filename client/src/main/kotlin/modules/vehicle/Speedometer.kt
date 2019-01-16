@@ -9,10 +9,7 @@ import online.fivem.common.events.*
 import online.fivem.common.extensions.orZero
 import kotlin.coroutines.CoroutineContext
 
-class Speedometer : AbstractModule(), CoroutineScope {
-
-	override val coroutineContext: CoroutineContext = Job()
-
+class Speedometer(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
 	private var vehicleHasSpeedo = false
 	private var updateJob: Job? = null
 
