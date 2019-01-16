@@ -5,6 +5,9 @@ import online.fivem.client.gtav.Client
 import online.fivem.client.modules.eventGenerator.TickExecutorModule
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Entity
+import online.fivem.common.common.UEvent
+import online.fivem.common.events.PlayerGetInDriversSeatEvent
+import online.fivem.common.events.PlayerLeftVehicleEvent
 import online.fivem.common.extensions.compareTo
 import online.fivem.common.extensions.orZero
 import online.fivem.common.extensions.times
@@ -48,21 +51,29 @@ class RealisticFailureModule(
 	private var healthPetrolTankDelta = 0.0
 	private var healthPetrolTankDeltaScaled = 0.0
 
-	private var tireBurstMaxNumber =
-		Cfg.randomTireBurstInterval * 1200 // the tire burst lottery runs roughly 1200 times per minute
+	// the tire burst lottery runs roughly 1200 times per minute
+	private var tireBurstMaxNumber = Cfg.randomTireBurstInterval * 1200
+
+	// If we hit this number again randomly, a tire will burst.
 	private var tireBurstLuckyNumber: Int =
-		if (Cfg.randomTireBurstInterval != 0) Random.nextInt(tireBurstMaxNumber) else 0// If we hit this number again randomly, a tire will burst.
+		if (Cfg.randomTireBurstInterval != 0) Random.nextInt(tireBurstMaxNumber) else 0
+
+	private var mainJob: Job? = null
 
 	override fun init() {
 		moduleLoader.on<TickExecutorModule> { someFunc() }
+		UEvent.on<PlayerGetInDriversSeatEvent> { startThings() }
+		UEvent.on<PlayerLeftVehicleEvent> { stopThings() }
 	}
 
-	override fun start(): Job? {
+	private fun startThings() {
+		mainJob?.cancel()
+		mainJob = launch {
+			val ped = Client.getPlayerPed()
 
-		launch {
 			while (isActive) {
 				delay(50)
-				val ped = Client.getPlayerPed()
+
 				if (isPedDrivingAVehicle()) {
 					vehicle = Client.getVehiclePedIsIn(ped, false)
 					vehicleClass = Client.getVehicleClass(vehicle)
@@ -100,7 +111,8 @@ class RealisticFailureModule(
 						Client.setVehicleUndriveable(vehicle, true)
 					}
 
-					// If ped spawned a new vehicle while in a vehicle or teleported from one vehicle to another, handle as if we just entered the car
+					// If ped spawned a new vehicle while in a vehicle or teleported from one vehicle to another,
+					// handle as if we just entered the car
 					if (vehicle != lastVehicle) {
 						pedInSameVehicleLast = false
 					}
@@ -109,7 +121,8 @@ class RealisticFailureModule(
 					if (pedInSameVehicleLast) {
 						// Damage happened while in the car = can be multiplied
 
-						// Only do calculations if any damage is present on the car. Prevents weird behavior when fixing using trainer or other script
+						// Only do calculations if any damage is present on the car.
+						// Prevents weird behavior when fixing using trainer or other script
 						if (healthEngineCurrent != 1000.0 || healthBodyCurrent != 1000 || healthPetrolTankCurrent != 1000.0) {
 
 							// Combine the delta values (Get the largest of the three)
@@ -125,7 +138,8 @@ class RealisticFailureModule(
 								healthEngineCombinedDelta *= 0.7
 							}
 
-							// If complete damage, but not catastrophic (ie. explosion territory) pull back a bit, to give a couple of seconds og engine runtime before dying
+							// If complete damage, but not catastrophic (ie. explosion territory) pull back a bit,
+							// to give a couple of seconds og engine runtime before dying
 							if (healthEngineCombinedDelta > healthEngineCurrent) {
 								healthEngineCombinedDelta = healthEngineCurrent - (Cfg.cascadingFailureThreshold / 5)
 							}
@@ -170,8 +184,8 @@ class RealisticFailureModule(
 						fDeformationDamageMult =
 								Client.getVehicleHandlingFloat(vehicle, "CHandlingData", "fDeformationDamageMult")
 						fBrakeForce = Client.getVehicleHandlingFloat(vehicle, "CHandlingData", "fBrakeForce")
-						val newFDeformationDamageMult =
-							fDeformationDamageMult.pow(Cfg.deformationExponent)     // Pull the handling file value closer to 1
+						// Pull the handling file value closer to 1
+						val newFDeformationDamageMult = fDeformationDamageMult.pow(Cfg.deformationExponent)
 						if (Cfg.deformationMultiplier != -1) Client.setVehicleHandlingFloat(
 							vehicle,
 							"CHandlingData",
@@ -189,8 +203,8 @@ class RealisticFailureModule(
 						fCollisionDamageMult =
 								Client.getVehicleHandlingFloat(vehicle, "CHandlingData", "fCollisionDamageMult")
 						//Modify it by pulling all number a towards 1.0
-						val newFCollisionDamageMultiplier =
-							fCollisionDamageMult.pow(Cfg.collisionDamageExponent)    // Pull the handling file value closer to 1
+						// Pull the handling file value closer to 1
+						val newFCollisionDamageMultiplier = fCollisionDamageMult.pow(Cfg.collisionDamageExponent)
 						Client.setVehicleHandlingFloat(
 							vehicle,
 							"CHandlingData",
@@ -202,8 +216,8 @@ class RealisticFailureModule(
 						fEngineDamageMult =
 								Client.getVehicleHandlingFloat(vehicle, "CHandlingData", "fEngineDamageMult")
 						//Modify it by pulling all number a towards 1.0
-						val newFEngineDamageMult =
-							fEngineDamageMult.pow(Cfg.engineDamageExponent)    // Pull the handling file value closer to 1
+						// Pull the handling file value closer to 1
+						val newFEngineDamageMult = fEngineDamageMult.pow(Cfg.engineDamageExponent)
 						Client.setVehicleHandlingFloat(
 							vehicle,
 							"CHandlingData",
@@ -235,46 +249,50 @@ class RealisticFailureModule(
 					lastVehicle = vehicle
 					if (Cfg.randomTireBurstInterval != 0 && Client.getEntitySpeed(vehicle) > 10) tireBurstLottery()
 				} else {
-					if (pedInSameVehicleLast) {
-						// We just got out of the vehicle
-						lastVehicle = Client.getVehiclePedIsIn(ped, true)
-						if (Cfg.deformationMultiplier != -1) Client.setVehicleHandlingFloat(
-							lastVehicle,
-							"CHandlingData",
-							"fDeformationDamageMult",
-							fDeformationDamageMult
-						)  // Restore deformation multiplier
-						Client.setVehicleHandlingFloat(
-							lastVehicle,
-							"CHandlingData",
-							"fBrakeForce",
-							fBrakeForce
-						)  // Restore Brake Force multiplier
-						if (Cfg.weaponsDamageMultiplier != -1.0) Client.setVehicleHandlingFloat(
-							lastVehicle,
-							"CHandlingData",
-							"fWeaponDamageMult",
-							Cfg.weaponsDamageMultiplier
-						)    // Since we are out of the vehicle, we should no longer compensate for bodyDamageFactor
-						Client.setVehicleHandlingFloat(
-							lastVehicle,
-							"CHandlingData",
-							"fCollisionDamageMult",
-							fCollisionDamageMult
-						) // Restore the original CollisionDamageMultiplier
-						Client.setVehicleHandlingFloat(
-							lastVehicle,
-							"CHandlingData",
-							"fEngineDamageMult",
-							fEngineDamageMult
-						) // Restore the original EngineDamageMultiplier
-					}
-					pedInSameVehicleLast = false
+					return@launch
 				}
 			}
 		}
+	}
 
-		return super.start()
+	private fun stopThings() {
+		mainJob?.cancel()
+		val ped = Client.getPlayerPed()
+		if (pedInSameVehicleLast) {
+			// We just got out of the vehicle
+			lastVehicle = Client.getVehiclePedIsIn(ped, true)
+			if (Cfg.deformationMultiplier != -1) Client.setVehicleHandlingFloat(
+				lastVehicle,
+				"CHandlingData",
+				"fDeformationDamageMult",
+				fDeformationDamageMult
+			)  // Restore deformation multiplier
+			Client.setVehicleHandlingFloat(
+				lastVehicle,
+				"CHandlingData",
+				"fBrakeForce",
+				fBrakeForce
+			)  // Restore Brake Force multiplier
+			if (Cfg.weaponsDamageMultiplier != -1.0) Client.setVehicleHandlingFloat(
+				lastVehicle,
+				"CHandlingData",
+				"fWeaponDamageMult",
+				Cfg.weaponsDamageMultiplier
+			)    // Since we are out of the vehicle, we should no longer compensate for bodyDamageFactor
+			Client.setVehicleHandlingFloat(
+				lastVehicle,
+				"CHandlingData",
+				"fCollisionDamageMult",
+				fCollisionDamageMult
+			) // Restore the original CollisionDamageMultiplier
+			Client.setVehicleHandlingFloat(
+				lastVehicle,
+				"CHandlingData",
+				"fEngineDamageMult",
+				fEngineDamageMult
+			) // Restore the original EngineDamageMultiplier
+		}
+		pedInSameVehicleLast = false
 	}
 
 	private fun someFunc() {
@@ -484,7 +502,7 @@ class RealisticFailureModule(
 			val numWheels = Client.getVehicleNumberOfWheels(vehicle)
 			var affectedTire: Int
 			if (numWheels == 2)
-				affectedTire = (Random.nextInt(2) - 1) * 4        // wheel 0 or 4
+				affectedTire = (Random.nextInt(2) - 1) * 4  // wheel 0 or 4
 			else if (numWheels == 4) {
 				affectedTire = (Random.nextInt(4) - 1)
 				if (affectedTire > 1) affectedTire += 2     // 0, 1, 4, 5
@@ -494,65 +512,79 @@ class RealisticFailureModule(
 				affectedTire = 0
 
 			Client.setVehicleTyreBurst(vehicle, affectedTire, false, 1000.0)
-			tireBurstLuckyNumber =
-					Random.nextInt(tireBurstMaxNumber)        // Select a new number to hit, just in case some numbers occur more often than others
+			// Select a new number to hit, just in case some numbers occur more often than others
+			tireBurstLuckyNumber = Random.nextInt(tireBurstMaxNumber)
+
 		}
 	}
 
 	companion object {
 		private object Cfg {
-			const val deformationMultiplier =
-				-1                    // How much should the vehicle visually deform from a collision. Range 0.0 to 10.0 Where 0.0 is no deformation and 10.0 is 10x deformation. -1 = Don't touch. Visual damage does not sync well to other players.
-			const val deformationExponent =
-				0.4                    // How much should the handling file deformation setting be compressed toward 1.0. (Make cars more similar). A value of 1=no change. Lower values will compress more, values above 1 it will expand. Dont set to zero or negative.
-			const val collisionDamageExponent =
-				0.6                // How much should the handling file deformation setting be compressed toward 1.0. (Make cars more similar). A value of 1=no change. Lower values will compress more, values above 1 it will expand. Dont set to zero or negative.
+			// How much should the vehicle visually deform from a collision. Range 0.0 to 10.0 Where 0.0 is no deformation and 10.0 is 10x deformation. -1 = Don't touch. Visual damage does not sync well to other players.
+			const val deformationMultiplier = -1
 
-			const val damageFactorEngine =
-				10.0                    // Sane values are 1 to 100. Higher values means more damage to vehicle. A good starting point is 10
-			const val damageFactorBody =
-				10.0                    // Sane values are 1 to 100. Higher values means more damage to vehicle. A good starting point is 10
-			const val damageFactorPetrolTank =
-				64.0                // Sane values are 1 to 200. Higher values means more damage to vehicle. A good starting point is 64
-			const val engineDamageExponent =
-				0.6                    // How much should the handling file engine damage setting be compressed toward 1.0. (Make cars more similar). A value of 1=no change. Lower values will compress more, values above 1 it will expand. Dont set to zero or negative.
-			const val weaponsDamageMultiplier =
-				0.01                // How much damage should the vehicle get from weapons fire. Range 0.0 to 10.0, where 0.0 is no damage and 10.0 is 10x damage. -1 = don't touch
-			const val degradingHealthSpeedFactor =
-				10            // Speed of slowly degrading health, but not failure. Value of 10 means that it will take about 0.25 second per health point, so degradation from 800 to 305 will take about 2 minutes of clean driving. Higher values means faster degradation
-			const val cascadingFailureSpeedFactor =
-				8.0            // Sane values are 1 to 100. When vehicle health drops below a certain point, cascading failure sets in, and the health drops rapidly until the vehicle dies. Higher values means faster failure. A good starting point is 8
+			// How much should the handling file deformation setting be compressed toward 1.0. (Make cars more similar). A value of 1=no change. Lower values will compress more, values above 1 it will expand. Dont set to zero or negative.
+			const val deformationExponent = 0.4
 
-			const val degradingFailureThreshold =
-				800.0            // Below this value, slow health degradation will set in
-			const val cascadingFailureThreshold =
-				360            // Below this value, health cascading failure will set in
-			const val engineSafeGuard =
-				100.0                    // Final failure value. Set it too high, and the vehicle won't smoke when disabled. Set too low, and the car will catch fire from a single bullet to the engine. At health 100 a typical car can take 3-4 bullets to the engine before catching fire.
+			// How much should the handling file deformation setting be compressed toward 1.0. (Make cars more similar). A value of 1=no change. Lower values will compress more, values above 1 it will expand. Dont set to zero or negative.
+			const val collisionDamageExponent = 0.6
 
-			const val torqueMultiplierEnabled =
-				true                // Decrease engine torque as engine gets more and more damaged
+			// Sane values are 1 to 100. Higher values means more damage to vehicle. A good starting point is 10
+			const val damageFactorEngine = 10.0
 
-			const val limpMode =
-				false                            // If true, the engine never fails completely, so you will always be able to get to a mechanic unless you flip your vehicle and preventVehicleFlip is set to true
-			const val limpModeMultiplier =
-				0.15                    // The torque multiplier to use when vehicle is limping. Sane values are 0.05 to 0.25
+			// Sane values are 1 to 100. Higher values means more damage to vehicle. A good starting point is 10
+			const val damageFactorBody = 10.0
 
-			const val preventVehicleFlip =
-				true                    // If true, you can't turn over an upside down vehicle
+			// Sane values are 1 to 200. Higher values means more damage to vehicle. A good starting point is 64
+			const val damageFactorPetrolTank = 64.0
 
-			const val sundayDriver =
-				true                        // If true, the accelerator response is scaled to enable easy slow driving. Will not prevent full throttle. Does not work with binary accelerators like a keyboard. Set to false to disable. The included stop-without-reversing and brake-light-hold feature does also work for keyboards.
-			const val sundayDriverAcceleratorCurve =
-				7.5            // The response curve to apply to the accelerator. Range 0.0 to 10.0. Higher values enables easier slow driving, meaning more pressure on the throttle is required to accelerate forward. Does nothing for keyboard drivers
-			const val sundayDriverBrakeCurve =
-				5.0                // The response curve to apply to the Brake. Range 0.0 to 10.0. Higher values enables easier braking, meaning more pressure on the throttle is required to brake hard. Does nothing for keyboard drivers
+			// How much should the handling file engine damage setting be compressed toward 1.0. (Make cars more similar). A value of 1=no change. Lower values will compress more, values above 1 it will expand. Dont set to zero or negative.
+			const val engineDamageExponent = 0.6
 
-			const val compatibilityMode =
-				false                    // prevents other scripts from modifying the fuel tank health to avoid random engine failure with BVA 2.01 (Downside is it disabled explosion prevention)
+			// How much damage should the vehicle get from weapons fire. Range 0.0 to 10.0, where 0.0 is no damage and 10.0 is 10x damage. -1 = don't touch
+			const val weaponsDamageMultiplier = 0.01
 
-			const val randomTireBurstInterval =
-				120                // Number of minutes (statistically, not precisely) to drive above 22 mph before you get a tire puncture. 0=feature is disabled
+			// Speed of slowly degrading health, but not failure. Value of 10 means that it will take about 0.25 second per health point, so degradation from 800 to 305 will take about 2 minutes of clean driving. Higher values means faster degradation
+			const val degradingHealthSpeedFactor = 10
+
+			// Sane values are 1 to 100. When vehicle health drops below a certain point, cascading failure sets in, and the health drops rapidly until the vehicle dies. Higher values means faster failure. A good starting point is 8
+			const val cascadingFailureSpeedFactor = 8.0
+
+			// Below this value, slow health degradation will set in
+			const val degradingFailureThreshold = 800.0
+
+			// Below this value, health cascading failure will set in
+			const val cascadingFailureThreshold = 360
+
+			// Final failure value. Set it too high, and the vehicle won't smoke when disabled. Set too low, and the car will catch fire from a single bullet to the engine. At health 100 a typical car can take 3-4 bullets to the engine before catching fire.
+			const val engineSafeGuard = 100.0
+
+			// Decrease engine torque as engine gets more and more damaged
+			const val torqueMultiplierEnabled = true
+
+			// If true, the engine never fails completely, so you will always be able to get to a mechanic unless you flip your vehicle and preventVehicleFlip is set to true
+			const val limpMode = false
+
+			// The torque multiplier to use when vehicle is limping. Sane values are 0.05 to 0.25
+			const val limpModeMultiplier = 0.15
+
+			// If true, you can't turn over an upside down vehicle
+			const val preventVehicleFlip = true
+
+			// If true, the accelerator response is scaled to enable easy slow driving. Will not prevent full throttle. Does not work with binary accelerators like a keyboard. Set to false to disable. The included stop-without-reversing and brake-light-hold feature does also work for keyboards.
+			const val sundayDriver = true
+
+			// The response curve to apply to the accelerator. Range 0.0 to 10.0. Higher values enables easier slow driving, meaning more pressure on the throttle is required to accelerate forward. Does nothing for keyboard drivers
+			const val sundayDriverAcceleratorCurve = 7.5
+
+			// The response curve to apply to the Brake. Range 0.0 to 10.0. Higher values enables easier braking, meaning more pressure on the throttle is required to brake hard. Does nothing for keyboard drivers
+			const val sundayDriverBrakeCurve = 5.0
+
+			// prevents other scripts from modifying the fuel tank health to avoid random engine failure with BVA 2.01 (Downside is it disabled explosion prevention)
+			const val compatibilityMode = false
+
+			// Number of minutes (statistically, not precisely) to drive above 22 mph before you get a tire puncture. 0=feature is disabled
+			const val randomTireBurstInterval = 120
 
 
 			// Class Damagefactor Multiplier
@@ -568,9 +600,9 @@ class RealisticFailureModule(
 				1.0,        //	5: Sports Classics
 				1.0,        //	6: Sports
 				1.0,        //	7: Super
-				0.25,        //	8: Motorcycles
+				0.25,       //	8: Motorcycles
 				0.7,        //	9: Off-road
-				0.25,        //	10: Industrial
+				0.25,       //	10: Industrial
 				1.0,        //	11: Utility
 				1.0,        //	12: Vans
 				1.0,        //	13: Cycles
@@ -578,10 +610,10 @@ class RealisticFailureModule(
 				1.0,        //	15: Helicopters
 				1.0,        //	16: Planes
 				1.0,        //	17: Service
-				0.75,        //	18: Emergency
-				0.75,        //	19: Military
+				0.75,       //	18: Emergency
+				0.75,       //	19: Military
 				1.0,        //	20: Commercial
-				1.0            //	21: Trains
+				1.0         //	21: Trains
 			)
 		}
 	}
