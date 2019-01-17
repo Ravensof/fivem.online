@@ -8,6 +8,8 @@ import kotlinx.coroutines.launch
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.Html
 import online.fivem.common.entities.PlayerSrc
+import online.fivem.server.external.Request
+import online.fivem.server.external.Response
 
 private external val exports: dynamic
 
@@ -49,19 +51,7 @@ object Exports {
 		exports.on(eventName, callback)
 	}
 
-	fun setHttpHandler(handler: (Request, Response) -> String) {
+	fun setHttpHandler(handler: (Request, Response) -> Unit) {
 		exports.setHttpHandler(handler)
-	}
-
-	interface Request {
-		val path: String
-		val method: String
-
-		fun setDataHandler(handler: (String) -> Unit)
-	}
-
-	interface Response {
-		fun send(data: String)
-		fun writeHead(head: String)
 	}
 }
