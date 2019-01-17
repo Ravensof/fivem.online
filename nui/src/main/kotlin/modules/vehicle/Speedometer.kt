@@ -174,7 +174,7 @@ class Speedometer(override val coroutineContext: CoroutineContext) : AbstractMod
 
 	companion object {
 
-		private val RESOURCES_DIR = Html.nuiLink("speedometer/v1")
+		private val RESOURCES_DIR = Html.nuiResourcesLink("speedometer/v1")
 
 		private const val TO_RADIANS = kotlin.math.PI / 180
 		private const val INTERPOLATION_STEPS = 10

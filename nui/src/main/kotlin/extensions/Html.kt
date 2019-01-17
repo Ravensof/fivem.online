@@ -4,8 +4,8 @@ import js.externals.jquery.jQuery
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.Html
 
-fun Html.Companion.nuiLink(link: String): String {
-	return GlobalConfig.RESOURCES_HTTP_HOME + link
+fun Html.Companion.nuiResourcesLink(link: String): String {
+	return GlobalConfig.RESOURCES_HTTP_HOME + "nui/resources/main/" + link
 }
 
 fun Html.Companion.prefetch(links: List<String>) {

@@ -322,7 +322,7 @@ private external fun IsPlayerAceAllowed(playerSrc: String, obj: String): Float
  * @param fileName The file in the resource.
  * @return The file contents
  */
-private external fun LoadResourceFile(resourceName: String, fileName: String): String
+private external fun LoadResourceFile(resourceName: String, fileName: String): String?
 
 private external fun PerformHttpRequestInternal(requestData: String, requestDataLength: Int): Double
 

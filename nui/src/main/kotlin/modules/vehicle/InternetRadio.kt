@@ -11,7 +11,7 @@ import online.fivem.common.events.InternetRadioChangedEvent
 import online.fivem.common.events.InternetRadioStopEvent
 import online.fivem.common.events.InternetRadioVolumeChangeEvent
 import online.fivem.common.extensions.orOne
-import online.fivem.nui.extensions.nuiLink
+import online.fivem.nui.extensions.nuiResourcesLink
 import online.fivem.nui.external.Howl
 import online.fivem.nui.external.HowlOptions
 import online.fivem.nui.modules.clientEventEchanger.ClientEvent
@@ -98,7 +98,7 @@ class InternetRadio : AbstractModule(), CoroutineScope {
 	}
 
 	companion object {
-		private val NOISE_RESOURCE = Html.nuiLink("radio/noise.mp3")
+		private val NOISE_RESOURCE = Html.nuiResourcesLink("radio/noise.mp3")
 		private const val MAX_RECONNECTING_ATTEMPTS = 500
 	}
 }

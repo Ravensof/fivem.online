@@ -4,8 +4,11 @@ import online.fivem.common.entities.InternetRadioStation
 import online.fivem.common.gtav.RadioStation
 
 object GlobalConfig {
-	const val RESOURCES_HTTP_HOME = "http://fivem.online/nui/resources/main/"
 	const val MODULE_NAME = "fivem-online"
+	const val SERVER_IP = "fivem.online"
+
+	const val SERVER_PORT = 30120
+
 	const val SERVER_NAME_IN_MENU = "FIVEM.ONLINE"
 	const val MAX_PLAYERS = 32
 	const val APP_VERSION = 190107
@@ -39,6 +42,9 @@ object GlobalConfig {
 		const val EXTRA_BLACKOUT_TIME: Long = 15_000
 		const val WAKING_UP_TIME = 10_000
 	}
+
+	//	const val RESOURCES_HTTP_HOME = "http://$SERVER_IP:$SERVER_PORT/$MODULE_NAME/"
+	const val RESOURCES_HTTP_HOME = "http://$SERVER_IP/"
 
 	const val SHOW_CONSOLE_ERROR = true
 	const val SHOW_CONSOLE_INFO = true

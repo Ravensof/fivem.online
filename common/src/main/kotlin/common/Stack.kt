@@ -1,4 +1,4 @@
-package online.fivem.client.common
+package online.fivem.common.common
 
 class Stack<Type> : Iterable<Type> {
 

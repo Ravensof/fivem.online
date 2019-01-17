@@ -1,9 +1,9 @@
 package online.fivem.client.modules.eventGenerator
 
 import kotlinx.coroutines.Job
-import online.fivem.client.common.Stack
 import online.fivem.client.gtav.Natives.setTick
 import online.fivem.common.common.AbstractModule
+import online.fivem.common.common.Stack
 
 class TickExecutorModule : AbstractModule() {
 
