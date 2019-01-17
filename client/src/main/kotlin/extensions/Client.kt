@@ -81,7 +81,13 @@ fun Client.isDisabledControlPressed(
 	return isDisabledControlPressed(inputGroup.index, control.index)
 }
 
-fun Client.drawScreenText2D(x: Double, y: Double, message: String, dropShadow: Boolean, outline: Boolean = false) {
+fun Client.drawScreenText2D(
+	x: Double,
+	y: Double,
+	message: String,
+	dropShadow: Boolean = true,
+	outline: Boolean = false
+) {
 	setTextFont(0)
 	setTextProportional(true)
 	setTextScale(0.0, 0.3)

@@ -1,6 +1,7 @@
 package online.fivem.server.modules.session
 
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
@@ -19,8 +20,11 @@ import online.fivem.server.modules.clientEventExchanger.ClientEvent
 import online.fivem.server.mysqlEntities.CharacterEntity
 import online.fivem.server.mysqlEntities.UserEntity
 import online.fivem.server.mysqlTables.BlackListTable
+import kotlin.coroutines.CoroutineContext
 
-class SessionModule : AbstractModule() {
+class SessionModule : AbstractModule(), CoroutineScope {
+
+	override val coroutineContext: CoroutineContext = Job()
 
 	private lateinit var mySQL: MySQL
 	private val players = mutableMapOf<PlayerSrc, Player>()
@@ -51,7 +55,7 @@ class SessionModule : AbstractModule() {
 	}
 
 	private fun onClientReady(playerSrc: PlayerSrc) {
-		GlobalScope.launch {
+		launch {
 
 			val identifiers = Natives.getPlayerIdentifiers(playerSrc)
 			val player = Player(
@@ -71,19 +75,24 @@ class SessionModule : AbstractModule() {
 			).await().firstOrNull() ?: return@launch Natives.dropPlayer(playerSrc, Strings.NO_SUCH_USER)
 
 			val character =
-				mySQL.query<CharacterEntity>("SELECT * FROM characters WHERE user_id=${user.id} LIMIT 1").await().firstOrNull()
+				mySQL.query<CharacterEntity>(
+					"""SELECT *
+						|FROM characters
+						|WHERE user_id=?
+						|LIMIT 1""".trimMargin(),
+					user.id
+				).await().firstOrNull()
 					?: return@launch Natives.dropPlayer(playerSrc, Strings.NO_SUCH_CHARACTER)
 
 			val sessionId = mySQL.query(
-				"""
-				|INSERT INTO sessions
-				|SET
-				|  user_id=?,
-				|  character_id=?,
-				|  steam=?,
-				|  license=?,
-				|  ip=?
-				|""".trimMargin(),
+				"""INSERT INTO sessions
+					|SET
+					|  user_id=?,
+					|  character_id=?,
+					|  steam=?,
+					|  license=?,
+					|  ip=?
+					|""".trimMargin(),
 				user.id,
 				character.id,
 				identifiers.steam.orEmpty(),
@@ -117,11 +126,11 @@ class SessionModule : AbstractModule() {
 
 				mySQL.send(
 					"""UPDATE sessions
-					|SET
-					| left_reason=?,
-					| logout_date=NOW()
-					|WHERE id=?
-					|LIMIT 1""".trimMargin(),
+						|SET
+						|   left_reason=?,
+						|   logout_date=NOW()
+						|WHERE id=?
+						|LIMIT 1""".trimMargin(),
 					reason,
 					player.sessionId
 				)
@@ -152,7 +161,7 @@ class SessionModule : AbstractModule() {
 
 		Console.log("connecting $playerName ${identifiers.ip} ${identifiers.license} ${identifiers.steam}")
 
-		GlobalScope.launch {
+		launch {
 			val result = blackList.await()
 
 			if (result.isNotEmpty()) {

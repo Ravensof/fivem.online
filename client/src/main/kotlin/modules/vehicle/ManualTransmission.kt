@@ -7,6 +7,7 @@ import online.fivem.client.gtav.Client
 import online.fivem.client.gtav.Natives
 import online.fivem.client.modules.eventGenerator.TickExecutorModule
 import online.fivem.common.common.Console
+import online.fivem.common.common.Utils.normalizeToLimits
 import online.fivem.common.extensions.*
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.pow
@@ -291,12 +292,6 @@ class ManualTransmission(
 		tThrottleRaw = 0
 		tThrottleFull = 0.0
 		Console.debug("Vehicle info has been reset")
-	}
-
-	private fun <T : Number> normalizeToLimits(value: T, min: T, max: T): T {
-		if (value < min) return min
-		if (value > max) return max
-		return value
 	}
 
 	private fun valueToPercentageInRange(min: Number, max: Number, input: Number): Number {
