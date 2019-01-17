@@ -57,12 +57,12 @@ class ManualTransmission(
 				resetLastVehicle()
 
 				vstTheoreticalMaxSpeed = Client.getVehicleHandlingFloat(
-					vehicle.vehicle,
+					vehicle.entity,
 					"CHandlingData",
 					"fInitialDriveMaxFlatVel"
 				) * 1.32
 				vstAcceleration =
-						Client.getVehicleHandlingFloat(vehicle.vehicle, "CHandlingData", "fInitialDriveForce")
+						Client.getVehicleHandlingFloat(vehicle.entity, "CHandlingData", "fInitialDriveForce")
 				vstNumberOfGears = vehicle.highGear
 
 				vehicle.highGear = 1
@@ -222,8 +222,8 @@ class ManualTransmission(
 			val hash = Client.getHashKey("SET_VEHICLE_CURRENT_GEAR").and(0xFFFFFFFF.toInt())
 			val hash2 = Client.getHashKey("SET_VEHICLE_NEXT_GEAR").and(0xFFFFFFFF.toInt())
 
-			Natives.invokeNative<Any>(hash, vehicle.vehicle, 0)
-			Natives.invokeNative<Any>(hash2, vehicle.vehicle, 0)
+			Natives.invokeNative<Any>(hash, vehicle.entity, 0)
+			Natives.invokeNative<Any>(hash2, vehicle.entity, 0)
 		}
 	}
 
@@ -237,9 +237,9 @@ class ManualTransmission(
 		when (currentGear) {
 			0 ->
 				if (tThrottleRaw > 0) {
-					Client.setVehicleCurrentRpm(vehicle.vehicle, -1.0)
+					Client.setVehicleCurrentRpm(vehicle.entity, -1.0)
 				} else {
-					Client.setVehicleCurrentRpm(vehicle.vehicle, 0.0)
+					Client.setVehicleCurrentRpm(vehicle.entity, 0.0)
 				}
 
 			1 ->
@@ -253,7 +253,7 @@ class ManualTransmission(
 						eConstEngineIdleRpm + tThrottleFull
 				engineRpm = exponentialCurve(engineRpm, gGearDiff / 100)
 				val rpm = normalizeToLimits(eEngineRpm, 0.0, 1.0)
-				Client.setVehicleCurrentRpm(vehicle.vehicle, rpm)
+				Client.setVehicleCurrentRpm(vehicle.entity, rpm)
 			}
 		}
 	}

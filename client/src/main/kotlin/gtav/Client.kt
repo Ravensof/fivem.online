@@ -16,6 +16,14 @@ typealias Handle = Int
 
 object Client {
 
+	fun isVehicleOnAllWheels(vehicle: Entity): Boolean {
+		return IsVehicleOnAllWheels(vehicle) == 1
+	}
+
+	fun isVehiclePreviouslyOwnedByPlayer(vehicle: Entity): Boolean {
+		return IsVehiclePreviouslyOwnedByPlayer(vehicle) == 1
+	}
+
 	fun setVehiclePetrolTankHealth(vehicle: Entity, health: Double) {
 		SetVehiclePetrolTankHealth(vehicle, health)
 	}
@@ -142,7 +150,7 @@ object Client {
 		SetTextEdge(p0, r, g, b, a)
 	}
 
-	fun setTextDropshadow(distance: Number, r: Int, g: Int, b: Int, a: Int) {
+	fun setTextDropShadow(distance: Number, r: Int, g: Int, b: Int, a: Int) {
 		SetTextDropshadow(distance, r, g, b, a)
 	}
 
@@ -222,6 +230,10 @@ object Client {
 
 	fun isVehicleWanted(vehicle: Entity): Boolean {
 		return IsVehicleWanted(vehicle) == 1
+	}
+
+	fun setVehicleIsWanted(vehicle: Entity, state: Boolean) {
+		SetVehicleIsWanted(vehicle, state)
 	}
 
 	fun isVehicleEngineStarting(vehicle: Entity): Boolean {
@@ -563,6 +575,10 @@ object Client {
 		return GetIsVehicleEngineRunning(vehicle) == 1
 	}
 
+	fun setVehicleEngineOn(vehicle: Entity, value: Boolean, instantly: Boolean, otherwise: Boolean = true) {
+		SetVehicleEngineOn(vehicle, value, instantly, otherwise)
+	}
+
 	fun isVehicleEngineOn(vehicle: Entity): Boolean {
 		return IsVehicleEngineOn(vehicle) == 1
 	}
@@ -587,7 +603,7 @@ object Client {
 		return GetEntitySpeed(entity)
 	}
 
-	fun getPedInVehicleSeat(vehicle: Entity, index: Int): Entity {//todo check
+	fun getPedInVehicleSeat(vehicle: Entity, index: Int): Entity? {//todo check return of empty seat
 		return GetPedInVehicleSeat(vehicle, index)
 	}
 
@@ -11408,9 +11424,9 @@ private external fun IsVehicleEngineStarting(vehicle: Entity): Number
  * Return Native.Function.Call(Of Boolean)(Hash.IS_VEHICLE_ON_ALL_WHEELS, vh)
  * End Function
  */
-//private external fun IsVehicleOnAllWheels(vehicle: number): number;
+private external fun IsVehicleOnAllWheels(vehicle: Entity): Number
 
-//private external fun IsVehiclePreviouslyOwnedByPlayer(vehicle: number): number;
+private external fun IsVehiclePreviouslyOwnedByPlayer(vehicle: Entity): Number
 
 //private external fun IsVehicleRadioLoud(vehicle: number): number;
 
@@ -26003,7 +26019,7 @@ private external fun SetVehicleEngineHealth(vehicle: Entity, health: Double)
  * --------------------------------------
  * And what's with BOOL otherwise, what does it do???
  */
-//private external fun SetVehicleEngineOn(vehicle: number, value: boolean, instantly: boolean, otherwise: boolean)
+private external fun SetVehicleEngineOn(vehicle: Entity, value: Boolean, instantly: Boolean, otherwise: Boolean)
 
 /**
  * Vehicle power multiplier.
@@ -26206,7 +26222,7 @@ private external fun SetVehicleHighGear(vehicle: Entity, gear: Int)
 /**
  * Sets the wanted state of this vehicle.
  */
-//private external fun SetVehicleIsWanted(vehicle: number, state: boolean)
+private external fun SetVehicleIsWanted(vehicle: Entity, state: Boolean)
 
 /**
  * VEHICLE::SET_VEHICLE_ENGINE_ON is not enough to start jet engines when not inside the vehicle. But with this native set to true it works: youtu.be/OK0ps2fDpxs

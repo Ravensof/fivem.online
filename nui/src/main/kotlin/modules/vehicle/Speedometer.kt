@@ -32,13 +32,13 @@ class Speedometer : AbstractModule(), CoroutineScope {
 	}
 
 	private val speedometerCanvas by lazy {
-		jQuery("<canvas id=\"$SPEEDOMETER_CANVAS\" width=\"440\" height=\"212\"></canvas>")
+		jQuery("<canvas width=\"440\" height=\"212\"></canvas>")
 	}
 
 	private val speedometerBlock by lazy {
 		jQuery(
 			"""
-		<div id="$SPEEDOMETER_BLOCK" class="speedometer" style="display: none">
+		<div class="speedometer" style="display: none">
 			<link rel="stylesheet" href="$RESOURCES_DIR/style.css">
 		</div>
 	""".trimIndent()
@@ -133,6 +133,16 @@ class Speedometer : AbstractModule(), CoroutineScope {
 				lastUpdate = Date.now()
 			}
 		}
+
+//		drawInterpolatorJob = launch {//https://try.kotlinlang.org/#/Examples/Canvas/Traffic%20light/Traffic%20light.kt
+//			repeatJob(1_000L / TARGET_FPS) {
+//
+//			}
+//
+//			for (data in speedometerInterpolatorChannel) {
+//
+//			}
+//		}
 	}
 
 	private fun drawRotatedImage(
@@ -160,10 +170,8 @@ class Speedometer : AbstractModule(), CoroutineScope {
 
 		private val RESOURCES_DIR = Html.nuiLink("speedometer/v1")
 
-		private const val SPEEDOMETER_BLOCK = "speedometer_block"
-		private const val SPEEDOMETER_CANVAS = "speedometer_canvas"
-
 		private const val TO_RADIANS = kotlin.math.PI / 180
 		private const val INTERPOLATION_STEPS = 10
+		private const val TARGET_FPS = 60
 	}
 }

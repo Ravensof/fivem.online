@@ -13,89 +13,89 @@ import online.fivem.common.extensions.orZero
 import online.fivem.common.gtav.NativeVehicles
 
 class Vehicle(
-	val vehicle: Entity,
+	val entity: Entity,
 
 	tickExecutor: TickExecutorModule? = null
 ) {
-	val id: Int = Client.getVehicleOilLevel(vehicle)?.toInt().orZero()
+	val id: Int = Client.getVehicleOilLevel(entity)?.toInt().orZero()
 
 	val wheels: List<Wheel>
 	val doors: List<Door>
 
 	var clutch: Number
 		get() {
-			return Client.getVehicleClutch(vehicle)
+			return Client.getVehicleClutch(entity)
 		}
 		set(value) {
-			Client.setVehicleClutch(vehicle, value)
+			Client.setVehicleClutch(entity, value)
 		}
 
 	var currentRpm: Double
 		set(value) {
-			Client.setVehicleCurrentRpm(vehicle, value)
+			Client.setVehicleCurrentRpm(entity, value)
 		}
 		get() {
-			return Client.getVehicleCurrentRpm(vehicle)
+			return Client.getVehicleCurrentRpm(entity)
 		}
 
 	val currentGear: Int
 		get() {
-			return Client.getVehicleCurrentGear(vehicle)
+			return Client.getVehicleCurrentGear(entity)
 		}
 
 	var highGear: Int
 		get() {
-			return Client.getVehicleHighGear(vehicle)
+			return Client.getVehicleHighGear(entity)
 		}
 		set(value) {
-			Client.setVehicleHighGear(vehicle, value)
+			Client.setVehicleHighGear(entity, value)
 		}
 
 	var isAlarmSet: Boolean
 		get() {
-			return Client.isVehicleAlarmSet(vehicle)
+			return Client.isVehicleAlarmSet(entity)
 		}
 		set(value) {
-			Client.setVehicleAlarm(vehicle, value)
+			Client.setVehicleAlarm(entity, value)
 		}
 
 	var alarmTimeLeft: Int
 		get() {
-			return Client.getVehicleAlarmTimeLeft(vehicle)
+			return Client.getVehicleAlarmTimeLeft(entity)
 		}
 		set(value) {
-			Client.setVehicleAlarmTimeLeft(vehicle, value)
+			Client.setVehicleAlarmTimeLeft(entity, value)
 		}
 
 	val dashboardSpeed: Double
 		get() {
-			return Client.getVehicleDashboardSpeed(vehicle)
+			return Client.getVehicleDashboardSpeed(entity)
 		}
 
 	var engineTemperature: Int
 		get() {
-			return Client.getVehicleEngineTemperature(vehicle)
+			return Client.getVehicleEngineTemperature(entity)
 		}
 		set(value) {
-			Client.setVehicleEngineTemperature(vehicle, value)
+			Client.setVehicleEngineTemperature(entity, value)
 		}
 
 	var fuelLevel: Number
 		get() {
-			return Client.getVehicleFuelLevel(vehicle)
+			return Client.getVehicleFuelLevel(entity)
 		}
 		set(value) {
-			Client.setVehicleFuelLevel(vehicle, value)
+			Client.setVehicleFuelLevel(entity, value)
 		}
 
 	//gravityAmount get set
 
-	var handBrake: Boolean
+	var isHandBrake: Boolean
 		set(value) {
-			Client.setVehicleHandbrake(vehicle, value)
+			Client.setVehicleHandbrake(entity, value)
 		}
 		get() {
-			return Client.getVehicleHandbrake(vehicle)
+			return Client.getVehicleHandbrake(entity)
 		}
 
 	//handlingField set get
@@ -106,99 +106,125 @@ class Vehicle(
 	//indicatorLights
 	//nextGear
 
-	val numberOfWheels: Int
-		get() {
-			return Client.getVehicleNumberOfWheels(vehicle)
-		}
+	val numberOfWheels = Client.getVehicleNumberOfWheels(entity)
 
-	val numberOfDoors: Int
-		get() {
-			return Client.getNumberOfVehicleDoors(vehicle)
-		}
+	val numberOfDoors = Client.getNumberOfVehicleDoors(entity)
 
 	//oilLevel вроде ни на что не влияет, поэтому использую как идентификатор
 	//steeringAngle set get
 	//steeringScale set get
 	var turboPressure: Number
 		get() {
-			return Client.getVehicleTurboPressure(vehicle).orZero()
+			return Client.getVehicleTurboPressure(entity).orZero()
 		}
 		set(value) {
-			Client.setVehicleTurboPressure(vehicle, value)
+			Client.setVehicleTurboPressure(entity, value)
 		}
 
 	var maxSpeed: Double
 		get() {
-			return Client.getVehicleMaxSpeed(vehicle)
+			return Client.getVehicleMaxSpeed(entity)
 		}
 		set(value) {
-			Client.setEntityMaxSpeed(vehicle, value)
+			Client.setEntityMaxSpeed(entity, value)
 		}
 
 	val isEngineStarting: Boolean
 		get() {
-			return Client.isVehicleEngineStarting(vehicle)
+			return Client.isVehicleEngineStarting(entity)
+		}
+
+	var isEngineOn: Boolean
+		get() {
+			return Client.isVehicleEngineOn(entity)
+		}
+		set(value) {
+			Client.setVehicleEngineOn(entity, value, true)
 		}
 
 	//isVehicleInteriorLightOn
 	//isVehicleNeedsToBeHotwired
 	//isVehiclePreviouslyOwnedByPlayer
 
-	val isWanted: Boolean
+	var isWanted: Boolean
 		get() {
-			return Client.isVehicleWanted(vehicle)
+			return Client.isVehicleWanted(entity)
+		}
+		set(value) {
+			Client.setVehicleIsWanted(entity, value)
 		}
 
 	//	SetVehicleAutoRepairDisabled
 
 	var dirtLevel: Int
 		get() {
-			return Client.getVehicleDirtLevel(vehicle)
+			return Client.getVehicleDirtLevel(entity)
 		}
 		set(value) {
-			Client.setVehicleDirtLevel(vehicle, value)
+			Client.setVehicleDirtLevel(entity, value)
 		}
 
 	var engineHealth: Double
 		get() {
-			return Client.getVehicleEngineHealth(vehicle)
+			return Client.getVehicleEngineHealth(entity)
 		}
 		set(value) {
-			Client.setVehicleEngineHealth(vehicle, value)
+			Client.setVehicleEngineHealth(entity, value)
 		}
 
 	var bodyHealth: Int
 		get() {
-			return Client.getVehicleBodyHealth(vehicle)
+			return Client.getVehicleBodyHealth(entity)
 		}
 		set(value) {
-			Client.setVehicleBodyHealth(vehicle, value)
+			Client.setVehicleBodyHealth(entity, value)
 		}
 
 	var petrolTankHealth: Double
 		get() {
-			return Client.getVehiclePetrolTankHealth(vehicle)
+			return Client.getVehiclePetrolTankHealth(entity)
 		}
 		set(value) {
-			Client.setVehiclePetrolTankHealth(vehicle, value)
+			Client.setVehiclePetrolTankHealth(entity, value)
 		}
 
+	val numberOfSeats = Client.getVehicleMaxNumberOfPassengers(entity) + 1
+
 	init {
-		if (Client.doesEntityExist(vehicle)) throw VehicleDoesntExistsException()
+		if (Client.doesEntityExist(entity)) throw VehicleDoesntExistsException()
 
 		wheels = mutableListOf()
 		for (i in 0 until numberOfWheels) {
-			wheels.add(Wheel(vehicle, i, tickExecutor))
+			wheels.add(Wheel(entity, i, tickExecutor))
 		}
 
 		doors = mutableListOf()
 		for (i in 0 until numberOfDoors) {
-			doors.add(Door(vehicle, i))
+			doors.add(Door(entity, i))
 		}
 	}
 
 	fun setForwardSpeed(speed: Number) {
-		Client.setVehicleForwardSpeed(vehicle, speed)
+		Client.setVehicleForwardSpeed(entity, speed)
+	}
+
+	fun getPassengers(): MutableList<Entity> {
+		val list = mutableListOf<Entity>()
+
+		for (i in -1 until Client.getVehicleMaxNumberOfPassengers(entity)) {
+			val entity = Client.getPedInVehicleSeat(entity, -1) ?: continue
+			list.add(entity)
+		}
+
+		return list
+	}
+
+	fun turnEngineOn(value: Boolean) {
+		Client.setVehicleEngineOn(entity, value, false)
+	}
+
+	fun isOnAllWheels(): Boolean {
+		return Client.isVehicleOnAllWheels(entity)
 	}
 
 //	fun setBoostActive(){
@@ -212,7 +238,7 @@ class Vehicle(
 //	}
 
 	fun destroy() {
-		Client.setVehicleAsNoLongerNeeded(vehicle)
+		Client.setVehicleAsNoLongerNeeded(entity)
 	}
 
 	class Wheel(
@@ -296,6 +322,15 @@ class Vehicle(
 				Client.setNetworkIdCanMigrate(networkId, true)
 
 				return@async Vehicle(vehicle, tickExecutor)
+			}
+		}
+
+		fun fromEntity(list: List<Entity>, tickExecutor: TickExecutorModule? = null): List<Vehicle> {
+			return list.map {
+				Vehicle(
+					entity = it,
+					tickExecutor = tickExecutor
+				)
 			}
 		}
 	}

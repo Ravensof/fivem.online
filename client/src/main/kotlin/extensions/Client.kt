@@ -92,7 +92,7 @@ fun Client.drawScreenText2D(
 	setTextProportional(true)
 	setTextScale(0.0, 0.3)
 	setTextColour(180, 20, 20, 255)
-	setTextDropshadow(0, 0, 0, 0, 255)
+	setTextDropShadow(0, 0, 0, 0, 255)
 	setTextEdge(1, 0, 0, 0, 255)
 
 	if (dropShadow) {
