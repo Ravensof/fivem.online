@@ -12,16 +12,16 @@ import online.fivem.common.events.SpeedometerDisableEvent
 import online.fivem.common.events.SpeedometerEnableEvent
 import online.fivem.common.events.SpeedometerUpdateEvent
 import online.fivem.nui.extensions.nuiLink
-import online.fivem.nui.extensions.toHTMLCanvasElement
 import online.fivem.nui.extensions.toHTMLImageElement
 import online.fivem.nui.modules.clientEventEchanger.ClientEvent
+import org.w3c.dom.CanvasRenderingContext2D
+import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLImageElement
+import kotlin.browser.document
 import kotlin.coroutines.CoroutineContext
 import kotlin.js.Date
 
-class Speedometer : AbstractModule(), CoroutineScope {
-
-	override val coroutineContext: CoroutineContext = Job()
+class Speedometer(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
 
 	private val speedometerArrow: HTMLImageElement by lazy {
 		jQuery("<img src=\"$RESOURCES_DIR/arrow-speedometer.svg\"/>").toHTMLImageElement()
@@ -31,27 +31,25 @@ class Speedometer : AbstractModule(), CoroutineScope {
 		jQuery("<img src=\"$RESOURCES_DIR/arrow-tachometer.svg\"/>").toHTMLImageElement()
 	}
 
-	private val speedometerCanvas by lazy {
-		jQuery("<canvas width=\"440\" height=\"212\"></canvas>")
-	}
-
 	private val speedometerBlock by lazy {
 		jQuery(
-			"""
-		<div class="speedometer" style="display: none">
+			"""<div class="speedometer" style="display: none">
 			<link rel="stylesheet" href="$RESOURCES_DIR/style.css">
-		</div>
-	""".trimIndent()
-		).apply {
-			append(speedometerCanvas)
-		}
+			</div>""".trimIndent()
+		)
 	}
-
-	private var context: dynamic = speedometerCanvas.toHTMLCanvasElement().getContext("2d")
 
 	private val speedometerInterpolatorChannel = Channel<SpeedometerData>(1)
 
 	private var drawInterpolatorJob: Job? = null
+
+	private val canvas: HTMLCanvasElement = document.createElement("canvas") as HTMLCanvasElement
+	private val context2D: CanvasRenderingContext2D = canvas.getContext("2d") as CanvasRenderingContext2D
+
+	init {
+		context2D.canvas.width = 440
+		context2D.canvas.height = 212
+	}
 
 	override fun init() {
 		ClientEvent.on<SpeedometerUpdateEvent> {
@@ -79,6 +77,7 @@ class Speedometer : AbstractModule(), CoroutineScope {
 	}
 
 	override fun start(): Job? {
+		speedometerBlock.append(canvas)
 		jQuery("#content").append(speedometerBlock)
 
 		return super.start()
@@ -110,12 +109,19 @@ class Speedometer : AbstractModule(), CoroutineScope {
 
 				for (i in 1..INTERPOLATION_STEPS) {
 					drawingTime = Date.now()
-					context.clearRect(0, 0, speedometerCanvas.width(), speedometerCanvas.height())
-					drawRotatedImage(tachometerArrow, 105, 102, lastRpm, tachometerArrow.width.toDouble() / 2, 17.02)
+					context2D.clearRect(0.0, 0.0, context2D.canvas.width.toDouble(), context2D.canvas.height.toDouble())
+					drawRotatedImage(
+						tachometerArrow,
+						105.0,
+						102.0,
+						lastRpm,
+						tachometerArrow.width.toDouble() / 2,
+						17.02
+					)
 					drawRotatedImage(
 						speedometerArrow,
-						291,
-						182,
+						291.0,
+						182.0,
 						lastSpeed,
 						148.0,
 						speedometerArrow.height.toDouble() / 2
@@ -147,18 +153,18 @@ class Speedometer : AbstractModule(), CoroutineScope {
 
 	private fun drawRotatedImage(
 		image: HTMLImageElement,
-		x: Int,
-		y: Int,
+		x: Double,
+		y: Double,
 		angle: Double,
 		rotatePointX: Double,
 		rotatePointY: Double
 	) {
 
-		context.save()
-		context.translate(x, y)
-		context.rotate(angle * TO_RADIANS)
-		context.drawImage(image, -rotatePointX, -rotatePointY)
-		context.restore()
+		context2D.save()
+		context2D.translate(x, y)
+		context2D.rotate(angle * TO_RADIANS)
+		context2D.drawImage(image, -rotatePointX, -rotatePointY)
+		context2D.restore()
 	}
 
 	private class SpeedometerData(
