@@ -204,6 +204,10 @@ class Vehicle(
 		}
 	}
 
+	fun addEnginePowerMultiplier(percents: Double) {
+		Client.setVehicleEnginePowerMultiplier(entity, percents)
+	}
+
 	fun setForwardSpeed(speed: Number) {
 		Client.setVehicleForwardSpeed(entity, speed)
 	}

@@ -43,7 +43,7 @@ class Speedometer(override val coroutineContext: CoroutineContext) : AbstractMod
 
 						engineTemperature = Client.getVehicleEngineTemperature(vehicle),
 						fuelLevel = Client.getVehicleFuelLevel(vehicle),
-						oilLevel = Client.getVehicleOilLevel(vehicle)?.toDouble().orZero(),
+						oilLevel = Client.getVehicleOilLevel(vehicle).orZero(),
 						petrolTankHealth = Client.getVehiclePetrolTankHealth(vehicle),
 						engineRunning = Client.getIsVehicleEngineRunning(vehicle),
 						engineOn = Client.isVehicleEngineOn(vehicle),

@@ -16,6 +16,10 @@ typealias Handle = Int
 
 object Client {
 
+	fun setVehicleEnginePowerMultiplier(vehicle: Entity, value: Double) {
+		SetVehicleEnginePowerMultiplier(vehicle, value)
+	}
+
 	fun isVehicleOnAllWheels(vehicle: Entity): Boolean {
 		return IsVehicleOnAllWheels(vehicle) == 1
 	}
@@ -555,16 +559,16 @@ object Client {
 		return GetVehicleNumberPlateText(vehicle)
 	}
 
-	fun getVehicleOilLevel(vehicle: Entity): Number? {
-		return if (getVehicleIndexFromEntityIndex(vehicle) != 0) GetVehicleOilLevel(vehicle) else null
+	fun getVehicleOilLevel(vehicle: Entity): Float? {
+		return if (getVehicleIndexFromEntityIndex(vehicle) != 0) GetVehicleOilLevel(vehicle).toFloat() else null
 	}
 
 	fun getVehiclePetrolTankHealth(vehicle: Entity): Double {
 		return GetVehiclePetrolTankHealth(vehicle).toDouble()
 	}
 
-	fun getVehicleTurboPressure(vehicle: Entity): Number? {//todo узнать возвращаемый тип
-		return if (doesEntityExist(vehicle)) GetVehicleTurboPressure(vehicle) else null
+	fun getVehicleTurboPressure(vehicle: Entity): Float? {//todo string?
+		return if (doesEntityExist(vehicle)) GetVehicleTurboPressure(vehicle).toFloat() else null
 	}
 
 	fun setVehicleTurboPressure(vehicle: Entity, pressure: Number) {
@@ -26032,7 +26036,7 @@ private external fun SetVehicleEngineOn(vehicle: Entity, value: Boolean, instant
  * VEHICLE::_SET_VEHICLE_ENGINE_POWER_MULTIPLIER(myVehicle, 30.0)
  * will have this effect: DriveForce *= 1.3
  */
-//private external fun SetVehicleEnginePowerMultiplier(vehicle: number, value: number)
+private external fun SetVehicleEnginePowerMultiplier(vehicle: Entity, value: Number)
 
 private external fun SetVehicleEngineTemperature(vehicle: Entity, temperature: Int)
 
