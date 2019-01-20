@@ -50,11 +50,14 @@ open class MySQL(override val coroutineContext: CoroutineContext) : CoroutineSco
 		var string = query
 
 		args.forEach {
+			if (it == null) {
+				string = string.replaceFirst(Regex("=[ \t]*\\?"), " is NULL")
+
+				return@forEach
+			}
 
 			string = string.replaceFirst(
 				"?", when (it) {
-					null -> "NULL"
-
 					is Int -> it.toString()
 
 					else -> filter(it.toString())

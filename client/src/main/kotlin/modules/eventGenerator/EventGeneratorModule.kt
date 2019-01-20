@@ -65,7 +65,7 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 			checkPlayerSeatIndex(Client.getPassengerSeatOfPedInVehicle())
 			checkPauseMenuState(Client.getPauseMenuState())
 			checkIsPlayerInVehicle()
-			checkPlayerTryingTogetAnyVehicle()
+			checkPlayerTryingToGetAnyVehicle()
 			checkRadio()
 		}
 
@@ -85,7 +85,7 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 		return super.stop()
 	}
 
-	private fun checkPlayerTryingTogetAnyVehicle() {
+	private fun checkPlayerTryingToGetAnyVehicle() {
 		val isPedAtGetInAnyVehicleRightNow = Client.isPedAtGetInAnyVehicle(playerPed)
 
 		if (isPedAtGetInAnyVehicleRightNow != isPedAtGetInAnyVehicle) {
@@ -157,13 +157,15 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 	}
 
 	private fun checkVehicleHealth() {
+		if (playerPed == 0) return
+
 		val currentPedHealth = Client.getEntityHealth(playerPed)
 		val pedHealthDiff = currentPedHealth - playerPedHealth
 		playerPedHealth = currentPedHealth
 
 		if (pedHealthDiff != 0) {
 			if (currentPedHealth == 0) {
-				UEvent.emit(PlayerPedHealthZeroEvent(pedHealthDiff))
+				UEvent.emit(PlayerPedHealthZeroEvent(currentPedHealth))
 			} else {
 				if (pedHealthDiff > 0) {
 					UEvent.emit(PlayersPedHealthIncreasedEvent(currentPedHealth, pedHealthDiff))

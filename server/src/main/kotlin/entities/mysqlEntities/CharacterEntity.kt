@@ -1,4 +1,4 @@
-package online.fivem.server.mysqlEntities
+package online.fivem.server.entities.mysqlEntities
 
 class CharacterEntity(
 	val id: Int,

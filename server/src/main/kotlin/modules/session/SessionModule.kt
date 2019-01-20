@@ -12,14 +12,14 @@ import online.fivem.common.gtav.NativeEvents
 import online.fivem.server.Strings
 import online.fivem.server.common.MySQL
 import online.fivem.server.entities.Player
+import online.fivem.server.entities.mysqlEntities.BlackListTable
+import online.fivem.server.entities.mysqlEntities.CharacterEntity
+import online.fivem.server.entities.mysqlEntities.UserEntity
 import online.fivem.server.gtav.Exports
 import online.fivem.server.gtav.Natives
 import online.fivem.server.modules.basics.BasicsModule
 import online.fivem.server.modules.basics.MySQLModule
 import online.fivem.server.modules.clientEventExchanger.ClientEvent
-import online.fivem.server.mysqlEntities.CharacterEntity
-import online.fivem.server.mysqlEntities.UserEntity
-import online.fivem.server.mysqlTables.BlackListTable
 import kotlin.coroutines.CoroutineContext
 
 class SessionModule : AbstractModule(), CoroutineScope {

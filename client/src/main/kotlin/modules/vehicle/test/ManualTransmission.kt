@@ -1,4 +1,4 @@
-package online.fivem.client.modules.vehicle
+package online.fivem.client.modules.vehicle.test
 
 import kotlinx.coroutines.*
 import online.fivem.client.entities.Vehicle

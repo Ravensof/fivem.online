@@ -1,4 +1,4 @@
-package online.fivem.server.mysqlTables
+package online.fivem.server.entities.mysqlEntities
 
 class BlackListTable(
 	val ip: String? = null,
