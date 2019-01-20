@@ -24,6 +24,7 @@ object Natives {
 		RegisterCommand(commandName, handler, restricted)
 	}
 
+	//не работает для бинарных файлов
 	fun loadResourceFile(resourceName: String, fileName: String): String? {
 		return LoadResourceFile(resourceName, fileName)
 	}

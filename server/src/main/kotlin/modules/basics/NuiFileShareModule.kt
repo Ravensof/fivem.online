@@ -26,13 +26,12 @@ class NuiFileShareModule(override val coroutineContext: CoroutineContext) : Abst
 		return super.stop()
 	}
 
+	//не работает для бинарных файлов
 	private fun handler(request: Request, response: Response) {
-//		Console.debug("nuiFileShare: ${request.address} to ${request.path} ")
-
 		val file = Natives.loadResourceFile(GlobalConfig.MODULE_NAME, request.path)
 
 		if (file != null) {
-			Console.debug("nuiFileShare: ${request.address} sending ${request.path} ")
+			Console.debug("nuiFileShare: ${request.address} sending ${file.length} ${request.path} ")
 			return response.send(file)
 		}
 		Console.debug("nuiFileShare: ${request.address} no file ${request.path} ")

@@ -11,7 +11,7 @@ import online.fivem.common.common.Html
 import online.fivem.common.events.SpeedometerDisableEvent
 import online.fivem.common.events.SpeedometerEnableEvent
 import online.fivem.common.events.SpeedometerUpdateEvent
-import online.fivem.nui.extensions.nuiLink
+import online.fivem.nui.extensions.nuiResourcesLink
 import online.fivem.nui.extensions.toHTMLImageElement
 import online.fivem.nui.modules.clientEventEchanger.ClientEvent
 import org.w3c.dom.CanvasRenderingContext2D
@@ -73,6 +73,7 @@ class Speedometer(override val coroutineContext: CoroutineContext) : AbstractMod
 		ClientEvent.on<SpeedometerDisableEvent> {
 			speedometerBlock.hide()
 			drawInterpolatorJob?.cancel()
+			drawInterpolatorJob?.cancel()
 		}
 	}
 
@@ -91,6 +92,7 @@ class Speedometer(override val coroutineContext: CoroutineContext) : AbstractMod
 	}
 
 	private fun runSpeedometer() {
+		drawInterpolatorJob?.cancel()
 		drawInterpolatorJob = launch {
 
 			var lastSpeed = 0.0
@@ -139,16 +141,6 @@ class Speedometer(override val coroutineContext: CoroutineContext) : AbstractMod
 				lastUpdate = Date.now()
 			}
 		}
-
-//		drawInterpolatorJob = launch {//https://try.kotlinlang.org/#/Examples/Canvas/Traffic%20light/Traffic%20light.kt
-//			repeatJob(1_000L / TARGET_FPS) {
-//
-//			}
-//
-//			for (data in speedometerInterpolatorChannel) {
-//
-//			}
-//		}
 	}
 
 	private fun drawRotatedImage(
@@ -178,6 +170,5 @@ class Speedometer(override val coroutineContext: CoroutineContext) : AbstractMod
 
 		private const val TO_RADIANS = kotlin.math.PI / 180
 		private const val INTERPOLATION_STEPS = 10
-		private const val TARGET_FPS = 60
 	}
 }

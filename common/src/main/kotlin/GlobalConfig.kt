@@ -5,7 +5,7 @@ import online.fivem.common.gtav.RadioStation
 
 object GlobalConfig {
 	const val MODULE_NAME = "fivem-online"
-	const val SERVER_IP = "fivem.online"
+	const val SERVER_IP = "server1.fivem.online"
 
 	const val SERVER_PORT = 30120
 
@@ -44,7 +44,7 @@ object GlobalConfig {
 	}
 
 	//	const val RESOURCES_HTTP_HOME = "http://$SERVER_IP:$SERVER_PORT/$MODULE_NAME/"
-	const val RESOURCES_HTTP_HOME = "http://$SERVER_IP/"
+	const val RESOURCES_HTTP_HOME = "http://$SERVER_IP/$MODULE_NAME/"
 
 	const val SHOW_CONSOLE_ERROR = true
 	const val SHOW_CONSOLE_INFO = true

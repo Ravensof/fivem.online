@@ -1,12 +1,14 @@
 package online.fivem.client.modules.vehicle
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import online.fivem.client.gtav.Client
 import online.fivem.client.modules.nuiEventExchanger.NuiEvent
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.UEvent
 import online.fivem.common.events.*
 import online.fivem.common.extensions.orZero
+import online.fivem.common.extensions.repeatJob
 import kotlin.coroutines.CoroutineContext
 
 class Speedometer(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
@@ -18,13 +20,13 @@ class Speedometer(override val coroutineContext: CoroutineContext) : AbstractMod
 		UEvent.on<PlayerLeftVehicleEvent> { onPlayerLeftVehicle() }
 	}
 
-	private fun updateJob(): Job = launch {
+	private fun updateJob(): Job? {
 		val ped = Client.getPlayerPed()
-		val vehicle = Client.getVehiclePedIsUsing(ped) ?: return@launch
+		val vehicle = Client.getVehiclePedIsUsing(ped) ?: return null
 
 		var speed: Double
 
-		while (isActive) {
+		return repeatJob(UPDATE_RATE) {
 			speed = Client.getVehicleDashboardSpeed(vehicle)
 
 			if (!vehicleHasSpeedo && speed > 0) {
@@ -51,7 +53,6 @@ class Speedometer(override val coroutineContext: CoroutineContext) : AbstractMod
 					)
 				)
 			}
-			delay(UPDATE_RATE)
 		}
 	}
 
