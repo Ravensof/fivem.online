@@ -5,7 +5,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import online.fivem.client.gtav.Client
-import online.fivem.client.modules.eventGenerator.TickExecutorModule
+import online.fivem.client.modules.basics.TickExecutorModule
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console

@@ -2,7 +2,7 @@ package online.fivem.client.modules.vehicle
 
 import kotlinx.coroutines.*
 import online.fivem.client.gtav.Client
-import online.fivem.client.modules.eventGenerator.TickExecutorModule
+import online.fivem.client.modules.basics.TickExecutorModule
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Entity
 import online.fivem.common.common.UEvent

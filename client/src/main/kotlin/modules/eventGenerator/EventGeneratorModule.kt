@@ -50,8 +50,6 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 	private var isPedAtGetInAnyVehicle: Boolean? = null
 
 	override fun init() {
-		moduleLoader.add(TickExecutorModule())
-		moduleLoader.add(KeysHandlerModule(coroutineContext))
 	}
 
 	override fun start(): Job? {

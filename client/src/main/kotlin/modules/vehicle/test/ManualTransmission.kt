@@ -5,7 +5,7 @@ import online.fivem.client.entities.Vehicle
 import online.fivem.client.extensions.drawScreenText2D
 import online.fivem.client.gtav.Client
 import online.fivem.client.gtav.Natives
-import online.fivem.client.modules.eventGenerator.TickExecutorModule
+import online.fivem.client.modules.basics.TickExecutorModule
 import online.fivem.common.common.Console
 import online.fivem.common.common.Utils.normalizeToLimits
 import online.fivem.common.extensions.*

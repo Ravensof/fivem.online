@@ -13,7 +13,7 @@ class BasicsModule : AbstractModule(), CoroutineScope {
 	override val coroutineContext: CoroutineContext = SupervisorJob()
 
 	override fun init() {
-		moduleLoader.add(MySQLModule())
+		moduleLoader.add(MySQLModule(coroutineContext))
 		moduleLoader.add(CommandsModule())
 		moduleLoader.add(HttpServerModule(coroutineContext))
 		moduleLoader.add(NuiFileShareModule(coroutineContext))

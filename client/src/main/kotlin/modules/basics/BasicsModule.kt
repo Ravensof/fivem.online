@@ -3,7 +3,6 @@ package online.fivem.client.modules.basics
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import online.fivem.client.gtav.Client
-import online.fivem.client.modules.eventGenerator.TickExecutorModule
 import online.fivem.client.modules.nuiEventExchanger.NuiEvent
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
@@ -23,6 +22,8 @@ class BasicsModule : AbstractModule(), CoroutineScope {
 		UEvent.on<PauseMenuStateChangedEvent> { onPauseMenuStateChanged(it.pauseMenuState) }
 
 		moduleLoader.apply {
+			add(TickExecutorModule())
+			add(ControlHandlerModule(coroutineContext))
 			add(JoinTransitionModule(coroutineContext))
 			add(SpawnManagerModule(coroutineContext))
 			add(SynchronizationModule(coroutineContext))

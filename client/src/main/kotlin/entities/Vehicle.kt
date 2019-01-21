@@ -6,7 +6,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.withTimeout
 import online.fivem.client.extensions.createVehicle
 import online.fivem.client.gtav.Client
-import online.fivem.client.modules.eventGenerator.TickExecutorModule
+import online.fivem.client.modules.basics.TickExecutorModule
 import online.fivem.common.common.Entity
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.extensions.orZero

@@ -27,7 +27,7 @@ class ClientEventExchangerModule : AbstractModule(), CoroutineScope {
 	override val coroutineContext: CoroutineContext = Job()
 
 	private val playersSendChannels = createChannels<Data>()
-	private val playersReceiveChannels = createChannels<Packet>()
+	private val playersReceiveChannels = createChannels<Packet<*>>()
 
 	private val playersList = mutableMapOf<Int, Double>()
 
@@ -58,7 +58,7 @@ class ClientEventExchangerModule : AbstractModule(), CoroutineScope {
 						Strings.CLIENT_PACKETS_OVERFLOW
 					)
 				}
-				channel.send(Packet(playerSrc, netPacket.data))
+				channel.send(Packet<Any>(playerSrc, netPacket.data))
 			}
 		}
 
@@ -166,14 +166,16 @@ class ClientEventExchangerModule : AbstractModule(), CoroutineScope {
 		return list
 	}
 
-	class Packet(
+	class Packet<Response>(
 		val playerSrc: PlayerSrc? = null,
-		val data: Data
+		val data: Data,
+		val timeout: Long = 0,
+		val callback: ((PlayerSrc, Response) -> Unit)? = null
 	)
 
 	companion object {
 		private const val PLAYERS_CHANNEL_SIZE = 128
 
-		val channel = Channel<Packet>(PLAYERS_CHANNEL_SIZE)
+		val channel = Channel<Packet<*>>(PLAYERS_CHANNEL_SIZE)
 	}
 }

@@ -4,7 +4,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import online.fivem.client.gtav.Client
-import online.fivem.client.modules.eventGenerator.TickExecutorModule
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.gtav.NativeAudioScenes
 import kotlin.coroutines.CoroutineContext

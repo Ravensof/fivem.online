@@ -687,10 +687,10 @@ object Client {
 	 * 0, 1 and 2 used in the scripts. 0 is by far the most common of them.
 	 */
 	fun isControlPressed(
-		inputGroup: NativeControls.Groups = defaultControlGroup,
-		control: NativeControls.Keys
+		inputGroup: Int,
+		control: Int
 	): Boolean {
-		return IsControlPressed(inputGroup.index, control.index) == 1
+		return IsControlPressed(inputGroup, control) == 1
 	}
 
 	/**

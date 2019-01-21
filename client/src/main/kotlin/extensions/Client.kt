@@ -60,6 +60,13 @@ fun Client.disableControlAction(
 	disableControlAction(inputGroup.index, control.index, disable)
 }
 
+fun Client.isControlPressed(
+	inputGroup: NativeControls.Groups = Client.defaultControlGroup,
+	control: NativeControls.Keys
+): Boolean {
+	return Client.isControlPressed(inputGroup.index, control.index)
+}
+
 fun Client.isDisabledControlJustPressed(
 	inputGroup: NativeControls.Groups = Client.defaultControlGroup,
 	control: NativeControls.Keys

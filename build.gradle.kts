@@ -71,7 +71,7 @@ subprojects {
 			"common" -> {
 			}
 
-			"nui" -> {
+			"nui", "loadingScreen" -> {
 				implementation("org.jetbrains.kotlinx:kotlinx-html-common:0.6.11")
 				compile("org.jetbrains.kotlinx:kotlinx-html-js:0.6.1")
 				compile("kotlin.js.externals:kotlin-js-jquery:3.2.0-0")
