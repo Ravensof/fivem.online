@@ -6,6 +6,6 @@ class Player(
 	val playerSrc: PlayerSrc,
 	val name: String,
 
-	var sessionId: Int = -1,
+	val sessionId: Int,
 	var characterId: Int = -1
 )

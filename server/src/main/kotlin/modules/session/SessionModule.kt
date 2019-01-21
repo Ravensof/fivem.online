@@ -58,10 +58,6 @@ class SessionModule : AbstractModule(), CoroutineScope {
 		launch {
 
 			val identifiers = Natives.getPlayerIdentifiers(playerSrc)
-			val player = Player(
-				playerSrc = playerSrc,
-				name = identifiers.name.orEmpty()
-			)
 
 			val user = mySQL.query<UserEntity>(
 				"""SELECT id
@@ -100,8 +96,12 @@ class SessionModule : AbstractModule(), CoroutineScope {
 				identifiers.ip
 			).await() ?: return@launch Natives.dropPlayer(playerSrc, Strings.SESSION_HAVE_NOT_BEEN_CREATED)
 
-			player.sessionId = sessionId
-			player.characterId = character.id
+			val player = Player(
+				playerSrc = playerSrc,
+				name = identifiers.name.orEmpty(),
+				sessionId = sessionId,
+				characterId = character.id
+			)
 
 			players[playerSrc] = player
 
