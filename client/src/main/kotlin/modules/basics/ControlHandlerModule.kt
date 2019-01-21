@@ -14,7 +14,7 @@ import kotlin.js.Date
 
 class ControlHandlerModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
 
-	val handlers = Stack<Listener>()
+	private val handlers = mutableListOf<Listener>()
 
 	private val tickExecutor by moduleLoader.onReady<TickExecutorModule>()
 	private var executorId = Stack.UNDEFINED_INDEX
@@ -24,10 +24,6 @@ class ControlHandlerModule(override val coroutineContext: CoroutineContext) : Ab
 	override fun start(): Job? {
 		executorId = tickExecutor.add(::checkPressedKeys)
 
-//		repeatJob(KEY_SCAN_TIME) {
-//			checkPressedKeys()
-//		}
-
 		return super.start()
 	}
 
@@ -35,6 +31,18 @@ class ControlHandlerModule(override val coroutineContext: CoroutineContext) : Ab
 		tickExecutor.remove(executorId)
 
 		return super.stop()
+	}
+
+	fun addListener(listener: Listener) {
+		handlers.lastOrNull()?.onFocusLost()
+		handlers.add(listener)
+		listener.onFocus()
+	}
+
+	fun removeListener(listener: Listener) {
+		handlers.remove(listener)
+		listener.onFocusLost()
+		handlers.lastOrNull()?.onFocus()
 	}
 
 	private fun checkPressedKeys() {
@@ -107,9 +115,9 @@ class ControlHandlerModule(override val coroutineContext: CoroutineContext) : Ab
 			registeredKeys.add(control)
 		}
 
-		fun onFocus()
+		fun onFocus() {}
 
-		fun onFocusLost()
+		fun onFocusLost() {}
 
 		fun onJustPressed(control: NativeControls.Keys): Boolean = false
 
