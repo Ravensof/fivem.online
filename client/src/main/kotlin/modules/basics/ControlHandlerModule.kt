@@ -49,7 +49,7 @@ class ControlHandlerModule(override val coroutineContext: CoroutineContext) : Ab
 		val activeHandler = handlers.lastOrNull() ?: return
 
 		activeHandler.registeredKeys.forEach {
-			val isControlPressed = Client.isControlPressed(group, it)// || Client.isDisabledControlPressed(group, it)
+			val isControlPressed = Client.isControlPressed(group, it)
 
 			if (isControlPressed) {
 
@@ -99,19 +99,10 @@ class ControlHandlerModule(override val coroutineContext: CoroutineContext) : Ab
 //		)
 
 		private const val KEY_HOLD_TIME = 250
-//		private const val KEY_SCAN_TIME = 40L
-//		private const val KEY_DEBOUNCE_TIME = 75
-
 	}
 
 	interface Listener {
-		val registeredKeys: MutableList<NativeControls.Keys>
-
-		fun registerKey(control: NativeControls.Keys) {
-			if (registeredKeys.contains(control)) return
-
-			registeredKeys.add(control)
-		}
+		val registeredKeys: List<NativeControls.Keys>
 
 		fun onFocus() {}
 
@@ -125,4 +116,50 @@ class ControlHandlerModule(override val coroutineContext: CoroutineContext) : Ab
 
 		fun onJustReleased(control: NativeControls.Keys): Boolean = false
 	}
+
+//	interface ExtraListener : Listener {
+//
+//		override val registeredKeys: MutableList<NativeControls.Keys>
+//
+//		val justHandlers: MutableMap<NativeControls.Keys, () -> Boolean>
+//		val shortHandlers: MutableMap<NativeControls.Keys, () -> Boolean>
+//		val longHandlers: MutableMap<NativeControls.Keys, () -> Boolean>
+//		val releaseHandlers: MutableMap<NativeControls.Keys, () -> Boolean>
+//
+//		override fun onShortPressed(control: NativeControls.Keys): Boolean = shortHandlers[control]?.invoke() ?: false
+//
+//		override fun onJustPressed(control: NativeControls.Keys): Boolean = justHandlers[control]?.invoke() ?: false
+//
+//		override fun onLongPressed(control: NativeControls.Keys): Boolean = longHandlers[control]?.invoke() ?: false
+//
+//		override fun onJustReleased(control: NativeControls.Keys): Boolean = releaseHandlers[control]?.invoke() ?: false
+//
+//		fun onShortPressed(control: NativeControls.Keys, callback: () -> Boolean) {
+//			if (!registeredKeys.contains(control)) {
+//				registeredKeys.add(control)
+//			}
+//			shortHandlers[control] = callback
+//		}
+//
+//		fun onJustPressed(control: NativeControls.Keys, callback: () -> Boolean) {
+//			if (!registeredKeys.contains(control)) {
+//				registeredKeys.add(control)
+//			}
+//			justHandlers[control] = callback
+//		}
+//
+//		fun onLongPressed(control: NativeControls.Keys, callback: () -> Boolean) {
+//			if (!registeredKeys.contains(control)) {
+//				registeredKeys.add(control)
+//			}
+//			longHandlers[control] = callback
+//		}
+//
+//		fun onJustReleased(control: NativeControls.Keys, callback: () -> Boolean) {
+//			if (!registeredKeys.contains(control)) {
+//				registeredKeys.add(control)
+//			}
+//			releaseHandlers[control] = callback
+//		}
+//	}
 }

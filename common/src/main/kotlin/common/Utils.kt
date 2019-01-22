@@ -2,6 +2,7 @@ package online.fivem.common.common
 
 import online.fivem.common.extensions.compareTo
 import online.fivem.common.extensions.times
+import kotlin.math.pow
 
 object Utils {
 
@@ -17,5 +18,11 @@ object Utils {
 		if (value < min) return min
 		if (value > max) return max
 		return value
+	}
+
+	//todo test
+	fun parseE(number: String): Float {
+		val p = number.split(Regex("^e\$i"))
+		return p[0].toFloat().pow(p[1].toFloat())
 	}
 }
