@@ -55,11 +55,13 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 	override fun start(): Job? {
 
 		repeatJob(50) {
+			if (playerPed == 0) return@repeatJob
 			checkVehicleHealth()
 			checkAcceleration()
 		}
 
 		repeatJob(500) {
+			if (playerPed == 0) return@repeatJob
 			checkPlayerSeatIndex(Client.getPassengerSeatOfPedInVehicle())
 			checkPauseMenuState(Client.getPauseMenuState())
 			checkIsPlayerInVehicle()
@@ -69,7 +71,9 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 
 		repeatJob(1_000) {
 			checkPlayersPed(Client.getPlayerPed())
+			if (playerPed == 0) return@repeatJob
 
+			checkCoordinates()
 			checkAudioMusicLevelInMP(Client.getProfileSetting(ProfileSetting.AUDIO_MUSIC_LEVEL_IN_MP).orZero())
 			checkIsScreenFadedInOut(Client.isScreenFadedOut())
 		}
@@ -97,9 +101,25 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 		}
 	}
 
-	private fun checkAcceleration() {
+	private fun checkCoordinates() {
 		val currentCoordinates = Client.getEntityCoords(playerPed) ?: return
 
+		if (playerCoordinates != currentCoordinates) {
+			val rotation = Client.getEntityHeading(playerPed)
+			val coordinates = CoordinatesX(currentCoordinates, rotation)
+
+			playerCoordinates = coordinates
+
+			UEvent.emit(
+				PlayerCoordinatesChangedEvent(
+					coordinates
+				)
+			)
+			CoordinatesEvent.handle(currentCoordinates)
+		}
+	}
+
+	private fun checkAcceleration() {
 		playerCoordinates?.let {
 			val dateNow = Date.now() / 1_000
 			val dt = dateNow - iLastSpeedCheck
@@ -123,19 +143,6 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 					)
 				}
 			}
-		}
-
-		if (playerCoordinates != currentCoordinates) {
-			val rotation = Client.getEntityHeading(playerPed)
-			val coordinates = CoordinatesX(currentCoordinates, rotation)
-
-			playerCoordinates = coordinates
-
-			UEvent.emit(
-				PlayerCoordinatesChangedEvent(
-					coordinates
-				)
-			)
 		}
 	}
 

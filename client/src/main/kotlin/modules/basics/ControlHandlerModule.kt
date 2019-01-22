@@ -36,12 +36,10 @@ class ControlHandlerModule(override val coroutineContext: CoroutineContext) : Ab
 	fun addListener(listener: Listener) {
 		handlers.lastOrNull()?.onFocusLost()
 		handlers.add(listener)
-		listener.onFocus()
 	}
 
 	fun removeListener(listener: Listener) {
 		handlers.remove(listener)
-		listener.onFocusLost()
 		handlers.lastOrNull()?.onFocus()
 	}
 
