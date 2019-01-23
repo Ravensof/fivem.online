@@ -7,8 +7,7 @@ import online.fivem.common.gtav.NativeEvents
 import online.fivem.server.gtav.Natives
 import online.fivem.server.modules.basics.BasicsModule
 import online.fivem.server.modules.clientEventExchanger.ClientEventExchangerModule
-import online.fivem.server.modules.session.SessionModule
-import online.fivem.server.modules.test.Test
+import online.fivem.server.modules.rolePlaySystem.RolePlaySystemModule
 
 internal fun main() {
 	Natives.on(NativeEvents.Server.RESOURCE_START) { resourceName: String ->
@@ -25,9 +24,9 @@ fun start() {
 
 		add(BasicsModule())
 
-		add(SessionModule())
+		add(RolePlaySystemModule())
 
-		add(Test())
+//		add(Test())
 
 		add(ClientEventExchangerModule())//last
 

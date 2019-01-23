@@ -1,4 +1,4 @@
-package online.fivem.server.modules.session
+package online.fivem.server.modules.rolePlaySystem
 
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
@@ -13,11 +13,11 @@ import online.fivem.server.ServerConfig
 import online.fivem.server.common.MySQL
 import online.fivem.server.entities.Player
 import online.fivem.server.modules.basics.MySQLModule
+import online.fivem.server.modules.basics.SessionModule
 import online.fivem.server.modules.clientEventExchanger.ClientEvent
 import kotlin.coroutines.CoroutineContext
 
-class SynchronizationModule : AbstractModule(), CoroutineScope {
-	override val coroutineContext: CoroutineContext = Job()
+class SynchronizationModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
 
 	private val requestJob by lazy { requestJob() }
 	private val synchronizationJob by lazy { synchronizationJob() }

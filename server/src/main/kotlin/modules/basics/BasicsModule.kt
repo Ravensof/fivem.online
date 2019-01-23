@@ -17,6 +17,7 @@ class BasicsModule : AbstractModule(), CoroutineScope {
 		moduleLoader.add(CommandsModule())
 		moduleLoader.add(HttpServerModule(coroutineContext))
 		moduleLoader.add(NuiFileShareModule(coroutineContext))
+		moduleLoader.add(SessionModule(coroutineContext))
 	}
 
 	fun spawn(playerSrc: PlayerSrc, coordinatesX: CoordinatesX, pedHash: Int) {

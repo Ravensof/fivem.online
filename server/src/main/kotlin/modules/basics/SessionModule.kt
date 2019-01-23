@@ -1,7 +1,6 @@
-package online.fivem.server.modules.session
+package online.fivem.server.modules.basics
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
@@ -17,14 +16,10 @@ import online.fivem.server.entities.mysqlEntities.CharacterEntity
 import online.fivem.server.entities.mysqlEntities.UserEntity
 import online.fivem.server.gtav.Exports
 import online.fivem.server.gtav.Natives
-import online.fivem.server.modules.basics.BasicsModule
-import online.fivem.server.modules.basics.MySQLModule
 import online.fivem.server.modules.clientEventExchanger.ClientEvent
 import kotlin.coroutines.CoroutineContext
 
-class SessionModule : AbstractModule(), CoroutineScope {
-
-	override val coroutineContext: CoroutineContext = Job()
+class SessionModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
 
 	private lateinit var mySQL: MySQL
 	private val players = mutableMapOf<PlayerSrc, Player>()
@@ -37,7 +32,6 @@ class SessionModule : AbstractModule(), CoroutineScope {
 		ClientEvent.on<ImReadyEvent> { playerSrc, _ -> onClientReady(playerSrc) }
 
 		moduleLoader.on<MySQLModule> { mySQL = it.mySQL }
-		moduleLoader.add(SynchronizationModule())
 	}
 
 	fun getConnectedPlayers(): List<PlayerSrc> {

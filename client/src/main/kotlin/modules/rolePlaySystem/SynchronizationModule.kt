@@ -1,8 +1,10 @@
-package online.fivem.client.modules.basics
+package online.fivem.client.modules.rolePlaySystem
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import online.fivem.client.gtav.Client
+import online.fivem.client.modules.basics.JoinTransitionModule
+import online.fivem.client.modules.basics.SpawnManagerModule
 import online.fivem.client.modules.serverEventExchanger.ServerEvent
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console

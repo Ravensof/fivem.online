@@ -26,7 +26,6 @@ class BasicsModule : AbstractModule(), CoroutineScope {
 			add(ControlHandlerModule(coroutineContext))
 			add(JoinTransitionModule(coroutineContext))
 			add(SpawnManagerModule(coroutineContext))
-			add(SynchronizationModule(coroutineContext))
 		}
 	}
 
