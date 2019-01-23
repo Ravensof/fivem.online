@@ -56,11 +56,11 @@ class ControlHandlerModule(override val coroutineContext: CoroutineContext) : Ab
 				if (pressedKeys[it] == 0.0) {
 					pressedKeys[it] = Date.now()
 
-					if (activeHandler.onJustPressed(it)) return@forEach disableAllKeys()
+					if (activeHandler.onJustPressed(it)) return disableAllKeys()
 				} else if (pressedKeys[it].orZero() > 0 && Date.now() - pressedKeys[it].orZero() > KEY_HOLD_TIME) {
 					pressedKeys[it] = -1.0
 
-					if (activeHandler.onLongPressed(it)) return@forEach disableAllKeys()
+					if (activeHandler.onLongPressed(it)) return disableAllKeys()
 				}
 
 			} else {
@@ -69,9 +69,9 @@ class ControlHandlerModule(override val coroutineContext: CoroutineContext) : Ab
 					pressedKeys[it] = 0.0
 
 					if (pressedKeys[it] != -1.0) {
-						if (activeHandler.onShortPressed(it)) return@forEach disableAllKeys()
+						if (activeHandler.onShortPressed(it)) return disableAllKeys()
 					} else {
-						if (activeHandler.onJustReleased(it)) return@forEach disableAllKeys()
+						if (activeHandler.onJustReleased(it)) return disableAllKeys()
 					}
 				}
 			}

@@ -16,8 +16,43 @@ typealias Handle = Int
 
 object Client {
 
+	fun isPlayerControlOn(player: Int): Boolean {
+		return IsPlayerControlOn(player) == 1
+	}
+
 	fun setVehicleEnginePowerMultiplier(vehicle: Entity, value: Double) {
 		SetVehicleEnginePowerMultiplier(vehicle, value)
+	}
+
+	/**
+	 * 0: Sport
+	 * 1: Muscle
+	 * 2: Lowrider
+	 * 3: SUV
+	 * 4: Offroad
+	 * 5: Tuner
+	 * 6: Bike Wheels
+	 * 7: High End
+	 */
+	fun setVehicleWheelType(vehicle: Entity, wheelType: Int) {
+		SetVehicleWheelType(vehicle, wheelType)
+	}
+
+	/**
+	 * Returns an int
+	 * Wheel Types:
+	 * 0: Sport
+	 * 1: Muscle
+	 * 2: Lowrider
+	 * 3: SUV
+	 * 4: Offroad
+	 * 5: Tuner
+	 * 6: Bike Wheels
+	 * 7: High End
+	 * Tested in Los Santos Customs
+	 */
+	fun getVehicleWheelType(vehicle: Entity): Int {
+		return GetVehicleWheelType(vehicle)
 	}
 
 	fun isVehicleOnAllWheels(vehicle: Entity): Boolean {
@@ -100,6 +135,10 @@ object Client {
 
 	fun toggleVehicleMod(vehicle: Entity, modType: Int, toggle: Boolean) {
 		ToggleVehicleMod(vehicle, modType, toggle)
+	}
+
+	fun getFrameCount(): Int {
+		return GetFrameCount().toInt()
 	}
 
 	fun getFrameTime(): Double {
@@ -765,7 +804,7 @@ object Client {
 	fun doScreenFadeIn(duration: Int): Job {
 		return GlobalScope.launch {
 			DoScreenFadeIn(duration)
-			while (!isScreenFadedIn() && !isScreenFadingOut()) {//todo test
+			while (!isScreenFadedIn() && !isScreenFadingOut()) {
 				delay(25)
 			}
 		}
@@ -778,7 +817,7 @@ object Client {
 	fun doScreenFadeOut(duration: Int): Job {
 		return GlobalScope.launch {
 			DoScreenFadeOut(duration)
-			while (!isScreenFadedOut() && !isScreenFadingIn()) {//todo
+			while (!isScreenFadedOut() && !isScreenFadingIn()) {
 				delay(25)
 			}
 		}
@@ -6504,7 +6543,7 @@ private external fun GetEntitySpeedVector(entity: Entity, relative: Boolean): Ar
 
 //private external fun GetForcedComponent(componentHash: string | number, componentId: number): [number, number, number];
 
-//private external fun GetFrameCount(): number;
+private external fun GetFrameCount(): Number
 
 private external fun GetFrameTime(): Number
 
@@ -9258,20 +9297,7 @@ private external fun GetVehicleWheelHealth(vehicle: Entity, wheelIndex: Int): Nu
  */
 private external fun GetVehicleWheelSpeed(vehicle: Entity, wheelIndex: Int): Number
 
-/**
- * Returns an int
- * Wheel Types:
- * 0: Sport
- * 1: Muscle
- * 2: Lowrider
- * 3: SUV
- * 4: Offroad
- * 5: Tuner
- * 6: Bike Wheels
- * 7: High End
- * Tested in Los Santos Customs
- */
-//private external fun GetVehicleWheelType(vehicle: number): number;
+private external fun GetVehicleWheelType(vehicle: Entity): Int
 
 /**
  * Returns the offset of the specified wheel relative to the wheel's axle center.
@@ -26614,17 +26640,7 @@ private external fun SetVehicleUndriveable(vehicle: Entity, toggle: Boolean)
 
 private external fun SetVehicleWheelHealth(vehicle: Number, wheelIndex: Int, health: Number)
 
-/**
- * 0: Sport
- * 1: Muscle
- * 2: Lowrider
- * 3: SUV
- * 4: Offroad
- * 5: Tuner
- * 6: Bike Wheels
- * 7: High End
- */
-//private external fun SetVehicleWheelType(vehicle: number, WheelType: number)
+private external fun SetVehicleWheelType(vehicle: Entity, WheelType: Int)
 
 /**
  * Adjusts the offset of the specified wheel relative to the wheel's axle center.
@@ -29504,7 +29520,7 @@ external fun GetPlayerTeam(player: Int): Int
  * ---
  * You can't disable controls with this, use SET_PLAYER_CONTROL(...) for this.
  */
-//private external fun IsPlayerControlOn(player: number): number;
+private external fun IsPlayerControlOn(player: Int): Number
 
 //private external fun IsPlayerDead(player: number): number;
 
@@ -29531,7 +29547,7 @@ external fun GetPlayerTeam(player: Int): Int
  * Returns TRUE if the game is in online mode and FALSE if in offline mode.
  * This is an alias for NETWORK_IS_SIGNED_ONLINE.
  */
-//private external fun IsPlayerOnline(): number;
+//private external fun IsPlayerOnline(): number;//todo test? может поможет определить одиночную сессию
 
 /**
  * Checks whether the specified player has a Ped, the Ped is not dead, is not injured and is not arrested.
@@ -29567,7 +29583,7 @@ private external fun IsPlayerSwitchInProgress(): Number
 
 //private external fun IsPlayerTeleportActive(): number;
 
-private external fun IsPlayerVehicleRadioEnabled(): Int
+//private external fun IsPlayerVehicleRadioEnabled(): Number
 
 //private external fun N_0x5f43d83fd6738741(): number;
 

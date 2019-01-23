@@ -190,6 +190,14 @@ class Vehicle(
 
 	val numberOfSeats = Client.getVehicleMaxNumberOfPassengers(entity) + 1
 
+	var wheelType: Int
+		get() {
+			return Client.getVehicleWheelType(entity)
+		}
+		set(value) {
+			Client.setVehicleWheelType(entity, value)
+		}
+
 	init {
 		if (Client.doesEntityExist(entity)) throw VehicleDoesntExistsException()
 

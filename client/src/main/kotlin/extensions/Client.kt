@@ -122,3 +122,11 @@ fun Client.isToggleModOn(vehicle: Entity, modType: NativeVehicleMods): Boolean {
 fun Client.toggleVehicleMod(vehicle: Entity, modType: NativeVehicleMods, toggle: Boolean) {
 	toggleVehicleMod(vehicle, modType.id, toggle)
 }
+
+fun Client.getAverageFPS(): Double {
+	return getFrameCount().toDouble() / getGameTimer()
+}
+
+fun Client.getCurrentFPS(): Double {
+	return 1f / getFrameTime()
+}

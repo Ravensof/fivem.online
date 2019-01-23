@@ -36,7 +36,7 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 	private var audioMusicLevelInMP: Int? = null
 	private var playerRadioStationName: RadioStation? = null
 
-	var accelerationThreshold: Double = 150.0
+	var accelerationThreshold: Double = 150.0 // m/s^2
 		set(value) {
 			if (value > field) {
 				field = value

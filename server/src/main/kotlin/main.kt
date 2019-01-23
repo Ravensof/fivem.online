@@ -26,7 +26,7 @@ fun start() {
 
 		add(RolePlaySystemModule())
 
-//		add(Test())
+		add(Test())
 
 		add(ClientEventExchangerModule())//last
 

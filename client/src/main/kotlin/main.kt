@@ -3,7 +3,6 @@ package online.fivem.client
 import online.fivem.client.gtav.Natives
 import online.fivem.client.modules.basics.BasicsModule
 import online.fivem.client.modules.eventGenerator.EventGeneratorModule
-import online.fivem.client.modules.nuiEventExchanger.NuiEvent
 import online.fivem.client.modules.nuiEventExchanger.NuiEventExchangerModule
 import online.fivem.client.modules.rolePlaySystem.RolePlaySystemModule
 import online.fivem.client.modules.serverEventExchanger.ServerEventExchangerModule
@@ -11,7 +10,6 @@ import online.fivem.client.modules.vehicle.VehicleModule
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.Console
 import online.fivem.common.common.ModuleLoader
-import online.fivem.common.events.HideLoadingScreenEvent
 import online.fivem.common.gtav.NativeEvents
 
 internal fun main(args: Array<String>) {
@@ -40,10 +38,9 @@ fun start() {
 
 		add(ServerEventExchangerModule())//last
 
-//		add(Test())
+		add(Test())
 
 		finally {
-			NuiEvent.emit(HideLoadingScreenEvent())
 
 			Console.log("all modules loaded")
 		}
