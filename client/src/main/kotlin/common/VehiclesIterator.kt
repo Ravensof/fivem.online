@@ -6,13 +6,11 @@ import online.fivem.common.common.Entity
 
 class VehiclesIterator : Iterator<Entity> {
 
-	private var currentEntity: Entity
-	private val handle: Handle
+	private var currentEntity: Entity = -1
+	private var handle: Handle = 0
 
 	init {
-		val findHandle = Client.findFirstVehicle()
-		handle = findHandle.first
-		currentEntity = findHandle.second
+		start()
 	}
 
 	override fun hasNext(): Boolean {
@@ -28,5 +26,11 @@ class VehiclesIterator : Iterator<Entity> {
 
 	fun close() {
 		Client.endFindVehicle(handle)
+	}
+
+	fun start() {
+		val findHandle = Client.findFirstVehicle()
+		handle = findHandle.first
+		currentEntity = findHandle.second
 	}
 }
