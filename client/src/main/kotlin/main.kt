@@ -6,6 +6,7 @@ import online.fivem.client.modules.eventGenerator.EventGeneratorModule
 import online.fivem.client.modules.nuiEventExchanger.NuiEventExchangerModule
 import online.fivem.client.modules.rolePlaySystem.RolePlaySystemModule
 import online.fivem.client.modules.serverEventExchanger.ServerEventExchangerModule
+import online.fivem.client.modules.test.Test
 import online.fivem.client.modules.vehicle.VehicleModule
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.Console

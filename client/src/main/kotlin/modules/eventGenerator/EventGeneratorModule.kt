@@ -218,7 +218,7 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 
 	private fun checkPauseMenuState(state: Int) {
 		if (pauseMenuState != state) {
-			if (pauseMenuState == 0) {
+			if (state == 0) {
 				UEvent.emit(PauseMenuDisabledEvent())
 			} else {
 				UEvent.emit(PauseMenuStateChangedEvent(state))

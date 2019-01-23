@@ -5,5 +5,5 @@ import js.externals.jquery.jQuery
 import org.w3c.dom.HTMLElement
 
 class MainView : View() {
-	override val view: JQuery<HTMLElement> = jQuery("content")
+	override val view: JQuery<HTMLElement> = jQuery("#content")
 }

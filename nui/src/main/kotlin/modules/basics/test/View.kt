@@ -19,9 +19,9 @@ open class View {
 	var isVisible: Boolean
 		set(value) {
 			if (value)
-				view.hide()
-			else
 				view.show()
+			else
+				view.hide()
 		}
 		get() {
 			return view.`is`(":hidden")
