@@ -2,7 +2,7 @@ package online.fivem.nui.modules.basics
 
 import kotlinx.coroutines.CoroutineScope
 import online.fivem.common.common.AbstractModule
-import online.fivem.common.events.ShowGuiEvent
+import online.fivem.common.events.net.ShowGuiEvent
 import online.fivem.nui.modules.basics.test.MainView
 import online.fivem.nui.modules.clientEventEchanger.ClientEvent
 import kotlin.coroutines.CoroutineContext

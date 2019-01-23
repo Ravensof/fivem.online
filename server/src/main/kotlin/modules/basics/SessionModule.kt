@@ -6,7 +6,7 @@ import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.entities.PlayerSrc
-import online.fivem.common.events.ImReadyEvent
+import online.fivem.common.events.net.ImReadyEvent
 import online.fivem.common.gtav.NativeEvents
 import online.fivem.server.Strings
 import online.fivem.server.common.MySQL

@@ -8,7 +8,7 @@ import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.UEvent
 import online.fivem.common.events.PauseMenuStateChangedEvent
-import online.fivem.common.events.ShowGuiEvent
+import online.fivem.common.events.net.ShowGuiEvent
 import kotlin.coroutines.CoroutineContext
 
 class BasicsModule : AbstractModule(), CoroutineScope {

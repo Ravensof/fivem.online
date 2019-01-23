@@ -8,9 +8,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Html
-import online.fivem.common.events.SpeedometerDisableEvent
-import online.fivem.common.events.SpeedometerEnableEvent
-import online.fivem.common.events.SpeedometerUpdateEvent
+import online.fivem.common.events.net.SpeedometerDisableEvent
+import online.fivem.common.events.net.SpeedometerEnableEvent
+import online.fivem.common.events.net.SpeedometerUpdateEvent
 import online.fivem.nui.extensions.nuiResourcesLink
 import online.fivem.nui.extensions.toHTMLImageElement
 import online.fivem.nui.modules.clientEventEchanger.ClientEvent

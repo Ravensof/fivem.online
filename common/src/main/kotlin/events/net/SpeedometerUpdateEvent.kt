@@ -1,4 +1,4 @@
-package online.fivem.common.events
+package online.fivem.common.events.net
 
 class SpeedometerUpdateEvent(
 	val currentGear: Int,

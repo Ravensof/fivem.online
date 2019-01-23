@@ -10,7 +10,7 @@ import online.fivem.common.entities.ClientsNetPacket
 import online.fivem.common.entities.PlayerSrc
 import online.fivem.common.entities.ServersNetPacket
 import online.fivem.common.events.EstablishConnectionEvent
-import online.fivem.common.events.ImReadyEvent
+import online.fivem.common.events.net.ImReadyEvent
 import online.fivem.common.extensions.onNull
 import online.fivem.common.gtav.NativeEvents
 import online.fivem.server.ServerConfig

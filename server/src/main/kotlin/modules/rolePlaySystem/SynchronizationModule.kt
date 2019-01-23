@@ -6,8 +6,8 @@ import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
 import online.fivem.common.entities.CoordinatesX
-import online.fivem.common.events.SynchronizeEvent
 import online.fivem.common.events.net.RequestPackEvent
+import online.fivem.common.events.net.SynchronizeEvent
 import online.fivem.common.extensions.isNotEmpty
 import online.fivem.server.ServerConfig
 import online.fivem.server.common.MySQL

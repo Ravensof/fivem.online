@@ -6,7 +6,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Html
-import online.fivem.common.events.DebugNUITextEvent
+import online.fivem.common.events.net.DebugNUITextEvent
 import online.fivem.nui.modules.basics.test.DebugView
 import online.fivem.nui.modules.basics.test.View
 import online.fivem.nui.modules.clientEventEchanger.ClientEvent

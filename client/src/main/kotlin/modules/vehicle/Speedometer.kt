@@ -6,7 +6,11 @@ import online.fivem.client.gtav.Client
 import online.fivem.client.modules.nuiEventExchanger.NuiEvent
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.UEvent
-import online.fivem.common.events.*
+import online.fivem.common.events.PlayerGetInDriversSeatEvent
+import online.fivem.common.events.PlayerLeftVehicleEvent
+import online.fivem.common.events.net.SpeedometerDisableEvent
+import online.fivem.common.events.net.SpeedometerEnableEvent
+import online.fivem.common.events.net.SpeedometerUpdateEvent
 import online.fivem.common.extensions.orZero
 import online.fivem.common.extensions.repeatJob
 import kotlin.coroutines.CoroutineContext

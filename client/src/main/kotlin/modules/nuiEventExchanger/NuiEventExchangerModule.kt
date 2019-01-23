@@ -10,7 +10,7 @@ import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Serializer
 import online.fivem.common.entities.NuiPacket
-import online.fivem.common.events.ImReadyEvent
+import online.fivem.common.events.net.ImReadyEvent
 
 class NuiEventExchangerModule : AbstractModule() {
 
