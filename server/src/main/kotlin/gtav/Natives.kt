@@ -128,6 +128,16 @@ object Natives {
 		ExecuteCommand(commandString)
 	}
 
+	//todo test
+	// the callback will be called next game tick
+	fun mainThread(callback: () -> Unit) {
+		setImmediate(callback)
+	}
+
+	fun getCurrentResourceName(): String {
+		return GetCurrentResourceName()
+	}
+
 	private fun getNumPlayerIdentifiers(playerSrc: PlayerSrc): Int {
 		return GetNumPlayerIdentifiers(playerSrc.value)
 	}
@@ -392,3 +402,5 @@ private external fun StartResource(resourceName: String): Float
 private external fun StopResource(resourceName: String): Float
 
 private external fun TempBanPlayer(playerSrc: String, reason: String)
+
+private external fun setImmediate(callback: () -> Unit)//todo test

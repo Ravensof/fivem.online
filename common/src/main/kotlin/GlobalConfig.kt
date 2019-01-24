@@ -43,14 +43,15 @@ object GlobalConfig {
 		const val WAKING_UP_TIME = 10_000
 	}
 
-	//	const val RESOURCES_HTTP_HOME = "http://$SERVER_IP:$SERVER_PORT/$MODULE_NAME/"
-	const val RESOURCES_HTTP_HOME = "http://$SERVER_IP/$MODULE_NAME/"
-
 	const val SHOW_CONSOLE_ERROR = true
 	const val SHOW_CONSOLE_INFO = true
 	const val SHOW_CONSOLE_WARN = true
 	const val SHOW_CONSOLE_DEBUG = true
 	const val SHOW_CONSOLE_LOG = true
+
+	//dont touch
+	//	const val RESOURCES_HTTP_HOME = "http://$SERVER_IP:$SERVER_PORT/$MODULE_NAME/"
+	const val RESOURCES_HTTP_HOME = "http://$SERVER_IP/$MODULE_NAME/"
 
 	const val CONSOLE_PREFIX = "$MODULE_NAME/"
 

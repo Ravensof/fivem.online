@@ -18,6 +18,12 @@ object Natives {
 	fun <T> invokeNative(hash: String, vararg args: InputArgument): T {
 		return Citizen.invokeNative(hash, *args)
 	}
+
+	//todo test
+	// the callback will be called next game tick
+	fun mainThread(callback: () -> Unit) {
+		setImmediate(callback)
+	}
 }
 
 private external interface IntPtrInitialized
@@ -83,3 +89,5 @@ private external fun on(eventName: String, callback: Any)
 private external fun onNet(eventName: String, callback: Any)
 
 private external fun setTick(callback: () -> Unit)
+
+private external fun setImmediate(callback: () -> Unit)//todo test
