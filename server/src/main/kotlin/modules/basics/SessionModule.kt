@@ -160,7 +160,9 @@ class SessionModule(override val coroutineContext: CoroutineContext) : AbstractM
 
 			if (result.isNotEmpty()) {
 				val reason = Strings.YOU_ARE_BANNED_FROM_THIS_SERVER.replace("%s", result.first().reason.orEmpty())
-				return@launch Natives.dropPlayer(source, reason)
+				Natives.mainThread {
+					setKickReason(reason)
+				}
 			}
 		}
 	}

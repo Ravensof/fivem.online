@@ -128,8 +128,6 @@ object Natives {
 		ExecuteCommand(commandString)
 	}
 
-	//todo test
-	// the callback will be called next game tick
 	fun mainThread(callback: () -> Unit) {
 		setImmediate(callback)
 	}
@@ -403,4 +401,4 @@ private external fun StopResource(resourceName: String): Float
 
 private external fun TempBanPlayer(playerSrc: String, reason: String)
 
-private external fun setImmediate(callback: () -> Unit)//todo test
+private external fun setImmediate(callback: () -> Unit)
