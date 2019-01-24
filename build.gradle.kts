@@ -5,7 +5,7 @@ buildscript {
 }
 
 plugins {
-	id("kotlin2js").version("1.3.11")
+	id("kotlin2js").version("1.3.20")
 	id("kotlinx-serialization").version("1.3.0")
 }
 
