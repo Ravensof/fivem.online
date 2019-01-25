@@ -4,6 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import online.fivem.client.extensions.networkResurrectLocalPlayer
+import online.fivem.client.extensions.setPlayerModelSync
 import online.fivem.client.gtav.Client
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.UEvent
@@ -36,10 +37,7 @@ class SpawnManagerModule(override val coroutineContext: CoroutineContext) : Abst
 		freezePlayer(playerId, true)
 
 		modelHash?.let {
-			Client.requestModel(it).join()
-
-			Client.setPlayerModel(playerId, it)
-			Client.setModelAsNoLongerNeeded(it)
+			Client.setPlayerModelSync(playerId, it)
 		}
 
 //			Client.requestCollisionAtCoordinates(coordinatesX)//todo не работает?

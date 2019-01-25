@@ -69,12 +69,6 @@ open class View {
 		view.remove()
 	}
 
-	private fun doOnChild(function: (View) -> Unit) {
-		children.forEach {
-			function(it)
-		}
-	}
-
 	suspend fun loadHTML(path: String) {
 		val data = jQuery.get(Html.nuiResourcesLink(path)).await() as String
 		val jquery = jQuery(data)

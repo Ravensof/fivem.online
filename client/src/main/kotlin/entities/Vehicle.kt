@@ -5,10 +5,13 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withTimeout
 import online.fivem.client.extensions.createVehicle
+import online.fivem.client.extensions.setVehicleNeonLightsColour
+import online.fivem.client.extensions.setVehicleTyreSmokeColor
 import online.fivem.client.gtav.Client
 import online.fivem.client.modules.basics.TickExecutorModule
 import online.fivem.common.common.Entity
 import online.fivem.common.entities.CoordinatesX
+import online.fivem.common.entities.RGB
 import online.fivem.common.extensions.orZero
 import online.fivem.common.gtav.NativeVehicles
 
@@ -198,6 +201,93 @@ class Vehicle(
 			Client.setVehicleWheelType(entity, value)
 		}
 
+	var colours: Pair<Int, Int>
+		get() {
+			return Client.getVehicleColours(entity)
+		}
+		set(value) {
+			Client.setVehicleColours(entity, value.first, value.second)
+		}
+
+	var extraColors: Pair<Int, Int>
+		get() {
+			return Client.getVehicleExtraColours(entity)
+		}
+		set(value) {
+			Client.setVehicleExtraColours(entity, value.first, value.second)
+		}
+
+	val model = Client.getEntityModel(entity)
+
+	var livery: Int?
+		get() {
+			return Client.getVehicleLivery(entity)
+		}
+		set(value) {
+			Client.setVehicleLivery(entity, value ?: -1)
+		}
+
+	var numberPlateText: String
+		get() {
+			return Client.getVehicleNumberPlateText(entity).orEmpty()
+		}
+		set(value) {
+			Client.setVehicleNumberPlateText(entity, value)
+		}
+
+	var numberPlateTextIndex: Int
+		get() {
+			return Client.getVehicleNumberPlateTextIndex(entity)
+		}
+		set(value) {
+			Client.setVehicleNumberPlateTextIndex(entity, value)
+		}
+
+	var windowTint: Int
+		get() {
+			return Client.getVehicleWindowTint(entity)
+		}
+		set(value) {
+			Client.setVehicleWindowTint(entity, value)
+		}
+
+	var neonLightsColour: RGB
+		get() {
+			return Client.getVehicleNeonLightsColour(entity)
+		}
+		set(value) {
+			Client.setVehicleNeonLightsColour(entity, value)
+		}
+
+	var tyreSmokeColor: RGB
+		get() {
+			return Client.getVehicleTyreSmokeColor(entity)
+		}
+		set(value) {
+			Client.setVehicleTyreSmokeColor(entity, value)
+		}
+
+	val isOnAllWheels: Boolean
+		get() {
+			return Client.isVehicleOnAllWheels(entity)
+		}
+
+	var brakeLights: Boolean = false
+		set(value) {
+			field = value
+			Client.setVehicleBrakeLights(entity, value)
+		}
+
+	var tyresCanBurst: Boolean
+		get() {
+			return Client.getVehicleTyresCanBurst(entity)
+		}
+		set(value) {
+			Client.setVehicleTyresCanBurst(entity, value)
+		}
+
+	//todo mod, neon
+
 	init {
 		if (Client.doesEntityExist(entity)) throw VehicleDoesntExistsException()
 
@@ -235,10 +325,6 @@ class Vehicle(
 		Client.setVehicleEngineOn(entity, value, false)
 	}
 
-	fun isOnAllWheels(): Boolean {
-		return Client.isVehicleOnAllWheels(entity)
-	}
-
 //	fun setBoostActive(){
 //		Client.setVehicleBoostActive(vehicle, true)
 //		Client.setVehicleForwardSpeed(vehicle, 30)
@@ -268,7 +354,7 @@ class Vehicle(
 				Client.setVehicleWheelHealth(vehicle, index, value)
 			}
 
-		val speed: Number
+		val speed: Int
 			get() {
 				return Client.getVehicleWheelSpeed(vehicle, index)
 			}
@@ -291,10 +377,6 @@ class Vehicle(
 			}
 			set(value) {
 				Client.setVehicleWheelXrot(vehicle, index, value)
-
-				if (tickExecutor == null) return
-				tickExecutor.remove(xRotationExecId)
-				xRotationExecId = tickExecutor.add { Client.setVehicleWheelXrot(vehicle, index, value) }
 			}
 
 

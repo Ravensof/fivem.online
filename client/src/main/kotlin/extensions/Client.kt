@@ -3,7 +3,9 @@ package online.fivem.client.extensions
 import online.fivem.client.gtav.Client
 import online.fivem.common.common.Entity
 import online.fivem.common.common.Utils
+import online.fivem.common.entities.Coordinates
 import online.fivem.common.entities.CoordinatesX
+import online.fivem.common.entities.RGB
 import online.fivem.common.gtav.NativeControls
 import online.fivem.common.gtav.NativeVehicleMods
 
@@ -130,3 +132,36 @@ fun Client.getAverageFPS(): Double {
 fun Client.getCurrentFPS(): Double {
 	return 1f / getFrameTime()
 }
+
+fun Client.setVehicleNeonLightsColour(vehicle: Entity, color: RGB) {
+	setVehicleNeonLightsColour(vehicle, color.red, color.green, color.blue)
+}
+
+fun Client.setVehicleTyreSmokeColor(vehicle: Entity, color: RGB) {
+	setVehicleTyreSmokeColor(vehicle, color.red, color.green, color.blue)
+}
+
+/**
+ * -1 водитель
+ * 0 справа от водителя
+ * 1 позади водителя
+ * 2 ...
+ */
+fun Client.getPassengerSeatOfPedInVehicle(vehicle: Entity, ped: Entity): Int? {
+	for (i in -1 until Client.getVehicleMaxNumberOfPassengers(vehicle)) {
+		if (getPedInVehicleSeat(vehicle, i) == ped) {
+			return i
+		}
+	}
+
+	return null
+}
+
+suspend fun Client.setPlayerModelSync(player: Int, hash: Int) {
+	requestModel(hash).join()
+	setPlayerModel(player, hash)
+	setModelAsNoLongerNeeded(hash)
+}
+
+fun Client.requestCollisionAtCoordinates(coordinates: Coordinates) =
+	requestCollisionAtCoordinates(coordinates.x, coordinates.y, coordinates.z)
