@@ -1,4 +1,4 @@
-package online.fivem.nui.modules.vehicle
+package online.fivem.nui.modules.vehicle.view
 
 import js.externals.jquery.jQuery
 import kotlinx.coroutines.CoroutineScope
@@ -6,22 +6,30 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Html
-import online.fivem.common.events.net.SpeedometerDisableEvent
-import online.fivem.common.events.net.SpeedometerEnableEvent
-import online.fivem.common.events.net.SpeedometerUpdateEvent
+import online.fivem.nui.common.View
 import online.fivem.nui.extensions.nuiResourcesLink
 import online.fivem.nui.extensions.toHTMLImageElement
-import online.fivem.nui.modules.clientEventEchanger.ClientEvent
-import org.w3c.dom.CanvasRenderingContext2D
-import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLImageElement
-import kotlin.browser.document
 import kotlin.coroutines.CoroutineContext
 import kotlin.js.Date
 
-class Speedometer(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
+class SpeedometerSimpleView : View(), CoroutineScope {
+	override val coroutineContext: CoroutineContext = Job()
+
+	var data: SpeedometerData? = null
+		set(value) {
+			field = value ?: return
+
+			launch {
+				speedometerInterpolatorChannel.send(
+					SpeedometerData(
+						speed = value.speed,
+						rpm = value.rpm
+					)
+				)
+			}
+		}
 
 	private val speedometerArrow: HTMLImageElement by lazy {
 		jQuery("<img src=\"$RESOURCES_DIR/arrow-speedometer.svg\"/>").toHTMLImageElement()
@@ -43,51 +51,22 @@ class Speedometer(override val coroutineContext: CoroutineContext) : AbstractMod
 
 	private var drawInterpolatorJob: Job? = null
 
-	private val canvas: HTMLCanvasElement = document.createElement("canvas") as HTMLCanvasElement
-	private val context2D: CanvasRenderingContext2D = canvas.getContext("2d") as CanvasRenderingContext2D
-
 	init {
 		context2D.canvas.width = 440
 		context2D.canvas.height = 212
 	}
 
-	override fun init() {
-		ClientEvent.on<SpeedometerUpdateEvent> {
-			if (speedometerInterpolatorChannel.isFull) return@on
-
-			launch {
-				speedometerInterpolatorChannel.send(
-					SpeedometerData(
-						speed = it.dashboardSpeed,
-						rpm = it.currentRpm
-					)
-				)
-			}
-		}
-
-		ClientEvent.on<SpeedometerEnableEvent> {
-			runSpeedometer()
-			speedometerBlock.show()
-		}
-
-		ClientEvent.on<SpeedometerDisableEvent> {
-			speedometerBlock.hide()
-			drawInterpolatorJob?.cancel()
-		}
+	override fun onShow() {
+		runSpeedometer()
 	}
 
-	override fun start(): Job? {
-		speedometerBlock.append(canvas)
-		jQuery("#content").append(speedometerBlock)
-
-		return super.start()
+	override fun onHide() {
+		drawInterpolatorJob?.cancel()
 	}
 
-	override fun stop(): Job? {
+	override fun onRemove() {
 		drawInterpolatorJob?.cancel()
 		speedometerInterpolatorChannel.close()
-
-		return super.stop()
 	}
 
 	private fun runSpeedometer() {
@@ -158,7 +137,7 @@ class Speedometer(override val coroutineContext: CoroutineContext) : AbstractMod
 		context2D.restore()
 	}
 
-	private class SpeedometerData(
+	class SpeedometerData(
 		val speed: Double,
 		val rpm: Double
 	)

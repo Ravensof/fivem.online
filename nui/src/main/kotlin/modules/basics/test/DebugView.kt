@@ -1,5 +1,7 @@
 package online.fivem.nui.modules.basics.test
 
+import online.fivem.nui.common.View
+
 class DebugView(val id: Int) : View() {
 	init {
 		view.attr(

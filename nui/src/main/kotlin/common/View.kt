@@ -1,16 +1,19 @@
-package online.fivem.nui.modules.basics.test
+package online.fivem.nui.common
 
 import js.externals.jquery.jQuery
 import kotlinx.coroutines.await
 import online.fivem.common.common.Html
 import online.fivem.nui.extensions.nuiResourcesLink
+import org.w3c.dom.CanvasRenderingContext2D
+import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
+import kotlin.browser.document
 
 open class View {
 	open val view: js.externals.jquery.JQuery<HTMLElement> = jQuery("<div class=\"view\"></div>")
 
 	var parent: View? = null
-	private val _children = mutableListOf<View>()
+
 	val children: List<View>
 		get() {
 			return _children
@@ -18,14 +21,27 @@ open class View {
 
 	var isVisible: Boolean
 		set(value) {
-			if (value)
+			if (value) {
+				onShow()
 				view.show()
-			else
+			} else {
 				view.hide()
+				onHide()
+			}
 		}
 		get() {
 			return view.`is`(":hidden")
 		}
+
+	protected val canvas: HTMLCanvasElement by lazy {
+		val canvas = document.createElement("canvas") as HTMLCanvasElement
+		view.append(canvas)
+		canvas
+	}
+
+	protected val context2D: CanvasRenderingContext2D by lazy { canvas.getContext("2d") as CanvasRenderingContext2D }
+
+	private val _children = mutableListOf<View>()
 
 	open fun add(view: View) {
 		this.view.append(view.view)
@@ -33,27 +49,30 @@ open class View {
 		_children.add(view)
 	}
 
-//	fun remove(view: View) {
-//		view.isVisible = false
-//		view.parent = null
-//		_children.remove(view)
-//
-//	}
+	protected open fun onShow() {}
+
+	protected open fun onHide() {}
+
+	protected open fun onRemove() {}
 
 	fun remove() {
 		isVisible = false
 		parent = null
 
-		_children.forEach {
-			it.remove()
+		onRemove()
+
+		children.forEach {
 			_children.remove(it)
+			it.remove()
 		}
 
 		view.remove()
 	}
 
-	fun getChildren(): List<View> {
-		return _children
+	private fun doOnChild(function: (View) -> Unit) {
+		children.forEach {
+			function(it)
+		}
 	}
 
 	suspend fun loadHTML(path: String) {
