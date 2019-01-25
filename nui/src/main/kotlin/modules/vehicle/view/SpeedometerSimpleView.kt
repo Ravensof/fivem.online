@@ -8,8 +8,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import online.fivem.common.common.Html
 import online.fivem.nui.common.View
+import online.fivem.nui.extensions.getImage
 import online.fivem.nui.extensions.nuiResourcesLink
-import online.fivem.nui.extensions.toHTMLImageElement
 import org.w3c.dom.HTMLImageElement
 import kotlin.coroutines.CoroutineContext
 import kotlin.js.Date
@@ -31,13 +31,9 @@ class SpeedometerSimpleView : View(), CoroutineScope {
 			}
 		}
 
-	private val speedometerArrow: HTMLImageElement by lazy {
-		jQuery("<img src=\"$RESOURCES_DIR/arrow-speedometer.svg\"/>").toHTMLImageElement()
-	}
+	private val speedometerArrow: HTMLImageElement = Html.getImage("$RESOURCES_DIR/arrow-speedometer.svg")
 
-	private val tachometerArrow: HTMLImageElement by lazy {
-		jQuery("<img src=\"$RESOURCES_DIR/arrow-tachometer.svg\"/>").toHTMLImageElement()
-	}
+	private val tachometerArrow: HTMLImageElement = Html.getImage("$RESOURCES_DIR/arrow-tachometer.svg")
 
 	private val speedometerBlock by lazy {
 		jQuery(

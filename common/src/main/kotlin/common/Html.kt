@@ -1,5 +1,7 @@
 package online.fivem.common.common
 
+import online.fivem.common.GlobalConfig
+
 class Html {
 	companion object {
 		fun escape(text: String): String {
@@ -23,6 +25,10 @@ class Html {
 
 		fun urlEncode(string: String): String {
 			return encodeURIComponent(string)
+		}
+
+		fun getResourceLink(type: String, link: String): String {
+			return GlobalConfig.RESOURCES_HTTP_HOME + "$type/resources/main/" + link
 		}
 	}
 }
