@@ -8,6 +8,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Html
+import online.fivem.common.common.Utils
 import online.fivem.common.events.net.SpeedometerDisableEvent
 import online.fivem.common.events.net.SpeedometerEnableEvent
 import online.fivem.common.events.net.SpeedometerUpdateEvent
@@ -106,7 +107,7 @@ class Speedometer(override val coroutineContext: CoroutineContext) : AbstractMod
 
 			for (data in speedometerInterpolatorChannel) {
 				stepRPM = (data.rpm * 180 - lastRpm) / INTERPOLATION_STEPS
-				stepSpeed = (data.speed * 2.236936 * 180 / 150 - lastSpeed) / INTERPOLATION_STEPS
+				stepSpeed = (data.speed * Utils.MPS_TO_MILES_PER_HOUR * 180 / 150 - lastSpeed) / INTERPOLATION_STEPS
 
 				for (i in 1..INTERPOLATION_STEPS) {
 					drawingTime = Date.now()

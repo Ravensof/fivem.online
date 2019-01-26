@@ -2,11 +2,11 @@ package online.fivem.common.common
 
 class Stack<Type> : Iterable<Type> {
 
-	private var index = UNDEFINED_INDEX
-	private val _stack = mutableMapOf<Int, Type>()
-	private val indexes = mutableListOf<Int>()
+	private var index: Handle = UNDEFINED_INDEX
+	private val _stack = mutableMapOf<Handle, Type>()
+	private val indexes = mutableListOf<Handle>()
 
-	fun add(data: Type): Int {
+	fun add(data: Type): Handle {
 		val index = ++this.index
 
 		indexes += index
@@ -27,7 +27,11 @@ class Stack<Type> : Iterable<Type> {
 		return null
 	}
 
-	fun remove(index: Int) {
+	fun isEmpty() = _stack.isEmpty()
+
+	fun isNotEmpty() = _stack.isNotEmpty()
+
+	fun remove(index: Handle) {
 		indexes.remove(index)
 		_stack.remove(index)
 	}
@@ -37,6 +41,6 @@ class Stack<Type> : Iterable<Type> {
 	}
 
 	companion object {
-		const val UNDEFINED_INDEX = Int.MIN_VALUE
+		const val UNDEFINED_INDEX = Handle.MIN_VALUE
 	}
 }

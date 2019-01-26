@@ -5,14 +5,13 @@ package online.fivem.client.gtav
 import kotlinx.coroutines.*
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.Entity
+import online.fivem.common.common.Handle
 import online.fivem.common.entities.Coordinates
 import online.fivem.common.entities.RGB
 import online.fivem.common.entities.Time
 import online.fivem.common.gtav.NativeControls
 import online.fivem.common.gtav.ProfileSetting
 import online.fivem.common.gtav.RadioStation
-
-typealias Handle = Int
 
 object Client {
 
@@ -1464,6 +1463,7 @@ object Client {
 	 * Fades the screen in.
 	 * duration: The time the fade should take, in milliseconds.
 	 */
+	@Deprecated("use api.doScreenFadeIn")
 	fun doScreenFadeIn(duration: Int): Job {
 		return GlobalScope.launch {
 			DoScreenFadeIn(duration)
@@ -1481,6 +1481,7 @@ object Client {
 	 * Fades the screen out.
 	 * duration: The time the fade should take, in milliseconds.
 	 */
+	@Deprecated("use api.doScreenFadeOut")
 	fun doScreenFadeOut(duration: Int): Job {
 		return GlobalScope.launch {
 			DoScreenFadeOut(duration)
@@ -1594,6 +1595,7 @@ object Client {
 	 * Flags(256, 260, 384, 768, 896, 900, 952, 1280)
 	 * [ translation: cameraRotation = flags &amp; (1 &lt;&lt; 8) - sfink]
 	 */
+	@Deprecated("use api.lockControl")
 	fun setPlayerControl(player: Int, toggle: Boolean, flags: Number = 0) {
 		SetPlayerControl(player, toggle, flags)
 	}

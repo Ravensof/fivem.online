@@ -4,7 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import online.fivem.client.gtav.Client
+import online.fivem.client.modules.basics.API
 import online.fivem.client.modules.basics.TickExecutorModule
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
@@ -17,6 +17,7 @@ import kotlin.coroutines.CoroutineContext
 class BlackOut(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
 
 	private val tickExecutor by moduleLoader.onReady<TickExecutorModule>()
+	private val api by moduleLoader.onReady<API>()
 	private var timeLeft: Long = 0
 
 	override fun init() {
@@ -39,20 +40,25 @@ class BlackOut(override val coroutineContext: CoroutineContext) : AbstractModule
 		if (timeLeft > 0) return@launch addBlackOut(timeMillis)
 		timeLeft += GlobalConfig.BlackOut.EXTRA_BLACKOUT_TIME + timeMillis
 
-		Client.doScreenFadeOut(100).join()
+		val blackOutHandle = api.doNuiBlackOut(100).await()
+//		Client.doScreenFadeOut(100).join()
+
+		val muteHandle = api.muteSound()
+		val lockHandle = api.lockControl()
+		val ragdollHandle = api.setRagdollEffect()
 
 		var time: Long
-		val playerPed = Client.getPlayerPed()
 
-		val execId = tickExecutor.add { Client.setPedToRagdoll(playerPed) }
 		while (timeLeft > 0) {
 			time = timeLeft
-			Client.setPedToRagdoll(playerPed, time.toInt() + GlobalConfig.BlackOut.WAKING_UP_TIME)
 			delay(time)
 			timeLeft -= time
 		}
 
-		Client.doScreenFadeIn(GlobalConfig.BlackOut.WAKING_UP_TIME).join()
-		tickExecutor.remove(execId)
+		api.unMuteSound(muteHandle)
+		api.undoNuiBlackOut(blackOutHandle, GlobalConfig.BlackOut.WAKING_UP_TIME).join()
+		api.unLockControl(lockHandle)
+		api.removeRagdollEffect(ragdollHandle)
+//		Client.doScreenFadeIn(GlobalConfig.BlackOut.WAKING_UP_TIME).join()
 	}
 }

@@ -6,6 +6,7 @@ import online.fivem.common.common.Utils
 import online.fivem.common.entities.Coordinates
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.entities.RGB
+import online.fivem.common.gtav.NativeAudioScenes
 import online.fivem.common.gtav.NativeControls
 import online.fivem.common.gtav.NativeVehicleMods
 
@@ -39,10 +40,6 @@ fun Client.networkResurrectLocalPlayer(coordinatesX: CoordinatesX, changeTime: B
 		coordinatesX.rotation,
 		changeTime
 	)
-
-fun Client.getEntitySpeedKmH(entity: Int): Double = Utils.mpsToKmh(getEntitySpeed(entity)).toDouble()
-
-fun Client.getEntitySpeedMpH(entity: Int): Double = Utils.mpsToMph(getEntitySpeed(entity)).toDouble()
 
 //ped садится в машину
 fun Client.isPedAtGetInAnyVehicle(ped: Entity): Boolean {
@@ -166,11 +163,19 @@ suspend fun Client.setPlayerModelSync(player: Int, hash: Int) {
 fun Client.requestCollisionAtCoordinates(coordinates: Coordinates) =
 	requestCollisionAtCoordinates(coordinates.x, coordinates.y, coordinates.z)
 
-fun Client.getVehiclePseudoTurboPressure(vehicle: Entity, startRPM: Double = 0.6, endRPM: Double = 1.0): Double {
+fun Client.getVehicleTurboPressureRPMBased(vehicle: Entity, startRPM: Double = 0.6, endRPM: Double = 1.0): Double {
 	return (
 			Utils.normalizeToLimits(
 				getVehicleCurrentRpm(vehicle), startRPM, endRPM
 			) - startRPM
 
 			) / (endRPM - startRPM)
+}
+
+fun Client.startAudioScene(audioScene: NativeAudioScenes) {
+	startAudioScene(audioScene.name)
+}
+
+fun Client.stopAudioScene(audioScene: NativeAudioScenes) {
+	stopAudioScene(audioScene.name)
 }

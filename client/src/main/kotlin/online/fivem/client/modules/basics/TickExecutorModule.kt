@@ -3,6 +3,7 @@ package online.fivem.client.modules.basics
 import kotlinx.coroutines.Job
 import online.fivem.client.gtav.Natives.setTick
 import online.fivem.common.common.AbstractModule
+import online.fivem.common.common.Handle
 import online.fivem.common.common.Stack
 
 class TickExecutorModule : AbstractModule() {
@@ -19,11 +20,11 @@ class TickExecutorModule : AbstractModule() {
 		return super.stop()
 	}
 
-	fun add(function: () -> Unit): Int {
+	fun add(function: () -> Unit): Handle {
 		return tickFunctions.add(function)
 	}
 
-	fun remove(index: Int) {
+	fun remove(index: Handle) {
 		tickFunctions.remove(index)
 	}
 }

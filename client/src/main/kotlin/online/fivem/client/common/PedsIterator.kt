@@ -1,8 +1,8 @@
 package online.fivem.client.common
 
 import online.fivem.client.gtav.Client
-import online.fivem.client.gtav.Handle
 import online.fivem.common.common.Entity
+import online.fivem.common.common.Handle
 
 class PedsIterator : Iterator<Entity> {
 

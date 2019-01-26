@@ -7,6 +7,7 @@ import online.fivem.client.extensions.networkResurrectLocalPlayer
 import online.fivem.client.extensions.setPlayerModelSync
 import online.fivem.client.gtav.Client
 import online.fivem.common.common.AbstractModule
+import online.fivem.common.common.Stack
 import online.fivem.common.common.UEvent
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.events.PlayerSpawnedEvent
@@ -14,6 +15,8 @@ import online.fivem.common.events.net.SpawnVehicleEvent
 import kotlin.coroutines.CoroutineContext
 
 class SpawnManagerModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
+
+	private val api by moduleLoader.onReady<API>()
 
 	override fun start(): Job? {
 		return super.start()
@@ -30,7 +33,7 @@ class SpawnManagerModule(override val coroutineContext: CoroutineContext) : Abst
 
 	fun spawnPlayer(coordinatesX: CoordinatesX, modelHash: Int?): Job = launch {
 
-		Client.doScreenFadeOut(500).join()
+		val fadeHandle = api.doScreenFadeOut(500).await()
 		Client.setEntityCoordsNoOffset(Client.getPlayerPed(), 0, 0, 0, zAxis = true)
 		val playerId = Client.getPlayerId()
 
@@ -56,19 +59,21 @@ class SpawnManagerModule(override val coroutineContext: CoroutineContext) : Abst
 
 		Client.shutdownLoadingScreen()
 
-		Client.doScreenFadeIn(500).join()
-
+		api.doScreenFadeIn(fadeHandle, 500)
 		freezePlayer(playerId, false)
 
 		UEvent.emit(PlayerSpawnedEvent())
 	}
 
+	private var lockControlHandle = Stack.UNDEFINED_INDEX
+
 	private fun freezePlayer(playerSrc: Int, freeze: Boolean) {
-		Client.setPlayerControl(playerSrc, !freeze, 0)
 
 		val ped = Client.getPlayerPed()
 
+		api.unLockControl(lockControlHandle)
 		if (!freeze) {
+
 			if (!Client.isEntityVisible(ped)) {
 				Client.setEntityVisible(ped, true)
 			}
@@ -81,6 +86,7 @@ class SpawnManagerModule(override val coroutineContext: CoroutineContext) : Abst
 			Client.setPlayerInvincible(playerSrc, false)
 
 		} else {
+			lockControlHandle = api.lockControl()
 			if (Client.isEntityVisible(ped)) {
 				Client.setEntityVisible(ped, false)
 			}
