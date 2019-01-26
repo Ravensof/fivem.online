@@ -1,5 +1,3 @@
-package online.fivem.client
-
 import online.fivem.client.gtav.Natives
 import online.fivem.client.modules.basics.BasicsModule
 import online.fivem.client.modules.eventGenerator.EventGeneratorModule

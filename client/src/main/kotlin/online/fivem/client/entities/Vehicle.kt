@@ -390,6 +390,109 @@ class Vehicle(
 	)
 
 	companion object {
+//		fun getProperties(vehicle: Entity): Any {
+//
+//			val color1: Int
+//			val color2: Int
+//
+//			Client.getVehicleColours(vehicle).let {
+//				color1 = it.first
+//				color2 = it.second
+//			}
+//
+//			val pearlescentColor: Int
+//			val wheelColor: Int
+//
+//			Client.getVehicleExtraColours(vehicle).let {
+//				pearlescentColor = it.first
+//				wheelColor = it.second
+//			}
+//
+//			return object {
+//
+//				val model = Client.getEntityModel(vehicle)
+//
+//				val plate = Client.getVehicleNumberPlateText(vehicle)
+//				val plateIndex = Client.getVehicleNumberPlateTextIndex(vehicle)
+//
+//				val health = Client.getEntityHealth(vehicle)
+//				val dirtLevel = Client.getVehicleDirtLevel(vehicle)
+//
+//				val color1 = color1
+//				val color2 = color2
+//
+//				val pearlescentColor = pearlescentColor
+//				val wheelColor = wheelColor
+//
+//				val wheels = Client.getVehicleWheelType(vehicle)
+//				val windowTint = Client.getVehicleWindowTint(vehicle)
+//
+//				val neonEnabled = {
+//					Client.isVehicleNeonLightEnabled(vehicle, 0)
+//					Client.isVehicleNeonLightEnabled(vehicle, 1)
+//					Client.isVehicleNeonLightEnabled(vehicle, 2)
+//					Client.isVehicleNeonLightEnabled(vehicle, 3)
+//				}
+//
+//				val extras = {
+//
+//				}
+//
+//				val neonColor = Client.getVehicleNeonLightsColour(vehicle)
+//				val tyreSmokeColor = Client.getVehicleTyreSmokeColor(vehicle)
+//
+//				val modSpoilers = Client.getVehicleMod(vehicle, 0)
+//				val modFrontBumper = Client.getVehicleMod(vehicle, 1)
+//				val modRearBumper = Client.getVehicleMod(vehicle, 2)
+//				val modSideSkirt = Client.getVehicleMod(vehicle, 3)
+//				val modExhaust = Client.getVehicleMod(vehicle, 4)
+//				val modFrame = Client.getVehicleMod(vehicle, 5)
+//				val modGrille = Client.getVehicleMod(vehicle, 6)
+//				val modHood = Client.getVehicleMod(vehicle, 7)
+//				val modFender = Client.getVehicleMod(vehicle, 8)
+//				val modRightFender = Client.getVehicleMod(vehicle, 9)
+//				val modRoof = Client.getVehicleMod(vehicle, 10)
+//
+//				val modEngine = Client.getVehicleMod(vehicle, 11)
+//				val modBrakes = Client.getVehicleMod(vehicle, 12)
+//				val modTransmission = Client.getVehicleMod(vehicle, 13)
+//				val modHorns = Client.getVehicleMod(vehicle, 14)
+//				val modSuspension = Client.getVehicleMod(vehicle, 15)
+//				val modArmor = Client.getVehicleMod(vehicle, 16)
+//
+//				val modTurbo = Client.isToggleModOn(vehicle, 18)
+//				val modSmokeEnabled = Client.isToggleModOn(vehicle, 20)
+//				val modXenon = Client.isToggleModOn(vehicle, 22)
+//
+//				val modFrontWheels = Client.getVehicleMod(vehicle, 23)
+//				val modBackWheels = Client.getVehicleMod(vehicle, 24)
+//
+//				val modPlateHolder = Client.getVehicleMod(vehicle, 25)
+//				val modVanityPlate = Client.getVehicleMod(vehicle, 26)
+//				val modTrimA = Client.getVehicleMod(vehicle, 27)
+//				val modOrnaments = Client.getVehicleMod(vehicle, 28)
+//				val modDashboard = Client.getVehicleMod(vehicle, 29)
+//				val modDial = Client.getVehicleMod(vehicle, 30)
+//				val modDoorSpeaker = Client.getVehicleMod(vehicle, 31)
+//				val modSeats = Client.getVehicleMod(vehicle, 32)
+//				val modSteeringWheel = Client.getVehicleMod(vehicle, 33)
+//				val modShifterLeavers = Client.getVehicleMod(vehicle, 34)
+//				val modAPlate = Client.getVehicleMod(vehicle, 35)
+//				val modSpeakers = Client.getVehicleMod(vehicle, 36)
+//				val modTrunk = Client.getVehicleMod(vehicle, 37)
+//				val modHydrolic = Client.getVehicleMod(vehicle, 38)
+//				val modEngineBlock = Client.getVehicleMod(vehicle, 39)
+//				val modAirFilter = Client.getVehicleMod(vehicle, 40)
+//				val modStruts = Client.getVehicleMod(vehicle, 41)
+//				val modArchCover = Client.getVehicleMod(vehicle, 42)
+//				val modAerials = Client.getVehicleMod(vehicle, 43)
+//				val modTrimB = Client.getVehicleMod(vehicle, 44)
+//				val modTank = Client.getVehicleMod(vehicle, 45)
+//				val modWindows = Client.getVehicleMod(vehicle, 46)
+//				val modLivery = Client.getVehicleLivery(vehicle)
+//			}
+//		}
+
 		fun create(
 			id: Int,
 			vehicleModel: NativeVehicles,
