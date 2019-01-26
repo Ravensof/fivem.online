@@ -1102,6 +1102,7 @@ object Client {
 		return GetVehicleCurrentGear(vehicle)
 	}
 
+	//0.0-1.0
 	fun getVehicleCurrentRpm(vehicle: Entity): Double {
 		return GetVehicleCurrentRpm(vehicle)
 	}
@@ -1172,8 +1173,8 @@ object Client {
 		return GetVehiclePetrolTankHealth(vehicle).toDouble()
 	}
 
-	fun getVehicleTurboPressure(vehicle: Entity): Float? {//todo string?
-		return if (doesEntityExist(vehicle)) GetVehicleTurboPressure(vehicle).toFloat() else null
+	fun getVehicleTurboPressure(vehicle: Entity): Float? {
+		return if (doesEntityExist(vehicle)) GetVehicleTurboPressure(vehicle) else null
 	}
 
 	fun setVehicleTurboPressure(vehicle: Entity, pressure: Number) {
@@ -9741,7 +9742,7 @@ private external fun GetVehiclePetrolTankHealth(vehicle: Int): Number
  */
 //private external fun GetVehicleTrailerVehicle(vehicle: number, trailer: number): number;
 
-private external fun GetVehicleTurboPressure(vehicle: Int): Number
+private external fun GetVehicleTurboPressure(vehicle: Int): Float
 
 private external fun GetVehicleTyreSmokeColor(vehicle: Entity): Array<Int>
 

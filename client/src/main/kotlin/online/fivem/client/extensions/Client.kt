@@ -165,3 +165,12 @@ suspend fun Client.setPlayerModelSync(player: Int, hash: Int) {
 
 fun Client.requestCollisionAtCoordinates(coordinates: Coordinates) =
 	requestCollisionAtCoordinates(coordinates.x, coordinates.y, coordinates.z)
+
+fun Client.getVehiclePseudoTurboPressure(vehicle: Entity, startRPM: Double = 0.6, endRPM: Double = 1.0): Double {
+	return (
+			Utils.normalizeToLimits(
+				getVehicleCurrentRpm(vehicle), startRPM, endRPM
+			) - startRPM
+
+			) / (endRPM - startRPM)
+}
