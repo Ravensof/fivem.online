@@ -42,7 +42,22 @@ class HowlOptions(
 	val rate: Double = 1.0,
 	val pool: Int = 5,
 	val xhrWithCredentials: Boolean = true,
-	val format: List<String> = listOf("opus", "ogg", "mp3"),
+	val format: Array<String> = arrayOf(
+		"mp3",
+		"mpeg",
+		"opus",
+		"ogg",
+		"oga",
+		"wav",
+		"aac",
+		"caf",
+		"m4a",
+		"mp4",
+		"weba",
+		"webm",
+		"dolby",
+		"flac"
+	),
 	val volume: Double = 1.0,
 
 	val onload: () -> Unit = {},

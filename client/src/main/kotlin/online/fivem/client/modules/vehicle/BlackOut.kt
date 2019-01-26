@@ -5,7 +5,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import online.fivem.client.modules.basics.API
-import online.fivem.client.modules.basics.TickExecutorModule
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
@@ -16,7 +15,6 @@ import kotlin.coroutines.CoroutineContext
 
 class BlackOut(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
 
-	private val tickExecutor by moduleLoader.onReady<TickExecutorModule>()
 	private val api by moduleLoader.onReady<API>()
 	private var timeLeft: Long = 0
 
@@ -27,10 +25,8 @@ class BlackOut(override val coroutineContext: CoroutineContext) : AbstractModule
 		}
 
 		UEvent.on<AccelerationThresholdAchievedEvent> {
-			/*
-			todo падение с 10 метров дает 314м/с^2,
-			повысить порог до 300м/с2?
-			 */
+			if (it.accelerationModule < 250) return@on
+
 			Console.debug("blackout from ${it.accelerationModule.toInt()} m/s^2")//1176
 			blackOut(0)
 		}
@@ -44,7 +40,7 @@ class BlackOut(override val coroutineContext: CoroutineContext) : AbstractModule
 		if (timeLeft > 0) return@launch addBlackOut(timeMillis)
 		timeLeft += GlobalConfig.BlackOut.EXTRA_BLACKOUT_TIME + timeMillis
 
-		val blackOutHandle = api.doNuiBlackOut(0).await()
+		val blackOutHandle = api.doNuiBlackOut().await()
 
 		val muteHandle = api.muteSound()
 		val lockHandle = api.lockControl()
@@ -59,8 +55,8 @@ class BlackOut(override val coroutineContext: CoroutineContext) : AbstractModule
 		}
 
 		api.unMuteSound(muteHandle)
-		api.undoNuiBlackOut(blackOutHandle, GlobalConfig.BlackOut.WAKING_UP_TIME).join()
 		api.unLockControl(lockHandle)
+		api.undoNuiBlackOut(blackOutHandle, GlobalConfig.BlackOut.WAKING_UP_TIME).join()
 		api.removeRagdollEffect(ragdollHandle)
 	}
 }

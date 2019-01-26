@@ -21,6 +21,12 @@ class InternetRadio : AbstractModule() {
 	private val radioStationList = GlobalConfig.internetRadioStations
 
 	override fun init() {
+		radioStationList.forEach {
+			it.value.name?.let { name ->
+				Client.addTextEntry(it.key, name)
+			}
+		}
+
 		UEvent.on<PlayerRadioStationChangedEvent> { onPlayerVehicleRadioStationChanged(it.radioStation) }
 
 		UEvent.on<AudioMusicLevelInMPChangedEvent> {

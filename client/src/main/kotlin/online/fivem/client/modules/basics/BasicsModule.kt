@@ -15,9 +15,6 @@ class BasicsModule : AbstractModule(), CoroutineScope {
 
 	override val coroutineContext: CoroutineContext = Job()
 
-	private var menuStateChangeExecutorId = -1
-	private val tickExecutor by moduleLoader.onReady<TickExecutorModule>()
-
 	override fun init() {
 		UEvent.on<PauseMenuStateChangedEvent> { onPauseMenuStateChanged(it.pauseMenuState) }
 
@@ -38,15 +35,6 @@ class BasicsModule : AbstractModule(), CoroutineScope {
 
 	private fun onPauseMenuStateChanged(state: Int) {
 		NuiEvent.emit(ShowGuiEvent(state == 0))
-
-		if (state != 0 && menuStateChangeExecutorId != -1) return
-
-		if (state == 0) {
-			tickExecutor.remove(menuStateChangeExecutorId)
-			menuStateChangeExecutorId = -1
-		} else {
-			menuStateChangeExecutorId = tickExecutor.add(::changeHeaderInMainMenu)
-		}
 	}
 
 	private fun changeHeaderInMainMenu() {
