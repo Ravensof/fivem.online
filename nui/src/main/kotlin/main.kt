@@ -1,5 +1,3 @@
-package online.fivem.nui
-
 import online.fivem.common.common.Console
 import online.fivem.common.common.ModuleLoader
 import online.fivem.nui.modules.basics.BasicsModule
