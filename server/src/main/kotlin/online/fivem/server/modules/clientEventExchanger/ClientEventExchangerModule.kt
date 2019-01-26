@@ -43,10 +43,10 @@ class ClientEventExchangerModule : AbstractModule(), CoroutineScope {
 				Strings.CLIENT_WRONG_PACKET_FORMAT
 			)
 
-			if (netPacket.playersCount == 1 && Natives.getPlayers().count() > 1) return@onNet Natives.dropPlayer(
-				playerSrc,
-				Strings.CLIENT_SINGLE_SESSION
-			)
+//			if (netPacket.playersCount == 1 && Natives.getPlayers().count() > 1) return@onNet Natives.dropPlayer(
+//				playerSrc,
+//				Strings.CLIENT_SINGLE_SESSION
+//			)
 
 			launch {
 				val channel = playersReceiveChannels[playerSrc.value]
