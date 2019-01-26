@@ -23,9 +23,22 @@ class API(
 
 	private val nuiBlackOutScreenStack = UnitStack()
 
-	fun doNuiBlackOut(duration: Int) = setJob(nuiBlackOutScreenStack) {
+	fun doNuiBlackOut(duration: Int = 0) = setJob(nuiBlackOutScreenStack) {
+		var supportId = -1
+
+		if (duration == 0) {
+			supportId = tickExecutor.add {
+				Client.drawRect(
+					0.0, 0.0,
+					1000.0, 2000.0,//todo подставлять разрешение экрана
+					0, 0, 0
+				)
+			}
+		}
+
 		NuiEvent.emit(BlackOutEvent(duration))
 		delay(duration.toLong())
+		tickExecutor.remove(supportId)
 	}
 
 	fun undoNuiBlackOut(handle: Handle, duration: Int) = unsetJob(nuiBlackOutScreenStack, handle) {

@@ -27,6 +27,10 @@ class BlackOut(override val coroutineContext: CoroutineContext) : AbstractModule
 		}
 
 		UEvent.on<AccelerationThresholdAchievedEvent> {
+			/*
+			todo падение с 10 метров дает 314м/с^2,
+			повысить порог до 300м/с2?
+			 */
 			Console.debug("blackout from ${it.accelerationModule.toInt()} m/s^2")//1176
 			blackOut(0)
 		}
@@ -40,8 +44,7 @@ class BlackOut(override val coroutineContext: CoroutineContext) : AbstractModule
 		if (timeLeft > 0) return@launch addBlackOut(timeMillis)
 		timeLeft += GlobalConfig.BlackOut.EXTRA_BLACKOUT_TIME + timeMillis
 
-		val blackOutHandle = api.doNuiBlackOut(100).await()
-//		Client.doScreenFadeOut(100).join()
+		val blackOutHandle = api.doNuiBlackOut(0).await()
 
 		val muteHandle = api.muteSound()
 		val lockHandle = api.lockControl()
@@ -59,6 +62,5 @@ class BlackOut(override val coroutineContext: CoroutineContext) : AbstractModule
 		api.undoNuiBlackOut(blackOutHandle, GlobalConfig.BlackOut.WAKING_UP_TIME).join()
 		api.unLockControl(lockHandle)
 		api.removeRagdollEffect(ragdollHandle)
-//		Client.doScreenFadeIn(GlobalConfig.BlackOut.WAKING_UP_TIME).join()
 	}
 }
