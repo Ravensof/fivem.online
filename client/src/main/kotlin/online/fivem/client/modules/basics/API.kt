@@ -18,6 +18,7 @@ import online.fivem.common.extensions.UnitStack
 import online.fivem.common.extensions.set
 import online.fivem.common.extensions.unset
 import online.fivem.common.gtav.NativeAudioScenes
+import online.fivem.common.gtav.NativeControls
 import kotlin.coroutines.CoroutineContext
 
 class API(
@@ -25,11 +26,16 @@ class API(
 ) : AbstractModule(), CoroutineScope {
 
 	private val tickExecutor by moduleLoader.onReady<TickExecutorModule>()
+	private val controlHandlerModule by moduleLoader.onReady<ControlHandlerModule>()
 
 	fun setPlayerCoordinates(coordinates: Coordinates) {
-		UEvent.emit(PlayersPedTeleportingEvent())
-		Client.setEntityCoordsNoOffset(Client.getPlayerPed(), coordinates.x, coordinates.y, coordinates.z)
-		UEvent.emit(PlayersPedTeleportedEvent())
+		launch {
+			UEvent.emit(PlayersPedTeleportingEvent())
+			delay(1_000)
+			Client.setEntityCoordsNoOffset(Client.getPlayerPed(), coordinates.x, coordinates.y, coordinates.z)
+			delay(1_000)
+			UEvent.emit(PlayersPedTeleportedEvent())
+		}
 	}
 
 	private val nuiBlackOutScreenStack = UnitStack()
@@ -85,13 +91,11 @@ class API(
 	private val playerControlStack = UnitStack()
 
 	fun lockControl(): Handle = playerControlStack.set {
-		@Suppress("DEPRECATION")
-		Client.setPlayerControl(Client.getPlayerId(), false)
+		controlHandlerModule.addListener(LockControlListener)
 	}
 
 	fun unLockControl(handle: Handle) = playerControlStack.unset(handle) {
-		@Suppress("DEPRECATION")
-		Client.setPlayerControl(Client.getPlayerId(), true)
+		controlHandlerModule.removeListener(LockControlListener)
 	}
 
 	private val muteSoundStack = UnitStack()
@@ -118,5 +122,13 @@ class API(
 				doOnce()
 			}
 		}
+	}
+
+	private object LockControlListener : ControlHandlerModule.Listener {
+		override val registeredKeys: List<NativeControls.Keys> = NativeControls.Keys.values().toList()
+		override fun onJustPressed(control: NativeControls.Keys): Boolean = true
+		override fun onJustReleased(control: NativeControls.Keys): Boolean = true
+		override fun onLongPressed(control: NativeControls.Keys): Boolean = true
+		override fun onShortPressed(control: NativeControls.Keys): Boolean = true
 	}
 }

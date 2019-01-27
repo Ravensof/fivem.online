@@ -16,7 +16,8 @@ object GlobalConfig {
 	val internetRadioStations: Map<String, InternetRadioStation> = mapOf(
 		RadioStation.RADIO_01_CLASS_ROCK.name to InternetRadioStation(
 			url = "http://de1.internet-radio.com:8005/live",
-			name = "Los Santos Rock Radio"
+			name = "Los Santos Rock Radio",
+			defaultVolume = 0.8
 		),  // Los Santos Rock Radio
 
 		RadioStation.RADIO_02_POP.name to InternetRadioStation(
@@ -34,7 +35,7 @@ object GlobalConfig {
 		RadioStation.RADIO_04_PUNK.name to InternetRadioStation(
 			url = "http://158.174.163.217:8000/;?type=http&nocache=79766",
 			name = "Synth, EBM, Industrial, C64, and more!",
-			defaultVolume = 1.0
+			defaultVolume = 0.7
 		),        // Channel X
 //		RadioStations.RADIO_05_TALK_01.name to InternetRadioStation("http://server1.fivem.online:8000/", 2.3),     // West Coast Talk Radio
 //		RadioStation.RADIO_06_COUNTRY.name to InternetRadioStation(
@@ -50,7 +51,7 @@ object GlobalConfig {
 		RadioStation.RADIO_08_MEXICAN.name to InternetRadioStation(
 			url = "http://162.247.76.193:7000/stream",
 			name = "Cacoteo Radio",
-			defaultVolume = 0.4
+			defaultVolume = 0.5
 		),     // East Los FM
 
 		RadioStation.RADIO_09_HIPHOP_OLD.name to InternetRadioStation(
@@ -61,7 +62,8 @@ object GlobalConfig {
 
 		RadioStation.RADIO_11_TALK_02.name to InternetRadioStation(
 			url = "http://air.radiorecord.ru:805/hbass_320",
-			name = "Hard Bass"
+			name = "Hard Bass",
+			defaultVolume = 0.4
 		),      // Blaine County Radio
 
 //		RadioStation.RADIO_12_REGGAE.name to InternetRadioStation(
@@ -72,19 +74,19 @@ object GlobalConfig {
 		RadioStation.RADIO_13_JAZZ.name to InternetRadioStation(
 			"http://air.radiorecord.ru:805/fbass_320",
 			"Future Bass",
-			0.5
+			0.4
 		),        // Worldwide FM
 
 		RadioStation.RADIO_14_DANCE_02.name to InternetRadioStation(
 			url = "http://air.radiorecord.ru:805/tm_320",
 			name = "Trancemission",
-			defaultVolume = 0.6
+			defaultVolume = 0.4
 		),    // FlyLo FM
 
 		RadioStation.RADIO_15_MOTOWN.name to InternetRadioStation(
 			url = "http://air.radiorecord.ru:805/yo_320",
 			name = "Yo! FM",
-			defaultVolume = 0.7
+			defaultVolume = 0.5
 		),      // The Lowdown 91.1
 
 		RadioStation.RADIO_16_SILVERLAKE.name to InternetRadioStation(
@@ -101,7 +103,7 @@ object GlobalConfig {
 		RadioStation.RADIO_18_90S_ROCK.name to InternetRadioStation(
 			url = "http://212.83.150.15:8111/stream",
 			name = "DISCO FUNK",
-			defaultVolume = 0.4
+			defaultVolume = 0.3
 		),    // Vinewood Boulevard Radio
 
 		RadioStation.RADIO_20_THELAB.name to InternetRadioStation(
