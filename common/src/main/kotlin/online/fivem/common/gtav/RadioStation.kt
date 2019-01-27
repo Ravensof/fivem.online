@@ -22,5 +22,6 @@ enum class RadioStation {
 	RADIO_19_USER,        // Self Radio
 	RADIO_20_THELAB,      // The Lab
 
-	RADIO_22_DLC_BATTLE_MIX1_RADIO,//??
+	RADIO_21_DLC_XM17, // Blonded Los Santos 97.8 FM
+	RADIO_22_DLC_BATTLE_MIX1_RADIO,//LS UR
 }

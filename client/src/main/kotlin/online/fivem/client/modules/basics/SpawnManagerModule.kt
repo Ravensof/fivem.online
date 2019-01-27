@@ -9,6 +9,7 @@ import online.fivem.client.gtav.Client
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Stack
 import online.fivem.common.common.UEvent
+import online.fivem.common.entities.Coordinates
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.events.PlayerSpawnedEvent
 import online.fivem.common.events.net.SpawnVehicleEvent
@@ -34,7 +35,7 @@ class SpawnManagerModule(override val coroutineContext: CoroutineContext) : Abst
 	fun spawnPlayer(coordinatesX: CoordinatesX, modelHash: Int?): Job = launch {
 
 		val fadeHandle = api.doScreenFadeOut(500).await()
-		Client.setEntityCoordsNoOffset(Client.getPlayerPed(), 0, 0, 0, zAxis = true)
+		api.setPlayerCoordinates(Coordinates(0, 0, 0))
 		val playerId = Client.getPlayerId()
 
 		freezePlayer(playerId, true)
@@ -47,7 +48,7 @@ class SpawnManagerModule(override val coroutineContext: CoroutineContext) : Abst
 
 		val ped = Client.getPlayerPed()
 
-		Client.setEntityCoordsNoOffset(ped, coordinatesX.x, coordinatesX.y, coordinatesX.z, zAxis = true)
+		api.setPlayerCoordinates(coordinatesX)
 		Client.networkResurrectLocalPlayer(coordinatesX)
 		Client.clearPedTasksImmediately(ped)
 		Client.removeAllPedWeapons(ped)

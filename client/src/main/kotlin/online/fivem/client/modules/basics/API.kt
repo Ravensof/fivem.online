@@ -8,18 +8,29 @@ import online.fivem.client.modules.nuiEventExchanger.NuiEvent
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Handle
 import online.fivem.common.common.Stack
+import online.fivem.common.common.UEvent
+import online.fivem.common.entities.Coordinates
+import online.fivem.common.events.PlayersPedTeleportedEvent
+import online.fivem.common.events.PlayersPedTeleportingEvent
 import online.fivem.common.events.net.BlackOutEvent
 import online.fivem.common.events.net.CancelBlackOutEvent
+import online.fivem.common.extensions.UnitStack
+import online.fivem.common.extensions.set
+import online.fivem.common.extensions.unset
 import online.fivem.common.gtav.NativeAudioScenes
 import kotlin.coroutines.CoroutineContext
-
-private typealias UnitStack = Stack<Unit>
 
 class API(
 	override val coroutineContext: CoroutineContext
 ) : AbstractModule(), CoroutineScope {
 
 	private val tickExecutor by moduleLoader.onReady<TickExecutorModule>()
+
+	fun setPlayerCoordinates(coordinates: Coordinates) {
+		UEvent.emit(PlayersPedTeleportingEvent())
+		Client.setEntityCoordsNoOffset(Client.getPlayerPed(), coordinates.x, coordinates.y, coordinates.z)
+		UEvent.emit(PlayersPedTeleportedEvent())
+	}
 
 	private val nuiBlackOutScreenStack = UnitStack()
 
@@ -62,34 +73,34 @@ class API(
 	private var ragdollExecutorId = Stack.UNDEFINED_INDEX
 
 
-	fun setRagdollEffect(): Handle = set(ragdollStack) {
+	fun setRagdollEffect(): Handle = ragdollStack.set {
 		val playerPed = Client.getPlayerPed()
 		ragdollExecutorId = tickExecutor.add { Client.setPedToRagdoll(playerPed) }
 	}
 
-	fun removeRagdollEffect(handle: Handle) = unset(ragdollStack, handle) {
+	fun removeRagdollEffect(handle: Handle) = ragdollStack.unset(handle) {
 		tickExecutor.remove(ragdollExecutorId)
 	}
 
 	private val playerControlStack = UnitStack()
 
-	fun lockControl(): Handle = set(playerControlStack) {
+	fun lockControl(): Handle = playerControlStack.set {
 		@Suppress("DEPRECATION")
 		Client.setPlayerControl(Client.getPlayerId(), false)
 	}
 
-	fun unLockControl(handle: Handle) = unset(playerControlStack, handle) {
+	fun unLockControl(handle: Handle) = playerControlStack.unset(handle) {
 		@Suppress("DEPRECATION")
 		Client.setPlayerControl(Client.getPlayerId(), true)
 	}
 
 	private val muteSoundStack = UnitStack()
 
-	fun muteSound(): Handle = set(muteSoundStack) {
+	fun muteSound(): Handle = muteSoundStack.set {
 		Client.startAudioScene(NativeAudioScenes.MP_LEADERBOARD_SCENE)
 	}
 
-	fun unMuteSound(handle: Handle) = unset(muteSoundStack, handle) {
+	fun unMuteSound(handle: Handle) = muteSoundStack.unset(handle) {
 		Client.stopAudioScene(NativeAudioScenes.MP_LEADERBOARD_SCENE)
 	}
 
@@ -106,20 +117,6 @@ class API(
 			if (stack.isEmpty()) {
 				doOnce()
 			}
-		}
-	}
-
-	private fun set(stack: UnitStack, doOnce: () -> Unit): Handle {
-		if (stack.isEmpty()) {
-			doOnce()
-		}
-		return stack.add(Unit)
-	}
-
-	private fun unset(stack: UnitStack, handle: Handle, doOnce: () -> Unit) {
-		stack.remove(handle)
-		if (stack.isEmpty()) {
-			doOnce()
 		}
 	}
 }

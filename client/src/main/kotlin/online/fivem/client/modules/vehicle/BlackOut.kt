@@ -11,21 +11,29 @@ import online.fivem.common.common.Console
 import online.fivem.common.common.UEvent
 import online.fivem.common.events.AccelerationThresholdAchievedEvent
 import online.fivem.common.events.PlayerPedHealthZeroEvent
+import online.fivem.common.events.PlayersPedTeleportedEvent
+import online.fivem.common.events.PlayersPedTeleportingEvent
 import kotlin.coroutines.CoroutineContext
 
 class BlackOut(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
 
 	private val api by moduleLoader.onReady<API>()
 	private var timeLeft: Long = 0
+	private var isAllowed = true
 
 	override fun init() {
+		UEvent.on<PlayersPedTeleportingEvent> { isAllowed = false }
+		UEvent.on<PlayersPedTeleportedEvent> { isAllowed = true }
+
 		UEvent.on<PlayerPedHealthZeroEvent> {
+			if (!isAllowed) return@on
+
 			Console.debug("blackout from commas")
 			blackOut(0)//GlobalConfig.BlackOut.BLACKOUT_TIME_FROM_COMMAS)
 		}
 
 		UEvent.on<AccelerationThresholdAchievedEvent> {
-			if (it.accelerationModule < 250) return@on
+			if (!isAllowed || it.accelerationModule < 250) return@on
 
 			Console.debug("blackout from ${it.accelerationModule.toInt()} m/s^2")//1176
 			blackOut(0)
