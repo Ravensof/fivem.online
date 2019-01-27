@@ -13,16 +13,16 @@ class MainControlListener : AbstractModule(), ControlHandlerModule.Listener {
 
 	private val controlHandlerModule by moduleLoader.onReady<ControlHandlerModule>()
 
-	override fun start(): Job? {
+	override fun onStart(): Job? {
 		controlHandlerModule.addListener(this)
 
-		return super.start()
+		return super.onStart()
 	}
 
-	override fun stop(): Job? {
+	override fun onStop(): Job? {
 		controlHandlerModule.removeListener(this)
 
-		return super.stop()
+		return super.onStop()
 	}
 
 	override fun onShortPressed(control: NativeControls.Keys): Boolean {

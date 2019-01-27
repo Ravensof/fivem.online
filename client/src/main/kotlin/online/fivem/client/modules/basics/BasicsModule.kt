@@ -15,22 +15,22 @@ class BasicsModule : AbstractModule(), CoroutineScope {
 
 	override val coroutineContext: CoroutineContext = Job()
 
-	override fun init() {
+	override fun onInit() {
 		UEvent.on<PauseMenuStateChangedEvent> { onPauseMenuStateChanged(it.pauseMenuState) }
 
 		moduleLoader.apply {
 			add(TickExecutorModule())
 			add(ControlHandlerModule(coroutineContext))
+			add(API(coroutineContext))
 			add(JoinTransitionModule(coroutineContext))
 			add(SpawnManagerModule(coroutineContext))
-			add(API(coroutineContext))
 		}
 	}
 
-	override fun start(): Job? {
+	override fun onStart(): Job? {
 		changeHeaderInMainMenu()
 
-		return super.start()
+		return super.onStart()
 	}
 
 	private fun onPauseMenuStateChanged(state: Int) {

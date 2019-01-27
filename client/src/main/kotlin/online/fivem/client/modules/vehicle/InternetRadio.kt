@@ -1,6 +1,8 @@
 package online.fivem.client.modules.vehicle
 
 import kotlinx.coroutines.Job
+import online.fivem.client.extensions.start
+import online.fivem.client.extensions.stop
 import online.fivem.client.gtav.Client
 import online.fivem.client.modules.nuiEventExchanger.NuiEvent
 import online.fivem.common.GlobalConfig
@@ -20,7 +22,7 @@ class InternetRadio : AbstractModule() {
 
 	private val radioStationList = GlobalConfig.internetRadioStations
 
-	override fun init() {
+	override fun onInit() {
 		radioStationList.forEach {
 			it.value.name?.let { name ->
 				Client.addTextEntry(it.key, name)
@@ -34,10 +36,10 @@ class InternetRadio : AbstractModule() {
 		}
 	}
 
-	override fun start(): Job? {
+	override fun onStart(): Job? {
 		NuiEvent.emit(InternetRadioVolumeChangeEvent(this@InternetRadio.volume))
 
-		return super.start()
+		return super.onStart()
 	}
 
 	fun playRadio(radio: InternetRadioStation) {
@@ -81,9 +83,9 @@ class InternetRadio : AbstractModule() {
 		Client.setFrontendRadioActive(!mute)
 
 		if (mute) {
-			Client.startAudioScene(NativeAudioScenes.DLC_MPHEIST_TRANSITION_TO_APT_FADE_IN_RADIO_SCENE.name)
+			NativeAudioScenes.DLC_MPHEIST_TRANSITION_TO_APT_FADE_IN_RADIO_SCENE.start()
 		} else {
-			Client.stopAudioScene(NativeAudioScenes.DLC_MPHEIST_TRANSITION_TO_APT_FADE_IN_RADIO_SCENE.name)
+			NativeAudioScenes.DLC_MPHEIST_TRANSITION_TO_APT_FADE_IN_RADIO_SCENE.stop()
 		}
 	}
 

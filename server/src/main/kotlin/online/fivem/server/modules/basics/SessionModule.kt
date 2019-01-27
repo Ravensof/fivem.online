@@ -25,7 +25,7 @@ class SessionModule(override val coroutineContext: CoroutineContext) : AbstractM
 	private val players = mutableMapOf<PlayerSrc, Player>()
 	private val basicsModule by moduleLoader.onReady<BasicsModule>()
 
-	override fun init() {
+	override fun onInit() {
 		Exports.on(NativeEvents.Server.PLAYER_CONNECTING, ::onClientConnecting)
 		Exports.on(NativeEvents.Server.PLAYER_DROPPED, ::onPlayerDropped)
 

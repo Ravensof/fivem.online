@@ -60,7 +60,7 @@ class RealisticFailureModule(
 
 	private var mainJob: Job? = null
 
-	override fun init() {
+	override fun onInit() {
 		moduleLoader.on<TickExecutorModule> { someFunc() }
 		UEvent.on<PlayerGetInDriversSeatEvent> { startThings() }
 		UEvent.on<PlayerLeftVehicleEvent> { stopThings() }

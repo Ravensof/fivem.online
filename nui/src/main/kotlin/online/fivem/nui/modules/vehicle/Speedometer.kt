@@ -52,7 +52,7 @@ class Speedometer(override val coroutineContext: CoroutineContext) : AbstractMod
 		context2D.canvas.height = 212
 	}
 
-	override fun init() {
+	override fun onInit() {
 		ClientEvent.on<SpeedometerUpdateEvent> {
 			if (speedometerInterpolatorChannel.isFull) return@on
 
@@ -77,18 +77,18 @@ class Speedometer(override val coroutineContext: CoroutineContext) : AbstractMod
 		}
 	}
 
-	override fun start(): Job? {
+	override fun onStart(): Job? {
 		speedometerBlock.append(canvas)
 		jQuery("#content").append(speedometerBlock)
 
-		return super.start()
+		return super.onStart()
 	}
 
-	override fun stop(): Job? {
+	override fun onStop(): Job? {
 		drawInterpolatorJob?.cancel()
 		speedometerInterpolatorChannel.close()
 
-		return super.stop()
+		return super.onStop()
 	}
 
 	private fun runSpeedometer() {

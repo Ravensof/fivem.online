@@ -11,7 +11,7 @@ import online.fivem.common.common.Console
 import online.fivem.common.common.ModuleLoader
 import online.fivem.common.gtav.NativeEvents
 
-internal fun main(args: Array<String>) {
+internal fun main() {
 
 	Natives.on(NativeEvents.Client.RESOURCE_START) { resource: String ->
 		if (resource == GlobalConfig.MODULE_NAME) {

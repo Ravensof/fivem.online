@@ -14,16 +14,16 @@ class NuiFileShareModule(override val coroutineContext: CoroutineContext) : Abst
 	private val httpServerModule by moduleLoader.onReady<HttpServerModule>()
 	private val disposable = mutableListOf<Int>()
 
-	override fun start(): Job? {
+	override fun onStart(): Job? {
 		shareList.forEach { disposable += httpServerModule.handlers.add(it to ::handler) }
 
-		return super.start()
+		return super.onStart()
 	}
 
-	override fun stop(): Job? {
+	override fun onStop(): Job? {
 		disposable.forEach { httpServerModule.handlers.remove(it) }
 
-		return super.stop()
+		return super.onStop()
 	}
 
 	//не работает для бинарных файлов

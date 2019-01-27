@@ -1,8 +1,8 @@
 package online.fivem.client.modules.basics
 
 import kotlinx.coroutines.*
-import online.fivem.client.extensions.startAudioScene
-import online.fivem.client.extensions.stopAudioScene
+import online.fivem.client.extensions.start
+import online.fivem.client.extensions.stop
 import online.fivem.client.gtav.Client
 import online.fivem.client.modules.nuiEventExchanger.NuiEvent
 import online.fivem.common.common.AbstractModule
@@ -101,11 +101,11 @@ class API(
 	private val muteSoundStack = UnitStack()
 
 	fun muteSound(): Handle = muteSoundStack.set {
-		Client.startAudioScene(NativeAudioScenes.MP_LEADERBOARD_SCENE)
+		NativeAudioScenes.MP_LEADERBOARD_SCENE.start()
 	}
 
 	fun unMuteSound(handle: Handle) = muteSoundStack.unset(handle) {
-		Client.stopAudioScene(NativeAudioScenes.MP_LEADERBOARD_SCENE)
+		NativeAudioScenes.MP_LEADERBOARD_SCENE.stop()
 	}
 
 	private fun setJob(stack: UnitStack, doOnce: suspend () -> Unit): Deferred<Handle> = async {

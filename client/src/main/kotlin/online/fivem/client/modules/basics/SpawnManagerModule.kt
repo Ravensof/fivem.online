@@ -19,10 +19,6 @@ class SpawnManagerModule(override val coroutineContext: CoroutineContext) : Abst
 
 	private val api by moduleLoader.onReady<API>()
 
-	override fun start(): Job? {
-		return super.start()
-	}
-
 	private fun vehicleSpawn(event: SpawnVehicleEvent) {
 		launch {
 			//			val vehicle = withTimeout(5_000) { Client.createVehicle(event.vehicleModel, event.coordinatesX).await() }

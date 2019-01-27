@@ -12,7 +12,7 @@ import kotlin.coroutines.CoroutineContext
 class BasicsModule : AbstractModule(), CoroutineScope {
 	override val coroutineContext: CoroutineContext = SupervisorJob()
 
-	override fun init() {
+	override fun onInit() {
 		moduleLoader.add(MySQLModule(coroutineContext))
 		moduleLoader.add(CommandsModule())
 		moduleLoader.add(HttpServerModule(coroutineContext))

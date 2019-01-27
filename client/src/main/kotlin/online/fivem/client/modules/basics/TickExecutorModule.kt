@@ -10,14 +10,14 @@ class TickExecutorModule : AbstractModule() {
 
 	private val tickFunctions = Stack<() -> Unit>()
 
-	override fun init() {
+	override fun onInit() {
 		setTick { tickFunctions.forEach { it() } }
 	}
 
-	override fun stop(): Job? {
+	override fun onStop(): Job? {
 		tickFunctions.clear()
 
-		return super.stop()
+		return super.onStop()
 	}
 
 	fun add(function: () -> Unit): Handle {

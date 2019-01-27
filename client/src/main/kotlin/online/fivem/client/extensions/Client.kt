@@ -6,8 +6,6 @@ import online.fivem.common.common.Utils
 import online.fivem.common.entities.Coordinates
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.entities.RGB
-import online.fivem.common.gtav.NativeAudioScenes
-import online.fivem.common.gtav.NativeControls
 import online.fivem.common.gtav.NativeVehicleMods
 
 fun Client.createVehicle(
@@ -49,42 +47,6 @@ fun Client.isPedAtGetInAnyVehicle(ped: Entity): Boolean {
 //ped пытается сесть в машину
 fun Client.isPedGettingInAnyVehicle(ped: Entity): Boolean {
 	return Client.isPedInAnyVehicle(ped, true) != Client.isPedInAnyVehicle(ped, false)
-}
-
-fun Client.disableControlAction(
-	inputGroup: NativeControls.Groups = Client.defaultControlGroup,
-	control: NativeControls.Keys,
-	disable: Boolean = true
-) {
-	disableControlAction(inputGroup.index, control.index, disable)
-}
-
-fun Client.isControlPressed(
-	inputGroup: NativeControls.Groups = Client.defaultControlGroup,
-	control: NativeControls.Keys
-): Boolean {
-	return Client.isControlPressed(inputGroup.index, control.index)
-}
-
-fun Client.isDisabledControlJustPressed(
-	inputGroup: NativeControls.Groups = Client.defaultControlGroup,
-	control: NativeControls.Keys
-): Boolean {
-	return isDisabledControlJustPressed(inputGroup.index, control.index)
-}
-
-fun Client.isDisabledControlJustReleased(
-	inputGroup: NativeControls.Groups = Client.defaultControlGroup,
-	control: NativeControls.Keys
-): Boolean {
-	return isDisabledControlJustReleased(inputGroup.index, control.index)
-}
-
-fun Client.isDisabledControlPressed(
-	inputGroup: NativeControls.Groups = Client.defaultControlGroup,
-	control: NativeControls.Keys
-): Boolean {
-	return isDisabledControlPressed(inputGroup.index, control.index)
 }
 
 fun Client.drawScreenText2D(
@@ -170,12 +132,4 @@ fun Client.getVehicleTurboPressureRPMBased(vehicle: Entity, startRPM: Double = 0
 			) - startRPM
 
 			) / (endRPM - startRPM)
-}
-
-fun Client.startAudioScene(audioScene: NativeAudioScenes) {
-	startAudioScene(audioScene.name)
-}
-
-fun Client.stopAudioScene(audioScene: NativeAudioScenes) {
-	stopAudioScene(audioScene.name)
 }

@@ -17,7 +17,7 @@ class ServerEventExchangerModule : AbstractModule() {
 
 	var key: Double? = null
 
-	override fun init() {
+	override fun onInit() {
 		Natives.onNet(GlobalConfig.NET_EVENT_NAME) { netPacket: String ->
 			try {
 				val packet = Serializer.unserialize<ServersNetPacket>(netPacket)
@@ -32,7 +32,7 @@ class ServerEventExchangerModule : AbstractModule() {
 	}
 
 	@ExperimentalCoroutinesApi
-	override fun start(): Job? {
+	override fun onStart(): Job? {
 
 		val pauseChannel = Channel<Boolean>()
 

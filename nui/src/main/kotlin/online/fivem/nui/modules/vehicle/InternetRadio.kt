@@ -33,22 +33,22 @@ class InternetRadio : AbstractModule(), CoroutineScope {
 
 	private var internetRadioStation: InternetRadioStation? = null
 
-	override fun start(): Job? {
+	override fun onStart(): Job? {
 		ClientEvent.on<InternetRadioChangedEvent> { changeStation(it.internetRadioStation) }
 
 		ClientEvent.on<InternetRadioStopEvent> { disable() }
 
 		ClientEvent.on<InternetRadioVolumeChangeEvent> { changeVolume(it.volume) }
 
-		return super.start()
+		return super.onStart()
 	}
 
-	override fun stop(): Job? {
+	override fun onStop(): Job? {
 		howler?.unload()
 		howler = null
 		noisePlayer.unload()
 
-		return super.stop()
+		return super.onStop()
 	}
 
 	private fun changeVolume(volume: Double) {

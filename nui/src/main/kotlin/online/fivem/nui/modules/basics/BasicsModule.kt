@@ -9,7 +9,8 @@ class BasicsModule : AbstractModule(), CoroutineScope {
 
 	override val coroutineContext: CoroutineContext = SupervisorJob()
 
-	override fun init() {
+	override fun onInit() {
 		moduleLoader.add(GUIModule(coroutineContext))
+		moduleLoader.add(PlaySoundModule())
 	}
 }

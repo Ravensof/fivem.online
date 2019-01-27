@@ -5,34 +5,36 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import online.fivem.client.gtav.Client
 import online.fivem.common.common.AbstractModule
-import online.fivem.common.gtav.NativeAudioScenes
+import online.fivem.common.common.Stack
 import kotlin.coroutines.CoroutineContext
 
 class JoinTransitionModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
 
 	private var switchingPlayerJob: Job? = null
 	private val tickExecutor by moduleLoader.onReady<TickExecutorModule>()
+	private val api by moduleLoader.onReady<API>()
 
-	override fun init() {
-		Client.setManualShutdownLoadingScreenNui(true)
-		startTransition()
+	private var muteHandle = Stack.UNDEFINED_INDEX
 
-		launch {
-			switchingPlayerJob?.join()
+	override fun onInit() {
+		moduleLoader.on<API> {
+			Client.setManualShutdownLoadingScreenNui(true)
+			startTransition()
 
-			Client.shutdownLoadingScreen()
-			Client.doScreenFadeOut(0)
-			Client.shutdownLoadingScreenNui()
-			Client.doScreenFadeIn(500).join()
+			launch {
+				switchingPlayerJob?.join()
+
+				Client.shutdownLoadingScreen()
+				val fadeHandle = api.doScreenFadeOut(0).await()
+				Client.shutdownLoadingScreenNui()
+				api.doScreenFadeIn(fadeHandle, 500).join()
+			}
 		}
 	}
 
-	override fun start(): Job? {
-		return super.start()
-	}
-
 	fun startTransition(): Job {
-		muteSound(MUTE_SOUND)
+		api.unMuteSound(muteHandle)
+		muteHandle = api.muteSound()
 
 		return launch {
 			if (!Client.isPlayerSwitchInProgress()) {
@@ -47,7 +49,7 @@ class JoinTransitionModule(override val coroutineContext: CoroutineContext) : Ab
 			val execId = tickExecutor.add { clearScreen() }
 
 			switchingPlayerJob?.join()
-			muteSound(false)
+			api.unMuteSound(muteHandle)
 
 			Client.switchInPlayer(Client.getPlayerPed()).join()
 			tickExecutor.remove(execId)
@@ -61,16 +63,7 @@ class JoinTransitionModule(override val coroutineContext: CoroutineContext) : Ab
 		Client.setDrawOrigin(0, 0, 0, 0)
 	}
 
-	private fun muteSound(mute: Boolean) {
-		if (mute) {
-			Client.startAudioScene(NativeAudioScenes.MP_LEADERBOARD_SCENE.name)
-		} else {
-			Client.stopAudioScene(NativeAudioScenes.MP_LEADERBOARD_SCENE.name)
-		}
-	}
-
 	companion object {
 		const val CLOUD_OPACITY = 0.01
-		const val MUTE_SOUND = true
 	}
 }

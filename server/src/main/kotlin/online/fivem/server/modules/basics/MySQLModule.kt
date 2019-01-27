@@ -9,7 +9,7 @@ class MySQLModule(override val coroutineContext: CoroutineContext) : AbstractMod
 
 	val mySQL = MySQL(coroutineContext)
 
-	override fun init() {
+	override fun onInit() {
 		mySQL.connect()
 	}
 }

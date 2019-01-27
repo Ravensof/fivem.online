@@ -21,13 +21,18 @@ class ModuleLoader : CoroutineScope {
 	private val events = Event(coroutineContext)
 
 	fun add(module: AbstractModule) {
-		module.moduleLoader = this@ModuleLoader
-		module.init()
-		launch {
-			if (queue.isFull) {
-				Console.warn("ModuleLoader`s queue is full")
+		try {
+			module.moduleLoader = this@ModuleLoader
+			module.onInit()
+
+			launch {
+				if (queue.isFull) {
+					Console.warn("ModuleLoader`s queue is full")
+				}
+				queue.send(module)
 			}
-			queue.send(module)
+		} catch (exception: Throwable) {
+			Console.error("failed to load module ${module::class.simpleName}: \r\n${exception.message}\r\n ${exception.cause}")
 		}
 	}
 
@@ -35,30 +40,45 @@ class ModuleLoader : CoroutineScope {
 		finally = function
 	}
 
-	fun start() {
-		launch {
+	fun start() = launch {
 
-			while (!queue.isEmpty) {
-				val module = queue.receive()
+		var module: AbstractModule
+
+		while (!queue.isEmpty) {
+			module = queue.receive()
+
+			try {
 				Console.log("start module ${module::class.simpleName}")
-				module.start()?.join()
+				module.onStart()?.join()
 				modules.add(module)
 
 				val event = ModuleLoadedEvent(module)
 
 				UEvent.emit(event)
 				events.emit(module)
+			} catch (exception: Throwable) {
+				Console.error(
+					"failed to start module ${module::class.simpleName}: \n" +
+							"${exception.message}\n" +
+							" ${exception.cause}"
+				)
 			}
-			finally?.invoke()
 		}
+		finally?.invoke()
 	}
 
-	fun stop() {
-		launch {
-			modules.asReversed().forEach {
+	fun stop() = launch {
+		modules.asReversed().forEach {
+			try {
 				Console.log("stop module ${it::class.simpleName}")
 				modules.remove(it)
-				it.stop()?.join()
+				it.onStop()?.join()
+			} catch (exception: Throwable) {
+				Console.error(
+					"failed to stop module ${it::class.simpleName}: \n" +
+							"${exception.message}\n" +
+							" ${exception.cause}"
+				)
 			}
 		}
 	}

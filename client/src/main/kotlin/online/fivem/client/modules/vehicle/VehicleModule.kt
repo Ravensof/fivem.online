@@ -8,7 +8,7 @@ import kotlin.coroutines.CoroutineContext
 class VehicleModule : AbstractModule(), CoroutineScope {
 	override val coroutineContext: CoroutineContext = Job()
 
-	override fun init() {
+	override fun onInit() {
 		moduleLoader.apply {
 			add(InternetRadio())
 			add(Speedometer(coroutineContext))

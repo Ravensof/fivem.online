@@ -4,7 +4,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import online.fivem.client.extensions.disableControlAction
 import online.fivem.client.extensions.isControlPressed
-import online.fivem.client.gtav.Client
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Stack
 import online.fivem.common.extensions.orZero
@@ -21,16 +20,16 @@ class ControlHandlerModule(override val coroutineContext: CoroutineContext) : Ab
 
 	private val pressedKeys = mutableMapOf<NativeControls.Keys, Double>()
 
-	override fun start(): Job? {
+	override fun onStart(): Job? {
 		executorId = tickExecutor.add(::checkPressedKeys)
 
-		return super.start()
+		return super.onStart()
 	}
 
-	override fun stop(): Job? {
+	override fun onStop(): Job? {
 		tickExecutor.remove(executorId)
 
-		return super.stop()
+		return super.onStop()
 	}
 
 	fun addListener(listener: Listener) {
@@ -49,7 +48,7 @@ class ControlHandlerModule(override val coroutineContext: CoroutineContext) : Ab
 		val activeHandler = handlers.lastOrNull() ?: return
 
 		activeHandler.registeredKeys.forEach {
-			val isControlPressed = Client.isControlPressed(group, it)
+			val isControlPressed = it.isControlPressed()
 
 			if (isControlPressed) {
 
@@ -80,7 +79,7 @@ class ControlHandlerModule(override val coroutineContext: CoroutineContext) : Ab
 
 	private fun disableAllKeys() {
 		NativeControls.Keys.values().forEach {
-			Client.disableControlAction(control = it)
+			it.disableControlAction()
 		}
 	}
 

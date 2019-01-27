@@ -9,7 +9,7 @@ class InteractionMenu : AbstractModule() {
 
 	private val controlHandlerModule by moduleLoader.onReady<ControlHandlerModule>()
 
-	override fun init() {
+	override fun onInit() {
 		moduleLoader.on<MainControlListener> {
 			it.onShortPressListener(
 				NativeControls.Keys.INTERACTION_MENU,
@@ -17,7 +17,7 @@ class InteractionMenu : AbstractModule() {
 			)
 		}
 
-		super.init()
+		super.onInit()
 	}
 
 	private fun onInteractionMenuButton(): Boolean {

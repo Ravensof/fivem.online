@@ -11,7 +11,7 @@ import kotlin.coroutines.CoroutineContext
 class BlackScreenModule(override val coroutineContext: CoroutineContext) :
 	AbstractModule(), CoroutineScope {
 
-	override fun init() {
+	override fun onInit() {
 		val blackBlock = jQuery(
 			"""
 				<div style="

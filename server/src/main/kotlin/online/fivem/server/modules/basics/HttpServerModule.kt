@@ -17,16 +17,16 @@ class HttpServerModule(override val coroutineContext: CoroutineContext) : Abstra
 		handlers.add(Regex(".*") to ::handler404)
 	}
 
-	override fun start(): Job? {
+	override fun onStart(): Job? {
 		Exports.setHttpHandler(::handler)
 
-		return super.start()
+		return super.onStart()
 	}
 
-	override fun stop(): Job? {
+	override fun onStop(): Job? {
 		handlers.clear()
 
-		return super.stop()
+		return super.onStop()
 	}
 
 	private fun handler(request: Request, response: Response) {

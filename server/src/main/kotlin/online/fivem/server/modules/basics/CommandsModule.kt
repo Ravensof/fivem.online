@@ -8,20 +8,20 @@ import online.fivem.common.common.AbstractModule
 
 class CommandsModule : AbstractModule() {
 
-	override fun start(): Job? {
+	override fun onStart(): Job? {
 		GlobalScope.launch {
 			for (command in executionQueue) {
 				CommandEvent.handle(command)
 			}
 		}
 
-		return super.start()
+		return super.onStart()
 	}
 
-	override fun stop(): Job? {
+	override fun onStop(): Job? {
 		executionQueue.close()
 
-		return super.stop()
+		return super.onStop()
 	}
 
 	class Command(

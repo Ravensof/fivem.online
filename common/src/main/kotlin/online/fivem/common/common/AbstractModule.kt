@@ -5,9 +5,9 @@ import kotlinx.coroutines.Job
 abstract class AbstractModule {
 	lateinit var moduleLoader: ModuleLoader
 
-	open fun init() {}
+	open fun onInit() {}
 
-	open fun start(): Job? = null
+	open fun onStart(): Job? = null
 
-	open fun stop(): Job? = null
+	open fun onStop(): Job? = null
 }

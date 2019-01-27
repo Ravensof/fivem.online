@@ -49,10 +49,10 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 
 	private var isPedAtGetInAnyVehicle: Boolean? = null
 
-	override fun init() {
+	override fun onInit() {
 	}
 
-	override fun start(): Job? {
+	override fun onStart(): Job? {
 
 		repeatJob(50) {
 			if (playerPed == 0) return@repeatJob
@@ -78,13 +78,13 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 			checkIsScreenFadedInOut(Client.isScreenFadedOut())
 		}
 
-		return super.start()
+		return super.onStart()
 	}
 
-	override fun stop(): Job? {
+	override fun onStop(): Job? {
 		cancel()
 
-		return super.stop()
+		return super.onStop()
 	}
 
 	private fun checkPlayerTryingToGetAnyVehicle() {

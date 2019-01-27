@@ -92,7 +92,7 @@ object GlobalConfig {
 		RadioStation.RADIO_16_SILVERLAKE.name to InternetRadioStation(
 			url = "http://ice3.somafm.com/indiepop-128-mp3",
 			name = "SomaFM: Indie Pop Rock",
-			defaultVolume = 0.6
+			defaultVolume = 0.7
 		),  // Radio Mirror Park
 
 //		RadioStation.RADIO_17_FUNK.name to InternetRadioStation(
@@ -109,7 +109,7 @@ object GlobalConfig {
 		RadioStation.RADIO_20_THELAB.name to InternetRadioStation(
 			url = "http://air.radiorecord.ru:805/rave_320",
 			name = "Rave FM",
-			defaultVolume = 0.6
+			defaultVolume = 0.4
 		),      // The Lab
 
 		RadioStation.RADIO_21_DLC_XM17.name to InternetRadioStation(
@@ -126,9 +126,10 @@ object GlobalConfig {
 	)
 
 	object BlackOut {
-		const val BLACKOUT_TIME_FROM_COMMAS: Long = 30_000
-		const val EXTRA_BLACKOUT_TIME: Long = 15_000
-		const val WAKING_UP_TIME = 10_000
+		const val BLACKOUT_TIME_FROM_COMMAS: Long = 30 //seconds
+		const val ACCELERATION_THRESHOLD: Long = 250 // m/s^2
+		const val EXTRA_BLACKOUT_TIME: Long = 15//seconds
+		const val WAKING_UP_TIME = 10//seconds
 	}
 
 	const val SHOW_CONSOLE_ERROR = true

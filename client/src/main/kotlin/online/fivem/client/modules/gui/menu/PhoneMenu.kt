@@ -20,7 +20,7 @@ class PhoneMenu(
 	private val controlHandlerModule by moduleLoader.onReady<ControlHandlerModule>()
 	private var navigatorListener: NavigationControlsHandler? = null
 
-	override fun init() {
+	override fun onInit() {
 		moduleLoader.on<MainControlListener> {
 			it.onShortPressListener(
 				NativeControls.Keys.PHONE,
@@ -28,7 +28,7 @@ class PhoneMenu(
 			)
 		}
 
-		super.init()
+		super.onInit()
 	}
 
 	override fun onKeyUp() {

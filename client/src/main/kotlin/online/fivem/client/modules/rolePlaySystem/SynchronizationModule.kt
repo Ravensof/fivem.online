@@ -19,7 +19,7 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 	private val spawnManager by moduleLoader.onReady<SpawnManagerModule>()
 	private val joinTransition by moduleLoader.onReady<JoinTransitionModule>()
 
-	override fun init() {
+	override fun onInit() {
 		ServerEvent.on<RequestPackEvent> { onServerRequest(it.kClasses) }
 		ServerEvent.on<SpawnPlayerEvent> { onPlayerSpawn(it.coordinatesX, it.model) }
 //		ServerEvent.on<SpawnVehicleEvent> { onVehicleSpawn(it) }

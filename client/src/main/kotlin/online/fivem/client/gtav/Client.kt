@@ -1008,10 +1008,12 @@ object Client {
 	 * Used to prepare a scene where the surrounding sound is muted or a bit changed. This does not play any sound.
 	 * List of all usable scene names found in b617d. Sorted alphabetically and identical names removed: pastebin.com/MtM9N9CC
 	 */
+	@Deprecated("use NativeAudioScenes.{scene}.play()")
 	fun startAudioScene(scene: String): Boolean {
 		return StartAudioScene(scene) == 1
 	}
 
+	@Deprecated("use NativeAudioScenes.{scene}.stop()")
 	fun stopAudioScene(scene: String) {
 		StopAudioScene(scene)
 	}
@@ -1354,33 +1356,37 @@ object Client {
 	 * };
 	 * 0, 1 and 2 used in the scripts.
 	 */
+	@Deprecated("use NativeControls.Keys.isControlEnabled")
 	fun isControlEnabled(
-		inputGroup: NativeControls.Groups = defaultControlGroup,
-		control: NativeControls.Keys
+		inputGroup: Int = defaultControlGroup.index,
+		control: Int
 	): Boolean {
-		return IsControlEnabled(inputGroup.index, control.index) == 1
+		return IsControlEnabled(inputGroup, control) == 1
 	}
 
+	@Deprecated("use NativeControls.Keys.isControlJustPressed")
 	fun isControlJustPressed(
-		inputGroup: NativeControls.Groups = defaultControlGroup,
-		control: NativeControls.Keys
+		inputGroup: Int = defaultControlGroup.index,
+		control: Int
 	): Boolean {
-		return IsControlJustPressed(inputGroup.index, control.index) == 1
+		return IsControlJustPressed(inputGroup, control) == 1
 	}
 
+	@Deprecated("use NativeControls.Keys.isControlJustReleased")
 	fun isControlJustReleased(
-		inputGroup: NativeControls.Groups = defaultControlGroup,
-		control: NativeControls.Keys
+		inputGroup: Int = defaultControlGroup.index,
+		control: Int
 	): Boolean {
-		return IsControlJustReleased(inputGroup.index, control.index) == 1
+		return IsControlJustReleased(inputGroup, control) == 1
 	}
 
 	/**
 	 * index always is 2 for xbox 360 controller and razerblade
 	 * 0, 1 and 2 used in the scripts. 0 is by far the most common of them.
 	 */
+	@Deprecated("use NativeControls.Keys.isControlPressed")
 	fun isControlPressed(
-		inputGroup: Int,
+		inputGroup: Int = defaultControlGroup.index,
 		control: Int
 	): Boolean {
 		return IsControlPressed(inputGroup, control) == 1
@@ -1389,11 +1395,12 @@ object Client {
 	/**
 	 * 0, 1 and 2 used in the scripts. 0 is by far the most common of them.
 	 */
+	@Deprecated("use NativeControls.Keys.isControlReleased")
 	fun isControlReleased(
-		inputGroup: NativeControls.Groups = defaultControlGroup,
-		control: NativeControls.Keys
+		inputGroup: Int = defaultControlGroup.index,
+		control: Int
 	): Boolean {
-		return IsControlReleased(inputGroup.index, control.index) == 1
+		return IsControlReleased(inputGroup, control) == 1
 	}
 
 	/**
@@ -1434,6 +1441,7 @@ object Client {
 	 * Example: CONTROLS::DISABLE_CONTROL_ACTION(2, 19, true) disables the switching UI from appearing both when using a keyboard and Xbox 360 controller. Needs to be executed each frame.
 	 * Control group 1 and 0 gives the same results as 2. Same results for all players.
 	 */
+	@Deprecated("use NativeControls.Keys.disableControlAction")
 	fun disableControlAction(
 		inputGroup: Int,
 		control: Int,
@@ -1445,6 +1453,7 @@ object Client {
 	/**
 	 * 0, 1 and 2 used in the scripts. 0 is by far the most common of them.
 	 */
+	@Deprecated("use NativeControls.Keys.isDisabledControlJustPressed")
 	fun isDisabledControlJustPressed(
 		inputGroup: Int,
 		control: Int
@@ -1455,6 +1464,7 @@ object Client {
 	/**
 	 * 0, 1 and 2 used in the scripts. 0 is by far the most common of them.
 	 */
+	@Deprecated("use NativeControls.Keys.isDisabledControlJustReleased")
 	fun isDisabledControlJustReleased(
 		inputGroup: Int,
 		control: Int
@@ -1465,6 +1475,7 @@ object Client {
 	/**
 	 * 0, 1 and 2 used in the scripts. 0 is by far the most common of them.
 	 */
+	@Deprecated("use NativeControls.Keys.isDisabledControlPressed")
 	fun isDisabledControlPressed(
 		inputGroup: Int,
 		control: Int

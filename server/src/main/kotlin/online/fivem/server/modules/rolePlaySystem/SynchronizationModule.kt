@@ -27,7 +27,7 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 
 	private lateinit var mySQL: MySQL
 
-	override fun init() {
+	override fun onInit() {
 		ClientEvent.on<SynchronizeEvent> { playerSrc, synchronizeEvent ->
 			launch {
 				if (syncDataChannel.isFull) {
@@ -43,19 +43,19 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 	}
 
 	@ExperimentalCoroutinesApi
-	override fun start(): Job? {
+	override fun onStart(): Job? {
 		synchronizationJob.start()
 		requestJob.start()
 
-		return super.start()
+		return super.onStart()
 	}
 
-	override fun stop(): Job? {
+	override fun onStop(): Job? {
 		requestJob.cancel()
 		synchronizationJob.cancel()
 		mySQL.close()
 
-		return super.stop()
+		return super.onStop()
 	}
 
 	private fun requestJob() = launch {

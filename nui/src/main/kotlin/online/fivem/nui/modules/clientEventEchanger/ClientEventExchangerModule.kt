@@ -19,7 +19,7 @@ import kotlin.coroutines.CoroutineContext
 class ClientEventExchangerModule : AbstractModule(), EventListener, CoroutineScope {
 	override val coroutineContext: CoroutineContext = Job()
 
-	override fun start(): Job? {
+	override fun onStart(): Job? {
 		window.addEventListener("message", this)
 
 		val channel = Channel<Unit>()
@@ -44,10 +44,10 @@ class ClientEventExchangerModule : AbstractModule(), EventListener, CoroutineSco
 		}
 	}
 
-	override fun stop(): Job? {
+	override fun onStop(): Job? {
 		window.removeEventListener("message", this)
 
-		return super.stop()
+		return super.onStop()
 	}
 
 	override fun handleEvent(event: Event) {

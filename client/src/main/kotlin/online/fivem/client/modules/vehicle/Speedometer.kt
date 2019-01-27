@@ -19,7 +19,7 @@ class Speedometer(override val coroutineContext: CoroutineContext) : AbstractMod
 	private var vehicleHasSpeedo = false
 	private var updateJob: Job? = null
 
-	override fun init() {
+	override fun onInit() {
 		UEvent.on<PlayerGetInDriversSeatEvent> { onPlayerJoinVehicle() }
 		UEvent.on<PlayerLeftVehicleEvent> { onPlayerLeftVehicle() }
 	}

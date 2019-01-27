@@ -31,7 +31,7 @@ class ClientEventExchangerModule : AbstractModule(), CoroutineScope {
 
 	private val playersList = mutableMapOf<Int, Double>()
 
-	override fun init() {
+	override fun onInit() {
 		Exports.on(NativeEvents.Server.PLAYER_DROPPED) { playerId: Int, _: String -> onPlayerDropped(playerId) }
 
 		Natives.onNet(GlobalConfig.NET_EVENT_NAME) { playerSrc: PlayerSrc, netPacket: Any ->
@@ -77,7 +77,7 @@ class ClientEventExchangerModule : AbstractModule(), CoroutineScope {
 	}
 
 	@ExperimentalCoroutinesApi
-	override fun start(): Job? {
+	override fun onStart(): Job? {
 		playersSendChannels.forEachIndexed { playerSrc, channel ->
 			launch {
 				for (data in channel) {
@@ -120,13 +120,13 @@ class ClientEventExchangerModule : AbstractModule(), CoroutineScope {
 			}
 		}
 
-		return super.start()
+		return super.onStart()
 	}
 
-	override fun stop(): Job? {
+	override fun onStop(): Job? {
 		cancel()
 
-		return super.stop()
+		return super.onStop()
 	}
 
 	private fun onPlayerDropped(playerId: Int) {
