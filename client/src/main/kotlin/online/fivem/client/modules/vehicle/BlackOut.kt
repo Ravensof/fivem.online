@@ -58,7 +58,7 @@ class BlackOut(override val coroutineContext: CoroutineContext) : AbstractModule
 		if (timeLeft > 0) return@launch addBlackOut(timeMillis)
 		timeLeft += EXTRA_BLACKOUT_TIME * 1_000 + timeMillis
 
-		val blackOutHandle = api.doNuiBlackOut().await()
+		val blackOutHandle = api.doNuiBlackOut()
 
 		val muteHandle = api.muteSound()
 		val lockHandle = api.lockControl()
@@ -76,7 +76,7 @@ class BlackOut(override val coroutineContext: CoroutineContext) : AbstractModule
 		delay(2_000)
 		api.unMuteSound(muteHandle)
 		api.unLockControl(lockHandle)
-		api.undoNuiBlackOut(blackOutHandle, WAKING_UP_TIME * 1_000).join()
+		api.undoNuiBlackOut(blackOutHandle.await(), WAKING_UP_TIME * 1_000).join()
 		api.removeRagdollEffect(ragdollHandle)
 	}
 }
