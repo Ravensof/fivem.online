@@ -3,6 +3,7 @@ package online.fivem.client.extensions
 import online.fivem.client.modules.nuiEventExchanger.NuiEvent
 import online.fivem.common.Sounds
 import online.fivem.common.events.net.PlaySoundEvent
+import online.fivem.common.events.net.PrefetchFileEvent
 
 fun Sounds.play(volume: Double = 1.0) {
 	NuiEvent.emit(
@@ -11,4 +12,8 @@ fun Sounds.play(volume: Double = 1.0) {
 			volume = volume
 		)
 	)
+}
+
+fun Sounds.prefetch() {
+	NuiEvent.emit(PrefetchFileEvent(file))
 }
