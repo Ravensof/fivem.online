@@ -41,9 +41,12 @@ class Vehicle(
 			return Client.getVehicleCurrentRpm(entity)
 		}
 
-	val currentGear: Int
+	var currentGear: Int
 		get() {
 			return Client.getVehicleCurrentGear(entity)
+		}
+		set(value) {
+			Client.setVehicleCurrentGear(entity, value)
 		}
 
 	var highGear: Int
@@ -107,7 +110,13 @@ class Vehicle(
 	//handlingVector set get
 	//highGear set get
 	//indicatorLights
-	//nextGear
+	var nextGear: Int
+		get() {
+			return Client.getVehicleNextGear(entity)
+		}
+		set(value) {
+			Client.setVehhicleNextGear(entity, value)
+		}
 
 	val numberOfWheels = Client.getVehicleNumberOfWheels(entity)
 

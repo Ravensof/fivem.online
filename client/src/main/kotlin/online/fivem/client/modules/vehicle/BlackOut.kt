@@ -5,6 +5,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import online.fivem.client.extensions.play
+import online.fivem.client.extensions.prefetch
 import online.fivem.client.modules.basics.API
 import online.fivem.common.GlobalConfig.BlackOut.ACCELERATION_THRESHOLD
 import online.fivem.common.GlobalConfig.BlackOut.BLACKOUT_TIME_FROM_COMMAS
@@ -48,6 +49,8 @@ class BlackOut(override val coroutineContext: CoroutineContext) : AbstractModule
 						).toLong() * 100
 			)
 		}
+
+		Sounds.SHOCK_EFFECT.prefetch()
 	}
 
 	private fun addBlackOut(timeMillis: Long) {
@@ -72,7 +75,7 @@ class BlackOut(override val coroutineContext: CoroutineContext) : AbstractModule
 			timeLeft -= time
 		}
 
-		Sounds.NOISE.play()
+		Sounds.SHOCK_EFFECT.play()
 		delay(2_000)
 		api.unMuteSound(muteHandle)
 		api.unLockControl(lockHandle)

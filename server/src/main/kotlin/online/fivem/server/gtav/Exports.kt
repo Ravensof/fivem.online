@@ -37,7 +37,9 @@ object Exports {
 		}, httpRequestType, postData, headers)
 
 		return coroutineScope.async {
-			channel.receive()
+			val result = channel.receive()
+			channel.close()
+			return@async result
 		}
 	}
 

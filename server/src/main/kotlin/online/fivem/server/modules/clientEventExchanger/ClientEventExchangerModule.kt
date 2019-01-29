@@ -174,7 +174,7 @@ class ClientEventExchangerModule : AbstractModule(), CoroutineScope {
 	)
 
 	companion object {
-		private const val PLAYERS_CHANNEL_SIZE = 128
+		private const val PLAYERS_CHANNEL_SIZE = 128 * GlobalConfig.MAX_PLAYERS
 
 		val channel = Channel<Packet<*>>(PLAYERS_CHANNEL_SIZE)
 	}

@@ -15,5 +15,5 @@ fun Sounds.play(volume: Double = 1.0) {
 }
 
 fun Sounds.prefetch() {
-	NuiEvent.emit(PrefetchFileEvent(file))
+	NuiEvent.emit(PrefetchFileEvent(Sounds.PATH + file))
 }

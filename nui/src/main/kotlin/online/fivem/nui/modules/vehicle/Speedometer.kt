@@ -68,11 +68,11 @@ class Speedometer(override val coroutineContext: CoroutineContext) : AbstractMod
 
 		ClientEvent.on<SpeedometerEnableEvent> {
 			runSpeedometer()
-			speedometerBlock.show()
+			speedometerBlock.fadeIn()
 		}
 
 		ClientEvent.on<SpeedometerDisableEvent> {
-			speedometerBlock.hide()
+			speedometerBlock.fadeOut()
 			drawInterpolatorJob?.cancel()
 		}
 	}

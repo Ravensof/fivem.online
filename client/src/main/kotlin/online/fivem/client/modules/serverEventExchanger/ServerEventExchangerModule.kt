@@ -12,8 +12,11 @@ import online.fivem.common.entities.ClientsNetPacket
 import online.fivem.common.entities.ServersNetPacket
 import online.fivem.common.events.EstablishConnectionEvent
 import online.fivem.common.events.net.ImReadyEvent
+import kotlin.coroutines.CoroutineContext
 
-class ServerEventExchangerModule : AbstractModule() {
+class ServerEventExchangerModule : AbstractModule(), CoroutineScope {
+
+	override val coroutineContext: CoroutineContext = SupervisorJob()
 
 	var key: Double? = null
 
@@ -39,10 +42,10 @@ class ServerEventExchangerModule : AbstractModule() {
 		ServerEvent.on<EstablishConnectionEvent> {
 			key = it.key
 			ServerEvent.emit(ImReadyEvent())
-			GlobalScope.launch { pauseChannel.send(true) }
+			launch { pauseChannel.send(true) }
 		}
 
-		GlobalScope.launch {
+		launch {
 			for (data in channel) {
 				Natives.emitNet(
 					eventName = GlobalConfig.NET_EVENT_NAME,
@@ -58,14 +61,14 @@ class ServerEventExchangerModule : AbstractModule() {
 			}
 		}
 
-		GlobalScope.launch {
+		launch {
 			while (!pauseChannel.isClosedForSend) {
 				startHandshaking()
 				delay(5_000)
 			}
 		}
 
-		return GlobalScope.launch {
+		return launch {
 			Console.log("connecting to server..")
 			pauseChannel.receive()
 			pauseChannel.close()

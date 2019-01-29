@@ -1022,10 +1022,14 @@ object Client {
 		SetFrontendRadioActive(active)
 	}
 
+	fun setClockDate(day: Int, month: Int, year: Int) {
+		SetClockDate(day, month, year)
+	}
+
 	/**
 	 * SET_CLOCK_TIME(12, 34, 56);
 	 */
-	fun setClockTime(hour: Short, minute: Short, second: Short) {
+	fun setClockTime(hour: Int, minute: Int, second: Int) {
 		SetClockTime(hour, minute, second)
 	}
 
@@ -1136,6 +1140,28 @@ object Client {
 	 */
 	fun getVehiclePedIsUsing(ped: Entity): Int? {
 		return GetVehiclePedIsUsing(ped).takeIf { it != 0 }
+	}
+
+	//todo test
+	fun setVehhicleNextGear(vehicle: Entity, gear: Int) {
+		Natives.invokeNative<Nothing>(
+			getHashKey("SET_VEHICLE_NEXT_GEAR").and(0xFFFFFFFF.toInt()),
+			vehicle,
+			gear
+		)
+	}
+
+	fun getVehicleNextGear(vehicle: Int): Int {
+		return GetVehicleNextGear(vehicle)
+	}
+
+	//todo test
+	fun setVehicleCurrentGear(vehicle: Entity, gear: Int) {
+		Natives.invokeNative<Nothing>(
+			getHashKey("SET_VEHICLE_CURRENT_GEAR").and(0xFFFFFFFF.toInt()),
+			vehicle,
+			gear
+		)
 	}
 
 	fun getVehicleCurrentGear(vehicle: Entity): Int {
@@ -9681,7 +9707,7 @@ private external fun GetVehicleMod(vehicle: Entity, modType: Int): Int
 
 private external fun GetVehicleNeonLightsColour(vehicle: Entity): Array<Int>
 
-//private external fun GetVehicleNextGear(vehicle: Int): Int
+private external fun GetVehicleNextGear(vehicle: Int): Int
 
 /**
  * Calling this with an invalid node id, will crash the game.
@@ -22511,9 +22537,9 @@ private external fun SendNuiMessage(jsonString: String): Int
  */
 //private external fun SetCinematicModeActive(p0: boolean)
 
-//private external fun SetClockDate(day: number, month: number, year: number)
+private external fun SetClockDate(day: Int, month: Int, year: Int)
 
-private external fun SetClockTime(hour: Short, minute: Short, second: Short)
+private external fun SetClockTime(hour: Int, minute: Int, second: Int)
 
 private external fun SetCloudHatOpacity(opacity: Number)
 //private external fun N_0xf36199225d6d8c86(opacity: number)
