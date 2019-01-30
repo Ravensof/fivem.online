@@ -7,7 +7,7 @@ import online.fivem.common.common.Utils
 import online.fivem.common.entities.Coordinates
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.entities.RGB
-import online.fivem.common.gtav.NativeVehicleMods
+import online.fivem.common.gtav.NativeVehicles
 
 fun Client.createVehicle(
 	modelHash: Int,
@@ -77,11 +77,11 @@ fun Client.drawScreenText2D(
 	drawText(x, y)
 }
 
-fun Client.isToggleModOn(vehicle: Entity, modType: NativeVehicleMods): Boolean {
+fun Client.isToggleModOn(vehicle: Entity, modType: NativeVehicles.Mod): Boolean {
 	return isToggleModOn(vehicle, modType.id)
 }
 
-fun Client.toggleVehicleMod(vehicle: Entity, modType: NativeVehicleMods, toggle: Boolean) {
+fun Client.toggleVehicleMod(vehicle: Entity, modType: NativeVehicles.Mod, toggle: Boolean) {
 	toggleVehicleMod(vehicle, modType.id, toggle)
 }
 

@@ -14,6 +14,7 @@ import online.fivem.common.events.PlayersPedTeleportedEvent
 import online.fivem.common.events.PlayersPedTeleportingEvent
 import online.fivem.common.events.net.BlackOutEvent
 import online.fivem.common.events.net.CancelBlackOutEvent
+import online.fivem.common.events.net.ShowGuiEvent
 import online.fivem.common.extensions.UnitStack
 import online.fivem.common.extensions.set
 import online.fivem.common.extensions.unset
@@ -27,6 +28,16 @@ class API(
 
 	private val tickExecutor by moduleLoader.onReady<TickExecutorModule>()
 	private val controlHandlerModule by moduleLoader.onReady<ControlHandlerModule>()
+
+	private val hideNui = UnitStack()
+
+	fun hideNui() = hideNui.set {
+		NuiEvent.emit(ShowGuiEvent(false))
+	}
+
+	fun cancelHideNui(handle: Handle) = hideNui.unset(handle) {
+		NuiEvent.emit(ShowGuiEvent(true))
+	}
 
 	fun setPlayerCoordinates(coordinates: Coordinates) {
 		launch {

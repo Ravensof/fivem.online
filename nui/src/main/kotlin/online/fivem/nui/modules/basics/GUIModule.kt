@@ -19,6 +19,10 @@ class GUIModule(override val coroutineContext: CoroutineContext) : AbstractModul
 	}
 
 	private fun onShowGui(show: Boolean) {
-		mainView.isVisible = show
+		if (show) {
+			mainView.view.fadeIn()
+		} else {
+			mainView.view.fadeOut()
+		}
 	}
 }

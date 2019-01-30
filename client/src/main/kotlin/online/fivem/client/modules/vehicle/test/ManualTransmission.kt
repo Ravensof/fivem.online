@@ -4,7 +4,6 @@ import kotlinx.coroutines.*
 import online.fivem.client.entities.Vehicle
 import online.fivem.client.extensions.drawScreenText2D
 import online.fivem.client.gtav.Client
-import online.fivem.client.gtav.Natives
 import online.fivem.client.modules.basics.TickExecutorModule
 import online.fivem.common.common.Console
 import online.fivem.common.common.Utils.normalizeToLimits
@@ -219,11 +218,8 @@ class ManualTransmission(
 	private fun simulateClutch() {
 		// Tell the game we are in neutral, we don't want to spin the tires in neutral.
 		if (currentGear == 0) {
-			val hash = Client.getHashKey("SET_VEHICLE_CURRENT_GEAR").and(0xFFFFFFFF.toInt())
-			val hash2 = Client.getHashKey("SET_VEHICLE_NEXT_GEAR").and(0xFFFFFFFF.toInt())
-
-			Natives.invokeNative<Any>(hash, vehicle.entity, 0)
-			Natives.invokeNative<Any>(hash2, vehicle.entity, 0)
+			Client.setVehicleCurrentGear(vehicle.entity, 0)
+			Client.setVehicleNextGear(vehicle.entity, 0)
 		}
 	}
 

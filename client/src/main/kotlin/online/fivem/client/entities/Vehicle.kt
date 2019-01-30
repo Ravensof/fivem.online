@@ -14,6 +14,7 @@ import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.entities.RGB
 import online.fivem.common.extensions.orZero
 import online.fivem.common.gtav.NativeVehicles
+import kotlin.reflect.KProperty
 
 class Vehicle(
 	val entity: Entity,
@@ -26,97 +27,54 @@ class Vehicle(
 	val doors: List<Door>
 
 	var clutch: Number
-		get() {
-			return Client.getVehicleClutch(entity)
-		}
-		set(value) {
-			Client.setVehicleClutch(entity, value)
-		}
+		get() = Client.getVehicleClutch(entity)
+		set(value) = Client.setVehicleClutch(entity, value)
 
 	var currentRpm: Double
-		set(value) {
-			Client.setVehicleCurrentRpm(entity, value)
-		}
-		get() {
-			return Client.getVehicleCurrentRpm(entity)
-		}
+		set(value) = Client.setVehicleCurrentRpm(entity, value)
+		get() = Client.getVehicleCurrentRpm(entity)
 
 	var currentGear: Int
-		get() {
-			return Client.getVehicleCurrentGear(entity)
-		}
-		set(value) {
-			Client.setVehicleCurrentGear(entity, value)
-		}
+		get() = Client.getVehicleCurrentGear(entity)
+		set(value) = Client.setVehicleCurrentGear(entity, value)
 
 	var highGear: Int
-		get() {
-			return Client.getVehicleHighGear(entity)
-		}
-		set(value) {
-			Client.setVehicleHighGear(entity, value)
-		}
+		get() = Client.getVehicleHighGear(entity)
+		set(value) = Client.setVehicleHighGear(entity, value)
 
 	var isAlarmSet: Boolean
-		get() {
-			return Client.isVehicleAlarmSet(entity)
-		}
-		set(value) {
-			Client.setVehicleAlarm(entity, value)
-		}
+		get() = Client.isVehicleAlarmSet(entity)
+		set(value) = Client.setVehicleAlarm(entity, value)
 
 	var alarmTimeLeft: Int
-		get() {
-			return Client.getVehicleAlarmTimeLeft(entity)
-		}
-		set(value) {
-			Client.setVehicleAlarmTimeLeft(entity, value)
-		}
+		get() = Client.getVehicleAlarmTimeLeft(entity)
+		set(value) = Client.setVehicleAlarmTimeLeft(entity, value)
 
 	val dashboardSpeed: Double
-		get() {
-			return Client.getVehicleDashboardSpeed(entity)
-		}
+		get() = Client.getVehicleDashboardSpeed(entity)
 
 	var engineTemperature: Int
-		get() {
-			return Client.getVehicleEngineTemperature(entity)
-		}
-		set(value) {
-			Client.setVehicleEngineTemperature(entity, value)
-		}
+		get() = Client.getVehicleEngineTemperature(entity)
+		set(value) = Client.setVehicleEngineTemperature(entity, value)
 
 	var fuelLevel: Number
-		get() {
-			return Client.getVehicleFuelLevel(entity)
-		}
-		set(value) {
-			Client.setVehicleFuelLevel(entity, value)
-		}
+		get() = Client.getVehicleFuelLevel(entity)
+		set(value) = Client.setVehicleFuelLevel(entity, value)
 
 	//gravityAmount get set
 
 	var isHandBrake: Boolean
-		set(value) {
-			Client.setVehicleHandbrake(entity, value)
-		}
-		get() {
-			return Client.getVehicleHandbrake(entity)
-		}
+		set(value) = Client.setVehicleHandbrake(entity, value)
+		get() = Client.getVehicleHandbrake(entity)
 
 	//handlingField set get
 	//handlingFloat set get
 	//handlingInt set get
 	//handlingVector set get
-	//highGear set get
 	//indicatorLights
 	var nextGear: Int
-		get() {
-			return Client.getVehicleNextGear(entity)
-		}
-		set(value) {
-			Client.setVehicleNextGear(entity, value)
-		}
+		get() = Client.getVehicleNextGear(entity)
+		set(value) = Client.setVehicleNextGear(entity, value)
 
 	val numberOfWheels = Client.getVehicleNumberOfWheels(entity)
 
@@ -125,161 +83,89 @@ class Vehicle(
 	//oilLevel вроде ни на что не влияет, поэтому использую как идентификатор
 	//steeringAngle set get
 	//steeringScale set get
-	var turboPressure: Number
-		get() {
-			return Client.getVehicleTurboPressure(entity).orZero()
-		}
-		set(value) {
-			Client.setVehicleTurboPressure(entity, value)
-		}
+	var turboPressure: Int
+		get() = Client.getVehicleTurboPressure(entity).orZero()
+		set(value) = Client.setVehicleTurboPressure(entity, value)
 
 	var maxSpeed: Double
-		get() {
-			return Client.getVehicleMaxSpeed(entity)
-		}
-		set(value) {
-			Client.setEntityMaxSpeed(entity, value)
-		}
+		get() = Client.getVehicleMaxSpeed(entity)
+		set(value) = Client.setEntityMaxSpeed(entity, value)
 
 	val isEngineStarting: Boolean
-		get() {
-			return Client.isVehicleEngineStarting(entity)
-		}
+		get() = Client.isVehicleEngineStarting(entity)
 
 	var isEngineOn: Boolean
-		get() {
-			return Client.isVehicleEngineOn(entity)
-		}
-		set(value) {
-			Client.setVehicleEngineOn(entity, value, true)
-		}
+		get() = Client.isVehicleEngineOn(entity)
+		set(value) = Client.setVehicleEngineOn(entity, value, true)
 
 	//isVehicleInteriorLightOn
 	//isVehicleNeedsToBeHotwired
 	//isVehiclePreviouslyOwnedByPlayer
 
 	var isWanted: Boolean
-		get() {
-			return Client.isVehicleWanted(entity)
-		}
-		set(value) {
-			Client.setVehicleIsWanted(entity, value)
-		}
+		get() = Client.isVehicleWanted(entity)
+		set(value) = Client.setVehicleIsWanted(entity, value)
 
 	//	SetVehicleAutoRepairDisabled
 
 	var dirtLevel: Int
-		get() {
-			return Client.getVehicleDirtLevel(entity)
-		}
-		set(value) {
-			Client.setVehicleDirtLevel(entity, value)
-		}
+		get() = Client.getVehicleDirtLevel(entity)
+		set(value) = Client.setVehicleDirtLevel(entity, value)
 
 	var engineHealth: Double
-		get() {
-			return Client.getVehicleEngineHealth(entity)
-		}
-		set(value) {
-			Client.setVehicleEngineHealth(entity, value)
-		}
+		get() = Client.getVehicleEngineHealth(entity)
+		set(value) = Client.setVehicleEngineHealth(entity, value)
 
 	var bodyHealth: Int
-		get() {
-			return Client.getVehicleBodyHealth(entity)
-		}
-		set(value) {
-			Client.setVehicleBodyHealth(entity, value)
-		}
+		get() = Client.getVehicleBodyHealth(entity)
+		set(value) = Client.setVehicleBodyHealth(entity, value)
 
 	var petrolTankHealth: Double
-		get() {
-			return Client.getVehiclePetrolTankHealth(entity)
-		}
-		set(value) {
-			Client.setVehiclePetrolTankHealth(entity, value)
-		}
+		get() = Client.getVehiclePetrolTankHealth(entity)
+		set(value) = Client.setVehiclePetrolTankHealth(entity, value)
 
 	val numberOfSeats = Client.getVehicleMaxNumberOfPassengers(entity) + 1
 
 	var wheelType: Int
-		get() {
-			return Client.getVehicleWheelType(entity)
-		}
-		set(value) {
-			Client.setVehicleWheelType(entity, value)
-		}
+		get() = Client.getVehicleWheelType(entity)
+		set(value) = Client.setVehicleWheelType(entity, value)
 
 	var colours: Pair<Int, Int>
-		get() {
-			return Client.getVehicleColours(entity)
-		}
-		set(value) {
-			Client.setVehicleColours(entity, value.first, value.second)
-		}
+		get() = Client.getVehicleColours(entity)
+		set(value) = Client.setVehicleColours(entity, value.first, value.second)
 
 	var extraColors: Pair<Int, Int>
-		get() {
-			return Client.getVehicleExtraColours(entity)
-		}
-		set(value) {
-			Client.setVehicleExtraColours(entity, value.first, value.second)
-		}
+		get() = Client.getVehicleExtraColours(entity)
+		set(value) = Client.setVehicleExtraColours(entity, value.first, value.second)
 
 	val model = Client.getEntityModel(entity)
 
 	var livery: Int?
-		get() {
-			return Client.getVehicleLivery(entity)
-		}
-		set(value) {
-			Client.setVehicleLivery(entity, value ?: -1)
-		}
+		get() = Client.getVehicleLivery(entity)
+		set(value) = Client.setVehicleLivery(entity, value ?: -1)
 
 	var numberPlateText: String
-		get() {
-			return Client.getVehicleNumberPlateText(entity).orEmpty()
-		}
-		set(value) {
-			Client.setVehicleNumberPlateText(entity, value)
-		}
+		get() = Client.getVehicleNumberPlateText(entity).orEmpty()
+		set(value) = Client.setVehicleNumberPlateText(entity, value)
 
 	var numberPlateTextIndex: Int
-		get() {
-			return Client.getVehicleNumberPlateTextIndex(entity)
-		}
-		set(value) {
-			Client.setVehicleNumberPlateTextIndex(entity, value)
-		}
+		get() = Client.getVehicleNumberPlateTextIndex(entity)
+		set(value) = Client.setVehicleNumberPlateTextIndex(entity, value)
 
 	var windowTint: Int
-		get() {
-			return Client.getVehicleWindowTint(entity)
-		}
-		set(value) {
-			Client.setVehicleWindowTint(entity, value)
-		}
+		get() = Client.getVehicleWindowTint(entity)
+		set(value) = Client.setVehicleWindowTint(entity, value)
 
 	var neonLightsColour: RGB
-		get() {
-			return Client.getVehicleNeonLightsColour(entity)
-		}
-		set(value) {
-			Client.setVehicleNeonLightsColour(entity, value)
-		}
+		get() = Client.getVehicleNeonLightsColour(entity)
+		set(value) = Client.setVehicleNeonLightsColour(entity, value)
 
 	var tyreSmokeColor: RGB
-		get() {
-			return Client.getVehicleTyreSmokeColor(entity)
-		}
-		set(value) {
-			Client.setVehicleTyreSmokeColor(entity, value)
-		}
+		get() = Client.getVehicleTyreSmokeColor(entity)
+		set(value) = Client.setVehicleTyreSmokeColor(entity, value)
 
 	val isOnAllWheels: Boolean
-		get() {
-			return Client.isVehicleOnAllWheels(entity)
-		}
+		get() = Client.isVehicleOnAllWheels(entity)
 
 	var brakeLights: Boolean = false
 		set(value) {
@@ -288,12 +174,8 @@ class Vehicle(
 		}
 
 	var tyresCanBurst: Boolean
-		get() {
-			return Client.getVehicleTyresCanBurst(entity)
-		}
-		set(value) {
-			Client.setVehicleTyresCanBurst(entity, value)
-		}
+		get() = Client.getVehicleTyresCanBurst(entity)
+		set(value) = Client.setVehicleTyresCanBurst(entity, value)
 
 	//todo mod, neon
 
@@ -537,6 +419,58 @@ class Vehicle(
 					entity = it,
 					tickExecutor = tickExecutor
 				)
+			}
+		}
+	}
+
+	val handling = Handling(entity)
+
+	class Handling(private val entity: Entity) {
+
+		/**
+		 * Multiplies the game's calculation of deformation-causing damage.
+		 * Value: 0.0 - 10.0. 0.0 = no deformation through damage is possible. 10.0 = Ten times deformation-causing damage.
+		 */
+		var deformationDamageMultiplier: Double by HandlingDelegate("fDeformationDamageMult")
+
+		/**
+		 * Multiplies the game's calculation of deceleration. Bigger number = harder braking
+		 * Brake Force formula TBD
+		 * Value: 0.01 - 2.0 and above. 1.0 uses brake force calculation unmodified.
+		 */
+		var brakeForce: Double by HandlingDelegate("fBrakeForce")
+
+		/**
+		 * Multiplies the game's calculation of damage to the vehicle through weapon damage.
+		 * Value: 0.0 - 10.0. 0.0 = no damage through weapons. 10.0 = Ten times damage through weapons.
+		 */
+		var weaponDamageMultiplier: Double by HandlingDelegate("fWeaponDamageMult")
+
+		var initialDriveForce: Double by HandlingDelegate("fInitialDriveForce")
+
+		/**
+		 * How many forward speeds a transmission contains.
+		 * Value: 1-16 or more.
+		 */
+		var initialDriveGears: Int by HandlingDelegate("nInitialDriveGears")
+
+		private class HandlingDelegate(private val fieldName: String) {
+			operator fun <T> getValue(handling: Handling, property: KProperty<*>): T = when (property.name[0]) {
+				'f' -> Client.getVehicleHandlingFloat(handling.entity, "CHandlingData", fieldName).unsafeCast<T>()
+				'i', 'n' -> Client.getVehicleHandlingInt(handling.entity, "CHandlingData", fieldName).unsafeCast<T>()
+				else -> throw Exception("this type is not supported for vehicle handling")
+			}
+
+			operator fun <T> setValue(handling: Handling, property: KProperty<*>, value: T) {
+				when (property.name[0]) {
+					'f', 'n' -> Client.setVehicleHandlingFloat(
+						handling.entity,
+						"CHandlingData",
+						fieldName,
+						value as Double
+					)
+					'i' -> Client.setVehicleHandlingInt(handling.entity, "CHandlingData", fieldName, value as Int)
+				}
 			}
 		}
 	}

@@ -390,6 +390,17 @@ object Client {
 	}
 
 	/**
+	 * Sets a handling override for a specific vehicle. Certain handling flags can only be set globally using `SET_HANDLING_INT`, this might require some experimentation.
+	 * @param vehicle The vehicle to set data for.
+	 * @param _class The handling class to set. Only "CHandlingData" is supported at this time.
+	 * @param fieldName The field name to set. These match the keys in `handling.meta`.
+	 * @param value The integer value to set.
+	 */
+	fun setVehicleHandlingInt(vehicle: Entity, _class: String, fieldName: String, value: Int) {
+		SetVehicleHandlingInt(vehicle, _class, fieldName, value)
+	}
+
+	/**
 	 * control - c# works with (int)GTA.Control.CursorY / (int)GTA.Control.CursorX and returns the mouse movement (additive).
 	 * 0, 1 and 2 used in the scripts. 0 is by far the most common of them.
 	 */
@@ -558,12 +569,24 @@ object Client {
 	 * Returns the effective handling data of a vehicle as a floating-point value.
 	 * Example: `local fSteeringLock = GetVehicleHandlingFloat(vehicle, 'CHandlingData', 'fSteeringLock')`
 	 * @param vehicle The vehicle to obtain data for.
-	 * @param class The handling class to get. Only "CHandlingData" is supported at this time.
+	 * @param _class The handling class to get. Only "CHandlingData" is supported at this time.
 	 * @param fieldName The field name to get. These match the keys in `handling.meta`.
 	 * @return A floating-point value.
 	 */
 	fun getVehicleHandlingFloat(vehicle: Entity, _class: String, fieldName: String): Double {
 		return GetVehicleHandlingFloat(vehicle, _class, fieldName).toDouble()
+	}
+
+	/**
+	 * Returns the effective handling data of a vehicle as an integer value.
+	 * Example: `local modelFlags = GetVehicleHandlingInt(vehicle, 'CHandlingData', 'strModelFlags')`
+	 * @param vehicle The vehicle to obtain data for.
+	 * @param _class The handling class to get. Only "CHandlingData" is supported at this time.
+	 * @param fieldName The field name to get. These match the keys in `handling.meta`.
+	 * @return An integer.
+	 */
+	fun getVehicleHandlingInt(vehicle: Entity, _class: String, fieldName: String): Int {
+		return GetVehicleHandlingInt(vehicle, _class, fieldName)
 	}
 
 	/**
@@ -1230,11 +1253,14 @@ object Client {
 		return GetVehiclePetrolTankHealth(vehicle).toDouble()
 	}
 
-	fun getVehicleTurboPressure(vehicle: Entity): Float? {
-		return if (doesEntityExist(vehicle)) GetVehicleTurboPressure(vehicle) else null
+	// no such entity warning
+	fun getVehicleTurboPressure(vehicle: Entity): Int? {
+		val value = invokeNative("GET_VEHICLE_TURBO_PRESSURE", vehicle)
+
+		return if (value == false) null else value as Int
 	}
 
-	fun setVehicleTurboPressure(vehicle: Entity, pressure: Number) {
+	fun setVehicleTurboPressure(vehicle: Entity, pressure: Int) {
 		SetVehicleTurboPressure(vehicle, pressure)
 	}
 
@@ -6510,7 +6536,7 @@ private external fun FreezeEntityPosition(entity: Entity, toggle: Boolean)
  * 2. waiting to cross a road.
  * Note: PED::GET_PED_NEARBY_PEDS works for more peds.
  */
-//private external fun GetClosestPed(x: number, y: number, z: number, radius: number, p4: boolean, p5: boolean, p7: boolean, p8: boolean, pedType: number): [number, number];
+//private external fun GetClosestPed(x: number, y: number, z: number, radius: number, p4: boolean, p5: boolean, p7: boolean, p8: boolean, pedType: number): [number, number];//todo может понадобиться для поиска "сведетелей"?
 
 /**
  * p1 seems to be always 1.0f in the scripts
@@ -9486,15 +9512,7 @@ private external fun GetVehicleHandbrake(vehicle: Int): Int
 
 private external fun GetVehicleHandlingFloat(vehicle: Entity, _class: String, fieldName: String): Number
 
-/**
- * Returns the effective handling data of a vehicle as an integer value.
- * Example: `local modelFlags = GetVehicleHandlingInt(vehicle, 'CHandlingData', 'strModelFlags')`
- * @param vehicle The vehicle to obtain data for.
- * @param class The handling class to get. Only "CHandlingData" is supported at this time.
- * @param fieldName The field name to get. These match the keys in `handling.meta`.
- * @return An integer.
- */
-//private external fun GetVehicleHandlingInt(vehicle: number, _class: string, fieldName: string): number;
+private external fun GetVehicleHandlingInt(vehicle: Entity, _class: String, fieldName: String): Int
 
 /**
  * Returns the effective handling data of a vehicle as a vector value.
@@ -26430,14 +26448,7 @@ private external fun SetVehicleHandbrake(vehicle: Entity, toggle: Boolean)
 
 private external fun SetVehicleHandlingFloat(vehicle: Entity, _class: String, fieldName: String, value: Double)
 
-/**
- * Sets a handling override for a specific vehicle. Certain handling flags can only be set globally using `SET_HANDLING_INT`, this might require some experimentation.
- * @param vehicle The vehicle to set data for.
- * @param class The handling class to set. Only "CHandlingData" is supported at this time.
- * @param fieldName The field name to set. These match the keys in `handling.meta`.
- * @param value The integer value to set.
- */
-//private external fun SetVehicleHandlingInt(vehicle: number, _class: string, fieldName: string, value: number)
+private external fun SetVehicleHandlingInt(vehicle: Entity, _class: String, fieldName: String, value: Int)
 
 /**
  * Sets a handling override for a specific vehicle. Certain handling flags can only be set globally using `SET_HANDLING_VECTOR`, this might require some experimentation.

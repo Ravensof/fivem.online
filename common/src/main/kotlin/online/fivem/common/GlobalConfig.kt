@@ -28,7 +28,7 @@ object GlobalConfig {
 
 		RadioStation.RADIO_03_HIPHOP_NEW.name to InternetRadioStation(
 			url = "http://stream.radioreklama.bg/nrj.ogg",
-			name = "70s Music",
+			name = "Radio Energy",
 			defaultVolume = 0.8
 		),  // Radio Los Santos
 

@@ -3,17 +3,19 @@ package online.fivem.client.modules.basics
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import online.fivem.client.gtav.Client
-import online.fivem.client.modules.nuiEventExchanger.NuiEvent
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
+import online.fivem.common.common.Stack
 import online.fivem.common.common.UEvent
 import online.fivem.common.events.PauseMenuStateChangedEvent
-import online.fivem.common.events.net.ShowGuiEvent
 import kotlin.coroutines.CoroutineContext
 
 class BasicsModule : AbstractModule(), CoroutineScope {
 
 	override val coroutineContext: CoroutineContext = Job()
+	private val API by moduleLoader.onReady<API>()
+
+	private var handleShowNui = Stack.UNDEFINED_INDEX
 
 	override fun onInit() {
 		UEvent.on<PauseMenuStateChangedEvent> { onPauseMenuStateChanged(it.pauseMenuState) }
@@ -34,7 +36,10 @@ class BasicsModule : AbstractModule(), CoroutineScope {
 	}
 
 	private fun onPauseMenuStateChanged(state: Int) {
-		NuiEvent.emit(ShowGuiEvent(state == 0))
+		API.cancelHideNui(handleShowNui)
+		if (state != 0) {
+			handleShowNui = API.hideNui()
+		}
 	}
 
 	private fun changeHeaderInMainMenu() {
