@@ -3,6 +3,7 @@
 package online.fivem.client.gtav
 
 import kotlinx.coroutines.*
+import online.fivem.client.extensions.invokeNative
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.Entity
 import online.fivem.common.common.Handle
@@ -1000,8 +1001,8 @@ object Client {
 	 * As a result, it makes this native case-insensitive.
 	 * For example: "zentorno", "ZENTORNO" and "Zentorno" produce the same hash.
 	 */
-	fun getHashKey(string: String): Int {
-		return GetHashKey(string)
+	fun getHashKey(string: String): Long {
+		return GetHashKey(string).toLong()
 	}
 
 	/**
@@ -1142,26 +1143,16 @@ object Client {
 		return GetVehiclePedIsUsing(ped).takeIf { it != 0 }
 	}
 
-	//todo test
-	fun setVehhicleNextGear(vehicle: Entity, gear: Int) {
-		Natives.invokeNative<Nothing>(
-			getHashKey("SET_VEHICLE_NEXT_GEAR").and(0xFFFFFFFF.toInt()),
-			vehicle,
-			gear
-		)
+	fun setVehicleNextGear(vehicle: Entity, gear: Int) {
+		invokeNative("SET_VEHICLE_NEXT_GEAR", vehicle, gear)
 	}
 
 	fun getVehicleNextGear(vehicle: Int): Int {
 		return GetVehicleNextGear(vehicle)
 	}
 
-	//todo test
 	fun setVehicleCurrentGear(vehicle: Entity, gear: Int) {
-		Natives.invokeNative<Nothing>(
-			getHashKey("SET_VEHICLE_CURRENT_GEAR").and(0xFFFFFFFF.toInt()),
-			vehicle,
-			gear
-		)
+		invokeNative("SET_VEHICLE_CURRENT_GEAR", vehicle, gear)
 	}
 
 	fun getVehicleCurrentGear(vehicle: Entity): Int {
@@ -7313,7 +7304,7 @@ private external fun GetGameTimer(): Int
 
 //private external fun GetHasLowerableWheels(vehicle: number): number;
 
-private external fun GetHashKey(_string: String): Int
+private external fun GetHashKey(_string: String): Number
 
 //private external fun GetHashNameForComponent(entity: number, componentId: number, drawableVariant: number, textureVariant: number): number;
 

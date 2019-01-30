@@ -11,15 +11,10 @@ object Natives {
 		Exports.emitNet(eventName, data)
 	}
 
-	fun <T> invokeNative(hash: Int, vararg args: InputArgument): T {
-		return Citizen.invokeNative(hash.toString(), *args)
+	fun <T> invokeNative(hex: String, vararg args: InputArgument): T {
+		return Citizen.invokeNative(hex, *args)
 	}
 
-	fun <T> invokeNative(hash: String, vararg args: InputArgument): T {
-		return Citizen.invokeNative(hash, *args)
-	}
-
-	//todo test
 	// the callback will be called next game tick
 	fun mainThread(callback: () -> Unit) {
 		setImmediate(callback)

@@ -1,6 +1,7 @@
 package online.fivem.client.extensions
 
 import online.fivem.client.gtav.Client
+import online.fivem.client.gtav.Natives
 import online.fivem.common.common.Entity
 import online.fivem.common.common.Utils
 import online.fivem.common.entities.Coordinates
@@ -132,4 +133,12 @@ fun Client.getVehicleTurboPressureRPMBased(vehicle: Entity, startRPM: Double = 0
 			) - startRPM
 
 			) / (endRPM - startRPM)
+}
+
+fun Client.getFunctionHashKey(functionName: String): String {
+	return "0x" + (getHashKey(functionName) and 0xFFFFFFFF).toString(16)
+}
+
+fun Client.invokeNative(functionName: String, vararg args: Any): Any {
+	return Natives.invokeNative(getFunctionHashKey(functionName), *args)
 }
