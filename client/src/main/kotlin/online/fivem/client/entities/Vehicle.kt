@@ -115,7 +115,7 @@ class Vehicle(
 			return Client.getVehicleNextGear(entity)
 		}
 		set(value) {
-			Client.setVehhicleNextGear(entity, value)
+			Client.setVehicleNextGear(entity, value)
 		}
 
 	val numberOfWheels = Client.getVehicleNumberOfWheels(entity)

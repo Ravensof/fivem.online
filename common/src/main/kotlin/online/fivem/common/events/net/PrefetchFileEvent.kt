@@ -1,13 +1,13 @@
 package online.fivem.common.events.net
 
 class PrefetchFileEvent {
-	val files: List<String>//todo проверить, list может не сериализоваться
+	val files: Array<String>//todo сделать чтобы можно было сериализовать List
 
-	constructor(files: List<String>) {
+	constructor(files: Array<String>) {
 		this.files = files
 	}
 
 	constructor(file: String) {
-		files = listOf(file)
+		files = arrayOf(file)
 	}
 }
