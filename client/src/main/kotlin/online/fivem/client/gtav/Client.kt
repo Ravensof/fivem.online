@@ -17,6 +17,47 @@ import online.fivem.common.gtav.RadioStation
 object Client {
 
 	/**
+	 * Works in Singleplayer too.
+	 * Actually has a 4th param (BOOL) that sets byte_14273C46C (in b944) to whatever was passed to p3.
+	 */
+	fun networkOverrideClockTime(hours: Int, minutes: Int, seconds: Int) {
+		NetworkOverrideClockTime(hours, minutes, seconds)
+	}
+
+	fun getClockDayOfMonth(): Int {
+		return GetClockDayOfMonth()
+	}
+
+	fun getClockMonth(): Int {
+		return GetClockMonth()
+	}
+
+	fun getClockYear(): Int {
+		return GetClockYear()
+	}
+
+	/**
+	 * Gets the current ingame hour, expressed without zeros. (09:34 will be represented as 9)
+	 */
+	fun getClockHours(): Int {
+		return GetClockHours()
+	}
+
+	/**
+	 * Gets the current ingame clock minute.
+	 */
+	fun getClockMinutes(): Int {
+		return GetClockMinutes()
+	}
+
+	/**
+	 * Gets the current ingame clock second. Note that ingame clock seconds change really fast since a day in GTA is only 48 minutes in real life.
+	 */
+	fun getClockSeconds(): Int {
+		return GetClockSeconds()
+	}
+
+	/**
 	 * x/y/z - Location of a vertex (in world coords), presumably.
 	 * ----------------
 	 * x1, y1, z1     : Coordinates for the first point
@@ -1053,6 +1094,7 @@ object Client {
 	/**
 	 * SET_CLOCK_TIME(12, 34, 56);
 	 */
+	@Deprecated("not working? use object Date")
 	fun setClockTime(hour: Int, minute: Int, second: Int) {
 		SetClockTime(hour, minute, second)
 	}
@@ -6457,7 +6499,7 @@ private external fun FreezeEntityPosition(entity: Entity, toggle: Boolean)
 
 //private external fun GetClipSetForScriptedGunTask(p0: number): string;
 
-//private external fun GetClockDayOfMonth(): number;
+private external fun GetClockDayOfMonth(): Int
 
 /**
  * Gets the current day of the week.
@@ -6471,24 +6513,15 @@ private external fun FreezeEntityPosition(entity: Entity, toggle: Boolean)
  */
 //private external fun GetClockDayOfWeek(): number;
 
-/**
- * Gets the current ingame hour, expressed without zeros. (09:34 will be represented as 9)
- */
-//private external fun GetClockHours(): number;
+private external fun GetClockHours(): Int
 
-/**
- * Gets the current ingame clock minute.
- */
-//private external fun GetClockMinutes(): number;
+private external fun GetClockMinutes(): Int
 
-//private external fun GetClockMonth(): number;
+private external fun GetClockMonth(): Int
 
-/**
- * Gets the current ingame clock second. Note that ingame clock seconds change really fast since a day in GTA is only 48 minutes in real life.
- */
-//private external fun GetClockSeconds(): number;
+private external fun GetClockSeconds(): Int
 
-//private external fun GetClockYear(): number;
+private external fun GetClockYear(): Int
 
 /**
  * Returns TRUE if it found something. FALSE if not.
@@ -19339,11 +19372,7 @@ private external fun NetworkGetServerTime(): Time
  */
 //private external fun N_0x3039ae5ad2c9c0c4(player: number, toggle: boolean)
 
-/**
- * Works in Singleplayer too.
- * Actually has a 4th param (BOOL) that sets byte_14273C46C (in b944) to whatever was passed to p3.
- */
-//private external fun NetworkOverrideClockTime(Hours: number, Minutes: number, Seconds: number)
+private external fun NetworkOverrideClockTime(Hours: Int, Minutes: Int, Seconds: Int)
 
 /**
  * R* uses this to hear all player when spectating.

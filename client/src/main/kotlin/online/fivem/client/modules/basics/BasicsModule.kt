@@ -26,6 +26,7 @@ class BasicsModule : AbstractModule(), CoroutineScope {
 			add(API(coroutineContext))
 			add(JoinTransitionModule(coroutineContext))
 			add(SpawnManagerModule(coroutineContext))
+			add(RealDateModule())
 		}
 	}
 
