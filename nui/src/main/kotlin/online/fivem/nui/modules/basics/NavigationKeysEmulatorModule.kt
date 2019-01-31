@@ -5,9 +5,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
-import online.fivem.common.events.net.NuiEmulateKeyDownEvent
-import online.fivem.common.events.net.NuiEmulateKeyJustPressedEvent
-import online.fivem.common.events.net.NuiEmulateKeyUpEvent
+import online.fivem.common.events.nui.NuiEmulateKeyDownEvent
+import online.fivem.common.events.nui.NuiEmulateKeyJustPressedEvent
+import online.fivem.common.events.nui.NuiEmulateKeyUpEvent
 import online.fivem.nui.modules.clientEventEchanger.ClientEvent
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.KeyboardEvent

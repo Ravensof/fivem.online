@@ -5,6 +5,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 import online.fivem.client.entities.Vehicle
+import online.fivem.common.extensions.minus
 import online.fivem.common.extensions.repeatJob
 import kotlin.coroutines.CoroutineContext
 
@@ -27,7 +28,6 @@ opposite force
 class Engine(
 	private val vehicle: Vehicle,
 
-	private val petrolTank: PetrolTank,
 	private val transmission: Transmission
 
 ) : CoroutineScope {
@@ -44,7 +44,7 @@ class Engine(
 		if (engine != null) return
 
 		engine = repeatJob(UPDATE_INTERVAL) {
-			petrolTank.getFuel(currentRPM * minFuelConsumption * UPDATE_INTERVAL)
+			vehicle.fuelLevel -= currentRPM * minFuelConsumption * UPDATE_INTERVAL
 		}
 	}
 

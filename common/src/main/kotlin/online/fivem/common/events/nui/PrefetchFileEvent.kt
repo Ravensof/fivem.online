@@ -1,4 +1,4 @@
-package online.fivem.common.events.net
+package online.fivem.common.events.nui
 
 class PrefetchFileEvent {
 	val files: Array<String>//todo сделать чтобы можно было сериализовать List

@@ -31,7 +31,7 @@ class SpawnManagerModule(override val coroutineContext: CoroutineContext) : Abst
 	fun spawnPlayer(coordinatesX: CoordinatesX, modelHash: Int?): Job = launch {
 
 		val fadeHandle = api.doScreenFadeOut(500).await()
-		api.setPlayerCoordinates(Coordinates(0, 0, 0))
+		api.setPlayerCoordinates(Coordinates(0f, 0f, 0f))
 		val playerId = Client.getPlayerId()
 
 		freezePlayer(playerId, true)

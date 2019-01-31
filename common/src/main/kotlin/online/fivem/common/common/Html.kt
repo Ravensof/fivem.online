@@ -6,7 +6,7 @@ class Html {
 	companion object {
 		fun escape(text: String): String {
 
-			var text = text
+			var result = text
 
 			val map = mapOf(
 				"&" to "&amp;",
@@ -17,10 +17,10 @@ class Html {
 			)
 
 			map.forEach {
-				text = text.replace(it.key, it.value)
+				result = result.replace(it.key, it.value)
 			}
 
-			return text
+			return result
 		}
 
 		fun urlEncode(string: String): String {

@@ -21,6 +21,8 @@ class ServerEventExchangerModule : AbstractModule(), CoroutineScope {
 	var key: Double? = null
 
 	override fun onInit() {
+		moduleLoader.add(KotlinSerializationTest())
+
 		Natives.onNet(GlobalConfig.NET_EVENT_NAME) { netPacket: String ->
 			try {
 				val packet = Serializer.unserialize<ServersNetPacket>(netPacket)

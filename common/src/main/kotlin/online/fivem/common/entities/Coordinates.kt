@@ -1,9 +1,9 @@
 package online.fivem.common.entities
 
 open class Coordinates(
-	val x: Number,
-	val y: Number,
-	val z: Number
+	open val x: Float,
+	open val y: Float,
+	open val z: Float
 ) {
 	override fun equals(other: Any?): Boolean {
 		if (other !is Coordinates) return false

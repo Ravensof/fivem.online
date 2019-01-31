@@ -7,6 +7,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import online.fivem.common.common.Html
+import online.fivem.common.common.Utils
 import online.fivem.nui.common.View
 import online.fivem.nui.extensions.getImage
 import online.fivem.nui.extensions.nuiResourcesLink
@@ -81,7 +82,7 @@ class SpeedometerSimpleView : View(), CoroutineScope {
 
 			for (data in speedometerInterpolatorChannel) {
 				stepRPM = (data.rpm * 180 - lastRpm) / INTERPOLATION_STEPS
-				stepSpeed = (data.speed * 2.236936 * 180 / 150 - lastSpeed) / INTERPOLATION_STEPS
+				stepSpeed = (data.speed * Utils.MPS_TO_MILES_PER_HOUR * 180 / 150 - lastSpeed) / INTERPOLATION_STEPS
 
 				for (i in 1..INTERPOLATION_STEPS) {
 					drawingTime = Date.now()

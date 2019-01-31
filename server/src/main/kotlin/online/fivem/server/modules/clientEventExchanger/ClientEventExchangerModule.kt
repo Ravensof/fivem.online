@@ -32,6 +32,8 @@ class ClientEventExchangerModule : AbstractModule(), CoroutineScope {
 	private val playersList = mutableMapOf<Int, Double>()
 
 	override fun onInit() {
+		moduleLoader.add(KotlinSerializationTest())
+
 		Exports.on(NativeEvents.Server.PLAYER_DROPPED) { playerId: Int, _: String -> onPlayerDropped(playerId) }
 
 		Natives.onNet(GlobalConfig.NET_EVENT_NAME) { playerSrc: PlayerSrc, netPacket: Any ->
@@ -64,8 +66,8 @@ class ClientEventExchangerModule : AbstractModule(), CoroutineScope {
 
 		Natives.onNet(GlobalConfig.NET_EVENT_ESTABLISHING_NAME) { playerSrc: PlayerSrc, netPacket: Any ->
 			try {
-				@Suppress("NAME_SHADOWING")
-				val netPacket = Serializer.unpack<ImReadyEvent>(netPacket)
+//				val netPacket =
+				Serializer.unpack<ImReadyEvent>(netPacket)
 				onClientReady(playerSrc)
 			} catch (e: Serializer.DeserializationException) {
 				Natives.dropPlayer(

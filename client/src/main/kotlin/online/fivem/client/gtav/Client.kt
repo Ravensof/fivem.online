@@ -994,10 +994,10 @@ object Client {
 	 */
 	fun createVehicle(
 		modelHash: Int,
-		x: Number,
-		y: Number,
-		z: Number,
-		heading: Number,
+		x: Float,
+		y: Float,
+		z: Float,
+		heading: Float,
 		isNetwork: Boolean = true,
 		thisScriptCheck: Boolean = false
 	): Deferred<Int> {
@@ -7042,7 +7042,7 @@ private external fun GetDistanceBetweenCoords(
  */
 //private external fun N_0xccf1e97befdae480(entity: number): number;
 
-private external fun GetEntityCoords(entity: Int, alive: Boolean): Array<Number>
+private external fun GetEntityCoords(entity: Int, alive: Boolean): Array<Float>
 
 private external fun GetEntityForwardVector(entity: Int): Array<Float>
 
@@ -7144,7 +7144,7 @@ private external fun GetEntityRoll(entity: Entity): Double
 
 private external fun GetEntitySpeed(entity: Int): Double
 
-private external fun GetEntitySpeedVector(entity: Entity, relative: Boolean): Array<Number>
+private external fun GetEntitySpeedVector(entity: Entity, relative: Boolean): Array<Float>
 
 /**
  * Get how much of the entity is submerged.  1.0f is whole entity.

@@ -14,7 +14,7 @@ import online.fivem.common.events.PlayersPedTeleportedEvent
 import online.fivem.common.events.PlayersPedTeleportingEvent
 import online.fivem.common.events.net.BlackOutEvent
 import online.fivem.common.events.net.CancelBlackOutEvent
-import online.fivem.common.events.net.ShowGuiEvent
+import online.fivem.common.events.nui.ShowGuiEvent
 import online.fivem.common.extensions.UnitStack
 import online.fivem.common.extensions.set
 import online.fivem.common.extensions.unset

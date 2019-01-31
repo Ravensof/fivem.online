@@ -102,9 +102,9 @@ class SessionModule(override val coroutineContext: CoroutineContext) : AbstractM
 			basicsModule.spawn(
 				playerSrc,
 				CoordinatesX(
-					character.coord_x,
-					character.coord_y,
-					character.coord_z,
+					character.coord_x.toFloat(),
+					character.coord_y.toFloat(),
+					character.coord_z.toFloat(),
 					character.coord_rotation
 				), character.pedestrian
 			)

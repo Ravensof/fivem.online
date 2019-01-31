@@ -6,7 +6,7 @@ buildscript {
 
 plugins {
 	id("kotlin2js").version("1.3.20")
-	id("kotlinx-serialization").version("1.3.0")
+	id("kotlinx-serialization").version("1.3.20")
 }
 
 group = "online.fivem"
@@ -64,7 +64,7 @@ subprojects {
 
 		compile("org.jetbrains.kotlin:kotlin-stdlib-js:${properties["config.kotlin_version"]}")
 //		testCompile "org.jetbrains.kotlin:kotlin-test-js:$kotlin_version"
-		compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:0.9.0")
+		compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:${properties["config.serialization_runtime"]}")
 		compile("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:${properties["config.coroutines_version"]}")
 
 		when (project.name) {

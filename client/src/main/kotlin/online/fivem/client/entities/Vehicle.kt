@@ -23,8 +23,15 @@ class Vehicle(
 ) {
 	val id: Int = Client.getVehicleOilLevel(entity)?.toInt().orZero()
 
+	val handling = Handling(entity)
 	val wheels: List<Wheel>
 	val doors: List<Door>
+	val numberOfWheels = Client.getVehicleNumberOfWheels(entity)
+	val numberOfDoors = Client.getNumberOfVehicleDoors(entity)
+	val isEngineStarting: Boolean get() = Client.isVehicleEngineStarting(entity)
+	val numberOfSeats = Client.getVehicleMaxNumberOfPassengers(entity) + 1
+	val model = Client.getEntityModel(entity)
+	val isOnAllWheels: Boolean get() = Client.isVehicleOnAllWheels(entity)
 
 	var clutch: Number
 		get() = Client.getVehicleClutch(entity)
@@ -76,10 +83,6 @@ class Vehicle(
 		get() = Client.getVehicleNextGear(entity)
 		set(value) = Client.setVehicleNextGear(entity, value)
 
-	val numberOfWheels = Client.getVehicleNumberOfWheels(entity)
-
-	val numberOfDoors = Client.getNumberOfVehicleDoors(entity)
-
 	//oilLevel вроде ни на что не влияет, поэтому использую как идентификатор
 	//steeringAngle set get
 	//steeringScale set get
@@ -90,9 +93,6 @@ class Vehicle(
 	var maxSpeed: Double
 		get() = Client.getVehicleMaxSpeed(entity)
 		set(value) = Client.setEntityMaxSpeed(entity, value)
-
-	val isEngineStarting: Boolean
-		get() = Client.isVehicleEngineStarting(entity)
 
 	var isEngineOn: Boolean
 		get() = Client.isVehicleEngineOn(entity)
@@ -124,8 +124,6 @@ class Vehicle(
 		get() = Client.getVehiclePetrolTankHealth(entity)
 		set(value) = Client.setVehiclePetrolTankHealth(entity, value)
 
-	val numberOfSeats = Client.getVehicleMaxNumberOfPassengers(entity) + 1
-
 	var wheelType: Int
 		get() = Client.getVehicleWheelType(entity)
 		set(value) = Client.setVehicleWheelType(entity, value)
@@ -137,8 +135,6 @@ class Vehicle(
 	var extraColors: Pair<Int, Int>
 		get() = Client.getVehicleExtraColours(entity)
 		set(value) = Client.setVehicleExtraColours(entity, value.first, value.second)
-
-	val model = Client.getEntityModel(entity)
 
 	var livery: Int?
 		get() = Client.getVehicleLivery(entity)
@@ -163,9 +159,6 @@ class Vehicle(
 	var tyreSmokeColor: RGB
 		get() = Client.getVehicleTyreSmokeColor(entity)
 		set(value) = Client.setVehicleTyreSmokeColor(entity, value)
-
-	val isOnAllWheels: Boolean
-		get() = Client.isVehicleOnAllWheels(entity)
 
 	var brakeLights: Boolean = false
 		set(value) {
@@ -423,9 +416,8 @@ class Vehicle(
 		}
 	}
 
-	val handling = Handling(entity)
-
 	class Handling(private val entity: Entity) {
+		// https://gtamods.com/wiki/Handling.meta
 
 		/**
 		 * Multiplies the game's calculation of deformation-causing damage.

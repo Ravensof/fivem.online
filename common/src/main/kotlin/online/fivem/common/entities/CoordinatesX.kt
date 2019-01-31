@@ -1,12 +1,12 @@
 package online.fivem.common.entities
 
 class CoordinatesX(
-	x: Number,
-	y: Number,
-	z: Number,
-	val rotation: Number
+	override val x: Float,
+	override val y: Float,
+	override val z: Float,
+	val rotation: Float
 ) : Coordinates(x, y, z) {
-	constructor(coordinates: Coordinates, rotation: Number) : this(
+	constructor(coordinates: Coordinates, rotation: Float) : this(
 		coordinates.x,
 		coordinates.y,
 		coordinates.z,
