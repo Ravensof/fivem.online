@@ -1,6 +1,6 @@
-import kotlinx.serialization.cbor.CBOR
+import kotlinx.serialization.cbor.Cbor
 import kotlinx.serialization.dumps
-import kotlinx.serialization.json.JSON
+import kotlinx.serialization.json.Json
 import kotlinx.serialization.loads
 import kotlinx.serialization.protobuf.ProtoBuf
 import online.fivem.common.external.Base64
@@ -18,19 +18,19 @@ fun someTests() {
 
 	val serializer = CommonTest.serializer()
 
-	val serializedString = JSON.indented.stringify(serializer, test)
+	val serializedString = Json.indented.stringify(serializer, test)
 
 	println(serializedString)
 
-	println(JSON.parse(serializer, serializedString)::class)
+	println(Json.parse(serializer, serializedString)::class)
 
 	val protoBuf = ProtoBuf.dumps(serializer, test)
 
 	println("protoBuf = $protoBuf -> ${ProtoBuf.loads(serializer, protoBuf)}")
 
-	val cbor = CBOR.dumps(serializer, test)
+	val cbor = Cbor.dumps(serializer, test)
 
-	println("cbor = $cbor -> ${CBOR.loads(serializer, cbor)}")
+	println("cbor = $cbor -> ${Cbor.loads(serializer, cbor)}")
 
 	//test base 64
 	println(Base64.encode("test") == window.atob(Base64.encode("test")))

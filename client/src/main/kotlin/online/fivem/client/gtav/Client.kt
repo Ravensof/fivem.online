@@ -16,6 +16,89 @@ import online.fivem.common.gtav.RadioStation
 
 object Client {
 
+	fun networkSetTalkerProximity(p0: Int) {
+		NetworkSetTalkerProximity(p0)
+	}
+
+	/**
+	 * returns true if someone is screaming or talking in a microphone
+	 */
+	fun networkIsPlayerTalking(player: Int): Boolean {
+		return NetworkIsPlayerTalking(player) == 1
+	}
+
+	/**
+	 * Has the entity1 got a clear line of sight to the other entity2 from the direction entity1 is facing.
+	 * This is one of the most CPU demanding BOOL natives in the game; avoid calling this in things like nested for-loops
+	 */
+	fun hasEntityClearLosToEntityInFront(entity1: Entity, entity2: Entity): Boolean {
+		return HasEntityClearLosToEntityInFront(entity1, entity2) == 1
+	}
+
+	/**
+	 * R* uses this to hear all player when spectating.
+	 * It allows you to hear other online players when their chat is on none, crew and or friends
+	 */
+	fun networkOverrideReceiveRestrictions(player: Int, toggle: Boolean) {
+		NetworkOverrideReceiveRestrictions(player, toggle)
+	}
+
+	/**
+	 * Console Hash: 0x6C344AE3
+	 * "NETWORK_OVERRIDE_SEND_RESTRICTIONS" is right, but dev-c put a _ by default.
+	 * This is used alongside the native,
+	 * 'NETWORK_OVERRIDE_RECEIVE_RESTRICTIONS'. Read it's description for more info.
+	 */
+	fun networkOverrideSendRestrictions(player: Int, toggle: Boolean) {
+		NetworkOverrideSendRestrictions(player, toggle)
+//		invokeNative("_NETWORK_OVERRIDE_SEND_RESTRICTIONS", player, toggle)
+	}
+
+	/**
+	 * Convert a world coordinate into its relative screen coordinate.  (WorldToScreen)
+	 * Returns a boolean; whether or not the operation was successful. It will return false if the coordinates given are not visible to the rendering camera.
+	 * For .NET users...
+	 * VB:
+	 * Public Shared Function World3DToScreen2d(pos as vector3) As Vector2
+	 * Dim x2dp, y2dp As New Native.OutputArgument
+	 * Native.Function.Call(Of Boolean)(Native.Hash.GET_SCREEN_COORD_FROM_WORLD_COORD , pos.x, pos.y, pos.z, x2dp, y2dp)
+	 * Return New Vector2(x2dp.GetResult(Of Single), y2dp.GetResult(Of Single))
+	 * End Function
+	 * C#:
+	 * Vector2 World3DToScreen2d(Vector3 pos)
+	 * {
+	 * var x2dp = new OutputArgument();
+	 * var y2dp = new OutputArgument();
+	 * Function.Call&lt;bool&gt;(Hash.GET_SCREEN_COORD_FROM_WORLD_COORD , pos.X, pos.Y, pos.Z, x2dp, y2dp);
+	 * return new Vector2(x2dp.GetResult&lt;float&gt;(), y2dp.GetResult&lt;float&gt;());
+	 * }
+	 * //USE VERY SMALL VALUES FOR THE SCALE OF RECTS/TEXT because it is dramatically larger on screen than in 3D, e.g '0.05' small.
+	 * Used to be called _WORLD3D_TO_SCREEN2D
+	 * I thought we lost you from the scene forever. It does seem however that calling SET_DRAW_ORIGIN then your natives, then ending it. Seems to work better for certain things such as keeping boxes around people for a predator missile e.g.
+	 */
+	fun world3dToScreen2d(worldX: Number, worldY: Number, worldZ: Number): Pair<Float, Float>? {
+		val result = World3dToScreen2d(worldX, worldY, worldZ)
+
+		if (result[0] != 1) return null
+
+		return result[1].toFloat() to result[2].toFloat()
+	}
+
+	fun getPlayerWantedLevel(player: Int): Int {
+		return GetPlayerWantedLevel(player).toInt()
+	}
+
+	fun canPedHearPlayer(player: Int, ped: Entity): Boolean {
+		return CanPedHearPlayer(player, ped) == 1
+	}
+
+	/**
+	 * Returns true if ped1 can see ped2 in their line of vision
+	 */
+	fun canPedSeePed(ped1: Entity, ped2: Entity): Boolean {
+		return CanPedSeePed(ped1, ped2) == 1
+	}
+
 	/**
 	 * Works in Singleplayer too.
 	 * Actually has a 4th param (BOOL) that sets byte_14273C46C (in b944) to whatever was passed to p3.
@@ -3399,7 +3482,7 @@ private external fun SetTextEntry(text: String)
 
 //private external fun CanKnockPedOffVehicle(ped: number): number;
 
-//private external fun CanPedHearPlayer(player: number, ped: number): number;
+private external fun CanPedHearPlayer(player: Int, ped: Entity): Number
 
 //private external fun CanPedInCombatSeeTarget(ped: number, target: number): number;
 
@@ -3409,10 +3492,7 @@ private external fun SetTextEntry(text: String)
  */
 //private external fun CanPedRagdoll(ped: number): number;
 
-/**
- * Returns true if ped1 can see ped2 in their line of vision
- */
-//private external fun CanPedSeePed(ped1: number, ped2: number): number;
+private external fun CanPedSeePed(ped1: Entity, ped2: Entity): Number
 /**
  * Returns true if ped1 can see ped2 in their line of vision
  */
@@ -8984,29 +9064,8 @@ private external fun GetResourceMetadata(
  * I thought we lost you from the scene forever. It does seem however that calling SET_DRAW_ORIGIN then your natives, then ending it. Seems to work better for certain things such as keeping boxes around people for a predator missile e.g.
  */
 //private external fun GetScreenCoordFromWorldCoord(worldX: number, worldY: number, worldZ: number): [number, number, number];
-/**
- * Convert a world coordinate into its relative screen coordinate.  (WorldToScreen)
- * Returns a boolean; whether or not the operation was successful. It will return false if the coordinates given are not visible to the rendering camera.
- * For .NET users...
- * VB:
- * Public Shared Function World3DToScreen2d(pos as vector3) As Vector2
- * Dim x2dp, y2dp As New Native.OutputArgument
- * Native.Function.Call(Of Boolean)(Native.Hash.GET_SCREEN_COORD_FROM_WORLD_COORD , pos.x, pos.y, pos.z, x2dp, y2dp)
- * Return New Vector2(x2dp.GetResult(Of Single), y2dp.GetResult(Of Single))
- * End Function
- * C#:
- * Vector2 World3DToScreen2d(Vector3 pos)
- * {
- * var x2dp = new OutputArgument();
- * var y2dp = new OutputArgument();
- * Function.Call&lt;bool&gt;(Hash.GET_SCREEN_COORD_FROM_WORLD_COORD , pos.X, pos.Y, pos.Z, x2dp, y2dp);
- * return new Vector2(x2dp.GetResult&lt;float&gt;(), y2dp.GetResult&lt;float&gt;());
- * }
- * //USE VERY SMALL VALUES FOR THE SCALE OF RECTS/TEXT because it is dramatically larger on screen than in 3D, e.g '0.05' small.
- * Used to be called _WORLD3D_TO_SCREEN2D
- * I thought we lost you from the scene forever. It does seem however that calling SET_DRAW_ORIGIN then your natives, then ending it. Seems to work better for certain things such as keeping boxes around people for a predator missile e.g.
- */
-//private external fun World3dToScreen2d(worldX: number, worldY: number, worldZ: number): [number, number, number];
+
+private external fun World3dToScreen2d(worldX: Number, worldY: Number, worldZ: Number): Array<Number>
 
 /**
  * Returns whether the specified screen effect is active.
@@ -9020,7 +9079,7 @@ private external fun GetResourceMetadata(
  * GET_SCREEN_RESOLUTION(&amp;screenresx,&amp;screenresy);
  * Hardcoded to always return 1280 x 720
  */
-private external fun GetScreenResolution(): Array<Int>
+//private external fun GetScreenResolution(): Array<Int>
 
 /**
  * Gets the status of a script-assigned task. The hash does not seem to match the actual native name, but is assigned hardcoded from the executable during task creation.
@@ -10322,11 +10381,7 @@ private external fun HasCollisionLoadedAroundEntity(entity: Entity): Number
  */
 //private external fun HasEntityClearLosToEntity(entity1: number, entity2: number, traceType: number): number;
 
-/**
- * Has the entity1 got a clear line of sight to the other entity2 from the direction entity1 is facing.
- * This is one of the most CPU demanding BOOL natives in the game; avoid calling this in things like nested for-loops
- */
-//private external fun HasEntityClearLosToEntityInFront(entity1: number, entity2: number): number;
+private external fun HasEntityClearLosToEntityInFront(entity1: Entity, entity2: Entity): Number
 
 /**
  * Called on tick.
@@ -19284,10 +19339,7 @@ private external fun NetworkGetServerTime(): Time
 
 //private external fun NetworkIsPlayerMutedByMe(player: number): number;
 
-/**
- * returns true if someone is screaming or talking in a microphone
- */
-//private external fun NetworkIsPlayerTalking(player: number): number;//todo use
+private external fun NetworkIsPlayerTalking(player: Int): Number
 
 //private external fun NetworkIsPsnAvailable(): number;
 //private external fun N_0x8d11e61a4abf49cc(): number;
@@ -19366,7 +19418,7 @@ private external fun NetworkGetServerTime(): Time
 /**
  * Could possibly bypass being muted or automatically muted
  */
-//private external fun NetworkOverrideChatRestrictions(player: number, toggle: boolean)
+//private external fun NetworkOverrideChatRestrictions(player: Int, toggle: Boolean)
 /**
  * Could possibly bypass being muted or automatically muted
  */
@@ -19374,24 +19426,14 @@ private external fun NetworkGetServerTime(): Time
 
 private external fun NetworkOverrideClockTime(Hours: Int, Minutes: Int, Seconds: Int)
 
-/**
- * R* uses this to hear all player when spectating.
- * It allows you to hear other online players when their chat is on none, crew and or friends
- */
-//private external fun NetworkOverrideReceiveRestrictions(player: number, toggle: boolean)
+private external fun NetworkOverrideReceiveRestrictions(player: Int, toggle: Boolean)
 /**
  * R* uses this to hear all player when spectating.
  * It allows you to hear other online players when their chat is on none, crew and or friends
  */
 //private external fun N_0xddf73e2b1fec5ab4(player: number, toggle: boolean)
 
-/**
- * Console Hash: 0x6C344AE3
- * "NETWORK_OVERRIDE_SEND_RESTRICTIONS" is right, but dev-c put a _ by default.
- * This is used alongside the native,
- * 'NETWORK_OVERRIDE_RECEIVE_RESTRICTIONS'. Read it's description for more info.
- */
-//private external fun NetworkOverrideSendRestrictions(player: number, toggle: boolean)
+private external fun NetworkOverrideSendRestrictions(player: Int, toggle: Boolean)
 /**
  * Console Hash: 0x6C344AE3
  * "NETWORK_OVERRIDE_SEND_RESTRICTIONS" is right, but dev-c put a _ by default.
@@ -19884,7 +19926,7 @@ private external fun NetworkResurrectLocalPlayer(
 
 //private external fun NetworkSetScriptIsSafeForNetworkGame()
 
-//private external fun NetworkSetTalkerProximity(p0: number)
+private external fun NetworkSetTalkerProximity(p0: Int)
 
 //private external fun NetworkSetTeamOnlyChat(toggle: boolean)
 
@@ -29599,7 +29641,7 @@ external fun GetPlayerTeam(player: Int): Int
 
 //private external fun GetPlayerWantedCentrePosition(player: number): number[];
 
-//private external fun GetPlayerWantedLevel(player: number): number;
+private external fun GetPlayerWantedLevel(player: Int): Number
 
 /**
  * Alternative: GET_VEHICLE_PED_IS_IN(PLAYER_PED_ID(), 1);

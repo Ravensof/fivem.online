@@ -54,9 +54,11 @@ fun Client.drawScreenText2D(
 	x: Double,
 	y: Double,
 	message: String,
+	scale: Double = 1.0,
 	dropShadow: Boolean = true,
 	outline: Boolean = false
 ) {
+	setTextScale(0.0, 0.55 * scale)
 	setTextFont(0)
 	setTextProportional(true)
 	setTextScale(0.0, 0.3)
@@ -75,6 +77,20 @@ fun Client.drawScreenText2D(
 	setTextEntry("STRING")
 	addTextComponentString(message)
 	drawText(x, y)
+}
+
+fun Client.drawScreenText3D(
+	coordinates: Coordinates,
+	message: String,
+	scale: Double = 1.0,
+	dropShadow: Boolean = true,
+	outline: Boolean = false
+) {
+	val screenCoordinates = world3dToScreen2d(coordinates.x, coordinates.y, coordinates.z)
+
+	screenCoordinates?.let {
+		drawScreenText2D(it.first.toDouble(), it.second.toDouble(), message, scale, dropShadow, outline)
+	}
 }
 
 fun Client.isToggleModOn(vehicle: Entity, modType: NativeVehicles.Mod): Boolean {
