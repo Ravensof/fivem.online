@@ -2,6 +2,7 @@ package online.fivem.client.modules.basics
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import online.fivem.client.gtav.Client
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
@@ -12,7 +13,7 @@ import kotlin.coroutines.CoroutineContext
 
 class BasicsModule : AbstractModule(), CoroutineScope {
 
-	override val coroutineContext: CoroutineContext = Job()
+	override val coroutineContext: CoroutineContext = SupervisorJob()
 	private val API by moduleLoader.onReady<API>()
 
 	private var handleShowNui = Stack.UNDEFINED_INDEX
@@ -27,6 +28,7 @@ class BasicsModule : AbstractModule(), CoroutineScope {
 			add(JoinTransitionModule(coroutineContext))
 			add(SpawnManagerModule(coroutineContext))
 			add(RealDateModule())
+			add(WeatherModule(coroutineContext))
 		}
 	}
 

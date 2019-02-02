@@ -22,7 +22,7 @@ import kotlin.browser.document
 import kotlin.coroutines.CoroutineContext
 import kotlin.js.Date
 
-class Speedometer(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
+class SpeedometerModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
 
 	private val speedometerArrow: HTMLImageElement by lazy {
 		jQuery("<img src=\"$RESOURCES_DIR/arrow-speedometer.svg\"/>").toHTMLImageElement()

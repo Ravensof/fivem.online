@@ -85,4 +85,4 @@ private external fun onNet(eventName: String, callback: Any)
 
 private external fun setTick(callback: () -> Unit)
 
-private external fun setImmediate(callback: () -> Unit)//todo test
+private external fun setImmediate(callback: () -> Unit)

@@ -1,17 +1,20 @@
 package online.fivem.common.common
 
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import online.fivem.common.GlobalConfig
 import online.fivem.common.GlobalConfig.CONSOLE_PREFIX
+import kotlin.coroutines.CoroutineContext
 import kotlin.js.Console
 
-object Console : Console {
+object Console : Console, CoroutineScope {
+	override val coroutineContext: CoroutineContext = Job()
 	private val channel = Channel<String>(32)
 
 	init {
-		GlobalScope.launch {
+		launch {
 			for (data in channel) {
 				console.log(data)
 			}
@@ -28,7 +31,7 @@ object Console : Console {
 			o.forEach {
 				str += it
 			}
-			GlobalScope.launch { channel.send(str) }
+			launch { channel.send(str) }
 		}
 	}
 
@@ -38,7 +41,7 @@ object Console : Console {
 			o.forEach {
 				str += it
 			}
-			GlobalScope.launch { channel.send(str) }
+			launch { channel.send(str) }
 		}
 	}
 
@@ -48,7 +51,7 @@ object Console : Console {
 			o.forEach {
 				str += it
 			}
-			GlobalScope.launch { channel.send(str) }
+			launch { channel.send(str) }
 		}
 	}
 
@@ -58,7 +61,7 @@ object Console : Console {
 			o.forEach {
 				str += it
 			}
-			GlobalScope.launch { channel.send(str) }
+			launch { channel.send(str) }
 		}
 	}
 
@@ -68,7 +71,7 @@ object Console : Console {
 			o.forEach {
 				str += it
 			}
-			GlobalScope.launch { channel.send(str) }
+			launch { channel.send(str) }
 		}
 	}
 

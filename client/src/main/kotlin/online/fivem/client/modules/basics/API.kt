@@ -29,6 +29,18 @@ class API(
 	private val tickExecutor by moduleLoader.onReady<TickExecutorModule>()
 	private val controlHandlerModule by moduleLoader.onReady<ControlHandlerModule>()
 
+	private val enableBlackOut = UnitStack()
+
+	fun setBlackOut() = enableBlackOut.set {
+		@Suppress("DEPRECATION")
+		Client.setBlackout(true)
+	}
+
+	fun unSetBlackOut(handle: Handle) = enableBlackOut.unset(handle) {
+		@Suppress("DEPRECATION")
+		Client.setBlackout(false)
+	}
+
 	private val hideNui = UnitStack()
 
 	fun hideNui() = hideNui.set {
@@ -51,7 +63,7 @@ class API(
 
 	private val nuiBlackOutScreenStack = UnitStack()
 
-	fun doNuiBlackOut(duration: Int = 0) = setJob(nuiBlackOutScreenStack) {
+	fun setBlackScreen(duration: Int = 0) = setJob(nuiBlackOutScreenStack) {
 		var supportId = -1
 
 		if (duration == 0) {
@@ -69,7 +81,7 @@ class API(
 		tickExecutor.remove(supportId)
 	}
 
-	fun undoNuiBlackOut(handle: Handle, duration: Int) = unsetJob(nuiBlackOutScreenStack, handle) {
+	fun unSetBlackScreen(handle: Handle, duration: Int) = unsetJob(nuiBlackOutScreenStack, handle) {
 		NuiEvent.emit(CancelBlackOutEvent(duration))
 		delay(duration.toLong())
 	}

@@ -16,6 +16,7 @@ fun initSerializableClasses() {
 		SpawnPlayerEvent::class to SpawnPlayerEvent.serializer(),
 		SpawnVehicleEvent::class to SpawnVehicleEvent.serializer(),
 		SynchronizeEvent::class to SynchronizeEvent.serializer(),
+
 		//nui
 		BlackOutEvent::class to BlackOutEvent.serializer(),
 		CancelBlackOutEvent::class to CancelBlackOutEvent.serializer(),

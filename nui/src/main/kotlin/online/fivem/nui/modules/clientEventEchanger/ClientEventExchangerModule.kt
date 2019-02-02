@@ -65,8 +65,9 @@ class ClientEventExchangerModule : AbstractModule(), EventListener, CoroutineSco
 	override fun handleEvent(event: Event) {
 		val rawPacket = event.asDynamic().data
 
+		if (rawPacket is String) return
+
 		try {
-			if (rawPacket is String) return
 
 			if (rawPacket.hash == undefined) return handleUnsafePacket(rawPacket)
 

@@ -1,7 +1,8 @@
 package online.fivem.client.modules.nuiEventExchanger
 
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import online.fivem.client.gtav.Client
@@ -14,8 +15,11 @@ import online.fivem.common.common.Serializer
 import online.fivem.common.entities.NuiPacket
 import online.fivem.common.entities.NuiUnsafePacket
 import online.fivem.common.events.net.ImReadyEvent
+import kotlin.coroutines.CoroutineContext
 
-class NuiEventExchangerModule : AbstractModule() {
+class NuiEventExchangerModule : AbstractModule(), CoroutineScope {
+	override val coroutineContext: CoroutineContext = SupervisorJob()
+
 
 	override fun onInit() {
 		Exports.onNui(GlobalConfig.NUI_EVENT_NAME) { rawPacket ->
@@ -33,7 +37,7 @@ class NuiEventExchangerModule : AbstractModule() {
 
 	override fun onStart(): Job? {
 
-		GlobalScope.launch {
+		launch {
 			try {
 				for (data in channel) {
 					Client.sendNuiMessage(
@@ -49,7 +53,7 @@ class NuiEventExchangerModule : AbstractModule() {
 			}
 		}
 
-		GlobalScope.launch {
+		launch {
 			try {
 				for (data in unsafeChannel) {
 					Client.sendNuiMessage(
@@ -66,12 +70,12 @@ class NuiEventExchangerModule : AbstractModule() {
 		val channel = Channel<Unit>()
 
 		NuiEvent.on<ImReadyEvent> {
-			GlobalScope.launch {
+			launch {
 				channel.send(Unit)
 			}
 		}
 
-		return GlobalScope.launch {
+		return launch {
 			channel.receive()
 			channel.close()
 			NuiEvent.emit(ImReadyEvent())

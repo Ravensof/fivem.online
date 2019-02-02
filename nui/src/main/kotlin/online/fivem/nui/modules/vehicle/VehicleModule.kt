@@ -1,17 +1,17 @@
 package online.fivem.nui.modules.vehicle
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import online.fivem.common.common.AbstractModule
 import kotlin.coroutines.CoroutineContext
 
 class VehicleModule : AbstractModule(), CoroutineScope {
-	override val coroutineContext: CoroutineContext = Job()
+	override val coroutineContext: CoroutineContext = SupervisorJob()
 
 	override fun onInit() {
 		moduleLoader.apply {
 			add(InternetRadio())
-			add(Speedometer(coroutineContext))
+			add(SpeedometerModule(coroutineContext))
 		}
 	}
 }

@@ -13,8 +13,106 @@ import online.fivem.common.entities.Time
 import online.fivem.common.gtav.NativeControls
 import online.fivem.common.gtav.ProfileSetting
 import online.fivem.common.gtav.RadioStation
+import kotlin.coroutines.CoroutineContext
 
-object Client {
+object Client : CoroutineScope {
+	override val coroutineContext: CoroutineContext = Job()
+
+	/**
+	 * Forces footstep tracks on all surfaces.
+	 */
+	fun setForcePedFootstepsTracks(toggle: Boolean) {
+		SetForcePedFootstepsTracks(toggle)
+	}
+
+	/**
+	 * Forces vehicle trails on all surfaces.
+	 */
+	fun setForceVehicleTrails(toggle: Boolean) {
+		SetForceVehicleTrails(toggle)
+	}
+
+	/**
+	 * The following weatherTypes are used in the scripts:
+	 * "CLEAR"
+	 * "EXTRASUNNY"
+	 * "CLOUDS"
+	 * "OVERCAST"
+	 * "RAIN"
+	 * "CLEARING"
+	 * "THUNDER"
+	 * "SMOG"
+	 * "FOGGY"
+	 * "XMAS"
+	 * "SNOWLIGHT"
+	 * "BLIZZARD"
+	 */
+	@Deprecated("use NativeWeather.setWeatherTypeNowPersist()")
+	fun setWeatherTypeNowPersist(weatherType: String) {
+		SetWeatherTypeNowPersist(weatherType)
+	}
+
+	/**
+	 * The following weatherTypes are used in the scripts:
+	 * "CLEAR"
+	 * "EXTRASUNNY"
+	 * "CLOUDS"
+	 * "OVERCAST"
+	 * "RAIN"
+	 * "CLEARING"
+	 * "THUNDER"
+	 * "SMOG"
+	 * "FOGGY"
+	 * "XMAS"
+	 * "SNOWLIGHT"
+	 * "BLIZZARD"
+	 */
+	@Deprecated("use NativeWeather.setWeatherTypeNow()")
+	fun setWeatherTypeNow(weatherType: String) {
+		SetWeatherTypeNow(weatherType)
+	}
+
+	/**
+	 * The following weatherTypes are used in the scripts:
+	 * "CLEAR"
+	 * "EXTRASUNNY"
+	 * "CLOUDS"
+	 * "OVERCAST"
+	 * "RAIN"
+	 * "CLEARING"
+	 * "THUNDER"
+	 * "SMOG"
+	 * "FOGGY"
+	 * "XMAS"
+	 * "SNOWLIGHT"
+	 * "BLIZZARD"
+	 */
+	@Deprecated("use NativeWeather.setWeatherTypePersist()")
+	fun setWeatherTypePersist(weatherType: String) {
+		SetWeatherTypePersist(weatherType)
+	}
+
+	fun clearWeatherTypePersist() {
+		ClearWeatherTypePersist()
+	}
+
+	fun clearOverrideWeather() {
+		ClearOverrideWeather()
+	}
+
+	/**
+	 * Disables all emissive textures and lights like city lights, car lights, cop car lights. Particles still emit light
+	 * Used in Humane Labs Heist for EMP.
+	 */
+	@Deprecated("use API.setBlackOut()")
+	fun setBlackout(enable: Boolean) {
+		SetBlackout(enable)
+	}
+
+	@Deprecated("use NativeWeather.setOverTime(time)")
+	fun setWeatherTypeOverTime(weatherType: String, time: Float) {
+		SetWeatherTypeOverTime(weatherType, time)
+	}
 
 	fun networkSetTalkerProximity(p0: Int) {
 		NetworkSetTalkerProximity(p0)
@@ -1125,7 +1223,7 @@ object Client {
 		isNetwork: Boolean = true,
 		thisScriptCheck: Boolean = false
 	): Deferred<Int> {
-		return GlobalScope.async {
+		return async {
 			requestModel(modelHash)
 			while (!hasModelLoaded(modelHash)) {
 				delay(100)
@@ -1683,7 +1781,7 @@ object Client {
 	 */
 	@Deprecated("use api.doScreenFadeIn")
 	fun doScreenFadeIn(duration: Int): Job {
-		return GlobalScope.launch {
+		return launch {
 			DoScreenFadeIn(duration)
 			while (!isScreenFadedIn() && !isScreenFadingOut()) {
 				delay(25)
@@ -1701,7 +1799,7 @@ object Client {
 	 */
 	@Deprecated("use api.doScreenFadeOut")
 	fun doScreenFadeOut(duration: Int): Job {
-		return GlobalScope.launch {
+		return launch {
 			DoScreenFadeOut(duration)
 			while (!isScreenFadedOut() && !isScreenFadingIn()) {
 				delay(25)
@@ -1890,7 +1988,7 @@ object Client {
 	 * Looking it the disassembly, it seems like it actually returns the model if it's already loaded.
 	 */
 	fun requestModel(hash: Int): Job {
-		return GlobalScope.launch {
+		return launch {
 			RequestModel(hash)
 			while (!hasModelLoaded(hash)) {
 				delay(25)
@@ -1999,7 +2097,7 @@ object Client {
 	 * fucks up on mount chilliad
 	 */
 	fun switchOutPlayer(ped: Entity): Job {
-		return GlobalScope.launch {
+		return launch {
 			SwitchOutPlayer(ped, 0, 1)
 			while (getPlayerSwitchState() != 5) {
 				delay(25)
@@ -2008,7 +2106,7 @@ object Client {
 	}
 
 	fun switchInPlayer(ped: Entity): Job {
-		return GlobalScope.launch {
+		return launch {
 			SwitchInPlayer(ped)
 			while (getPlayerSwitchState() != 12) {
 				delay(25)
@@ -3729,7 +3827,7 @@ private external fun ClearDrawOrigin()
  */
 //private external fun N_0x55598d21339cb998(pos: number)
 
-//private external fun ClearOverrideWeather()
+private external fun ClearOverrideWeather()
 
 //private external fun ClearPedAlternateMovementAnim(ped: number, stance: number, p2: number)
 
@@ -3853,7 +3951,7 @@ private external fun ClearPlayerWantedLevel(player: Int)
 
 //private external fun ClearVehicleCustomSecondaryColour(vehicle: number): number;
 
-//private external fun ClearWeatherTypePersist()
+private external fun ClearWeatherTypePersist()
 
 /**
  * thisScriptCheck - can be destroyed if it belongs to the calling script.
@@ -22196,11 +22294,7 @@ private external fun SendNuiMessage(jsonString: String): Int
 
 //private external fun SetBitsInRange(rangeStart: number, rangeEnd: number, p3: number): number;
 
-/**
- * Disables all emissive textures and lights like city lights, car lights, cop car lights. Particles still emit light
- * Used in Humane Labs Heist for EMP.
- */
-//private external fun SetBlackout(enable: boolean)
+private external fun SetBlackout(enable: Boolean)
 
 /**
  * Sets alpha-channel for blip color.
@@ -23343,15 +23437,9 @@ private external fun SetEntityVisible(entity: Entity, toggle: Boolean, unk: Bool
 
 //private external fun SetForceObjectThisFrame(p0: number, p1: number, p2: number, p3: number)
 
-/**
- * Forces footstep tracks on all surfaces.
- */
-//private external fun SetForcePedFootstepsTracks(toggle: boolean)
+private external fun SetForcePedFootstepsTracks(toggle: Boolean)
 
-/**
- * Forces vehicle trails on all surfaces.
- */
-//private external fun SetForceVehicleTrails(toggle: boolean)
+private external fun SetForceVehicleTrails(toggle: Boolean)
 
 //private external fun SetFrontendActive(active: boolean)
 
@@ -26962,58 +27050,13 @@ private external fun SetVehicleWindowTint(vehicle: Entity, tint: Int)
  */
 //private external fun SetWeaponSmokegrenadeAssigned(ped: number): number;
 
-/**
- * The following weatherTypes are used in the scripts:
- * "CLEAR"
- * "EXTRASUNNY"
- * "CLOUDS"
- * "OVERCAST"
- * "RAIN"
- * "CLEARING"
- * "THUNDER"
- * "SMOG"
- * "FOGGY"
- * "XMAS"
- * "SNOWLIGHT"
- * "BLIZZARD"
- */
-//private external fun SetWeatherTypeNow(weatherType: string)
+private external fun SetWeatherTypeNow(weatherType: String)
 
-/**
- * The following weatherTypes are used in the scripts:
- * "CLEAR"
- * "EXTRASUNNY"
- * "CLOUDS"
- * "OVERCAST"
- * "RAIN"
- * "CLEARING"
- * "THUNDER"
- * "SMOG"
- * "FOGGY"
- * "XMAS"
- * "SNOWLIGHT"
- * "BLIZZARD"
- */
-//private external fun SetWeatherTypeNowPersist(weatherType: string)
+private external fun SetWeatherTypeNowPersist(weatherType: String)
 
-//private external fun SetWeatherTypeOverTime(weatherType: string, time: number)
+private external fun SetWeatherTypeOverTime(weatherType: String, time: Float)
 
-/**
- * The following weatherTypes are used in the scripts:
- * "CLEAR"
- * "EXTRASUNNY"
- * "CLOUDS"
- * "OVERCAST"
- * "RAIN"
- * "CLEARING"
- * "THUNDER"
- * "SMOG"
- * "FOGGY"
- * "XMAS"
- * "SNOWLIGHT"
- * "BLIZZARD"
- */
-//private external fun SetWeatherTypePersist(weatherType: string)
+private external fun SetWeatherTypePersist(weatherType: String)
 
 /**
  * Mixes two weather types. If percentWeather2 is set to 0.0f, then the weather will be entirely of weatherType1, if it is set to 1.0f it will be entirely of weatherType2. If it's set somewhere in between, there will be a mixture of weather behaviors. To test, try this in the RPH console, and change the float to different values between 0 and 1:
