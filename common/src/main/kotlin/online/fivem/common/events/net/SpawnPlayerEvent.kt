@@ -1,8 +1,11 @@
 package online.fivem.common.events.net
 
+import kotlinx.serialization.ContextualSerialization
+import kotlinx.serialization.Serializable
 import online.fivem.common.entities.CoordinatesX
 
+@Serializable
 class SpawnPlayerEvent(
-	val coordinatesX: CoordinatesX,
+	@ContextualSerialization val coordinatesX: CoordinatesX,
 	val model: Int
 )

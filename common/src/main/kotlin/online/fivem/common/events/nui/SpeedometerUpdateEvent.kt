@@ -1,12 +1,15 @@
 package online.fivem.common.events.nui
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 class SpeedometerUpdateEvent(
 	val currentGear: Int,
 	val currentRpm: Double,
 	val dashboardSpeed: Double,
 //		val nextGear: Int,
 
-	val engineTemperature: Int,
+	val engineTemperature: Float,
 	val fuelLevel: Double,
 	val handbrake: Boolean,
 	val oilLevel: Float,

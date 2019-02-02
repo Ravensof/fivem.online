@@ -39,7 +39,7 @@ class Speedometer(override val coroutineContext: CoroutineContext) : AbstractMod
 			}
 
 			if (vehicleHasSpeedo) {
-				NuiEvent.emit(
+				NuiEvent.emitUnsafe(
 					SpeedometerUpdateEvent(
 						currentGear = Client.getVehicleCurrentGear(vehicle),
 						currentRpm = Client.getVehicleCurrentRpm(vehicle),

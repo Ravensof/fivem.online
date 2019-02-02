@@ -1,5 +1,6 @@
 package online.fivem.common.entities
 
 class NuiPacket(
-	val data: Any
-)
+	hash: Int,
+	serialized: String
+) : KotlinXSerializationPacket(hash, serialized)

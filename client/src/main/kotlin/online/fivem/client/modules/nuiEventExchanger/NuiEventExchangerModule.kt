@@ -8,29 +8,58 @@ import online.fivem.client.gtav.Client
 import online.fivem.client.gtav.Exports
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
+import online.fivem.common.common.Console
+import online.fivem.common.common.KSerializer
 import online.fivem.common.common.Serializer
 import online.fivem.common.entities.NuiPacket
+import online.fivem.common.entities.NuiUnsafePacket
 import online.fivem.common.events.net.ImReadyEvent
 
 class NuiEventExchangerModule : AbstractModule() {
 
 	override fun onInit() {
-		Exports.onNui(GlobalConfig.NUI_EVENT_NAME) {
-			NuiEvent.handle(Serializer.unpack(it))
+		Exports.onNui(GlobalConfig.NUI_EVENT_NAME) { rawPacket ->
+			try {
+				val packet = rawPacket.unsafeCast<NuiPacket>()
+				val data = KSerializer.deserialize(packet.hash, packet.serialized)
+					?: throw Exception("KSerializer.deserialize returns null")
+
+				NuiEvent.handle(Serializer.unpack(data))
+			} catch (exception: Throwable) {
+				Console.error("NuiEventExchangerModule: ${exception.message}")
+			}
 		}
 	}
 
 	override fun onStart(): Job? {
 
 		GlobalScope.launch {
-			for (data in channel) {
-				Client.sendNuiMessage(
-					Serializer.prepare(
+			try {
+				for (data in channel) {
+					Client.sendNuiMessage(
 						NuiPacket(
-							data = data
+							hash = KSerializer.getSerializerHash(data::class)
+								?: throw KSerializer.UnregisteredClassException(data::class),
+							serialized = KSerializer.serialize(data)
 						)
 					)
-				)
+				}
+			} catch (exception: Throwable) {
+				Console.error("NuiEventExchangerModule: ${exception.message}")
+			}
+		}
+
+		GlobalScope.launch {
+			try {
+				for (data in unsafeChannel) {
+					Client.sendNuiMessage(
+						NuiUnsafePacket(
+							data = Serializer.prepare(data)
+						)
+					)
+				}
+			} catch (exception: Throwable) {
+				Console.error("NuiEventExchangerModule: ${exception.message}")
 			}
 		}
 
@@ -51,5 +80,6 @@ class NuiEventExchangerModule : AbstractModule() {
 
 	companion object {
 		val channel = Channel<Any>()
+		val unsafeChannel = Channel<Any>()
 	}
 }

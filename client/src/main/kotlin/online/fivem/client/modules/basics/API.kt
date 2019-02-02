@@ -12,8 +12,8 @@ import online.fivem.common.common.UEvent
 import online.fivem.common.entities.Coordinates
 import online.fivem.common.events.PlayersPedTeleportedEvent
 import online.fivem.common.events.PlayersPedTeleportingEvent
-import online.fivem.common.events.net.BlackOutEvent
-import online.fivem.common.events.net.CancelBlackOutEvent
+import online.fivem.common.events.nui.BlackOutEvent
+import online.fivem.common.events.nui.CancelBlackOutEvent
 import online.fivem.common.events.nui.ShowGuiEvent
 import online.fivem.common.extensions.UnitStack
 import online.fivem.common.extensions.set

@@ -3,4 +3,6 @@ package online.fivem.common.events.nui
 import kotlinx.serialization.Serializable
 
 @Serializable
-class NuiEmulateKeyDownEvent(val code: Int)
+class CancelBlackOutEvent(
+	val duration: Int
+)

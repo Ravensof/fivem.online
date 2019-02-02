@@ -4,7 +4,7 @@ import kotlinx.serialization.ContextualSerialization
 import kotlinx.serialization.Serializable
 import online.fivem.common.entities.CoordinatesX
 
-@Serializable //todo test
+@Serializable
 class SpawnVehicleEvent(
 	val vehicleId: Int,
 	val vehicleModel: Int,

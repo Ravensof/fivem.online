@@ -7,7 +7,6 @@ import online.fivem.client.modules.basics.JoinTransitionModule
 import online.fivem.client.modules.basics.SpawnManagerModule
 import online.fivem.client.modules.serverEventExchanger.ServerEvent
 import online.fivem.common.common.AbstractModule
-import online.fivem.common.common.Console
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.events.net.RequestPackEvent
 import online.fivem.common.events.net.SpawnPlayerEvent
@@ -41,29 +40,20 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 		}
 	}
 
-	private fun onServerRequest(kClasses: Array<String>) {
+	private fun onServerRequest(kClasses: List<String>) {
 
-		val response = mutableListOf<Any>()
 		val playerPed = Client.getPlayerPed()
 
-		kClasses.forEach { kClass ->
-			when (kClass) {
-				CoordinatesX::class.simpleName -> {
-					val coordinates =
-						Client.getEntityCoords(playerPed) ?: return Console.warn("player ped has no coordinates")
-
-					response.add(
-						CoordinatesX(
-							coordinates,
-							Client.getEntityHeading(playerPed)
-						)
+		ServerEvent.emit(
+			SynchronizeEvent(
+				coordinatesX = Client.getEntityCoords(playerPed)?.let {
+					CoordinatesX(
+						it,
+						Client.getEntityHeading(playerPed)
 					)
 				}
-			}
-		}
 
-		ServerEvent.emit(
-			SynchronizeEvent(response.toTypedArray())
+			)
 		)
 	}
 }

@@ -3,8 +3,8 @@ package online.fivem.nui.modules.basics.test
 import js.externals.jquery.jQuery
 import kotlinx.coroutines.CoroutineScope
 import online.fivem.common.common.AbstractModule
-import online.fivem.common.events.net.BlackOutEvent
-import online.fivem.common.events.net.CancelBlackOutEvent
+import online.fivem.common.events.nui.BlackOutEvent
+import online.fivem.common.events.nui.CancelBlackOutEvent
 import online.fivem.nui.modules.clientEventEchanger.ClientEvent
 import kotlin.coroutines.CoroutineContext
 

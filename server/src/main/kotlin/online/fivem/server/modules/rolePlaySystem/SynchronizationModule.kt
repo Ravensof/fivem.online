@@ -21,7 +21,7 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 
 	private val requestJob by lazy { requestJob() }
 	private val synchronizationJob by lazy { synchronizationJob() }
-	private val syncDataChannel = Channel<Pair<Player, Array<*>>>(GlobalConfig.MAX_PLAYERS)
+	private val syncDataChannel = Channel<Pair<Player, SynchronizeEvent>>(GlobalConfig.MAX_PLAYERS)
 
 	private val sessionModule by moduleLoader.onReady<SessionModule>()
 
@@ -36,7 +36,7 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 				val player = sessionModule.getPlayer(playerSrc)
 					?: return@launch Console.warn("user with playerSrc=${playerSrc.value} not found in session module")
 
-				syncDataChannel.send(player to synchronizeEvent.data)
+				syncDataChannel.send(player to synchronizeEvent)
 			}
 		}
 		moduleLoader.on<MySQLModule> { mySQL = it.mySQL }
@@ -79,12 +79,11 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 	private fun synchronizationJob() = launch {
 		for (obj in syncDataChannel) {
 			val player = obj.first
+			val data = obj.second
 
-			obj.second.forEach { data ->
-				when (data) {
-					is CoordinatesX -> {
-						mySQL.send(
-							"""UPDATE characters
+			data.coordinatesX?.let {
+				mySQL.send(
+					"""UPDATE characters
 							|SET
 							|   coord_x=?,
 							|   coord_y=?,
@@ -93,21 +92,19 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 							|WHERE id=?
 							|LIMIT 1
 						""".trimMargin(),
-							data.x,
-							data.y,
-							data.z,
-							data.rotation,
-							player.characterId
-						)
-					}
-				}
+					it.x,
+					it.y,
+					it.z,
+					it.rotation,
+					player.characterId
+				)
 			}
 		}
 	}
 
 	companion object {
 
-		private val syncList = arrayOf(
+		private val syncList = listOf(
 			CoordinatesX::class.simpleName!!
 		)
 

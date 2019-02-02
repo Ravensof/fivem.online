@@ -5,11 +5,12 @@ import kotlinx.coroutines.channels.Channel
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
+import online.fivem.common.common.KSerializer
 import online.fivem.common.common.Serializer
 import online.fivem.common.entities.ClientsNetPacket
 import online.fivem.common.entities.PlayerSrc
 import online.fivem.common.entities.ServersNetPacket
-import online.fivem.common.events.EstablishConnectionEvent
+import online.fivem.common.events.net.EstablishConnectionEvent
 import online.fivem.common.events.net.ImReadyEvent
 import online.fivem.common.extensions.onNull
 import online.fivem.common.gtav.NativeEvents
@@ -32,35 +33,38 @@ class ClientEventExchangerModule : AbstractModule(), CoroutineScope {
 	private val playersList = mutableMapOf<Int, Double>()
 
 	override fun onInit() {
-		moduleLoader.add(KotlinSerializationTest())
-
 		Exports.on(NativeEvents.Server.PLAYER_DROPPED) { playerId: Int, _: String -> onPlayerDropped(playerId) }
 
-		Natives.onNet(GlobalConfig.NET_EVENT_NAME) { playerSrc: PlayerSrc, netPacket: Any ->
-			@Suppress("NAME_SHADOWING")
-			val netPacket = Serializer.unpack<ClientsNetPacket>(netPacket)
+		Natives.onNet(GlobalConfig.NET_EVENT_NAME) { playerSrc: PlayerSrc, rawPacket: Any ->
 
-			if (playersList[playerSrc.value] != netPacket.key) return@onNet Natives.dropPlayer(
-				playerSrc,
-				Strings.CLIENT_WRONG_PACKET_FORMAT
-			)
+			try {
+				val packet = rawPacket.unsafeCast<ClientsNetPacket>()
+
+				val data = KSerializer.deserialize(packet.hash, packet.serialized)
+					?: throw Exception(Strings.CLIENT_WRONG_PACKET_FORMAT)
+
+				if (playersList[playerSrc.value] != packet.key) throw Exception(Strings.CLIENT_WRONG_PACKET_FORMAT)
 
 //			if (netPacket.playersCount == 1 && Natives.getPlayers().count() > 1) return@onNet Natives.dropPlayer(
 //				playerSrc,
 //				Strings.CLIENT_SINGLE_SESSION
 //			)
 
-			launch {
 				val channel = playersReceiveChannels[playerSrc.value]
 				if (channel.isFull) {
 					Console.warn("ClientEventExchanger: receive channel for player ${playerSrc.value} is full")
 
-					if (ServerConfig.KICK_FOR_PACKET_OVERFLOW) return@launch Natives.dropPlayer(
-						playerSrc,
-						Strings.CLIENT_PACKETS_OVERFLOW
-					)
+					if (ServerConfig.KICK_FOR_PACKET_OVERFLOW) throw Exception(Strings.CLIENT_PACKETS_OVERFLOW)
 				}
-				channel.send(Packet<Any>(playerSrc, netPacket.data))
+
+				launch {
+					channel.send(Packet<Any>(playerSrc, data))
+				}
+			} catch (exception: Throwable) {
+				return@onNet Natives.dropPlayer(
+					playerSrc,
+					exception.message.toString()
+				)
 			}
 		}
 
@@ -152,8 +156,10 @@ class ClientEventExchangerModule : AbstractModule(), CoroutineScope {
 		Natives.emitNet(
 			eventName = GlobalConfig.NET_EVENT_NAME,
 			playerSrc = playerSrc,
-			data = Serializer.serialize(
-				ServersNetPacket(data = data)
+			data = ServersNetPacket(
+				hash = KSerializer.getSerializerHash(data::class)
+					?: throw KSerializer.UnregisteredClassException(data::class),
+				serialized = KSerializer.serialize(data)
 			)
 		)
 	}

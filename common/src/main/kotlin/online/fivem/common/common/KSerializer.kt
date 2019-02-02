@@ -32,7 +32,7 @@ object KSerializer {
 		add(it.first, it.second)
 	}
 
-	fun getSerializer(hash: Int): KSerializer<*>? {
+	private fun getSerializer(hash: Int): KSerializer<*>? {
 		classHashes[hash]?.let {
 			return serializers[it]
 		}
@@ -48,22 +48,31 @@ object KSerializer {
 	}
 
 	fun <T : Any> serialize(obj: T): String {
-		val serializer = getSerializer(obj::class) ?: throw UnregisteredClassException()
+		val serializer = getSerializer(obj::class) ?: throw UnregisteredClassException(obj::class)
 
 		return Json.indented.stringify(serializer, obj)
 	}
 
 	inline fun <reified T : Any> deserialize(string: String): T {
-		val serializer = getSerializer(T::class) ?: throw UnregisteredClassException()
+		val serializer = getSerializer(T::class) ?: throw UnregisteredClassException(T::class)
 
 		return Json.parse(serializer, string)
 	}
 
 	fun deserialize(hash: Int, string: String): Any? {
-		val serializer = getSerializer(hash) ?: throw UnregisteredClassException()
+		val serializer =
+			getSerializer(hash) ?: throw UnregisteredClassException("cannot find deserializer for hash = $hash")
 
 		return Json.parse(serializer, string)
 	}
 
-	class UnregisteredClassException : Exception()
+	class UnregisteredClassException : Exception {
+
+		constructor(
+			kClass: KClass<out Any>? = null,
+			message: String = "class ${kClass?.simpleName} is not registered as serializable"
+		) : super(message)
+
+		constructor(string: String) : this(message = string)
+	}
 }

@@ -8,10 +8,12 @@ object NuiEvent : UEvent(Job()) {
 
 	override val printType = "nui"
 
-	override fun emit(data: Any): Job {
-		return launch {
-			NuiEventExchangerModule.channel.send(data)
-		}
+	fun emitUnsafe(data: Any) = launch {
+		NuiEventExchangerModule.unsafeChannel.send(data)
+	}
+
+	override fun emit(data: Any): Job = launch {
+		NuiEventExchangerModule.channel.send(data)
 	}
 
 	fun handle(data: Any) {

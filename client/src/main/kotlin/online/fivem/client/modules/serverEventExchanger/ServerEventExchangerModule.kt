@@ -7,10 +7,11 @@ import online.fivem.client.gtav.Natives
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
+import online.fivem.common.common.KSerializer
 import online.fivem.common.common.Serializer
 import online.fivem.common.entities.ClientsNetPacket
 import online.fivem.common.entities.ServersNetPacket
-import online.fivem.common.events.EstablishConnectionEvent
+import online.fivem.common.events.net.EstablishConnectionEvent
 import online.fivem.common.events.net.ImReadyEvent
 import kotlin.coroutines.CoroutineContext
 
@@ -21,17 +22,15 @@ class ServerEventExchangerModule : AbstractModule(), CoroutineScope {
 	var key: Double? = null
 
 	override fun onInit() {
-		moduleLoader.add(KotlinSerializationTest())
-
-		Natives.onNet(GlobalConfig.NET_EVENT_NAME) { netPacket: String ->
+		Natives.onNet(GlobalConfig.NET_EVENT_NAME) { rawPacket: Any ->
 			try {
-				val packet = Serializer.unserialize<ServersNetPacket>(netPacket)
+				val packet = rawPacket.unsafeCast<ServersNetPacket>()//JSON.parse<ServersNetPacket>(String())
+				val obj = KSerializer.deserialize(packet.hash, packet.serialized)
+					?: throw Exception("wrong net packet format")
 
-				ServerEvent.handle(packet.data)
+				ServerEvent.handle(obj)
 			} catch (e: Throwable) {
-				Console.error("${e.message} $netPacket")
-			} catch (e: Serializer.DeserializationException) {
-				Console.error("wrong net packet format")
+				Console.error("${e.message} ${JSON.stringify(rawPacket)}")
 			}
 		}
 	}
@@ -51,13 +50,13 @@ class ServerEventExchangerModule : AbstractModule(), CoroutineScope {
 			for (data in channel) {
 				Natives.emitNet(
 					eventName = GlobalConfig.NET_EVENT_NAME,
-					data = Serializer.prepare(
-						ClientsNetPacket(
-							data = data,
+					data = ClientsNetPacket(
+						hash = KSerializer.getSerializerHash(data::class)
+							?: throw KSerializer.UnregisteredClassException(data::class),
+						serialized = KSerializer.serialize(data),
 
-							playersCount = Client.getNumberOfPlayers(),
-							key = key
-						)
+						playersCount = Client.getNumberOfPlayers(),
+						key = key
 					)
 				)
 			}

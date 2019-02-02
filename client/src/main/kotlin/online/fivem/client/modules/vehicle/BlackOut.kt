@@ -6,6 +6,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import online.fivem.client.extensions.play
 import online.fivem.client.extensions.prefetch
+import online.fivem.client.gtav.Client
 import online.fivem.client.modules.basics.API
 import online.fivem.common.GlobalConfig.BlackOut.ACCELERATION_THRESHOLD
 import online.fivem.common.GlobalConfig.BlackOut.BLACKOUT_TIME_FROM_COMMAS
@@ -13,7 +14,6 @@ import online.fivem.common.GlobalConfig.BlackOut.EXTRA_BLACKOUT_TIME
 import online.fivem.common.GlobalConfig.BlackOut.WAKING_UP_TIME
 import online.fivem.common.Sounds
 import online.fivem.common.common.AbstractModule
-import online.fivem.common.common.Console
 import online.fivem.common.common.UEvent
 import online.fivem.common.events.AccelerationThresholdAchievedEvent
 import online.fivem.common.events.PlayerPedHealthZeroEvent
@@ -39,7 +39,11 @@ class BlackOut(override val coroutineContext: CoroutineContext) : AbstractModule
 		UEvent.on<AccelerationThresholdAchievedEvent> {
 			if (!isAllowed || it.accelerationModule < ACCELERATION_THRESHOLD) return@on
 
-			Console.debug("blackout from ${it.accelerationModule.toInt()} m/s^2")//todo удалить
+			val playerPed = Client.getPlayerPed()
+			val currentHealth = Client.getEntityHealth(playerPed)
+
+			Client.setEntityHealth(playerPed, currentHealth - it.accelerationModule.toInt() / 50)
+
 			blackOut(
 				(
 						if (timeLeft > 0)

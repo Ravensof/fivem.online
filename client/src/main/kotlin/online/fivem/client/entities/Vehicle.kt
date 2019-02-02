@@ -60,7 +60,7 @@ class Vehicle(
 	val dashboardSpeed: Double
 		get() = Client.getVehicleDashboardSpeed(entity)
 
-	var engineTemperature: Int
+	var engineTemperature: Float
 		get() = Client.getVehicleEngineTemperature(entity)
 		set(value) = Client.setVehicleEngineTemperature(entity, value)
 

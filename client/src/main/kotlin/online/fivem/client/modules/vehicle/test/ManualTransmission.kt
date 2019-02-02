@@ -168,7 +168,7 @@ class ManualTransmission(
 					"tThrottleRaw: $tThrottleRaw",
 					"tThrottleFull: $tThrottleFull"
 				).forEachIndexed { index, string ->
-					Client.drawScreenText2D(0.01, 0.01 + index * 2, string, true)
+					Client.drawScreenText2D(0.01, 0.01 + index * 2, string)
 				}
 
 				delay(1)

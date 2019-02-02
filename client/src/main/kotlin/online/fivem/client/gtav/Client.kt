@@ -1320,11 +1320,11 @@ object Client {
 		return GetVehicleDashboardSpeed(vehicle)
 	}
 
-	fun getVehicleEngineTemperature(vehicle: Entity): Int {
+	fun getVehicleEngineTemperature(vehicle: Entity): Float {
 		return GetVehicleEngineTemperature(vehicle)
 	}
 
-	fun setVehicleEngineTemperature(vehicle: Entity, temperature: Int) {
+	fun setVehicleEngineTemperature(vehicle: Entity, temperature: Float) {
 		SetVehicleEngineTemperature(vehicle, temperature)
 	}
 
@@ -9577,7 +9577,7 @@ private external fun GetVehicleDirtLevel(vehicle: Entity): Int
 
 private external fun GetVehicleEngineHealth(vehicle: Int): Number
 
-private external fun GetVehicleEngineTemperature(vehicle: Int): Int
+private external fun GetVehicleEngineTemperature(vehicle: Int): Float
 
 /**
  * formerly known as _GET_VEHICLE_PAINT_FADE
@@ -26409,7 +26409,7 @@ private external fun SetVehicleEngineOn(vehicle: Entity, value: Boolean, instant
 
 private external fun SetVehicleEnginePowerMultiplier(vehicle: Entity, value: Number)
 
-private external fun SetVehicleEngineTemperature(vehicle: Entity, temperature: Int)
+private external fun SetVehicleEngineTemperature(vehicle: Entity, temperature: Float)
 
 private external fun SetVehicleEngineTorqueMultiplier(vehicle: Entity, value: Double)
 
