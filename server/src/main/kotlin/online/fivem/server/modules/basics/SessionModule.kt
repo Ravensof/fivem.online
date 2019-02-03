@@ -4,6 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
+import online.fivem.common.common.UEvent
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.entities.PlayerSrc
 import online.fivem.common.events.net.ImReadyEvent
@@ -14,6 +15,7 @@ import online.fivem.server.entities.Player
 import online.fivem.server.entities.mysqlEntities.BlackListTable
 import online.fivem.server.entities.mysqlEntities.CharacterEntity
 import online.fivem.server.entities.mysqlEntities.UserEntity
+import online.fivem.server.events.PlayerConnectedEvent
 import online.fivem.server.gtav.Exports
 import online.fivem.server.gtav.Natives
 import online.fivem.server.modules.clientEventExchanger.ClientEvent
@@ -108,6 +110,8 @@ class SessionModule(override val coroutineContext: CoroutineContext) : AbstractM
 					character.coord_rotation
 				), character.pedestrian
 			)
+
+			UEvent.emit(PlayerConnectedEvent(player))
 		}
 	}
 

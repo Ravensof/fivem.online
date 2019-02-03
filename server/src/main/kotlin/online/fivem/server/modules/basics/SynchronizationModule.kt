@@ -1,34 +1,38 @@
-package online.fivem.server.modules.rolePlaySystem
+package online.fivem.server.modules.basics
 
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
-import online.fivem.common.entities.CoordinatesX
-import online.fivem.common.events.net.RequestPackEvent
-import online.fivem.common.events.net.SynchronizeEvent
+import online.fivem.common.common.UEvent
+import online.fivem.common.common.VDate
+import online.fivem.common.entities.PlayerSrc
+import online.fivem.common.events.net.ClientSideSynchronizeEvent
+import online.fivem.common.events.net.ServerSideSynchronizationEvent
 import online.fivem.common.extensions.isNotEmpty
 import online.fivem.server.ServerConfig
 import online.fivem.server.common.MySQL
 import online.fivem.server.entities.Player
-import online.fivem.server.modules.basics.MySQLModule
-import online.fivem.server.modules.basics.SessionModule
+import online.fivem.server.events.PlayerConnectedEvent
 import online.fivem.server.modules.clientEventExchanger.ClientEvent
 import kotlin.coroutines.CoroutineContext
 
 class SynchronizationModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
 
+	val date = VDate()
+	val syncData = ServerSideSynchronizationEvent(serverTime = 0.0)
+
 	private val requestJob by lazy { requestJob() }
 	private val synchronizationJob by lazy { synchronizationJob() }
-	private val syncDataChannel = Channel<Pair<Player, SynchronizeEvent>>(GlobalConfig.MAX_PLAYERS)
+	private val syncDataChannel = Channel<Pair<Player, ClientSideSynchronizeEvent>>(GlobalConfig.MAX_PLAYERS)
 
 	private val sessionModule by moduleLoader.onReady<SessionModule>()
 
 	private lateinit var mySQL: MySQL
 
 	override fun onInit() {
-		ClientEvent.on<SynchronizeEvent> { playerSrc, synchronizeEvent ->
+		ClientEvent.on<ClientSideSynchronizeEvent> { playerSrc, synchronizeEvent ->
 			launch {
 				if (syncDataChannel.isFull) {
 					Console.warn("synchronization DataChannel is full")
@@ -39,6 +43,9 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 				syncDataChannel.send(player to synchronizeEvent)
 			}
 		}
+
+		UEvent.on<PlayerConnectedEvent> { syncDataFor(it.player.playerSrc) }
+
 		moduleLoader.on<MySQLModule> { mySQL = it.mySQL }
 	}
 
@@ -58,6 +65,10 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 		return super.onStop()
 	}
 
+	private fun syncDataFor(playerSrc: PlayerSrc) {
+		ClientEvent.emit(syncData, playerSrc)
+	}
+
 	private fun requestJob() = launch {
 		while (isActive) {
 			val players = sessionModule.getConnectedPlayers()
@@ -67,10 +78,8 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 				continue
 			}
 
-			val requestPackEvent = RequestPackEvent(syncList)
-
 			for (playerSrc in players) {
-				ClientEvent.emit(requestPackEvent, playerSrc)
+				syncDataFor(playerSrc)
 				delay(SYNCHRONIZATION_PERIOD / players.size)
 			}
 		}
@@ -103,11 +112,6 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 	}
 
 	companion object {
-
-		private val syncList = listOf(
-			CoordinatesX::class.simpleName!!
-		)
-
 		const val SYNCHRONIZATION_PERIOD: Long = 1_000L * ServerConfig.SYNCHRONIZATION_PERIOD_SECONDS
 	}
 }

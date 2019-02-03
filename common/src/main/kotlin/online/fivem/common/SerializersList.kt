@@ -12,10 +12,11 @@ fun initSerializableClasses() {
 		//client-server
 		EstablishConnectionEvent::class to EstablishConnectionEvent.serializer(),
 		ImReadyEvent::class to ImReadyEvent.serializer(),
-		RequestPackEvent::class to RequestPackEvent.serializer(),
 		SpawnPlayerEvent::class to SpawnPlayerEvent.serializer(),
 		SpawnVehicleEvent::class to SpawnVehicleEvent.serializer(),
-		SynchronizeEvent::class to SynchronizeEvent.serializer(),
+
+		ClientSideSynchronizeEvent::class to ClientSideSynchronizeEvent.serializer(),
+		ServerSideSynchronizationEvent::class to ServerSideSynchronizationEvent.serializer(),
 
 		//nui
 		BlackOutEvent::class to BlackOutEvent.serializer(),

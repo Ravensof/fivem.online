@@ -27,8 +27,9 @@ class BasicsModule : AbstractModule(), CoroutineScope {
 			add(API(coroutineContext))
 			add(JoinTransitionModule(coroutineContext))
 			add(SpawnManagerModule(coroutineContext))
-			add(RealDateModule())
+			add(DateTimeModule())
 			add(WeatherModule(coroutineContext))
+			add(SynchronizationModule())
 		}
 	}
 

@@ -1,6 +1,7 @@
 package online.fivem.common
 
 import online.fivem.common.entities.InternetRadioStation
+import online.fivem.common.gtav.NativeWeather
 import online.fivem.common.gtav.RadioStation
 
 object GlobalConfig {
@@ -12,6 +13,8 @@ object GlobalConfig {
 	const val SERVER_NAME_IN_MENU = "FIVEM.ONLINE"
 	const val MAX_PLAYERS = 32
 	const val APP_VERSION = 190107
+
+	val defaultWeather: NativeWeather = NativeWeather.OVERCAST
 
 	val internetRadioStations: Map<String, InternetRadioStation> = mapOf(
 		RadioStation.RADIO_01_CLASS_ROCK.name to InternetRadioStation(
@@ -129,7 +132,7 @@ object GlobalConfig {
 		const val BLACKOUT_TIME_FROM_COMMAS: Long = 30 //seconds
 		const val ACCELERATION_THRESHOLD: Long = 250 // m/s^2
 		const val EXTRA_BLACKOUT_TIME: Long = 15//seconds
-		const val WAKING_UP_TIME = 10//seconds
+		const val WAKING_UP_TIME: Int = 10//seconds
 	}
 
 	const val SHOW_CONSOLE_ERROR = true

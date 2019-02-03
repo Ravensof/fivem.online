@@ -10151,9 +10151,9 @@ private external fun GetVehicleWindowTint(vehicle: Entity): Int
  */
 //private external fun GetWeatherTypeTransition(): [number, number, number];
 
-//private external fun GetWindDirection(): number[];
+//private external fun GetWindDirection(): number[]; // todo использовать
 
-//private external fun GetWindSpeed(): number;
+//private external fun GetWindSpeed(): number;// todo использовать
 
 /**
  * Returns the coordinates of an entity-bone.
@@ -27089,7 +27089,7 @@ private external fun SetWeatherTypePersist(weatherType: String)
 /**
  * Sets the the raw wind speed value.
  */
-//private external fun SetWind(speed: number)
+//private external fun SetWind(speed: number)// todo использовать
 
 /**
  * This is NOT a heading. It's a FLOAT value from 0.0-7.0. Look at this image:
@@ -27097,12 +27097,12 @@ private external fun SetWeatherTypePersist(weatherType: String)
  * ----------------------------
  * This appears to be a heading, in radians (0-2*pi) -PNWParksFan
  */
-//private external fun SetWindDirection(direction: number)
+//private external fun SetWindDirection(direction: number)// todo использовать
 
 /**
  * Using this native will clamp the wind speed value to a range of 0.0- 12.0. Using SET_WIND sets the same value but without the restriction.
  */
-//private external fun SetWindSpeed(speed: number)
+//private external fun SetWindSpeed(speed: number)// todo использовать
 
 //private external fun SetZoneEnabled(zoneId: number, toggle: boolean)
 

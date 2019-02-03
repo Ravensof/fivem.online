@@ -10,6 +10,6 @@ class RolePlaySystemModule : AbstractModule(), CoroutineScope {
 	override val coroutineContext: CoroutineContext = SupervisorJob()
 
 	override fun onInit() {
-		moduleLoader.add(SynchronizationModule(coroutineContext))
+
 	}
 }

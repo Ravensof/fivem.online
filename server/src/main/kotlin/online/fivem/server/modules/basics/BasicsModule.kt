@@ -18,6 +18,10 @@ class BasicsModule : AbstractModule(), CoroutineScope {
 		moduleLoader.add(HttpServerModule(coroutineContext))
 		moduleLoader.add(NuiFileShareModule(coroutineContext))
 		moduleLoader.add(SessionModule(coroutineContext))
+
+		moduleLoader.add(SynchronizationModule(coroutineContext))
+
+		moduleLoader.add(NatureControlSystemModule(coroutineContext))
 	}
 
 	fun spawn(playerSrc: PlayerSrc, coordinatesX: CoordinatesX, pedHash: Int) {
