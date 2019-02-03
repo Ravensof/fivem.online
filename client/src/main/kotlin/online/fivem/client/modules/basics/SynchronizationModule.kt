@@ -6,11 +6,14 @@ import kotlinx.coroutines.launch
 import online.fivem.client.gtav.Client
 import online.fivem.client.modules.serverEventExchanger.ServerEvent
 import online.fivem.common.common.AbstractModule
+import online.fivem.common.common.UEvent
 import online.fivem.common.entities.CoordinatesX
+import online.fivem.common.events.PauseMenuStateChangedEvent
 import online.fivem.common.events.net.ClientSideSynchronizeEvent
 import online.fivem.common.events.net.ServerSideSynchronizationEvent
 import online.fivem.common.events.net.SpawnPlayerEvent
 import kotlin.coroutines.CoroutineContext
+import kotlin.js.Date
 
 class SynchronizationModule : AbstractModule(), CoroutineScope {
 	override val coroutineContext: CoroutineContext = Job()
@@ -21,9 +24,14 @@ class SynchronizationModule : AbstractModule(), CoroutineScope {
 	private val spawnManager by moduleLoader.onReady<SpawnManagerModule>()
 	private val joinTransition by moduleLoader.onReady<JoinTransitionModule>()
 
+	private var lastSync = 0.0
+
 	override fun onInit() {
 		ServerEvent.on<ServerSideSynchronizationEvent> { onServerRequest(it) }
 		ServerEvent.on<SpawnPlayerEvent> { onPlayerSpawn(it.coordinatesX, it.model) }
+		UEvent.on<PauseMenuStateChangedEvent> {
+			if (it.pauseMenuState != 0 && Date.now() - lastSync >= SYNC_TIME_THRESHOLD_MILLISECONDS) synchronizeToServer()
+		}
 //		ServerEvent.on<SpawnVehicleEvent> { onVehicleSpawn(it) }
 	}
 
@@ -49,6 +57,10 @@ class SynchronizationModule : AbstractModule(), CoroutineScope {
 			launch { weatherModule.weatherQueue.send(it) }
 		}
 
+		synchronizeToServer()
+	}
+
+	private fun synchronizeToServer() {
 		val playerPed = Client.getPlayerPed()
 
 		ServerEvent.emit(ClientSideSynchronizeEvent(
@@ -59,5 +71,11 @@ class SynchronizationModule : AbstractModule(), CoroutineScope {
 				)
 			}
 		))
+
+		lastSync = Date.now()
+	}
+
+	companion object {
+		const val SYNC_TIME_THRESHOLD_MILLISECONDS = 5_000
 	}
 }

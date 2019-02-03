@@ -17,6 +17,7 @@ import online.fivem.server.entities.Player
 import online.fivem.server.events.PlayerConnectedEvent
 import online.fivem.server.modules.clientEventExchanger.ClientEvent
 import kotlin.coroutines.CoroutineContext
+import kotlin.js.Date
 
 class SynchronizationModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
 
@@ -66,6 +67,7 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 	}
 
 	private fun syncDataFor(playerSrc: PlayerSrc) {
+		syncData.serverTime = Date.now()
 		ClientEvent.emit(syncData, playerSrc)
 	}
 

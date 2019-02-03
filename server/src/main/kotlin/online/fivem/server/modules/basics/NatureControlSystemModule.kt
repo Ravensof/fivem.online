@@ -78,7 +78,7 @@ class NatureControlSystemModule(override val coroutineContext: CoroutineContext)
 				}
 			}
 
-			Console.debug("weather calculated: ${weather.name} ${currentTemperature}tC ($diff)")
+			Console.debug("weather calculated: ${weather.name} ${currentTemperature}tC (${cal.first}\\${cal.second} -> $diff)")
 
 			synchronizationModule.syncData.weather = Weather(
 				weather = weather,
