@@ -22,6 +22,7 @@ class NatureControlSystemModule(override val coroutineContext: CoroutineContext)
 		repeatJob(CALCULATE_WEATHER_PERIOD_SECONDS * 1_000) {
 
 			val currentTemperature = currentTemperature(synchronizationModule.date)
+
 			val cal = calculations(synchronizationModule.date)
 			val diff = cal.second - cal.first
 			val weather: NativeWeather
@@ -78,7 +79,7 @@ class NatureControlSystemModule(override val coroutineContext: CoroutineContext)
 				}
 			}
 
-			Console.debug("weather calculated: ${weather.name} ${currentTemperature}tC (${cal.first}\\${cal.second} -> $diff)")
+			Console.debug("weather calculated: ${weather.name} ${currentTemperature}tC (${(cal.second - cal.first) / cal.first} -> $diff)")
 
 			synchronizationModule.syncData.weather = Weather(
 				weather = weather,

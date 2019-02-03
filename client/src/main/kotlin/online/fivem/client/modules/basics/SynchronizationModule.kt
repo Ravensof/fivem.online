@@ -51,7 +51,7 @@ class SynchronizationModule : AbstractModule(), CoroutineScope {
 
 	private fun onServerRequest(event: ServerSideSynchronizationEvent) {
 
-		dateTime.date.serverTime = event.serverTime
+		dateTime.date.serverRealTime = event.serverTime
 
 		event.weather?.let {
 			launch { weatherModule.weatherQueue.send(it) }

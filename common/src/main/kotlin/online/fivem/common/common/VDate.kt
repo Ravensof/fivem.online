@@ -2,14 +2,24 @@ package online.fivem.common.common
 
 import kotlin.js.Date
 
-class VDate(var serverTime: Double = Date.now()) {
+class VDate(currentVirtualTime: Double? = null) {
+
+	private var swipeTime: Double = 0.0
 
 	var timeSpeed = 30.0
 	var timeZone = 7
 
-	private val additionalTime = serverTime - Date.now() + timeZone * HOUR
+	var serverRealTime: Double = Date.now()
 
-	val time get() = (Date.now() + additionalTime) * timeSpeed
+	private val additionalTime = serverRealTime - Date.now() + timeZone * HOUR
+
+	val time get() = (Date.now() + additionalTime) * timeSpeed + swipeTime
+
+	init {
+		currentVirtualTime?.let {
+			this.swipeTime = currentVirtualTime - time
+		}
+	}
 
 	private val date get() = Date(time)
 
@@ -22,6 +32,7 @@ class VDate(var serverTime: Double = Date.now()) {
 	val second get() = date.getUTCSeconds()
 
 	val dayOfWeek get() = date.getUTCDay()
+
 
 	companion object {
 		const val HOUR = 3_600_000
