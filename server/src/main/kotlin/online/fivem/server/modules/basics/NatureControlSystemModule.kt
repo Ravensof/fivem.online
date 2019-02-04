@@ -7,11 +7,13 @@ import online.fivem.common.common.Console
 import online.fivem.common.common.Utils
 import online.fivem.common.common.VDate
 import online.fivem.common.entities.Weather
+import online.fivem.common.extensions.orZero
 import online.fivem.common.extensions.repeatJob
 import online.fivem.common.gtav.NativeWeather
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.PI
 import kotlin.math.cos
+import kotlin.math.pow
 import kotlin.math.sin
 
 class NatureControlSystemModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
@@ -23,7 +25,10 @@ class NatureControlSystemModule(override val coroutineContext: CoroutineContext)
 
 			val currentTemperature = currentTemperature(synchronizationModule.date)
 
-			val cal = calculations(synchronizationModule.date)
+			val currentTime = synchronizationModule.date.time
+			val f = (currentTemperature(currentTime) - currentTemperature(currentTime - 1_000)) / 1_000 * 10.0.pow(8)
+
+			val cal = calculations(currentTime)
 			val diff = cal.second - cal.first
 			val weather: NativeWeather
 
@@ -79,11 +84,12 @@ class NatureControlSystemModule(override val coroutineContext: CoroutineContext)
 				}
 			}
 
-			Console.debug("weather calculated: ${weather.name} ${currentTemperature}tC (${(cal.second - cal.first) / cal.first} -> $diff)")
+			Console.debug("weather calculated: ${weather.name} ${currentTemperature}tC (f'(x)=$f -> $diff)")
 
 			synchronizationModule.syncData.weather = Weather(
 				weather = weather,
-				appearanceTime = synchronizationModule.date.time + synchronizationModule.date.timeSpeed * 60_000,
+				appearanceTime = if (synchronizationModule.syncData.weather?.weather == weather) synchronizationModule.syncData.weather?.appearanceTime.orZero() else
+					synchronizationModule.date.time + synchronizationModule.date.timeSpeed * TIME_IN_MILLISECONDS_FOR_APPLYING_WEATHER,
 				temperature = currentTemperature
 			)
 		}
@@ -91,7 +97,7 @@ class NatureControlSystemModule(override val coroutineContext: CoroutineContext)
 		return super.onStart()
 	}
 
-	private fun currentTemperature(microtime: Double): Double = currentTemperature(VDate(microtime))
+	private fun currentTemperature(milliseconds: Double): Double = currentTemperature(VDate(milliseconds))
 
 	private fun currentTemperature(date: VDate): Double {
 		var temp = 0.0
@@ -114,12 +120,12 @@ class NatureControlSystemModule(override val coroutineContext: CoroutineContext)
 		return temperature * step / (timeEnd - timeStart)
 	}
 
+	private fun calculations(milliseconds: Double): Pair<Double, Double> = calculations(VDate(milliseconds))
+
 	private fun calculations(date: VDate): Pair<Double, Double> {
 
-		val period = 86400_000 * 7
-
-		return calculateAverageTemp((date.time - period).toLong(), date.time.toLong()) to
-				calculateAverageTemp(date.time.toLong(), (date.time + period).toLong())
+		return calculateAverageTemp((date.time - PERIOD_MILLISECONDS).toLong(), date.time.toLong()) to
+				calculateAverageTemp(date.time.toLong(), (date.time + PERIOD_MILLISECONDS).toLong())
 	}
 
 	private enum class TemperaturePeriods(val function: (VDate) -> Double) {
@@ -136,9 +142,15 @@ class NatureControlSystemModule(override val coroutineContext: CoroutineContext)
 			return date.time * Utils.MILLISECONDS_TO_DAY + DAY_LAG
 		}
 
+		//нужно на что-то заменить. смещение в днях, для регулировки температуры. например если у нас 1е января, а температура
+		//нереально высокая, можно попробовать сместить генератор погоды на столько-то дней
 		private const val DAY_LAG = 180
 		private const val CALCULATE_WEATHER_PERIOD_SECONDS: Long = 60
 
 		private const val NUMBER_OF_CALCULATIONS_ON_RANGE = 1_000
+		//период, за который будет вычисляться средняя температура, чтобы потом вычислить перепады температур
+		private const val PERIOD_MILLISECONDS = 86400_000 * 3
+
+		private const val TIME_IN_MILLISECONDS_FOR_APPLYING_WEATHER = 60_000
 	}
 }

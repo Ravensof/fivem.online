@@ -21,4 +21,7 @@ fun NativeWeather.setWeatherTypeNowPersist() {
 	Client.setWeatherTypeNowPersist(name)
 }
 
+fun NativeWeather.mix(nativeWeather: NativeWeather, weather2: Float) {
+	Client.setWeatherTypeTransition(this, nativeWeather, weather2)
+}
 

@@ -8,6 +8,7 @@ import online.fivem.common.entities.Coordinates
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.entities.RGB
 import online.fivem.common.gtav.NativeVehicles
+import online.fivem.common.gtav.NativeWeather
 
 fun Client.createVehicle(
 	modelHash: Int,
@@ -151,10 +152,19 @@ fun Client.getVehicleTurboPressureRPMBased(vehicle: Entity, startRPM: Double = 0
 			) / (endRPM - startRPM)
 }
 
-fun Client.getFunctionHashKey(functionName: String): String {
+fun Client.getHexHashKey(functionName: String): String {
 	return "0x" + (getHashKey(functionName) and 0xFFFFFFFF).toString(16)
 }
 
 fun Client.invokeNative(functionName: String, vararg args: Any): Any {
-	return Natives.invokeNative(getFunctionHashKey(functionName), *args)
+	return Natives.invokeNative(getHexHashKey(functionName), *args)
+}
+
+fun Client.setWeatherTypeTransition(weatherType1: NativeWeather, weatherType2: NativeWeather, percentWeather2: Float) {
+	@Suppress("DEPRECATION")
+	setWeatherTypeTransition(
+		getHexHashKey(weatherType1.name),
+		getHexHashKey(weatherType2.name),
+		percentWeather2
+	)//todo test
 }

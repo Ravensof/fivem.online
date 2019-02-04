@@ -89,7 +89,7 @@ object GlobalConfig {
 		RadioStation.RADIO_15_MOTOWN.name to InternetRadioStation(
 			url = "http://air.radiorecord.ru:805/yo_320",
 			name = "Yo! FM",
-			defaultVolume = 0.5
+			defaultVolume = 0.8
 		),      // The Lowdown 91.1
 
 		RadioStation.RADIO_16_SILVERLAKE.name to InternetRadioStation(
