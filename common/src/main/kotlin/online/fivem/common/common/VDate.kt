@@ -11,7 +11,7 @@ class VDate(currentVirtualTime: Double? = null) {
 
 	var serverRealTime: Double = Date.now()
 
-	private val additionalTime = serverRealTime - Date.now() + timeZone * HOUR
+	private val additionalTime = serverRealTime - Date.now()
 
 	val time get() = (Date.now() + additionalTime) * timeSpeed + swipeTime
 
@@ -21,7 +21,7 @@ class VDate(currentVirtualTime: Double? = null) {
 		}
 	}
 
-	private val date get() = Date(time)
+	private val date get() = Date(time + timeZone * HOUR)
 
 	val year get() = date.getUTCFullYear()
 	val month get() = date.getUTCMonth()
