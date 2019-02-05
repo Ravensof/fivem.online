@@ -51,14 +51,10 @@ class API(
 		NuiEvent.emit(ShowGuiEvent(true))
 	}
 
-	fun setPlayerCoordinates(coordinates: Coordinates) {
-		launch {
-			UEvent.emit(PlayersPedTeleportingEvent())
-			delay(1_000)
-			Client.setEntityCoordsNoOffset(Client.getPlayerPed(), coordinates.x, coordinates.y, coordinates.z)
-			delay(1_000)
-			UEvent.emit(PlayersPedTeleportedEvent())
-		}
+	fun setPlayerCoordinates(coordinates: Coordinates) = launch {
+		UEvent.emit(PlayersPedTeleportingEvent()).join()
+		Client.setEntityCoordsNoOffset(Client.getPlayerPed(), coordinates.x, coordinates.y, coordinates.z)
+		UEvent.emit(PlayersPedTeleportedEvent()).join()
 	}
 
 	private val nuiBlackOutScreenStack = UnitStack()

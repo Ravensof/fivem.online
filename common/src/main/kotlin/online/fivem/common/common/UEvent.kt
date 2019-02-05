@@ -12,12 +12,10 @@ open class UEvent(override val coroutineContext: CoroutineContext) : CoroutineSc
 
 	val handlers = mutableListOf<Pair<KClass<*>, (Any) -> Unit>>()
 
-	open fun emit(data: Any): Job {
-		return launch {
-			handlers.forEach {
-				if (it.first.isInstance(data)) {
-					it.second(data)
-				}
+	open fun emit(data: Any): Job = launch {
+		handlers.forEach {
+			if (it.first.isInstance(data)) {
+				it.second(data)
 			}
 		}
 	}

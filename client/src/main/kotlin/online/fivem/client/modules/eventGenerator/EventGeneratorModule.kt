@@ -21,20 +21,7 @@ import kotlin.math.absoluteValue
 class EventGeneratorModule : AbstractModule(), CoroutineScope {
 	override val coroutineContext: CoroutineContext = Job()
 
-	private var playerPed = 0
-	private var playerPedHealth: Int = 0
-	private var playersVehicle: Int? = null
-
-	private var vehicleBodyHealth: Int? = null
-	private var vehicleEngineHealth: Double? = null
-	private var vehiclePetrolTankHealth: Double? = null
 	private var isFadeOut: Boolean = true
-
-	private var playerCoordinates: CoordinatesX? = null
-	private var playerSeatIndex: Int? = null
-	private var pauseMenuState: Int? = null
-	private var audioMusicLevelInMP: Int? = null
-	private var playerRadioStationName: RadioStation? = null
 
 	var accelerationThreshold: Double = 150.0 // m/s^2
 		set(value) {
@@ -42,9 +29,6 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 				field = value
 			}
 		}
-	private var iPlayerSpeed = 0.0
-	private var iPlayerAcceleration = 0.0
-	private var iPlayerAccelerationModule = 0.0
 	private var iLastSpeedCheck = 0.0
 
 	private var isPedAtGetInAnyVehicle: Boolean? = null
@@ -127,17 +111,15 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 
 			iLastSpeedCheck = dateNow
 
-			iPlayerAcceleration = (iSpeed - iPlayerSpeed) / dt
-			iPlayerSpeed = iSpeed
+			playerAcceleration = (iSpeed - playerSpeed) / dt
+			playerSpeed = iSpeed
 
-			iPlayerAccelerationModule = iPlayerAcceleration.absoluteValue
-
-			if (iPlayerAccelerationModule >= accelerationThreshold) {
+			if (playerAcceleration.absoluteValue >= accelerationThreshold) {
 				if (!Client.isPedAtGetInAnyVehicle(playerPed)) {
 					UEvent.emit(
 						AccelerationThresholdAchievedEvent(
-							iPlayerAcceleration,
-							iPlayerAccelerationModule,
+							playerAcceleration,
+							playerAcceleration.absoluteValue,
 							dt
 						)
 					)
@@ -288,5 +270,38 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 
 		UEvent.emit(PlayersVehicleChangedEvent(currentVehicle))
 		playersVehicle = currentVehicle
+	}
+
+	companion object {
+
+		val playerId get() = Client.getPlayerId()
+
+		var playerPed = 0
+			private set
+		var playerPedHealth: Int = 0
+			private set
+		var playersVehicle: Int? = null
+			private set
+
+		var vehicleBodyHealth: Int? = null
+			private set
+		var vehicleEngineHealth: Double? = null
+			private set
+		var vehiclePetrolTankHealth: Double? = null
+			private set
+		var playerCoordinates: CoordinatesX? = null
+			private set
+		var playerSeatIndex: Int? = null
+			private set
+		var pauseMenuState: Int? = null
+			private set
+		var audioMusicLevelInMP: Int? = null
+			private set
+		var playerRadioStationName: RadioStation? = null
+			private set
+		var playerSpeed = 0.0
+			private set
+		var playerAcceleration = 0.0
+			private set
 	}
 }

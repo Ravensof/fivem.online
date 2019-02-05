@@ -27,7 +27,7 @@ class WeatherModule(override val coroutineContext: CoroutineContext) : AbstractM
 	private var currentTemperature = 0.0
 
 	override fun onStart(): Job? {
-		setWeather(currentWeather)
+		setWeather(currentWeather, 1f)
 
 		launch {
 			for (weather in weatherQueue) {

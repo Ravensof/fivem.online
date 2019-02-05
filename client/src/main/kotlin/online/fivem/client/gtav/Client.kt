@@ -19,6 +19,21 @@ object Client : CoroutineScope {
 	override val coroutineContext: CoroutineContext = Job()
 
 	/**
+	 * traceType is always 17 in the scripts.
+	 * There is other codes used for traceType:
+	 * 19 - in jewelry_prep1a
+	 * 126 - in am_hunt_the_beast
+	 * 256 &amp; 287 - in fm_mission_controller
+	 */
+	fun hasEntityClearLosToEntity(entity1: Entity, entity2: Entity, traceType: Int = 17): Boolean {
+		return HasEntityClearLosToEntity(entity1, entity2, traceType) == 1
+	}
+
+	fun networkIsPlayerActive(player: Int): Boolean {
+		return NetworkIsPlayerActive(player) == 1
+	}
+
+	/**
 	 * enum IncidentTypes
 	 * {
 	 * FireDepartment = 3,
@@ -1753,8 +1768,16 @@ object Client : CoroutineScope {
 	 * If useZ is false, only the 2D plane (X-Y) will be considered for calculating the distance.
 	 * Consider using this faster native instead: SYSTEM::VDIST - DVIST always takes in consideration the 3D coordinates.
 	 */
-	fun getDistanceBetweenCoords(coords1: Coordinates, coords2: Coordinates, useZ: Boolean = true): Number {
-		return GetDistanceBetweenCoords(coords1.x, coords1.y, coords1.z, coords2.x, coords2.y, coords2.z, useZ)
+	fun getDistanceBetweenCoords(coords1: Coordinates, coords2: Coordinates, useZ: Boolean = true): Float {
+		return GetDistanceBetweenCoords(
+			coords1.x,
+			coords1.y,
+			coords1.z,
+			coords2.x,
+			coords2.y,
+			coords2.z,
+			useZ
+		).toFloat()
 	}
 
 	/**
@@ -10529,14 +10552,7 @@ private external fun HasCollisionLoadedAroundEntity(entity: Entity): Number
  */
 //private external fun HasEntityBeenDamagedByWeapon(entity: number, weaponHash: string | number, weaponType: number): number;
 
-/**
- * traceType is always 17 in the scripts.
- * There is other codes used for traceType:
- * 19 - in jewelry_prep1a
- * 126 - in am_hunt_the_beast
- * 256 &amp; 287 - in fm_mission_controller
- */
-//private external fun HasEntityClearLosToEntity(entity1: number, entity2: number, traceType: number): number;
+private external fun HasEntityClearLosToEntity(entity1: Entity, entity2: Entity, traceType: Int): Number
 
 private external fun HasEntityClearLosToEntityInFront(entity1: Entity, entity2: Entity): Number
 
@@ -11464,7 +11480,7 @@ private external fun IsPedFatallyInjured(ped: Entity): Number
 
 //private external fun IsPedHangingOnToVehicle(ped: number): number;
 
-//private external fun IsPedHeadtrackingEntity(ped: number, entity: number): number;
+//private external fun IsPedHeadtrackingEntity(ped: number, entity: number): number;//todo ??
 
 //private external fun IsPedHeadtrackingPed(ped1: number, ped2: number): number;
 
@@ -11656,7 +11672,7 @@ private external fun IsPedInAnyVehicle(ped: Entity, atGetIn: Boolean): Number
 /**
  * What's strafing?
  */
-//private external fun IsPedStrafing(ped: number): number;
+//private external fun IsPedStrafing(ped: number): number;// todo ??
 
 //private external fun IsPedSwimming(ped: number): number;
 
@@ -19461,7 +19477,7 @@ private external fun NetworkGetServerTime(): Time
 
 //private external fun NetworkIsPlayerAParticipant(p0: number): number;
 
-//private external fun NetworkIsPlayerActive(player: number): number;
+private external fun NetworkIsPlayerActive(player: Int): Number
 
 /**
  * hash collision
@@ -20388,7 +20404,7 @@ private external fun NetworkSetTalkerProximity(p0: Int)
  * looks like it passes a player in the paramater
  * Contains string "NETWORK_VOICE_CONNECT_TO_PLAYER" in ida
  */
-//private external fun NetworkVoiceConnectToPlayer(globalPtr: number)//todo test
+//private external fun NetworkVoiceConnectToPlayer(globalPtr: number)
 /**
  * Only one occurence in the scripts:
  * auto sub_cb43(auto a_0, auto a_1) {
@@ -27299,7 +27315,7 @@ private external fun ShutdownLoadingScreenNui()
  * C# Example :
  * Function.Call(Hash.SIMULATE_PLAYER_INPUT_GAIT, Game.Player, 1.0f, 100, 1.0f, 1, 0); //Player will go forward for 100ms
  */
-//private external fun SimulatePlayerInputGait(control: number, amount: number, gaitType: number, speed: number, p4: boolean, p5: boolean)
+//private external fun SimulatePlayerInputGait(control: number, amount: number, gaitType: number, speed: number, p4: boolean, p5: boolean)//todo ??
 
 //private external fun Sin(value: number): number;
 

@@ -29,6 +29,8 @@ class BasicsModule : AbstractModule(), CoroutineScope {
 			add(SpawnManagerModule(coroutineContext))
 			add(DateTimeModule())
 			add(WeatherModule(coroutineContext))
+			add(VoiceTransmissionModule(coroutineContext))
+
 			add(SynchronizationModule())
 		}
 	}
