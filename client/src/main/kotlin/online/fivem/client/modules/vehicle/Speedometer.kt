@@ -3,7 +3,7 @@ package online.fivem.client.modules.vehicle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import online.fivem.client.gtav.Client
-import online.fivem.client.modules.nuiEventExchanger.NuiEvent
+import online.fivem.client.modules.nui_event_exchanger.NuiEvent
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.UEvent
 import online.fivem.common.events.PlayerGetInDriversSeatEvent

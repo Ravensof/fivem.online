@@ -1,4 +1,4 @@
-package online.fivem.client.modules.rolePlaySystem
+package online.fivem.server.modules.roleplay_system
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob

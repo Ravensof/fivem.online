@@ -4,9 +4,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.entities.CoordinatesX
-import online.fivem.common.entities.PlayerSrc
 import online.fivem.common.events.net.SpawnPlayerEvent
-import online.fivem.server.modules.clientEventExchanger.ClientEvent
+import online.fivem.server.entities.Player
+import online.fivem.server.modules.client_event_exchanger.ClientEvent
 import kotlin.coroutines.CoroutineContext
 
 class BasicsModule : AbstractModule(), CoroutineScope {
@@ -24,7 +24,7 @@ class BasicsModule : AbstractModule(), CoroutineScope {
 		moduleLoader.add(NatureControlSystemModule(coroutineContext))
 	}
 
-	fun spawn(playerSrc: PlayerSrc, coordinatesX: CoordinatesX, pedHash: Int) {
-		ClientEvent.emit(SpawnPlayerEvent(coordinatesX, pedHash), playerSrc)
+	fun spawn(player: Player, coordinatesX: CoordinatesX, pedHash: Int) {
+		ClientEvent.emit(SpawnPlayerEvent(coordinatesX, pedHash), player)
 	}
 }

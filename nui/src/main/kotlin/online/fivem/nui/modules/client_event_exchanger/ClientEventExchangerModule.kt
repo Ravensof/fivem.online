@@ -1,4 +1,4 @@
-package online.fivem.nui.modules.clientEventEchanger
+package online.fivem.nui.modules.client_event_exchanger
 
 import js.externals.jquery.jQuery
 import kotlinx.coroutines.CoroutineScope

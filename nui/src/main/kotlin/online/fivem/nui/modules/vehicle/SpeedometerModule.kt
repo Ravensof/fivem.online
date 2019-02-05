@@ -14,7 +14,7 @@ import online.fivem.common.events.nui.SpeedometerEnableEvent
 import online.fivem.common.events.nui.SpeedometerUpdateEvent
 import online.fivem.nui.extensions.nuiResourcesLink
 import online.fivem.nui.extensions.toHTMLImageElement
-import online.fivem.nui.modules.clientEventEchanger.ClientEvent
+import online.fivem.nui.modules.client_event_exchanger.ClientEvent
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLImageElement

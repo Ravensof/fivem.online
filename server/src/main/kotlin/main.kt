@@ -9,8 +9,8 @@ import online.fivem.common.gtav.NativeEvents
 import online.fivem.server.gtav.Exports
 import online.fivem.server.gtav.Natives
 import online.fivem.server.modules.basics.BasicsModule
-import online.fivem.server.modules.clientEventExchanger.ClientEventExchangerModule
-import online.fivem.server.modules.rolePlaySystem.RolePlaySystemModule
+import online.fivem.server.modules.client_event_exchanger.ClientEventExchangerModule
+import online.fivem.server.modules.roleplay_system.RolePlaySystemModule
 import online.fivem.server.modules.test.Test
 
 internal fun main() {

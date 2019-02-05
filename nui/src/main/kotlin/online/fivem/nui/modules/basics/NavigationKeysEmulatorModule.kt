@@ -8,7 +8,7 @@ import online.fivem.common.common.Console
 import online.fivem.common.events.nui.NuiEmulateKeyDownEvent
 import online.fivem.common.events.nui.NuiEmulateKeyJustPressedEvent
 import online.fivem.common.events.nui.NuiEmulateKeyUpEvent
-import online.fivem.nui.modules.clientEventEchanger.ClientEvent
+import online.fivem.nui.modules.client_event_exchanger.ClientEvent
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.KeyboardEvent
 import kotlin.browser.window

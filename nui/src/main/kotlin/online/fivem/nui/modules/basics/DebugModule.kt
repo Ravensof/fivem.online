@@ -9,7 +9,7 @@ import online.fivem.common.common.Html
 import online.fivem.common.events.nui.DebugNUITextEvent
 import online.fivem.nui.common.View
 import online.fivem.nui.modules.basics.test.DebugView
-import online.fivem.nui.modules.clientEventEchanger.ClientEvent
+import online.fivem.nui.modules.client_event_exchanger.ClientEvent
 import kotlin.coroutines.CoroutineContext
 import kotlin.js.Date
 

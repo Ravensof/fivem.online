@@ -1,4 +1,4 @@
-package online.fivem.client.modules.rolePlaySystem
+package online.fivem.client.modules.role_play_system
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred

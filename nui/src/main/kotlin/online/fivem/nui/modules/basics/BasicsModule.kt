@@ -7,7 +7,7 @@ import online.fivem.common.common.Html
 import online.fivem.common.events.nui.PrefetchFileEvent
 import online.fivem.nui.extensions.nuiResourcesLink
 import online.fivem.nui.extensions.prefetch
-import online.fivem.nui.modules.clientEventEchanger.ClientEvent
+import online.fivem.nui.modules.client_event_exchanger.ClientEvent
 import kotlin.coroutines.CoroutineContext
 
 class BasicsModule : AbstractModule(), CoroutineScope {

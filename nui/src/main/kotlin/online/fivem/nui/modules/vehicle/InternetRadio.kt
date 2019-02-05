@@ -14,7 +14,7 @@ import online.fivem.common.extensions.orOne
 import online.fivem.nui.extensions.nuiResourcesLink
 import online.fivem.nui.external.Howl
 import online.fivem.nui.external.HowlOptions
-import online.fivem.nui.modules.clientEventEchanger.ClientEvent
+import online.fivem.nui.modules.client_event_exchanger.ClientEvent
 import kotlin.coroutines.CoroutineContext
 
 class InternetRadio : AbstractModule(), CoroutineScope {

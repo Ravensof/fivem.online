@@ -5,7 +5,7 @@ import online.fivem.common.common.AbstractModule
 import online.fivem.common.events.nui.ShowGuiEvent
 import online.fivem.nui.modules.basics.test.BlackScreenModule
 import online.fivem.nui.modules.basics.test.MainView
-import online.fivem.nui.modules.clientEventEchanger.ClientEvent
+import online.fivem.nui.modules.client_event_exchanger.ClientEvent
 import kotlin.coroutines.CoroutineContext
 
 class GUIModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {

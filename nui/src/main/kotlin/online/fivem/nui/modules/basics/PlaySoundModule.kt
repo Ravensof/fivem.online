@@ -7,7 +7,7 @@ import online.fivem.common.events.nui.PlaySoundEvent
 import online.fivem.nui.extensions.nuiResourcesLink
 import online.fivem.nui.external.Howl
 import online.fivem.nui.external.HowlOptions
-import online.fivem.nui.modules.clientEventEchanger.ClientEvent
+import online.fivem.nui.modules.client_event_exchanger.ClientEvent
 
 class PlaySoundModule : AbstractModule() {
 	override fun onInit() {

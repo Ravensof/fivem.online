@@ -15,7 +15,7 @@ import online.fivem.server.ServerConfig
 import online.fivem.server.common.MySQL
 import online.fivem.server.entities.Player
 import online.fivem.server.events.PlayerConnectedEvent
-import online.fivem.server.modules.clientEventExchanger.ClientEvent
+import online.fivem.server.modules.client_event_exchanger.ClientEvent
 import kotlin.coroutines.CoroutineContext
 import kotlin.js.Date
 

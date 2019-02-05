@@ -18,7 +18,7 @@ import online.fivem.server.entities.mysqlEntities.UserEntity
 import online.fivem.server.events.PlayerConnectedEvent
 import online.fivem.server.gtav.Exports
 import online.fivem.server.gtav.Natives
-import online.fivem.server.modules.clientEventExchanger.ClientEvent
+import online.fivem.server.modules.client_event_exchanger.ClientEvent
 import kotlin.coroutines.CoroutineContext
 
 class SessionModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
@@ -101,7 +101,7 @@ class SessionModule(override val coroutineContext: CoroutineContext) : AbstractM
 		players[playerSrc] = player
 
 		basicsModule.spawn(
-			playerSrc,
+			player,
 			CoordinatesX(
 				character.coord_x.toFloat(),
 				character.coord_y.toFloat(),

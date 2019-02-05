@@ -1,4 +1,4 @@
-package online.fivem.client.modules.serverEventExchanger
+package online.fivem.client.modules.server_event_exchanger
 
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch

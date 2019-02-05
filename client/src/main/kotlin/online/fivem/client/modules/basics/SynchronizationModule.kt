@@ -4,7 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import online.fivem.client.gtav.Client
-import online.fivem.client.modules.serverEventExchanger.ServerEvent
+import online.fivem.client.modules.server_event_exchanger.ServerEvent
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.UEvent
 import online.fivem.common.entities.CoordinatesX

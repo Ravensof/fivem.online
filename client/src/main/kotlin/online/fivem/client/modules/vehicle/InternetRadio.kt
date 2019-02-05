@@ -4,7 +4,7 @@ import kotlinx.coroutines.Job
 import online.fivem.client.extensions.start
 import online.fivem.client.extensions.stop
 import online.fivem.client.gtav.Client
-import online.fivem.client.modules.nuiEventExchanger.NuiEvent
+import online.fivem.client.modules.nui_event_exchanger.NuiEvent
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.UEvent

@@ -1,4 +1,4 @@
-package online.fivem.server.modules.clientEventExchanger
+package online.fivem.server.modules.client_event_exchanger
 
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel

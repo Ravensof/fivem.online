@@ -1,4 +1,4 @@
-package online.fivem.client.modules.nuiEventExchanger
+package online.fivem.client.modules.nui_event_exchanger
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
