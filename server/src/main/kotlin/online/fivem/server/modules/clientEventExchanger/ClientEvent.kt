@@ -5,6 +5,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import online.fivem.common.common.Console
 import online.fivem.common.entities.PlayerSrc
+import online.fivem.server.entities.Player
 import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.KClass
 
@@ -15,6 +16,12 @@ open class ClientEvent : CoroutineScope {
 	open val printType = "net"
 
 	val handlers = mutableListOf<Pair<KClass<*>, (PlayerSrc, Any) -> Unit>>()
+	val playerHandlers = mutableListOf<Pair<KClass<*>, (Player, Any) -> Unit>>()
+
+	fun emit(
+		data: Any,
+		player: Player
+	): Job = emit(data, player.playerSrc)
 
 	fun emit(
 		data: Any,
@@ -48,9 +55,14 @@ open class ClientEvent : CoroutineScope {
 		}
 	}
 
-	inline fun <reified T : Any> on(noinline function: (PlayerSrc, T) -> Unit) {
-		@Suppress("UNCHECKED_CAST")
-		handlers.add(T::class to function as (PlayerSrc, Any) -> Unit)
+	inline fun <reified T : Any> on(noinline function: (Player, T) -> Unit) {
+		playerHandlers.add(T::class to function.unsafeCast<((Player, Any) -> Unit)>())
+
+		Console.info("$printType event ${T::class} registered")
+	}
+
+	inline fun <reified T : Any> onGuest(noinline function: (PlayerSrc, T) -> Unit) {
+		handlers.add(T::class to function.unsafeCast<((PlayerSrc, Any) -> Unit)>())
 
 		Console.info("$printType event ${T::class} registered")
 	}
@@ -64,7 +76,7 @@ open class ClientEvent : CoroutineScope {
 		}
 
 		@Suppress("UNCHECKED_CAST")
-		handlers.add(T::class to handler as (PlayerSrc, Any) -> Unit)
+		handlers.add(T::class to handler.unsafeCast<((PlayerSrc, Any) -> Unit)>())
 
 		Console.info("$printType event ${T::class} registered")
 	}
@@ -78,12 +90,18 @@ open class ClientEvent : CoroutineScope {
 		}
 	}
 
-	fun handle(playerSrc: PlayerSrc, data: Any): Job {
-		return launch {
-			handlers.forEach {
-				if (it.first.isInstance(data)) {
-					it.second(playerSrc, data)
-				}
+	fun handle(playerSrc: PlayerSrc, data: Any) {
+		handlers.forEach {
+			if (it.first.isInstance(data)) {
+				it.second(playerSrc, data)
+			}
+		}
+	}
+
+	fun handle(player: Player, data: Any) {
+		playerHandlers.forEach {
+			if (it.first.isInstance(data)) {
+				it.second(player, data)
 			}
 		}
 	}

@@ -18,6 +18,7 @@ import online.fivem.server.ServerConfig
 import online.fivem.server.Strings
 import online.fivem.server.gtav.Exports
 import online.fivem.server.gtav.Natives
+import online.fivem.server.modules.basics.SessionModule
 import kotlin.coroutines.CoroutineContext
 import kotlin.random.Random
 
@@ -25,12 +26,14 @@ private typealias Data = Any
 
 class ClientEventExchangerModule : AbstractModule(), CoroutineScope {
 
-	override val coroutineContext: CoroutineContext = Job()
+	override val coroutineContext: CoroutineContext = SupervisorJob()
 
 	private val playersSendChannels = createChannels<Data>()
 	private val playersReceiveChannels = createChannels<Packet<*>>()
 
 	private val playersList = mutableMapOf<Int, Double>()
+
+	private val sessionModule by moduleLoader.onReady<SessionModule>()
 
 	override fun onInit() {
 		Exports.on(NativeEvents.Server.PLAYER_DROPPED) { playerId: Int, _: String -> onPlayerDropped(playerId) }
@@ -95,7 +98,13 @@ class ClientEventExchangerModule : AbstractModule(), CoroutineScope {
 		playersReceiveChannels.forEach { channel ->
 			launch {
 				for (packet in channel) {
-					ClientEvent.handle(packet.playerSrc!!, packet.data)
+					packet.playerSrc ?: throw Exception("null pointer exception")
+
+					sessionModule.getPlayer(packet.playerSrc.value)?.let {
+						ClientEvent.handle(it, packet.data)
+					}.onNull {
+						ClientEvent.handle(packet.playerSrc, packet.data)
+					}
 				}
 			}
 		}

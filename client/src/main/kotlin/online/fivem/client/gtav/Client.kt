@@ -19,9 +19,46 @@ object Client : CoroutineScope {
 	override val coroutineContext: CoroutineContext = Job()
 
 	/**
-	 * Mixes two weather types. If percentWeather2 is set to 0.0f, then the weather will be entirely of weatherType1, if it is set to 1.0f it will be entirely of weatherType2. If it's set somewhere in between, there will be a mixture of weather behaviors. To test, try this in the RPH console, and change the float to different values between 0 and 1:
+	 * enum IncidentTypes
+	 * {
+	 * FireDepartment = 3,
+	 * Paramedics = 5,
+	 * Police = 7,
+	 * PedsInCavalcades = 11,
+	 * Merryweather = 14
+	 * };
+	 * As for the 'police' incident, it will call police cars to you, but unlike PedsInCavalcades &amp; Merryweather they
+	 * won't start shooting at you unless you shoot first or shoot at them. The top 2 however seem to cancel theirselves
+	 * if there is noone dead around you or a fire. I only figured them out as I found out the 3rd param is definately
+	 * the amountOfPeople and they called incident 3 in scripts with 4 people (which the firetruck has) and incident 5
+	 * with 2 people (which the ambulence has). The 4 param I cant say is radius, but for the pedsInCavalcades and
+	 * Merryweather R* uses 0.0f and for the top 3 (Emergency Services) they use 3.0f.
+	 * Side Note: It seems calling the pedsInCavalcades or Merryweather then removing it seems to break you from calling
+	 * the EmergencyEvents and I also believe pedsInCavalcades. (The V cavalcades of course not IV).
+	 *
+	 * Side Note 2: I say it breaks as if you call this proper,
+	 * if(CREATE_INCIDENT) etc it will return false if you do as I said above.
+	 * =====================================================
+	 */
+	fun createIncident(
+		incidentType: Int,
+		x: Float,
+		y: Float,
+		z: Float,
+		amountOfPeople: Int,
+		radius: Float,
+		outIncidentID: Int
+	): Number {
+		return CreateIncident(incidentType, x, y, z, amountOfPeople, radius, outIncidentID)
+	}
+
+	/**
+	 * Mixes two weather types. If percentWeather2 is set to 0.0f, then the weather will be entirely of weatherType1, if
+	 * it is set to 1.0f it will be entirely of weatherType2. If it's set somewhere in between, there will be a mixture
+	 * of weather behaviors. To test, try this in the RPH console, and change the float to different values between 0 and 1:
 	 * execute "NativeFunction.Natives.x578C752848ECFA0C(Game.GetHashKey(""RAIN""), Game.GetHashKey(""SMOG""), 0.50f);
-	 * Note that unlike most of the other weather natives, this native takes the hash of the weather name, not the plain string. These are the weather names and their hashes:
+	 * Note that unlike most of the other weather natives, this native takes the hash of the weather name, not the plain
+	 * string. These are the weather names and their hashes:
 	 * CLEAR	0x36A83D84
 	 * EXTRASUNNY	0x97AA0A79
 	 * CLOUDS	0x30FDAF5C
@@ -35,10 +72,12 @@ object Client : CoroutineScope {
 	 * SNOWLIGHT	0x23FB812B
 	 * BLIZZARD	0x27EA2814
 	 *  -- [[ OLD INVALID INFO BELOW ]]
-	 * Not tested. Based purely on disassembly. Instantly sets the weather to sourceWeather, then transitions to targetWeather over the specified transitionTime in seconds.
+	 * Not tested. Based purely on disassembly. Instantly sets the weather to sourceWeather, then transitions to
+	 * targetWeather over the specified transitionTime in seconds.
 	 * If an invalid hash is specified for sourceWeather, the current weather type will be used.
 	 * If an invalid hash is specified for targetWeather, the next weather type will be used.
-	 * If an invalid hash is specified for both sourceWeather and targetWeather, the function just changes the transition time of the current transition.
+	 * If an invalid hash is specified for both sourceWeather and targetWeather, the function just changes the transition
+	 * time of the current transition.
 	 */
 	@Deprecated("use Client.setWeatherTypeTransition(weatherType1: NativeWeather, weatherType2: NativeWeather, percentWeather2: Float)")
 	fun setWeatherTypeTransition(weatherType1: String, weatherType2: String, percentWeather2: Float) {
@@ -4164,22 +4203,15 @@ private external fun ClearWeatherTypePersist()
  */
 //private external fun CreateGroup(unused: number): number;
 
-/**
- * enum IncidentTypes
- * {
- * FireDepartment = 3,
- * Paramedics = 5,
- * Police = 7,
- * PedsInCavalcades = 11,
- * Merryweather = 14
- * };
- * As for the 'police' incident, it will call police cars to you, but unlike PedsInCavalcades &amp; Merryweather they won't start shooting at you unless you shoot first or shoot at them. The top 2 however seem to cancel theirselves if there is noone dead around you or a fire. I only figured them out as I found out the 3rd param is definately the amountOfPeople and they called incident 3 in scripts with 4 people (which the firetruck has) and incident 5 with 2 people (which the ambulence has). The 4 param I cant say is radius, but for the pedsInCavalcades and Merryweather R* uses 0.0f and for the top 3 (Emergency Services) they use 3.0f.
- * Side Note: It seems calling the pedsInCavalcades or Merryweather then removing it seems to break you from calling the EmergencyEvents and I also believe pedsInCavalcades. (The V cavalcades of course not IV).
- * Side Note 2: I say it breaks as if you call this proper,
- * if(CREATE_INCIDENT) etc it will return false if you do as I said above.
- * =====================================================
- */
-//private external fun CreateIncident(incidentType: number, x: number, y: number, z: number, p5: number, radius: number, outIncidentID: number): number;
+private external fun CreateIncident(
+	incidentType: Int,
+	x: Number,
+	y: Number,
+	z: Number,
+	p5: Number,
+	radius: Number,
+	outIncidentID: Int
+): Number
 
 /**
  * p0 could be type (valueused in scripts: 14, 7, 5, 3, 11)

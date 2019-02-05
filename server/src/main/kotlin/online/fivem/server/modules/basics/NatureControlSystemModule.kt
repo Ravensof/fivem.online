@@ -23,10 +23,10 @@ class NatureControlSystemModule(override val coroutineContext: CoroutineContext)
 	override fun onStart(): Job? {
 		repeatJob(CALCULATE_WEATHER_PERIOD_SECONDS * 1_000) {
 
-			val currentTemperature = currentTemperature(synchronizationModule.date)
-
 			val currentTime = synchronizationModule.date.time
-			val f = (currentTemperature(currentTime) - currentTemperature(currentTime - 1_000)) / 1_000 * 10.0.pow(8)
+			val currentTemperature = currentTemperature(currentTime)
+
+			val derivative = derivative(currentTime) * 10.0.pow(8)
 
 			val cal = calculations(currentTime)
 			val diff = cal.second - cal.first
@@ -89,13 +89,21 @@ class NatureControlSystemModule(override val coroutineContext: CoroutineContext)
 			synchronizationModule.syncData.weather = Weather(
 				weather = weather,
 				appearanceTime = if (synchronizationModule.syncData.weather?.weather == weather) synchronizationModule.syncData.weather?.appearanceTime.orZero() else
-					synchronizationModule.date.time + synchronizationModule.date.timeSpeed * TIME_IN_MILLISECONDS_FOR_APPLYING_WEATHER,
+					currentTime + synchronizationModule.date.timeSpeed * TIME_IN_MILLISECONDS_FOR_APPLYING_WEATHER,
 				temperature = currentTemperature
 			)
 		}
 
 		return super.onStart()
 	}
+
+	private fun derivative(currentTime: Double): Double {
+		return (currentTemperature(currentTime) - currentTemperature(currentTime - 1_000)) / 1_000
+	}
+
+//	private fun currentWetness(currentTime: Double): Double {
+//		return 0.0
+//	}
 
 	private fun currentTemperature(milliseconds: Double): Double = currentTemperature(VDate(milliseconds))
 

@@ -2,9 +2,10 @@ package online.fivem.server.modules.basics
 
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import online.fivem.server.entities.Player
 import online.fivem.server.gtav.Natives.registerCommand
 
-private typealias Handler = (Int, Array<String>, String) -> Unit
+private typealias Handler = (Player, Array<String>, String) -> Unit
 
 object CommandEvent {
 
@@ -19,12 +20,12 @@ object CommandEvent {
 	}
 
 	fun handle(command: CommandsModule.Command) {
-		handlers[command.command]?.invoke(command.playerSrc, command.args, command.raw)
+		handlers[command.command]?.invoke(command.player, command.args, command.raw)
 	}
 
 	private fun handle(playerSrc: Int, command: String, args: Array<String>, raw: String) {
 		GlobalScope.launch {
-			CommandsModule.executionQueue.send(CommandsModule.Command(playerSrc, command, args, raw))
+			CommandsModule.executionQueue.send(CommandsModule.RawCommand(playerSrc, command, args, raw))
 		}
 	}
 }

@@ -14,7 +14,7 @@ class BasicsModule : AbstractModule(), CoroutineScope {
 
 	override fun onInit() {
 		moduleLoader.add(MySQLModule(coroutineContext))
-		moduleLoader.add(CommandsModule())
+		moduleLoader.add(CommandsModule(coroutineContext))
 		moduleLoader.add(HttpServerModule(coroutineContext))
 		moduleLoader.add(NuiFileShareModule(coroutineContext))
 		moduleLoader.add(SessionModule(coroutineContext))

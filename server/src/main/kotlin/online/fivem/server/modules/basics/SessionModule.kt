@@ -31,7 +31,7 @@ class SessionModule(override val coroutineContext: CoroutineContext) : AbstractM
 		Exports.on(NativeEvents.Server.PLAYER_CONNECTING, ::onClientConnecting)
 		Exports.on(NativeEvents.Server.PLAYER_DROPPED, ::onPlayerDropped)
 
-		ClientEvent.on<ImReadyEvent> { playerSrc, _ -> onClientReady(playerSrc) }
+		ClientEvent.onGuest<ImReadyEvent> { playerSrc: PlayerSrc, _ -> onClientReady(playerSrc) }
 
 		moduleLoader.on<MySQLModule> { mySQL = it.mySQL }
 	}
@@ -40,9 +40,9 @@ class SessionModule(override val coroutineContext: CoroutineContext) : AbstractM
 		return players.map { it.key }
 	}
 
-	fun getPlayer(playerSrc: PlayerSrc): Player? {
+	fun getPlayer(playerSrc: Int): Player? {
 		players.forEach {
-			if (it.key == playerSrc) {
+			if (it.key.value == playerSrc) {
 				return it.value
 			}
 		}
@@ -50,34 +50,33 @@ class SessionModule(override val coroutineContext: CoroutineContext) : AbstractM
 		return null
 	}
 
-	private fun onClientReady(playerSrc: PlayerSrc) {
-		launch {
+	private fun onClientReady(playerSrc: PlayerSrc) = launch {
 
-			val identifiers = Natives.getPlayerIdentifiers(playerSrc)
+		val identifiers = Natives.getPlayerIdentifiers(playerSrc)
 
-			val user = mySQL.query<UserEntity>(
-				"""SELECT id
+		val user = mySQL.query<UserEntity>(
+			"""SELECT id
 					|FROM users
 					|WHERE
 					|   steam=? AND
 					|   license=?
 					|LIMIT 1""".trimMargin(),
-				identifiers.steam,
-				identifiers.license
-			).await().firstOrNull() ?: return@launch Natives.dropPlayer(playerSrc, Strings.NO_SUCH_USER)
+			identifiers.steam,
+			identifiers.license
+		).await().firstOrNull() ?: return@launch Natives.dropPlayer(playerSrc, Strings.NO_SUCH_USER)
 
-			val character =
-				mySQL.query<CharacterEntity>(
-					"""SELECT *
+		val character =
+			mySQL.query<CharacterEntity>(
+				"""SELECT *
 						|FROM characters
 						|WHERE user_id=?
 						|LIMIT 1""".trimMargin(),
-					user.id
-				).await().firstOrNull()
-					?: return@launch Natives.dropPlayer(playerSrc, Strings.NO_SUCH_CHARACTER)
+				user.id
+			).await().firstOrNull()
+				?: return@launch Natives.dropPlayer(playerSrc, Strings.NO_SUCH_CHARACTER)
 
-			val sessionId = mySQL.query(
-				"""INSERT INTO sessions
+		val sessionId = mySQL.query(
+			"""INSERT INTO sessions
 					|SET
 					|  user_id=?,
 					|  character_id=?,
@@ -85,34 +84,33 @@ class SessionModule(override val coroutineContext: CoroutineContext) : AbstractM
 					|  license=?,
 					|  ip=?
 					|""".trimMargin(),
-				user.id,
-				character.id,
-				identifiers.steam.orEmpty(),
-				identifiers.license,
-				identifiers.ip
-			).await() ?: return@launch Natives.dropPlayer(playerSrc, Strings.SESSION_HAVE_NOT_BEEN_CREATED)
+			user.id,
+			character.id,
+			identifiers.steam.orEmpty(),
+			identifiers.license,
+			identifiers.ip
+		).await() ?: return@launch Natives.dropPlayer(playerSrc, Strings.SESSION_HAVE_NOT_BEEN_CREATED)
 
-			val player = Player(
-				playerSrc = playerSrc,
-				name = identifiers.name.orEmpty(),
-				sessionId = sessionId,
-				characterId = character.id
-			)
+		val player = Player(
+			playerSrc = playerSrc,
+			name = identifiers.name.orEmpty(),
+			sessionId = sessionId,
+			characterId = character.id
+		)
 
-			players[playerSrc] = player
+		players[playerSrc] = player
 
-			basicsModule.spawn(
-				playerSrc,
-				CoordinatesX(
-					character.coord_x.toFloat(),
-					character.coord_y.toFloat(),
-					character.coord_z.toFloat(),
-					character.coord_rotation
-				), character.pedestrian
-			)
+		basicsModule.spawn(
+			playerSrc,
+			CoordinatesX(
+				character.coord_x.toFloat(),
+				character.coord_y.toFloat(),
+				character.coord_z.toFloat(),
+				character.coord_rotation
+			), character.pedestrian
+		)
 
-			UEvent.emit(PlayerConnectedEvent(player))
-		}
+		UEvent.emit(PlayerConnectedEvent(player))
 	}
 
 	private fun onPlayerDropped(playerId: Int, reason: String) {

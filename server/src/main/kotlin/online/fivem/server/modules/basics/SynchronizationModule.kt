@@ -33,14 +33,13 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 	private lateinit var mySQL: MySQL
 
 	override fun onInit() {
-		ClientEvent.on<ClientSideSynchronizeEvent> { playerSrc, synchronizeEvent ->
-			launch {
-				if (syncDataChannel.isFull) {
-					Console.warn("synchronization DataChannel is full")
-				}
-				val player = sessionModule.getPlayer(playerSrc)
-					?: return@launch Console.warn("user with playerSrc=${playerSrc.value} not found in session module")
+		ClientEvent.on<ClientSideSynchronizeEvent> { player, synchronizeEvent ->
 
+			if (syncDataChannel.isFull) {
+				Console.warn("synchronization DataChannel is full")
+			}
+
+			launch {
 				syncDataChannel.send(player to synchronizeEvent)
 			}
 		}
