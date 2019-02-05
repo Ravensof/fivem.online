@@ -11,10 +11,12 @@ import online.fivem.common.entities.PlayerSrc
 import online.fivem.common.events.net.ClientSideSynchronizeEvent
 import online.fivem.common.events.net.ServerSideSynchronizationEvent
 import online.fivem.common.extensions.isNotEmpty
+import online.fivem.common.extensions.orZero
 import online.fivem.server.ServerConfig
 import online.fivem.server.common.MySQL
 import online.fivem.server.entities.Player
 import online.fivem.server.events.PlayerConnectedEvent
+import online.fivem.server.gtav.Natives
 import online.fivem.server.modules.client_event_exchanger.ClientEvent
 import kotlin.coroutines.CoroutineContext
 import kotlin.js.Date
@@ -66,7 +68,7 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 	}
 
 	private fun syncDataFor(playerSrc: PlayerSrc) {
-		syncData.serverTime = Date.now()
+		syncData.serverTime = Date.now() + Natives.getPlayerPing(playerSrc).orZero()
 		ClientEvent.emit(syncData, playerSrc)
 	}
 
