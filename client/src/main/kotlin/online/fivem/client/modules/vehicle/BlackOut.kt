@@ -14,9 +14,10 @@ import online.fivem.common.GlobalConfig.BlackOut.EXTRA_BLACKOUT_TIME
 import online.fivem.common.GlobalConfig.BlackOut.WAKING_UP_TIME
 import online.fivem.common.Sounds
 import online.fivem.common.common.AbstractModule
+import online.fivem.common.common.Console
 import online.fivem.common.common.UEvent
 import online.fivem.common.events.AccelerationThresholdAchievedEvent
-import online.fivem.common.events.PlayerPedHealthZeroEvent
+import online.fivem.common.events.PlayersPedHealthChangedEvent
 import online.fivem.common.events.PlayersPedTeleportedEvent
 import online.fivem.common.events.PlayersPedTeleportingEvent
 import kotlin.coroutines.CoroutineContext
@@ -31,7 +32,7 @@ class BlackOut(override val coroutineContext: CoroutineContext) : AbstractModule
 		UEvent.on<PlayersPedTeleportingEvent> { isAllowed = false }
 		UEvent.on<PlayersPedTeleportedEvent> { isAllowed = true }
 
-		UEvent.on<PlayerPedHealthZeroEvent> {
+		UEvent.on<PlayersPedHealthChangedEvent.Zero> {
 			if (!isAllowed) return@on
 			blackOut(BLACKOUT_TIME_FROM_COMMAS * 1_000)
 		}

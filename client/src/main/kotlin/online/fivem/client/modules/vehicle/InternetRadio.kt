@@ -31,7 +31,7 @@ class InternetRadio : AbstractModule() {
 
 		UEvent.on<PlayerRadioStationChangedEvent> { onPlayerVehicleRadioStationChanged(it.radioStation) }
 
-		UEvent.on<AudioMusicLevelInMPChangedEvent> {
+		UEvent.on<ProfileSettingUpdatedEvent.AudioMusicLevelInMP> {
 			onSettingsMusicLevelChanged(it.value)
 		}
 	}

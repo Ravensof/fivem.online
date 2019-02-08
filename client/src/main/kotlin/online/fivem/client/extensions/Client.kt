@@ -180,3 +180,23 @@ fun Client.getPlayersOnline(): List<Int> {
 	}
 	return list
 }
+
+fun Client.cellFrontCamActivate(activate: Boolean) {
+	Natives.invokeNative<Nothing>("0x2491A93618B7D838", activate)
+}
+
+fun Client.takePhoto() {
+	Natives.invokeNative<Nothing>("0xa67c35c56eb1bd9d")
+}
+
+fun Client.clearPhoto() {
+	Natives.invokeNative<Nothing>("0xd801cc02177fa3f1")
+}
+
+fun Client.wasPhotoTaken(): Boolean {
+	return Natives.invokeNative<Number>("0x0d6ca79eeebd8ca3") == 1
+}
+
+fun Client.savePhoto(unk: Int) {
+	Natives.invokeNative<Nothing>("0x3dec726c25a11bac")
+}

@@ -1,3 +1,10 @@
 package online.fivem.common.events
 
-open class PlayerVehicleRadioToggledEvent(val isEnabled: Boolean)
+import online.fivem.common.gtav.RadioStation
+
+sealed class PlayerVehicleRadioToggledEvent(val isEnabled: Boolean) {
+
+	class Disabled : PlayerVehicleRadioToggledEvent(false)
+
+	class Enabled(val radioStation: RadioStation) : PlayerVehicleRadioToggledEvent(true)
+}

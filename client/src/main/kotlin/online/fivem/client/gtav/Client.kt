@@ -19,6 +19,87 @@ object Client : CoroutineScope {
 	override val coroutineContext: CoroutineContext = Job()
 
 	/**
+	 * p1 and p2 have no effect
+	 * maybe a quick disassembly will tell us what they do
+	 * the statement below seems to be false. when I tried it with 2 vehicles:
+	 * if p2 is set to true, the both entities won't collide with the other until the distance between them is above 4 meters.
+	 */
+	//DetachEntity(PlayerPedId(), true, false)
+	fun detachEntity(entity: Entity, p1: Boolean, collision: Boolean) {
+		DetachEntity(entity, p1, collision)
+	}
+
+	/**
+	 * Attaches entity1 to bone (boneIndex) of entity2.
+	 * boneIndex - this is different to boneID, use GET_PED_BONE_INDEX to get the index from the ID. use the index for attaching to specific bones. entity1 will be attached to entity2's centre if bone index given doesn't correspond to bone indexes for that entity type.
+	 * useSoftPinning - when 2 entities with collision collide and form into a ball they will break the attachment of the entity that they were attached to. Or when an entity is attached far away and then the resets.
+	 * collision - controls collision between the two entities (FALSE disables collision).
+	 * isPed - pitch doesnt work when false and roll will only work on negative numbers (only peds)
+	 * vertexIndex - position of vertex
+	 * fixedRot - if false it ignores entity vector
+	 */
+	//AttachEntityToEntity(PlayerPedId(), GetPlayerPed(GetPlayerFromServerId(draggedBy)), 4103, 11816, 0.48, 0.00, 0.0, 0.0, 0.0, 0.0, false, false, false, false, 2, true)
+	fun attachEntityToEntity(
+		entity1: Entity,
+		entity2: Entity,
+		boneIndex: Number,
+		xPos: Number,
+		yPos: Number,
+		zPos: Number,
+		xRot: Number,
+		yRot: Number,
+		zRot: Number,
+		p9: Boolean,
+		useSoftPinning: Boolean,
+		collision: Boolean,
+		isPed: Boolean,
+		vertexIndex: Number,
+		fixedRot: Boolean
+	) {
+		AttachEntityToEntity(
+			entity1,
+			entity2,
+			boneIndex,
+			xPos,
+			yPos,
+			zPos,
+			xRot,
+			yRot,
+			zRot,
+			p9,
+			useSoftPinning,
+			collision,
+			isPed,
+			vertexIndex,
+			fixedRot
+		)
+	}
+
+	fun networkSetInSpectatorMode(toggle: Boolean, playerPed: Entity) {
+		NetworkSetInSpectatorMode(toggle, playerPed)
+	}
+
+	/**
+	 * Creates a mobile phone of the specified type.
+	 * Possible phone types:
+	 * 0 - Default phone / Michael's phone
+	 * 1 - Trevor's phone
+	 * 2 - Franklin's phone
+	 * 4 - Prologue phone
+	 * These values represent bit flags, so a value of '3' would toggle Trevor and Franklin's phones together, causing unexpected behavior and most likely crash the game.
+	 */
+	fun createMobilePhone(phoneId: Int) {
+		CreateMobilePhone(phoneId)
+	}
+
+	/**
+	 * Destroys the currently active mobile phone.
+	 */
+	fun destroyMobilePhone() {
+		DestroyMobilePhone()
+	}
+
+	/**
 	 * traceType is always 17 in the scripts.
 	 * There is other codes used for traceType:
 	 * 19 - in jewelry_prep1a
@@ -3159,16 +3240,23 @@ private external fun AddTextEntry(entryKey: String, entryText: String)
  */
 //private external fun AttachEntitiesToRope(rope: number, ent1: number, ent2: number, ent1_x: number, ent1_y: number, ent1_z: number, ent2_x: number, ent2_y: number, ent2_z: number, length: number, p10: boolean, p11: boolean, boneName1: string, boneName2: string)
 
-/**
- * Attaches entity1 to bone (boneIndex) of entity2.
- * boneIndex - this is different to boneID, use GET_PED_BONE_INDEX to get the index from the ID. use the index for attaching to specific bones. entity1 will be attached to entity2's centre if bone index given doesn't correspond to bone indexes for that entity type.
- * useSoftPinning - when 2 entities with collision collide and form into a ball they will break the attachment of the entity that they were attached to. Or when an entity is attached far away and then the resets.
- * collision - controls collision between the two entities (FALSE disables collision).
- * isPed - pitch doesnt work when false and roll will only work on negative numbers (only peds)
- * vertexIndex - position of vertex
- * fixedRot - if false it ignores entity vector
- */
-//private external fun AttachEntityToEntity(entity1: number, entity2: number, boneIndex: number, xPos: number, yPos: number, zPos: number, xRot: number, yRot: number, zRot: number, p9: boolean, useSoftPinning: boolean, collision: boolean, isPed: boolean, vertexIndex: number, fixedRot: boolean)
+private external fun AttachEntityToEntity(
+	entity1: Entity,
+	entity2: Entity,
+	boneIndex: Number,
+	xPos: Number,
+	yPos: Number,
+	zPos: Number,
+	xRot: Number,
+	yRot: Number,
+	zRot: Number,
+	p9: Boolean,
+	useSoftPinning: Boolean,
+	collision: Boolean,
+	isPed: Boolean,
+	vertexIndex: Number,
+	fixedRot: Boolean
+)
 
 /**
  * breakForce is the amount of force required to break the bond.
@@ -4276,16 +4364,7 @@ private external fun CreateIncident(
  */
 //private external fun CreateMissionTrain(variation: number, x: number, y: number, z: number, direction: boolean): number;
 
-/**
- * Creates a mobile phone of the specified type.
- * Possible phone types:
- * 0 - Default phone / Michael's phone
- * 1 - Trevor's phone
- * 2 - Franklin's phone
- * 4 - Prologue phone
- * These values represent bit flags, so a value of '3' would toggle Trevor and Franklin's phones together, causing unexpected behavior and most likely crash the game.
- */
-//private external fun CreateMobilePhone(p3: number)
+private external fun CreateMobilePhone(p3: Int)
 
 /**
  * p5 = sets as true in scripts
@@ -4823,10 +4902,7 @@ private external fun CreateVehicle(
 
 //private external fun DestroyItemset(p0: number)
 
-/**
- * Destroys the currently active mobile phone.
- */
-//private external fun DestroyMobilePhone()
+private external fun DestroyMobilePhone()
 
 /**
  * Hash collision
@@ -4837,13 +4913,7 @@ private external fun CreateVehicle(
 
 //private external fun DetachCam(cam: number)
 
-/**
- * p1 and p2 have no effect
- * maybe a quick disassembly will tell us what they do
- * the statement below seems to be false. when I tried it with 2 vehicles:
- * if p2 is set to true, the both entities won't collide with the other until the distance between them is above 4 meters.
- */
-//private external fun DetachEntity(entity: number, p1: boolean, collision: boolean)
+private external fun DetachEntity(entity: Entity, p1: Boolean, collision: Boolean)
 
 //private external fun DetachPortablePickupFromPed(ped: number)
 
@@ -20050,7 +20120,7 @@ private external fun NetworkResurrectLocalPlayer(
 
 //private external fun NetworkSetInMpCutscene(p0: boolean, p1: boolean)
 
-//private external fun NetworkSetInSpectatorMode(toggle: boolean, playerPed: number)
+private external fun NetworkSetInSpectatorMode(toggle: Boolean, playerPed: Entity)
 
 /**
  * hash collision???

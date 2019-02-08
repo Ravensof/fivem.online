@@ -4,11 +4,14 @@ import online.fivem.common.entities.InternetRadioStation
 import online.fivem.common.gtav.NativeWeather
 import online.fivem.common.gtav.RadioStation
 
+@Suppress("MemberVisibilityCanBePrivate")
 object GlobalConfig {
 	const val MODULE_NAME = "fivem-online"
 	const val SERVER_IP = "server1.fivem.online"
 
 	const val SERVER_PORT = 30120
+	const val HTTP_PORT = SERVER_PORT + 1
+	const val WEBRTC_PORT = HTTP_PORT + 1
 
 	const val SERVER_NAME_IN_MENU = "FIVEM.ONLINE"
 	const val MAX_PLAYERS = 32

@@ -152,12 +152,12 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 
 		if (pedHealthDiff != 0) {
 			if (currentPedHealth == 0) {
-				UEvent.emit(PlayerPedHealthZeroEvent(currentPedHealth))
+				UEvent.emit(PlayersPedHealthChangedEvent.Zero(currentPedHealth))
 			} else {
 				if (pedHealthDiff > 0) {
-					UEvent.emit(PlayersPedHealthIncreasedEvent(currentPedHealth, pedHealthDiff))
+					UEvent.emit(PlayersPedHealthChangedEvent.Increased(currentPedHealth, pedHealthDiff))
 				} else {
-					UEvent.emit(PlayersPedHealthDropppedEvent(currentPedHealth, pedHealthDiff))
+					UEvent.emit(PlayersPedHealthChangedEvent.Dropped(currentPedHealth, pedHealthDiff))
 				}
 			}
 		}
@@ -201,9 +201,9 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 	private fun checkPauseMenuState(state: Int) {
 		if (pauseMenuState != state) {
 			if (state == 0) {
-				UEvent.emit(PauseMenuDisabledEvent())
+				UEvent.emit(PauseMenuStateChangedEvent.Disabled())
 			} else {
-				UEvent.emit(PauseMenuStateChangedEvent(state))
+				UEvent.emit(PauseMenuStateChangedEvent.Switched(state))
 			}
 
 			pauseMenuState = state
@@ -212,7 +212,7 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 
 	private fun checkAudioMusicLevelInMP(volume: Int) {
 		if (audioMusicLevelInMP != volume) {
-			UEvent.emit(AudioMusicLevelInMPChangedEvent(volume))
+			UEvent.emit(ProfileSettingUpdatedEvent.AudioMusicLevelInMP(volume))
 
 			audioMusicLevelInMP = volume
 		}
@@ -243,9 +243,9 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 			playerRadioStationName = currentRadio
 
 			if (currentRadio != null) {
-				UEvent.emit(PlayerVehicleRadioEnabledEvent(currentRadio))
+				UEvent.emit(PlayerVehicleRadioToggledEvent.Enabled(currentRadio))
 			} else {
-				UEvent.emit(PlayerVehicleRadioDisabledEvent())
+				UEvent.emit(PlayerVehicleRadioToggledEvent.Disabled())
 			}
 		}
 	}

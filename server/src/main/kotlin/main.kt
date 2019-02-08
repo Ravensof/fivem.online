@@ -12,6 +12,9 @@ import online.fivem.server.modules.basics.BasicsModule
 import online.fivem.server.modules.client_event_exchanger.ClientEventExchangerModule
 import online.fivem.server.modules.roleplay_system.RolePlaySystemModule
 import online.fivem.server.modules.test.Test
+import online.fivem.server.modules.voice_transmission.VoiceTransmissionModule
+
+external fun require(module: String): dynamic
 
 internal fun main() {
 
