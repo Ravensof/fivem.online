@@ -33,7 +33,7 @@ class BlackOut(override val coroutineContext: CoroutineContext) : AbstractModule
 		UEvent.on<PlayersPedTeleportedEvent> { isAllowed = true }
 
 		UEvent.on<PlayersPedHealthChangedEvent.Zero> {
-			if (!isAllowed) return@on
+			if (!isAllowed || it.diff == 0) return@on
 			blackOut(BLACKOUT_TIME_FROM_COMMAS * 1_000)
 		}
 

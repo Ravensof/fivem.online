@@ -4,12 +4,13 @@ import kotlinx.coroutines.*
 import online.fivem.client.extensions.start
 import online.fivem.client.extensions.stop
 import online.fivem.client.gtav.Client
+import online.fivem.client.modules.eventGenerator.EventGeneratorModule
 import online.fivem.client.modules.nui_event_exchanger.NuiEvent
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Handle
 import online.fivem.common.common.Stack
 import online.fivem.common.common.UEvent
-import online.fivem.common.entities.Coordinates
+import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.events.local.PlayersPedTeleportedEvent
 import online.fivem.common.events.local.PlayersPedTeleportingEvent
 import online.fivem.common.events.nui.BlackOutEvent
@@ -51,9 +52,10 @@ class API(
 		NuiEvent.emit(ShowGuiEvent(true))
 	}
 
-	fun setPlayerCoordinates(coordinates: Coordinates) {
+	fun setPlayerCoordinates(coordinates: CoordinatesX) {
 		UEvent.emit(PlayersPedTeleportingEvent())
 		Client.setEntityCoordsNoOffset(Client.getPlayerPed(), coordinates.x, coordinates.y, coordinates.z)
+		EventGeneratorModule.playerCoordinates = coordinates
 		UEvent.emit(PlayersPedTeleportedEvent())
 	}
 

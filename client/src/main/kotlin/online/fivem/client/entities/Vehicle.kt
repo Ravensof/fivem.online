@@ -210,9 +210,9 @@ class Vehicle(
 	}
 
 //	fun setBoostActive(){
-//		Client.setVehicleBoostActive(vehicle, true)
-//		Client.setVehicleForwardSpeed(vehicle, 30)
-//		Client.startScreenEffect(NativeScreenEffects.RACE_TURBO.effect, 0)
+//		Client.setVehicleBoostActive(entity, true)
+//		Client.setVehicleForwardSpeed(entity, 30)
+//		NativeScreenEffects.RACE_TURBO.start()
 //	}
 
 //	fun onTryEnter() {
@@ -231,22 +231,13 @@ class Vehicle(
 	) {
 
 		var health: Number
-			get() {
-				return Client.getVehicleWheelHealth(vehicle, index)
-			}
-			set(value) {
-				Client.setVehicleWheelHealth(vehicle, index, value)
-			}
+			get() = Client.getVehicleWheelHealth(vehicle, index)
+			set(value) = Client.setVehicleWheelHealth(vehicle, index, value)
 
-		val speed: Int
-			get() {
-				return Client.getVehicleWheelSpeed(vehicle, index)
-			}
+		val speed: Int = Client.getVehicleWheelSpeed(vehicle, index)
 
 		var xOffset: Number
-			get() {
-				return Client.getVehicleWheelXOffset(vehicle, index)
-			}
+			get() = Client.getVehicleWheelXOffset(vehicle, index)
 			set(value) {
 				Client.setVehicleWheelXOffset(vehicle, index, value)
 
@@ -256,13 +247,8 @@ class Vehicle(
 			}
 
 		var xRotation: Number
-			get() {
-				return Client.getVehicleWheelXrot(vehicle, index)
-			}
-			set(value) {
-				Client.setVehicleWheelXrot(vehicle, index, value)
-			}
-
+			get() = Client.getVehicleWheelXrot(vehicle, index)
+			set(value) = Client.setVehicleWheelXrot(vehicle, index, value)
 
 		private var xOffsetExecId = -1
 		private var xRotationExecId = -1

@@ -290,7 +290,7 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 		var vehiclePetrolTankHealth: Double? = null
 			private set
 		var playerCoordinates: CoordinatesX? = null
-			private set
+
 		var playerSeatIndex: Int? = null
 			private set
 		var pauseMenuState: Int? = null

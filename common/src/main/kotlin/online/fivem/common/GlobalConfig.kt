@@ -145,8 +145,7 @@ object GlobalConfig {
 	const val SHOW_CONSOLE_LOG = true
 
 	//dont touch
-	//	const val RESOURCES_HTTP_HOME = "http://$SERVER_IP:$SERVER_PORT/$MODULE_NAME/"
-	const val RESOURCES_HTTP_HOME = "http://$SERVER_IP/$MODULE_NAME/"
+	const val RESOURCES_HTTP_HOME = "http://$SERVER_IP:$HTTP_PORT/"
 
 	const val CONSOLE_PREFIX = "$MODULE_NAME/"
 

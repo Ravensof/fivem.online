@@ -9,7 +9,6 @@ import online.fivem.client.gtav.Client
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Stack
 import online.fivem.common.common.UEvent
-import online.fivem.common.entities.Coordinates
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.events.local.PlayerSpawnedEvent
 import online.fivem.common.events.net.SpawnVehicleEvent
@@ -31,7 +30,7 @@ class SpawnManagerModule(override val coroutineContext: CoroutineContext) : Abst
 	fun spawnPlayerJob(coordinatesX: CoordinatesX, modelHash: Int?): Job = launch {
 
 		val fadeHandle = api.doScreenFadeOutAsync(500).await()
-		api.setPlayerCoordinates(Coordinates(0f, 0f, 0f))
+		api.setPlayerCoordinates(CoordinatesX(0f, 0f, 0f, 0f))
 		val playerId = Client.getPlayerId()
 
 		freezePlayer(playerId, true)

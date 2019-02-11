@@ -16,7 +16,6 @@ class BasicsModule : AbstractModule(), CoroutineScope {
 		moduleLoader.add(MySQLModule(coroutineContext))
 		moduleLoader.add(CommandsModule(coroutineContext))
 		moduleLoader.add(HttpServerModule(coroutineContext))
-		moduleLoader.add(NuiFileShareModule(coroutineContext))
 		moduleLoader.add(SessionModule(coroutineContext))
 
 		moduleLoader.add(SynchronizationModule(coroutineContext))

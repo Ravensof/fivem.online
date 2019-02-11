@@ -6,6 +6,16 @@ import online.fivem.common.gtav.entities.Command
 import online.fivem.common.gtav.entities.PlayerIdentifiers
 
 object Natives {
+
+	/**
+	 * Returns the physical on-disk path of the specified resource.
+	 * @param resourceName The name of the resource.
+	 * @return The resource directory name, possibly without trailing slash.
+	 */
+	fun getResourcePath(resourceName: String): String {
+		return GetResourcePath(resourceName)
+	}
+
 	fun on(eventName: String, callback: Any) = online.fivem.server.gtav.on(eventName, callback)
 
 	fun emitNet(eventName: String, playerSrc: Int, data: Any) = emitNet(eventName, playerSrc.toString(), data)
@@ -292,11 +302,6 @@ private external fun GetResourceByFindIndex(findIndex: Float): String
  */
 private external fun GetResourceMetadata(resourceName: String, metadataKey: String, index: Float): String
 
-/**
- * Returns the physical on-disk path of the specified resource.
- * @param resourceName The name of the resource.
- * @return The resource directory name, possibly without trailing slash.
- */
 private external fun GetResourcePath(resourceName: String): String
 
 /**
