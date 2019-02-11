@@ -19,5 +19,6 @@ class BasicsModule : AbstractModule(), CoroutineScope {
 
 		moduleLoader.add(GUIModule(coroutineContext))
 		moduleLoader.add(PlaySoundModule())
+		moduleLoader.add(LocalStorageModule())
 	}
 }

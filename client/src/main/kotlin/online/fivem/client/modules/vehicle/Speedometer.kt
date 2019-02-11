@@ -6,8 +6,8 @@ import online.fivem.client.gtav.Client
 import online.fivem.client.modules.nui_event_exchanger.NuiEvent
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.UEvent
-import online.fivem.common.events.PlayerGetInDriversSeatEvent
-import online.fivem.common.events.PlayerLeftVehicleEvent
+import online.fivem.common.events.local.PlayerGetInDriversSeatEvent
+import online.fivem.common.events.local.PlayerLeftVehicleEvent
 import online.fivem.common.events.nui.SpeedometerDisableEvent
 import online.fivem.common.events.nui.SpeedometerEnableEvent
 import online.fivem.common.events.nui.SpeedometerUpdateEvent

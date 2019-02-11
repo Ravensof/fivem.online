@@ -1949,7 +1949,7 @@ object Client : CoroutineScope {
 	 * Fades the screen in.
 	 * duration: The time the fade should take, in milliseconds.
 	 */
-	@Deprecated("use api.doScreenFadeIn")
+	@Deprecated("use api.doScreenFadeInJob")
 	fun doScreenFadeIn(duration: Int): Job {
 		return launch {
 			DoScreenFadeIn(duration)
@@ -1967,7 +1967,7 @@ object Client : CoroutineScope {
 	 * Fades the screen out.
 	 * duration: The time the fade should take, in milliseconds.
 	 */
-	@Deprecated("use api.doScreenFadeOut")
+	@Deprecated("use api.doScreenFadeOutAsync")
 	fun doScreenFadeOut(duration: Int): Job {
 		return launch {
 			DoScreenFadeOut(duration)

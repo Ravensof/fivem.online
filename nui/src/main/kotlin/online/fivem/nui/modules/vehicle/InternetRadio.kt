@@ -1,5 +1,7 @@
 package online.fivem.nui.modules.vehicle
 
+import external.howler.Howl
+import external.howler.HowlOptions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -12,8 +14,6 @@ import online.fivem.common.events.InternetRadioStopEvent
 import online.fivem.common.events.InternetRadioVolumeChangeEvent
 import online.fivem.common.extensions.orOne
 import online.fivem.nui.extensions.nuiResourcesLink
-import online.fivem.nui.external.Howl
-import online.fivem.nui.external.HowlOptions
 import online.fivem.nui.modules.client_event_exchanger.ClientEvent
 import kotlin.coroutines.CoroutineContext
 

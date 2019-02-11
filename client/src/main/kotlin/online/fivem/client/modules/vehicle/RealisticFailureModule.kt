@@ -6,11 +6,9 @@ import online.fivem.client.modules.basics.TickExecutorModule
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Entity
 import online.fivem.common.common.UEvent
-import online.fivem.common.events.PlayerGetInDriversSeatEvent
-import online.fivem.common.events.PlayerLeftVehicleEvent
-import online.fivem.common.extensions.compareTo
+import online.fivem.common.events.local.PlayerGetInDriversSeatEvent
+import online.fivem.common.events.local.PlayerLeftVehicleEvent
 import online.fivem.common.extensions.orZero
-import online.fivem.common.extensions.times
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.pow
 import kotlin.random.Random

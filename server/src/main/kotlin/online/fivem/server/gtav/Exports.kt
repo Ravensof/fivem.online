@@ -1,5 +1,7 @@
 package online.fivem.server.gtav
 
+import external.exports.http_handler.Request
+import external.exports.http_handler.Response
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -8,8 +10,6 @@ import kotlinx.coroutines.launch
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.Html
 import online.fivem.common.entities.PlayerSrc
-import online.fivem.server.external.Request
-import online.fivem.server.external.Response
 
 private external val exports: dynamic
 

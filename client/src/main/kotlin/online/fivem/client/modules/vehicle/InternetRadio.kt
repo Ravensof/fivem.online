@@ -9,7 +9,11 @@ import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.UEvent
 import online.fivem.common.entities.InternetRadioStation
-import online.fivem.common.events.*
+import online.fivem.common.events.InternetRadioChangedEvent
+import online.fivem.common.events.InternetRadioStopEvent
+import online.fivem.common.events.InternetRadioVolumeChangeEvent
+import online.fivem.common.events.local.PlayerRadioStationChangedEvent
+import online.fivem.common.events.local.ProfileSettingUpdatedEvent
 import online.fivem.common.extensions.onNull
 import online.fivem.common.extensions.orZero
 import online.fivem.common.gtav.NativeAudioScenes

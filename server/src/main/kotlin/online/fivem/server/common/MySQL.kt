@@ -1,7 +1,7 @@
 package online.fivem.server.common
 
+import external.danko.Base64
 import kotlinx.coroutines.*
-import online.fivem.common.external.Base64
 import online.fivem.server.ServerConfig
 import online.fivem.server.gtav.Exports
 import kotlin.coroutines.CoroutineContext

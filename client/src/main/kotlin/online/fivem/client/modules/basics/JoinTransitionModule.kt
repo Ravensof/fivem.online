@@ -19,7 +19,7 @@ class JoinTransitionModule(override val coroutineContext: CoroutineContext) : Ab
 	override fun onInit() {
 		moduleLoader.on<API> {
 			Client.setManualShutdownLoadingScreenNui(true)
-			startTransition()
+			startTransitionJob()
 
 			launch {
 				switchingPlayerJob?.join()
@@ -32,7 +32,7 @@ class JoinTransitionModule(override val coroutineContext: CoroutineContext) : Ab
 		}
 	}
 
-	fun startTransition(): Job {
+	fun startTransitionJob(): Job {
 		api.unMuteSound(muteHandle)
 		muteHandle = api.muteSound()
 
@@ -44,8 +44,7 @@ class JoinTransitionModule(override val coroutineContext: CoroutineContext) : Ab
 		}
 	}
 
-	fun endTransition(): Job {
-		return launch {
+	fun endTransitionJob(): Job = launch {
 			val execId = tickExecutor.add { clearScreen() }
 
 			switchingPlayerJob?.join()
@@ -55,7 +54,6 @@ class JoinTransitionModule(override val coroutineContext: CoroutineContext) : Ab
 			tickExecutor.remove(execId)
 			Client.clearDrawOrigin()
 		}
-	}
 
 	private fun clearScreen() {
 		Client.setCloudHatOpacity(CLOUD_OPACITY)

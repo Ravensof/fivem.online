@@ -9,7 +9,7 @@ import online.fivem.client.gtav.Client
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.UEvent
 import online.fivem.common.entities.CoordinatesX
-import online.fivem.common.events.*
+import online.fivem.common.events.local.*
 import online.fivem.common.extensions.orZero
 import online.fivem.common.extensions.repeatJob
 import online.fivem.common.gtav.ProfileSetting

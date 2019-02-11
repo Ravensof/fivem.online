@@ -11,7 +11,7 @@ import online.fivem.common.common.Stack
 import online.fivem.common.common.UEvent
 import online.fivem.common.entities.Coordinates
 import online.fivem.common.entities.CoordinatesX
-import online.fivem.common.events.PlayerSpawnedEvent
+import online.fivem.common.events.local.PlayerSpawnedEvent
 import online.fivem.common.events.net.SpawnVehicleEvent
 import kotlin.coroutines.CoroutineContext
 
@@ -28,9 +28,9 @@ class SpawnManagerModule(override val coroutineContext: CoroutineContext) : Abst
 		}
 	}
 
-	fun spawnPlayer(coordinatesX: CoordinatesX, modelHash: Int?): Job = launch {
+	fun spawnPlayerJob(coordinatesX: CoordinatesX, modelHash: Int?): Job = launch {
 
-		val fadeHandle = api.doScreenFadeOut(500).await()
+		val fadeHandle = api.doScreenFadeOutAsync(500).await()
 		api.setPlayerCoordinates(Coordinates(0f, 0f, 0f))
 		val playerId = Client.getPlayerId()
 
@@ -56,7 +56,7 @@ class SpawnManagerModule(override val coroutineContext: CoroutineContext) : Abst
 
 		Client.shutdownLoadingScreen()
 
-		api.doScreenFadeIn(fadeHandle, 500)
+		api.doScreenFadeInJob(fadeHandle, 500).join()
 		freezePlayer(playerId, false)
 
 		UEvent.emit(PlayerSpawnedEvent())

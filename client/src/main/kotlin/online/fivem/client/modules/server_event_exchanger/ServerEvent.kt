@@ -6,8 +6,8 @@ import online.fivem.common.common.UEvent
 
 object ServerEvent : UEvent(Job()) {
 
-	override fun emit(data: Any): Job {
-		return launch {
+	override fun emit(data: Any) {
+		launch {
 			ServerEventExchangerModule.channel.send(data)
 		}
 	}

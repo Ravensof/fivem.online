@@ -12,8 +12,10 @@ object NuiEvent : UEvent(Job()) {
 		NuiEventExchangerModule.unsafeChannel.send(data)
 	}
 
-	override fun emit(data: Any): Job = launch {
-		NuiEventExchangerModule.channel.send(data)
+	override fun emit(data: Any) {
+		launch {
+			NuiEventExchangerModule.channel.send(data)
+		}
 	}
 
 	fun handle(data: Any) {

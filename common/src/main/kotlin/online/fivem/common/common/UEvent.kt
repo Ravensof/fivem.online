@@ -2,7 +2,6 @@ package online.fivem.common.common
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.KClass
 
@@ -12,7 +11,7 @@ open class UEvent(override val coroutineContext: CoroutineContext) : CoroutineSc
 
 	val handlers = mutableListOf<Pair<KClass<*>, (Any) -> Unit>>()
 
-	open fun emit(data: Any): Job = launch {
+	open fun emit(data: Any) {
 		handlers.forEach {
 			if (it.first.isInstance(data)) {
 				it.second(data)

@@ -8,11 +8,13 @@ object ClientEvent : UEvent(Job()) {
 
 	override val printType = "nui"
 
-	override fun emit(data: Any): Job = launch {
-		ClientEventExchangerModule.channel.send(data)
+	override fun emit(data: Any) {
+		launch {
+			ClientEventExchangerModule.channel.send(data)
+		}
 	}
 
-	fun handle(data: Any): Job {
-		return super.emit(data)
+	fun handle(data: Any) {
+		super.emit(data)
 	}
 }

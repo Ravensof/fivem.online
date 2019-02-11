@@ -3,12 +3,13 @@ package online.fivem.client.modules.basics
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import online.fivem.client.gtav.Client
+import online.fivem.client.extensions.addText
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Stack
 import online.fivem.common.common.UEvent
-import online.fivem.common.events.PauseMenuStateChangedEvent
+import online.fivem.common.events.local.PauseMenuStateChangedEvent
+import online.fivem.common.gtav.NativeTextEntries
 import kotlin.coroutines.CoroutineContext
 
 class BasicsModule : AbstractModule(), CoroutineScope {
@@ -22,6 +23,7 @@ class BasicsModule : AbstractModule(), CoroutineScope {
 		UEvent.on<PauseMenuStateChangedEvent> { onPauseMenuStateChanged(it.pauseMenuState) }
 
 		moduleLoader.apply {
+			add(LocalStorageModule(coroutineContext))
 			add(TickExecutorModule())
 			add(ControlHandlerModule(coroutineContext))
 			add(API(coroutineContext))
@@ -49,6 +51,6 @@ class BasicsModule : AbstractModule(), CoroutineScope {
 	}
 
 	private fun changeHeaderInMainMenu() {
-		Client.addTextEntry("FE_THDR_GTAO", GlobalConfig.SERVER_NAME_IN_MENU)
+		NativeTextEntries.FE_THDR_GTAO.addText(GlobalConfig.SERVER_NAME_IN_MENU)
 	}
 }

@@ -1,12 +1,12 @@
 package online.fivem.server.modules.basics
 
+import external.exports.http_handler.Request
+import external.exports.http_handler.Response
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
 import online.fivem.common.common.Stack
-import online.fivem.server.external.Request
-import online.fivem.server.external.Response
 import online.fivem.server.gtav.Exports
 import kotlin.coroutines.CoroutineContext
 

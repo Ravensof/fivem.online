@@ -10,8 +10,8 @@ import online.fivem.common.common.Handle
 import online.fivem.common.common.Stack
 import online.fivem.common.common.UEvent
 import online.fivem.common.entities.Coordinates
-import online.fivem.common.events.PlayersPedTeleportedEvent
-import online.fivem.common.events.PlayersPedTeleportingEvent
+import online.fivem.common.events.local.PlayersPedTeleportedEvent
+import online.fivem.common.events.local.PlayersPedTeleportingEvent
 import online.fivem.common.events.nui.BlackOutEvent
 import online.fivem.common.events.nui.CancelBlackOutEvent
 import online.fivem.common.events.nui.ShowGuiEvent
@@ -51,10 +51,10 @@ class API(
 		NuiEvent.emit(ShowGuiEvent(true))
 	}
 
-	fun setPlayerCoordinates(coordinates: Coordinates) = launch {
-		UEvent.emit(PlayersPedTeleportingEvent()).join()
+	fun setPlayerCoordinates(coordinates: Coordinates) {
+		UEvent.emit(PlayersPedTeleportingEvent())
 		Client.setEntityCoordsNoOffset(Client.getPlayerPed(), coordinates.x, coordinates.y, coordinates.z)
-		UEvent.emit(PlayersPedTeleportedEvent()).join()
+		UEvent.emit(PlayersPedTeleportedEvent())
 	}
 
 	private val nuiBlackOutScreenStack = UnitStack()
@@ -82,14 +82,14 @@ class API(
 		delay(duration.toLong())
 	}
 
-	fun doScreenFadeOut(duration: Int) = setJob(fadeScreenStack) {
+	fun doScreenFadeOutAsync(duration: Int) = setJob(fadeScreenStack) {
 		@Suppress("DEPRECATION")
 		Client.doScreenFadeOut(duration).join()
 	}
 
 	private val fadeScreenStack = UnitStack()
 
-	fun doScreenFadeIn(handle: Handle, duration: Int) = unsetJob(fadeScreenStack, handle) {
+	fun doScreenFadeInJob(handle: Handle, duration: Int) = unsetJob(fadeScreenStack, handle) {
 		@Suppress("DEPRECATION")
 		Client.doScreenFadeIn(duration).join()
 	}

@@ -35,6 +35,10 @@ fun initSerializableClasses() {
 
 		InternetRadioChangedEvent::class to InternetRadioChangedEvent.serializer(),
 		InternetRadioStopEvent::class to InternetRadioStopEvent.serializer(),
-		InternetRadioVolumeChangeEvent::class to InternetRadioVolumeChangeEvent.serializer()
+		InternetRadioVolumeChangeEvent::class to InternetRadioVolumeChangeEvent.serializer(),
+
+		LocalStorageEvent.Post::class to LocalStorageEvent.Post.serializer(),
+		LocalStorageEvent.Request::class to LocalStorageEvent.Request.serializer(),
+		LocalStorageEvent.Response::class to LocalStorageEvent.Response.serializer()
 	)
 }

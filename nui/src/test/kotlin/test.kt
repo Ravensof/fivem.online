@@ -1,9 +1,9 @@
+import external.danko.Base64
 import kotlinx.serialization.cbor.Cbor
 import kotlinx.serialization.dumps
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.loads
 import kotlinx.serialization.protobuf.ProtoBuf
-import online.fivem.common.external.Base64
 import kotlin.browser.window
 
 fun main() {
