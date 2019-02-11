@@ -18,6 +18,18 @@ import kotlin.coroutines.CoroutineContext
 object Client : CoroutineScope {
 	override val coroutineContext: CoroutineContext = Job()
 
+	fun findKvp(handle: Handle): String? {
+		return FindKvp(handle)
+	}
+
+	fun endFindKvp(handle: Handle) {
+		EndFindKvp(handle)
+	}
+
+	fun startFindKvp(prefix: String): Handle {
+		return StartFindKvp(prefix)
+	}
+
 	fun deleteResourceKvp(key: String) {
 		DeleteResourceKvp(key)
 	}
@@ -6098,7 +6110,7 @@ private external fun DrawRect(
  */
 //private external fun EnableTennisMode(ped: number, toggle: boolean, p2: boolean)
 
-//private external fun EndFindKvp(handle: number)
+private external fun EndFindKvp(handle: Handle)
 
 private external fun EndFindObject(findHandle: Number)
 
@@ -6485,7 +6497,7 @@ private external fun FindFirstPickup(): Array<Int>
 
 private external fun FindFirstVehicle(): Array<Int>
 
-//private external fun FindKvp(handle: number): string;
+private external fun FindKvp(handle: Handle): String
 
 private external fun FindNextObject(findHandle: Number): Array<Any>
 
@@ -27547,7 +27559,7 @@ private external fun StartAudioScene(scene: String): Int?
 
 //private external fun StartEntityFire(entity: number): number;
 
-//private external fun StartFindKvp(prefix: string): number;
+private external fun StartFindKvp(prefix: String): Handle
 
 //private external fun StartFiringAmnesty(duration: number)
 

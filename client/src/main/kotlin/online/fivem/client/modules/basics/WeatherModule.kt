@@ -10,7 +10,6 @@ import online.fivem.client.extensions.setWeatherTypeNow
 import online.fivem.client.extensions.setWeatherTypeNowPersist
 import online.fivem.client.extensions.setWeatherTypePersist
 import online.fivem.client.gtav.Client
-import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
 import online.fivem.common.entities.Weather
@@ -23,7 +22,7 @@ class WeatherModule(override val coroutineContext: CoroutineContext) : AbstractM
 
 	private val dateTimeModule by moduleLoader.onReady<DateTimeModule>()
 
-	private var currentWeather: NativeWeather = GlobalConfig.defaultWeather
+	private var currentWeather: NativeWeather = NativeWeather.OVERCAST
 	private var currentTemperature = 0.0
 
 	override fun onStart(): Job? {

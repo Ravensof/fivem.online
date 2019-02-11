@@ -1,7 +1,6 @@
 package online.fivem.common
 
 import online.fivem.common.entities.InternetRadioStation
-import online.fivem.common.gtav.NativeWeather
 import online.fivem.common.gtav.RadioStation
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -16,8 +15,6 @@ object GlobalConfig {
 	const val SERVER_NAME_IN_MENU = "FIVEM.ONLINE"
 	const val MAX_PLAYERS = 32
 	const val APP_VERSION = 190107
-
-	val defaultWeather: NativeWeather = NativeWeather.OVERCAST
 
 	val internetRadioStations: Map<String, InternetRadioStation> = mapOf(
 		RadioStation.RADIO_01_CLASS_ROCK.name to InternetRadioStation(

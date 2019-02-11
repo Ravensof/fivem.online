@@ -17,4 +17,20 @@ object KvpStorage {
 	fun getInt(key: String): Int = Client.getResourceKvpInt(key)
 
 	fun getString(key: String): String? = Client.getResourceKvpString(key)
+
+	fun getKeys(prefix: String): List<String> {
+		val handle = Client.startFindKvp(prefix)
+
+		val list = mutableListOf<String>()
+
+		while (true) {
+			val data = Client.findKvp(handle) ?: break
+			list.add(data)
+		}
+
+		Client.endFindKvp(handle)
+
+		return list
+	}
+
 }
