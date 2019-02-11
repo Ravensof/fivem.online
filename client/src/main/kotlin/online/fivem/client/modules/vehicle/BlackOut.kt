@@ -44,7 +44,7 @@ class BlackOut(override val coroutineContext: CoroutineContext) : AbstractModule
 			val currentHealth = Client.getEntityHealth(playerPed)
 
 			Client.setEntityHealth(playerPed, currentHealth - it.accelerationModule.toInt() / 50)
-
+			Console.debug("blackout from ${it.accelerationModule} m/s^2")
 			blackOut(
 				(
 						if (timeLeft > 0)

@@ -1,4 +1,4 @@
-@file:Suppress("FunctionName")
+@file:Suppress("FunctionName", "KDocUnresolvedReference")
 
 package online.fivem.client.gtav
 
@@ -17,6 +17,34 @@ import kotlin.coroutines.CoroutineContext
 
 object Client : CoroutineScope {
 	override val coroutineContext: CoroutineContext = Job()
+
+	fun deleteResourceKvp(key: String) {
+		DeleteResourceKvp(key)
+	}
+
+	fun setResourceKvp(key: String, value: String) {
+		SetResourceKvp(key, value)
+	}
+
+	fun setResourceKvpFloat(key: String, value: Float) {
+		SetResourceKvpFloat(key, value)
+	}
+
+	fun setResourceKvpInt(key: String, value: Int) {
+		SetResourceKvpInt(key, value)
+	}
+
+	fun getResourceKvpFloat(key: String): Float {
+		return GetResourceKvpFloat(key)
+	}
+
+	fun getResourceKvpInt(key: String): Int {
+		return GetResourceKvpInt(key)
+	}
+
+	fun getResourceKvpString(key: String): String? {
+		return GetResourceKvpString(key)
+	}
 
 	/**
 	 * p1 and p2 have no effect
@@ -4866,7 +4894,7 @@ private external fun CreateVehicle(
  */
 //private external fun DeletePed(ped: number)
 
-//private external fun DeleteResourceKvp(key: string)
+private external fun DeleteResourceKvp(key: String)
 
 //private external fun DeleteRope(rope: number)
 
@@ -9125,11 +9153,11 @@ private external fun GetProfileSetting(profileSettingId: Int): Int
 
 //private external fun GetResourceByFindIndex(findIndex: number): string;
 
-//private external fun GetResourceKvpFloat(key: string): number;
+private external fun GetResourceKvpFloat(key: String): Float
 
-//private external fun GetResourceKvpInt(key: string): number;
+private external fun GetResourceKvpInt(key: String): Int
 
-//private external fun GetResourceKvpString(key: string): string;
+private external fun GetResourceKvpString(key: String): String?
 
 private external fun GetResourceMetadata(
 	resourceName: String,
@@ -10164,7 +10192,7 @@ private external fun GetVehiclePetrolTankHealth(vehicle: Int): Number
  */
 //private external fun GetVehicleTrailerVehicle(vehicle: number, trailer: number): number;
 
-private external fun GetVehicleTurboPressure(vehicle: Int): Float
+//private external fun GetVehicleTurboPressure(vehicle: Int): Float
 
 private external fun GetVehicleTyreSmokeColor(vehicle: Entity): Array<Int>
 
@@ -21094,7 +21122,7 @@ private external fun PlayerId(): Int
 
 //private external fun RegisterNamedRendertarget(p0: string, p1: boolean): number;
 
-private external fun RegisterNuiCallbackType(callbackType: String)
+//private external fun RegisterNuiCallbackType(callbackType: String)
 
 /**
  * Registers a script for any object with a specific model hash.
@@ -25928,11 +25956,11 @@ private external fun SetPlayerModel(player: Int, model: Int)
  */
 //private external fun SetRenderTrainAsDerailed(train: number, toggle: boolean)
 
-//private external fun SetResourceKvp(key: string, value: string)
+private external fun SetResourceKvp(key: String, value: String)
 
-//private external fun SetResourceKvpFloat(key: string, value: number)
+private external fun SetResourceKvpFloat(key: String, value: Float)
 
-//private external fun SetResourceKvpInt(key: string, value: number)
+private external fun SetResourceKvpInt(key: String, value: Int)
 
 /**
  * Sets the player's rich presence detail state for social platform providers to a specified string.
