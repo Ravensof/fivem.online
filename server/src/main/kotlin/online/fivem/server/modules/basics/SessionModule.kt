@@ -1,5 +1,6 @@
 package online.fivem.server.modules.basics
 
+import external.nodejs.mysql.Connection
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import online.fivem.common.common.AbstractModule
@@ -10,12 +11,14 @@ import online.fivem.common.entities.PlayerSrc
 import online.fivem.common.events.net.ImReadyEvent
 import online.fivem.common.gtav.NativeEvents
 import online.fivem.server.Strings
-import online.fivem.server.common.MySQL
 import online.fivem.server.entities.Player
 import online.fivem.server.entities.mysqlEntities.BlackListTable
 import online.fivem.server.entities.mysqlEntities.CharacterEntity
 import online.fivem.server.entities.mysqlEntities.UserEntity
 import online.fivem.server.events.PlayerConnectedEvent
+import online.fivem.server.extensions.rowAsync
+import online.fivem.server.extensions.send
+import online.fivem.server.extensions.sendAsync
 import online.fivem.server.gtav.Exports
 import online.fivem.server.gtav.Natives
 import online.fivem.server.modules.client_event_exchanger.ClientEvent
@@ -23,7 +26,7 @@ import kotlin.coroutines.CoroutineContext
 
 class SessionModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
 
-	private lateinit var mySQL: MySQL
+	private lateinit var mySQL: Connection
 	private val players = mutableMapOf<PlayerSrc, Player>()
 	private val basicsModule by moduleLoader.onReady<BasicsModule>()
 
@@ -33,7 +36,7 @@ class SessionModule(override val coroutineContext: CoroutineContext) : AbstractM
 
 		ClientEvent.onGuest<ImReadyEvent> { playerSrc: PlayerSrc, _ -> onClientReady(playerSrc) }
 
-		moduleLoader.on<MySQLModule> { mySQL = it.mySQL }
+		moduleLoader.on<MySQLModule> { mySQL = it.connection }
 	}
 
 	fun getConnectedPlayers(): List<PlayerSrc> {
@@ -54,28 +57,30 @@ class SessionModule(override val coroutineContext: CoroutineContext) : AbstractM
 
 		val identifiers = Natives.getPlayerIdentifiers(playerSrc)
 
-		val user = mySQL.query<UserEntity>(
+		val user = mySQL.rowAsync<UserEntity>(
 			"""SELECT id
 					|FROM users
 					|WHERE
 					|   steam=? AND
 					|   license=?
-					|LIMIT 1""".trimMargin(),
-			identifiers.steam,
-			identifiers.license
-		).await().firstOrNull() ?: return@launch Natives.dropPlayer(playerSrc, Strings.NO_SUCH_USER)
+					|""".trimMargin(),
+			arrayOf(
+				identifiers.steam,
+				identifiers.license
+			)
+		).await() ?: return@launch Natives.dropPlayer(playerSrc, Strings.NO_SUCH_USER)
 
 		val character =
-			mySQL.query<CharacterEntity>(
+			mySQL.rowAsync<CharacterEntity>(
 				"""SELECT *
 						|FROM characters
 						|WHERE user_id=?
-						|LIMIT 1""".trimMargin(),
-				user.id
-			).await().firstOrNull()
+						|""".trimMargin(),
+				arrayOf(user.id)
+			).await()
 				?: return@launch Natives.dropPlayer(playerSrc, Strings.NO_SUCH_CHARACTER)
 
-		val sessionId = mySQL.query(
+		val sessionId = mySQL.send(
 			"""INSERT INTO sessions
 					|SET
 					|  user_id=?,
@@ -84,12 +89,14 @@ class SessionModule(override val coroutineContext: CoroutineContext) : AbstractM
 					|  license=?,
 					|  ip=?
 					|""".trimMargin(),
-			user.id,
-			character.id,
-			identifiers.steam.orEmpty(),
-			identifiers.license,
-			identifiers.ip
-		).await() ?: return@launch Natives.dropPlayer(playerSrc, Strings.SESSION_HAVE_NOT_BEEN_CREATED)
+			arrayOf(
+				user.id,
+				character.id,
+				identifiers.steam.orEmpty(),
+				identifiers.license,
+				identifiers.ip
+			)
+		).insertId ?: return@launch Natives.dropPlayer(playerSrc, Strings.SESSION_HAVE_NOT_BEEN_CREATED)
 
 		val player = Player(
 			playerSrc = playerSrc,
@@ -120,15 +127,17 @@ class SessionModule(override val coroutineContext: CoroutineContext) : AbstractM
 				val player = it.value
 				players.remove(it.key)
 
-				mySQL.send(
+				mySQL.sendAsync(
 					"""UPDATE sessions
 						|SET
 						|   left_reason=?,
 						|   logout_date=NOW()
 						|WHERE id=?
 						|LIMIT 1""".trimMargin(),
-					reason,
-					player.sessionId
+					arrayOf(
+						reason,
+						player.sessionId
+					)
 				)
 
 				return Console.log("disconnected ${player.name}: $reason")
@@ -142,26 +151,26 @@ class SessionModule(override val coroutineContext: CoroutineContext) : AbstractM
 
 		val identifiers = Natives.getPlayerIdentifiers(source)
 
-		val blackList = mySQL.query<BlackListTable>(
+		val blackList = mySQL.rowAsync<BlackListTable>(
 			"""SELECT reason
 				|FROM `black_list`
 				|WHERE
 				|   ip=? OR
 				|   steam=? OR
 				|   license=?
-				|LIMIT 1""".trimMargin(),
-			identifiers.ip,
-			identifiers.steam,
-			identifiers.license
+				|""".trimMargin(),
+			arrayOf(
+				identifiers.ip,
+				identifiers.steam,
+				identifiers.license
+			)
 		)
 
 		Console.log("connecting $playerName ${identifiers.ip} ${identifiers.license} ${identifiers.steam}")
 
 		launch {
-			val result = blackList.await()
-
-			if (result.isNotEmpty()) {
-				val reason = Strings.YOU_ARE_BANNED_FROM_THIS_SERVER.replace("%s", result.first().reason.orEmpty())
+			blackList.await()?.let {
+				val reason = Strings.YOU_ARE_BANNED_FROM_THIS_SERVER.replace("%s", it.reason.orEmpty())
 				Natives.mainThread {
 					setKickReason(reason)
 				}

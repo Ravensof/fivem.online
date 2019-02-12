@@ -1,5 +1,6 @@
 package online.fivem.server.modules.basics
 
+import external.nodejs.mysql.Connection
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import online.fivem.common.GlobalConfig
@@ -13,9 +14,9 @@ import online.fivem.common.events.net.ServerSideSynchronizationEvent
 import online.fivem.common.extensions.isNotEmpty
 import online.fivem.common.extensions.orZero
 import online.fivem.server.ServerConfig
-import online.fivem.server.common.MySQL
 import online.fivem.server.entities.Player
 import online.fivem.server.events.PlayerConnectedEvent
+import online.fivem.server.extensions.send
 import online.fivem.server.gtav.Natives
 import online.fivem.server.modules.client_event_exchanger.ClientEvent
 import kotlin.coroutines.CoroutineContext
@@ -32,7 +33,7 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 
 	private val sessionModule by moduleLoader.onReady<SessionModule>()
 
-	private lateinit var mySQL: MySQL
+	private lateinit var mySQL: Connection
 
 	override fun onInit() {
 		ClientEvent.on<ClientSideSynchronizeEvent> { player, synchronizeEvent ->
@@ -48,7 +49,7 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 
 		UEvent.on<PlayerConnectedEvent> { syncDataFor(it.player.playerSrc) }
 
-		moduleLoader.on<MySQLModule> { mySQL = it.mySQL }
+		moduleLoader.on<MySQLModule> { mySQL = it.connection }
 	}
 
 	@ExperimentalCoroutinesApi
@@ -62,7 +63,6 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 	override fun onStop(): Job? {
 		requestJob.cancel()
 		synchronizationJob.cancel()
-		mySQL.close()
 
 		return super.onStop()
 	}
@@ -104,11 +104,13 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 							|WHERE id=?
 							|LIMIT 1
 						""".trimMargin(),
-					it.x,
-					it.y,
-					it.z,
-					it.rotation,
-					player.characterId
+					arrayOf(
+						it.x,
+						it.y,
+						it.z,
+						it.rotation,
+						player.characterId
+					)
 				)
 			}
 		}
