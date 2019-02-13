@@ -219,18 +219,33 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 	}
 
 	private fun checkPlayerSeatIndex(seatIndex: Int?) {
-		if (seatIndex != playerSeatIndex) {
-			when (seatIndex) {
-				-1 -> UEvent.emit(PlayerGetInDriversSeatEvent())
+		val previousSeat = playerSeatIndex
 
-				null -> {
-				}//UEvent.emit(PlayerSeatChangedEvent(seatIndex))
+		if (seatIndex == previousSeat) return
 
-				else -> UEvent.emit(PlayerGetInPassengerSeatEvent(seatIndex))
-			}
+		when {
+			previousSeat != null && seatIndex != null -> UEvent.emit(
+				if (seatIndex == -1)
+					PlayerVehicleSeatEvent.Changed.AsDriver(seatIndex)
+				else
+					PlayerVehicleSeatEvent.Changed.AsPassenger(previousSeat, seatIndex)
+			)
 
-			playerSeatIndex = seatIndex
+			previousSeat != null && seatIndex == null -> UEvent.emit(
+				PlayerVehicleSeatEvent.Left(previousSeat)
+			)
+
+			previousSeat == null && seatIndex != null -> UEvent.emit(
+				if (seatIndex == -1) {
+					PlayerVehicleSeatEvent.Join.Driver()
+				} else {
+					PlayerVehicleSeatEvent.Join.Passenger(seatIndex)
+				}
+			)
 		}
+
+		playerSeatIndex = seatIndex
+
 	}
 
 	private fun checkRadio() {
@@ -252,23 +267,23 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 
 	private fun checkIsPlayerInVehicle() {
 		val currentVehicle = if (Client.isPedInAnyVehicle(playerPed)) Client.getVehiclePedIsUsing(playerPed) else null
+		val previousVehicle = playersVehicle
+		if (currentVehicle == previousVehicle) return
 
-		if (currentVehicle == playersVehicle) return
+		when {
+			previousVehicle != null && currentVehicle != null -> {
+				UEvent.emit(PlayerLeftOrJoinVehicleEvent.Changed(currentVehicle, previousVehicle))
+			}
 
-		if (currentVehicle == null) {
-			UEvent.emit(PlayerLeftVehicleEvent())
-		} else {
-			val seat = Client.getPassengerSeatOfPedInVehicle(currentVehicle, playerPed) ?: return
+			previousVehicle != null && currentVehicle == null -> {
+				UEvent.emit(PlayerLeftOrJoinVehicleEvent.Left(previousVehicle))
+			}
 
-			UEvent.emit(
-				PlayerJoinVehicleEvent(
-					currentVehicle,
-					seat
-				)
-			)
+			previousVehicle == null && currentVehicle != null -> {
+				UEvent.emit(PlayerLeftOrJoinVehicleEvent.Join(currentVehicle))
+			}
 		}
 
-		UEvent.emit(PlayersVehicleChangedEvent(currentVehicle))
 		playersVehicle = currentVehicle
 	}
 

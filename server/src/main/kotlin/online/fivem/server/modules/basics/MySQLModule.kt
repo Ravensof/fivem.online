@@ -1,10 +1,10 @@
 package online.fivem.server.modules.basics
 
 import external.nodejs.mysql.Connection
-import external.nodejs.mysql.Params
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import online.fivem.common.common.AbstractModule
+import online.fivem.server.ServerConfig.MYSQL_PARAMS
 import require
 import kotlin.coroutines.CoroutineContext
 
@@ -26,14 +26,7 @@ class MySQLModule(override val coroutineContext: CoroutineContext) : AbstractMod
 	}
 
 	private fun connect() {
-		connection = mysql.createConnection(
-			Params(
-				host = "127.0.0.1",
-				database = "fivem",
-				user = "fivem",
-				password = "qwerta"
-			)
-		)
+		connection = mysql.createConnection(MYSQL_PARAMS)
 
 		connection.on("error") { error ->
 			if (error?.code == "PROTOCOL_CONNECTION_LOST") {

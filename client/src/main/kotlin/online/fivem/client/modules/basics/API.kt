@@ -54,8 +54,8 @@ class API(
 
 	fun setPlayerCoordinates(coordinates: CoordinatesX) {
 		UEvent.emit(PlayersPedTeleportingEvent())
-		Client.setEntityCoordsNoOffset(Client.getPlayerPed(), coordinates.x, coordinates.y, coordinates.z)
 		EventGeneratorModule.playerCoordinates = coordinates
+		Client.setEntityCoordsNoOffset(Client.getPlayerPed(), coordinates.x, coordinates.y, coordinates.z)
 		UEvent.emit(PlayersPedTeleportedEvent())
 	}
 

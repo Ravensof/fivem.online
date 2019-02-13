@@ -6,8 +6,7 @@ import online.fivem.client.modules.basics.TickExecutorModule
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Entity
 import online.fivem.common.common.UEvent
-import online.fivem.common.events.local.PlayerGetInDriversSeatEvent
-import online.fivem.common.events.local.PlayerLeftVehicleEvent
+import online.fivem.common.events.local.PlayerVehicleSeatEvent
 import online.fivem.common.extensions.orZero
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.pow
@@ -60,8 +59,8 @@ class RealisticFailureModule(
 
 	override fun onInit() {
 		moduleLoader.on<TickExecutorModule> { someFunc() }
-		UEvent.on<PlayerGetInDriversSeatEvent> { startThings() }
-		UEvent.on<PlayerLeftVehicleEvent> { stopThings() }
+		UEvent.on<PlayerVehicleSeatEvent.Join.Driver> { startThings() }
+		UEvent.on<PlayerVehicleSeatEvent.Left> { stopThings() }
 	}
 
 	private fun startThings() {

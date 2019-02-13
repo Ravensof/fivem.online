@@ -6,8 +6,8 @@ import online.fivem.client.gtav.Client
 import online.fivem.client.modules.nui_event_exchanger.NuiEvent
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.UEvent
-import online.fivem.common.events.local.PlayerGetInDriversSeatEvent
-import online.fivem.common.events.local.PlayerLeftVehicleEvent
+import online.fivem.common.events.local.PlayerLeftOrJoinVehicleEvent
+import online.fivem.common.events.local.PlayerVehicleSeatEvent
 import online.fivem.common.events.nui.SpeedometerDisableEvent
 import online.fivem.common.events.nui.SpeedometerEnableEvent
 import online.fivem.common.events.nui.SpeedometerUpdateEvent
@@ -20,8 +20,8 @@ class Speedometer(override val coroutineContext: CoroutineContext) : AbstractMod
 	private var updateJob: Job? = null
 
 	override fun onInit() {
-		UEvent.on<PlayerGetInDriversSeatEvent> { onPlayerJoinVehicle() }
-		UEvent.on<PlayerLeftVehicleEvent> { onPlayerLeftVehicle() }
+		UEvent.on<PlayerVehicleSeatEvent.Join.Driver> { onPlayerJoinVehicle() }
+		UEvent.on<PlayerLeftOrJoinVehicleEvent.Left> { onPlayerLeftVehicle() }
 	}
 
 	private fun updateJob(): Job? {
