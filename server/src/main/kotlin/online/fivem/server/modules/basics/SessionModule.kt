@@ -1,6 +1,5 @@
 package online.fivem.server.modules.basics
 
-import external.nodejs.mysql.Connection
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import online.fivem.common.common.AbstractModule
@@ -26,9 +25,10 @@ import kotlin.coroutines.CoroutineContext
 
 class SessionModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
 
-	private lateinit var mySQL: Connection
+
 	private val players = mutableMapOf<PlayerSrc, Player>()
 	private val basicsModule by moduleLoader.onReady<BasicsModule>()
+	private val mySQL by moduleLoader.onReady<MySQLModule>()
 
 	override fun onInit() {
 		Exports.on(NativeEvents.Server.PLAYER_CONNECTING, ::onClientConnecting)
@@ -36,7 +36,6 @@ class SessionModule(override val coroutineContext: CoroutineContext) : AbstractM
 
 		ClientEvent.onGuest<ImReadyEvent> { playerSrc: PlayerSrc, _ -> onClientReady(playerSrc) }
 
-		moduleLoader.on<MySQLModule> { mySQL = it.connection }
 	}
 
 	fun getConnectedPlayers(): List<PlayerSrc> {
@@ -57,7 +56,7 @@ class SessionModule(override val coroutineContext: CoroutineContext) : AbstractM
 
 		val identifiers = Natives.getPlayerIdentifiers(playerSrc)
 
-		val user = mySQL.rowAsync<UserEntity>(
+		val user = mySQL.connection.rowAsync<UserEntity>(
 			"""SELECT id
 					|FROM users
 					|WHERE
@@ -71,7 +70,7 @@ class SessionModule(override val coroutineContext: CoroutineContext) : AbstractM
 		).await() ?: return@launch Natives.dropPlayer(playerSrc, Strings.NO_SUCH_USER)
 
 		val character =
-			mySQL.rowAsync<CharacterEntity>(
+			mySQL.connection.rowAsync<CharacterEntity>(
 				"""SELECT *
 						|FROM characters
 						|WHERE user_id=?
@@ -80,7 +79,7 @@ class SessionModule(override val coroutineContext: CoroutineContext) : AbstractM
 			).await()
 				?: return@launch Natives.dropPlayer(playerSrc, Strings.NO_SUCH_CHARACTER)
 
-		val sessionId = mySQL.send(
+		val sessionId = mySQL.connection.send(
 			"""INSERT INTO sessions
 					|SET
 					|  user_id=?,
@@ -127,7 +126,7 @@ class SessionModule(override val coroutineContext: CoroutineContext) : AbstractM
 				val player = it.value
 				players.remove(it.key)
 
-				mySQL.sendAsync(
+				mySQL.connection.sendAsync(
 					"""UPDATE sessions
 						|SET
 						|   left_reason=?,
@@ -151,7 +150,7 @@ class SessionModule(override val coroutineContext: CoroutineContext) : AbstractM
 
 		val identifiers = Natives.getPlayerIdentifiers(source)
 
-		val blackList = mySQL.rowAsync<BlackListTable>(
+		val blackList = mySQL.connection.rowAsync<BlackListTable>(
 			"""SELECT reason
 				|FROM `black_list`
 				|WHERE

@@ -12,11 +12,11 @@ suspend fun <T> Connection.row(query: String, params: Any? = null): T? {
 
 	val pauseChannel = Channel<T?>()
 
-	val callback = { error: String?, results: Connection.Results, fields: Array<Connection.Field> ->
+	val callback = { error: Connection.Error?, results: Connection.Results, fields: Array<Connection.Field> ->
 
 		error?.let {
 			pauseChannel.close()
-			throw Exception(it)
+			throw Exception(it.code)
 		}
 
 		GlobalScope.launch {
@@ -44,7 +44,13 @@ suspend fun Connection.send(query: String, params: Any? = null): Connection.Resu
 
 	val pauseChannel = Channel<Connection.Results>()
 
-	val callback = { error: String?, results: Connection.Results, fields: Array<Connection.Field> ->
+	val callback = { error: Connection.Error?, results: Connection.Results, fields: Array<Connection.Field> ->
+
+		error?.let {
+			pauseChannel.close()
+			throw Exception(it.code)
+		}
+
 		GlobalScope.launch {
 			pauseChannel.send(results)
 		}

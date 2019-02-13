@@ -12,6 +12,8 @@ external interface Connection {
 	fun end()
 	fun end(callback: (String?) -> Unit)
 
+	fun on(event: String, callback: (Error?) -> Unit)
+
 	fun escape(raw: String): String
 	fun escapeId(identifier: String): String
 
@@ -81,4 +83,8 @@ external interface Connection {
 	}
 
 	interface Result
+
+	interface Error {
+		val code: String?
+	}
 }

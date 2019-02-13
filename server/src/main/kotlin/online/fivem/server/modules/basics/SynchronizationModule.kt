@@ -1,6 +1,5 @@
 package online.fivem.server.modules.basics
 
-import external.nodejs.mysql.Connection
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import online.fivem.common.GlobalConfig
@@ -33,7 +32,7 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 
 	private val sessionModule by moduleLoader.onReady<SessionModule>()
 
-	private lateinit var mySQL: Connection
+	private val mySQL by moduleLoader.onReady<MySQLModule>()
 
 	override fun onInit() {
 		ClientEvent.on<ClientSideSynchronizeEvent> { player, synchronizeEvent ->
@@ -48,8 +47,6 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 		}
 
 		UEvent.on<PlayerConnectedEvent> { syncDataFor(it.player.playerSrc) }
-
-		moduleLoader.on<MySQLModule> { mySQL = it.connection }
 	}
 
 	@ExperimentalCoroutinesApi
@@ -94,7 +91,7 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 			val data = obj.second
 
 			data.coordinatesX?.let {
-				mySQL.send(
+				mySQL.connection.send(
 					"""UPDATE characters
 							|SET
 							|   coord_x=?,

@@ -10,12 +10,23 @@ import kotlin.coroutines.CoroutineContext
 
 class MySQLModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
 
-	val connection: Connection
+	lateinit var connection: Connection
+		private set
 
-	init {
-		val mysql = require("mysql").unsafeCast<external.nodejs.mysql.MySQL>()
+	private val mysql = require("mysql").unsafeCast<external.nodejs.mysql.MySQL>()
 
-		this.connection = mysql.createConnection(
+	override fun onInit() {
+		connect()
+	}
+
+	override fun onStop(): Job? {
+		connection.end()
+
+		return super.onStop()
+	}
+
+	private fun connect() {
+		connection = mysql.createConnection(
 			Params(
 				host = "127.0.0.1",
 				database = "fivem",
@@ -23,15 +34,15 @@ class MySQLModule(override val coroutineContext: CoroutineContext) : AbstractMod
 				password = "qwerta"
 			)
 		)
-	}
 
-	override fun onInit() {
+		connection.on("error") { error ->
+			if (error?.code == "PROTOCOL_CONNECTION_LOST") {
+				connect()
+			} else {
+				throw Exception(error.toString())
+			}
+		}
+
 		connection.connect()
-	}
-
-	override fun onStop(): Job? {
-		connection.end()
-
-		return super.onStop()
 	}
 }
