@@ -10,7 +10,7 @@ object GlobalCache {
 	private val peds = mutableMapOf<Entity, Ped>()
 
 	fun getVehicle(entity: Entity): Vehicle? {
-		if (Client.doesEntityExist(entity)) {
+		if (!Client.doesEntityExist(entity)) {
 			vehicles.remove(entity)
 
 			return null
@@ -24,7 +24,7 @@ object GlobalCache {
 	}
 
 	fun getPed(entity: Entity): Ped? {
-		if (Client.doesEntityExist(entity)) {
+		if (!Client.doesEntityExist(entity)) {
 			peds.remove(entity)
 
 			return null

@@ -181,7 +181,7 @@ class Vehicle private constructor(
 	//todo mod, neon
 
 	init {
-		if (Client.doesEntityExist(entity)) throw VehicleDoesntExistsException()
+		if (!Client.doesEntityExist(entity)) throw VehicleDoesntExistsException("vehicle $entity doesnt exists")
 
 		val networkId = Client.networkGetNetworkIdFromEntity(entity)
 		Client.setNetworkIdCanMigrate(networkId, true)
@@ -480,10 +480,10 @@ class Vehicle private constructor(
 		var initialDriveGears: Int by HandlingDelegate("nInitialDriveGears")
 
 		private class HandlingDelegate(private val fieldName: String) {
-			operator fun <T> getValue(handling: Handling, property: KProperty<*>): T = when (property.name[0]) {
+			operator fun <T> getValue(handling: Handling, property: KProperty<*>): T = when (fieldName[0]) {
 				'f' -> Client.getVehicleHandlingFloat(handling.entity, "CHandlingData", fieldName).unsafeCast<T>()
 				'i', 'n' -> Client.getVehicleHandlingInt(handling.entity, "CHandlingData", fieldName).unsafeCast<T>()
-				else -> throw Exception("this type is not supported for vehicle handling")
+				else -> throw Exception("this type ($fieldName) is not supported for vehicle handling")
 			}
 
 			operator fun <T> setValue(handling: Handling, property: KProperty<*>, value: T) {
@@ -500,5 +500,5 @@ class Vehicle private constructor(
 		}
 	}
 
-	class VehicleDoesntExistsException : Exception()
+	class VehicleDoesntExistsException(message: String) : Exception(message)
 }

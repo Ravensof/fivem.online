@@ -59,11 +59,13 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 		}
 
 		repeatJob(1_000) {
-			val playerPed = checkPlayersPed(Client.getPlayerPed()) ?: return@repeatJob
-
-			checkCoordinates(playerPed)
 			checkAudioMusicLevelInMP(Client.getProfileSetting(ProfileSetting.AUDIO_MUSIC_LEVEL_IN_MP).orZero())
 			checkIsScreenFadedInOut(Client.isScreenFadedOut())
+
+			val pedIndex = Client.getPlayerPedId().takeIf { it != 0 } ?: return@repeatJob
+			val playerPed = checkPlayersPed(pedIndex) ?: return@repeatJob
+
+			checkCoordinates(playerPed)
 		}
 
 		return super.onStart()

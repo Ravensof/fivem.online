@@ -41,7 +41,7 @@ class SpawnManagerModule(override val coroutineContext: CoroutineContext) : Abst
 
 //			Client.requestCollisionAtCoordinates(coordinatesX)//todo не работает?
 
-		val ped = Client.getPlayerPed()
+		val ped = Client.getPlayerPedId()
 
 		api.setPlayerCoordinates(coordinatesX)
 		Client.networkResurrectLocalPlayer(coordinatesX)
@@ -65,7 +65,7 @@ class SpawnManagerModule(override val coroutineContext: CoroutineContext) : Abst
 
 	private fun freezePlayer(playerSrc: Int, freeze: Boolean) {
 
-		val ped = Client.getPlayerPed()
+		val ped = Client.getPlayerPedId()
 
 		api.unLockControl(lockControlHandle)
 		if (!freeze) {

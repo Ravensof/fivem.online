@@ -55,7 +55,7 @@ class API(
 	fun setPlayerCoordinates(coordinates: CoordinatesX) {
 		UEvent.emit(PlayersPedTeleportingEvent())
 		EventGeneratorModule.playerCoordinates = coordinates
-		Client.setEntityCoordsNoOffset(Client.getPlayerPed(), coordinates.x, coordinates.y, coordinates.z)
+		Client.setEntityCoordsNoOffset(Client.getPlayerPedId(), coordinates.x, coordinates.y, coordinates.z)
 		UEvent.emit(PlayersPedTeleportedEvent())
 	}
 
@@ -101,7 +101,7 @@ class API(
 
 
 	fun setRagdollEffect(): Handle = ragdollStack.set {
-		val playerPed = Client.getPlayerPed()
+		val playerPed = Client.getPlayerPedId()
 		ragdollExecutorId = tickExecutor.add { Client.setPedToRagdoll(playerPed) }
 	}
 

@@ -7,7 +7,7 @@ fun CoroutineScope.repeatJob(timeMillis: Long, function: () -> Unit): Job = laun
 	var startTime: Double
 	var endTime: Double
 
-	while (this.isActive) {
+	while (isActive) {
 		startTime = Date.now()
 		function()
 

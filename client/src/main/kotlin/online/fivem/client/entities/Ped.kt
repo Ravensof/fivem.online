@@ -14,7 +14,7 @@ class Ped private constructor(
 	val entity: Entity
 ) {
 	init {
-		if (Client.doesEntityExist(entity)) throw PedDoesntExistsException()
+		if (!Client.doesEntityExist(entity)) throw PedDoesntExistsException("ped $entity doesnt exists")
 	}
 
 	val isAtGetInAVehicle: Boolean get() = Client.isPedAtGetInAnyVehicle(entity)
@@ -40,7 +40,7 @@ class Ped private constructor(
 		return Client.getVehiclePedIsIn(entity, lastVehicle)
 	}
 
-	class PedDoesntExistsException : Exception()
+	class PedDoesntExistsException(message: String) : Exception(message)
 
 	companion object {
 

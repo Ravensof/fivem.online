@@ -62,7 +62,7 @@ class SynchronizationModule : AbstractModule(), CoroutineScope {
 	}
 
 	private fun synchronizeToServer() {
-		val playerPed = Client.getPlayerPed()
+		val playerPed = Client.getPlayerPedId()
 
 		ServerEvent.emit(ClientSideSynchronizeEvent(
 			coordinatesX = Client.getEntityCoords(playerPed)?.let {

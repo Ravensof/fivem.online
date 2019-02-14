@@ -18,6 +18,33 @@ import kotlin.coroutines.CoroutineContext
 object Client : CoroutineScope {
 	override val coroutineContext: CoroutineContext = Job()
 
+	fun setVehicleExclusiveDriver_2(vehicle: Entity, ped: Entity, p2: Number = 0) {
+		SetVehicleExclusiveDriver_2(vehicle, ped, p2)
+	}
+
+	/**
+	 * Ped: The ped to warp.
+	 * vehicle: The vehicle to warp the ped into.
+	 * Seat_Index: [-1 is driver seat, -2 first free passenger seat]
+	 * Moreinfo of Seat Index
+	 * DriverSeat = -1
+	 * Passenger = 0
+	 * Left Rear = 1
+	 * RightRear = 2
+	 */
+	fun setPedIntoVehicle(ped: Entity, vehicle: Entity, seatIndex: Int) {
+		SetPedIntoVehicle(ped, vehicle, seatIndex)
+	}
+
+	/**
+	 * from docks_heistb.c4:
+	 * AI::GET_IS_TASK_ACTIVE(PLAYER::PLAYER_PED_ID(), 2))
+	 * Known Tasks: pastebin.com/2gFqJ3Px
+	 */
+	fun getIsTaskActive(ped: Entity, taskNumber: Int): Boolean {
+		return GetIsTaskActive(ped, taskNumber) == 1
+	}
+
 	fun setPlayerHealthRechargeMultiplier(player: Int, regenRate: Float) {
 		SetPlayerHealthRechargeMultiplier(player, regenRate)
 	}
@@ -1071,7 +1098,7 @@ object Client : CoroutineScope {
 	 * [False = CurrentVehicle, True = LastVehicle]
 	 */
 	fun getVehiclePedIsIn(ped: Entity, lastVehicle: Boolean = true): Entity? {
-		return GetVehiclePedIsIn(ped, lastVehicle)
+		return GetVehiclePedIsIn(ped, lastVehicle).takeIf { it != 0 }
 	}
 
 	/**
@@ -1592,16 +1619,12 @@ object Client : CoroutineScope {
 	/**
 	 * p1 = !IS_ENTITY_DEAD
 	 */
-	fun getEntityCoords(entity: Entity, alive: Boolean = true): Coordinates? {
+	fun getEntityCoords(entity: Entity, alive: Boolean = true): Coordinates {
 		val coords = GetEntityCoords(entity, alive)
 
 		val x = coords[0]
 		val y = coords[1]
 		val z = coords[2]
-
-		if (x == 0f && y == 0f && z == 0f) {
-			return null
-		}
 
 		return Coordinates(x, y, z)
 	}
@@ -2188,13 +2211,6 @@ object Client : CoroutineScope {
 		return IsEntityVisible(entity) == 1
 	}
 
-	/**
-	 * returns the players ped used in many functions
-	 */
-	fun getPlayerPed(): Entity {
-		return GetPlayerPed(-1)
-	}
-
 	fun getPlayerPed(id: Int): Entity? {
 		return GetPlayerPed(id).takeIf { it != 0 }
 	}
@@ -2249,6 +2265,13 @@ object Client : CoroutineScope {
 	 */
 	fun getPlayerId(): Int {
 		return PlayerId()
+	}
+
+	/**
+	 * Returns current player ped
+	 */
+	fun getPlayerPedId(): Entity {
+		return PlayerPedId()
 	}
 
 	/**
@@ -7997,12 +8020,7 @@ private external fun GetHashKey(_string: String): Number
  */
 //private external fun N_0x4f5070aa58f69279(nodeID: number): number;
 
-/**
- * from docks_heistb.c4:
- * AI::GET_IS_TASK_ACTIVE(PLAYER::PLAYER_PED_ID(), 2))
- * Known Tasks: pastebin.com/2gFqJ3Px
- */
-//private external fun GetIsTaskActive(ped: number, taskNumber: number): number;
+private external fun GetIsTaskActive(ped: Entity, taskNumber: Int): Number
 
 private external fun GetIsVehicleEngineRunning(vehicle: Int): Int
 
@@ -20966,7 +20984,7 @@ private external fun PlayerId(): Int
 /**
  * Returns current player ped
  */
-//private external fun PlayerPedId(): number;
+private external fun PlayerPedId(): Entity
 
 //private external fun PlaystatsAmbientMissionCrateCreated(p0: number, p1: number, p2: number)
 //private external fun N_0xafc7e5e075a96f46(p0: number, p1: number, p2: number)
@@ -25189,17 +25207,7 @@ private external fun SetPedCanRagdollFromPlayerImpact(ped: Int, toggle: Boolean)
 
 //private external fun SetPedInfiniteAmmoClip(ped: number, toggle: boolean)
 
-/**
- * Ped: The ped to warp.
- * vehicle: The vehicle to warp the ped into.
- * Seat_Index: [-1 is driver seat, -2 first free passenger seat]
- * Moreinfo of Seat Index
- * DriverSeat = -1
- * Passenger = 0
- * Left Rear = 1
- * RightRear = 2
- */
-//private external fun SetPedIntoVehicle(ped: number, vehicle: number, seatIndex: number)
+private external fun SetPedIntoVehicle(ped: Entity, vehicle: Entity, seatIndex: Int)
 
 /**
  * Sets the ped drunk sounds.  Only works with PLAYER_PED_ID
@@ -26731,7 +26739,7 @@ private external fun SetVehicleEngineTorqueMultiplier(vehicle: Entity, value: Do
  */
 //private external fun N_0x41062318f23ed854(vehicle: number, ped: number)
 
-//private external fun SetVehicleExclusiveDriver_2(vehicle: number, ped: number, p2: number)
+private external fun SetVehicleExclusiveDriver_2(vehicle: Entity, ped: Entity, p2: Number)
 //private external fun N_0xb5c51b5502e85e83(vehicle: number, ped: number, p2: number)
 
 /**

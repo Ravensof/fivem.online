@@ -4,10 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import online.fivem.client.events.AccelerationThresholdAchievedEvent
-import online.fivem.client.events.PlayersPedHealthChangedEvent
-import online.fivem.client.events.PlayersPedTeleportedEvent
-import online.fivem.client.events.PlayersPedTeleportingEvent
+import online.fivem.client.events.*
 import online.fivem.client.extensions.play
 import online.fivem.client.extensions.prefetch
 import online.fivem.client.gtav.Client
@@ -40,7 +37,7 @@ class BlackOut(override val coroutineContext: CoroutineContext) : AbstractModule
 		UEvent.on<AccelerationThresholdAchievedEvent> {
 			if (!isAllowed || it.accelerationModule < ACCELERATION_THRESHOLD) return@on
 
-			val playerPed = Client.getPlayerPed()
+			val playerPed = Client.getPlayerPedId()
 			val currentHealth = Client.getEntityHealth(playerPed)
 
 			Client.setEntityHealth(playerPed, currentHealth - it.accelerationModule.toInt() / 50)
