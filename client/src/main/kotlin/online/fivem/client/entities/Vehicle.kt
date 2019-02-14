@@ -4,11 +4,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withTimeout
+import online.fivem.client.common.GlobalCache
 import online.fivem.client.extensions.createVehicle
 import online.fivem.client.extensions.setVehicleNeonLightsColour
 import online.fivem.client.extensions.setVehicleTyreSmokeColor
 import online.fivem.client.gtav.Client
-import online.fivem.client.modules.basics.TickExecutorModule
 import online.fivem.common.common.Entity
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.entities.RGB
@@ -16,22 +16,32 @@ import online.fivem.common.extensions.orZero
 import online.fivem.common.gtav.NativeVehicles
 import kotlin.reflect.KProperty
 
-class Vehicle(
+class Vehicle private constructor(
 	val entity: Entity,
-
-	tickExecutor: TickExecutorModule? = null
+	val id: Int = -1
 ) {
-	val id: Int = Client.getVehicleOilLevel(entity)?.toInt().orZero()
 
 	val handling = Handling(entity)
 	val wheels: List<Wheel>
 	val doors: List<Door>
 	val numberOfWheels = Client.getVehicleNumberOfWheels(entity)
 	val numberOfDoors = Client.getNumberOfVehicleDoors(entity)
+	val numberOfPassengersSeats = Client.getVehicleMaxNumberOfPassengers(entity)
+
 	val isEngineStarting: Boolean get() = Client.isVehicleEngineStarting(entity)
-	val numberOfSeats = Client.getVehicleMaxNumberOfPassengers(entity) + 1
+	val isEngineRunning: Boolean get() = Client.getIsVehicleEngineRunning(entity)
+
 	val model = Client.getEntityModel(entity)
 	val isOnAllWheels: Boolean get() = Client.isVehicleOnAllWheels(entity)
+	val classType: Int get() = Client.getVehicleClass(entity)
+
+	var heading: Float
+		get() = Client.getEntityHeading(entity)
+		set(value) = Client.setEntityHeading(entity, value)
+
+	var ownedByPlayer: Boolean
+		get() = Client.isVehiclePreviouslyOwnedByPlayer(entity)
+		set(value) = Client.setVehicleHasBeenOwnedByPlayer(entity, value)
 
 	var clutch: Number
 		get() = Client.getVehicleClutch(entity)
@@ -64,9 +74,13 @@ class Vehicle(
 		get() = Client.getVehicleEngineTemperature(entity)
 		set(value) = Client.setVehicleEngineTemperature(entity, value)
 
-	var fuelLevel: Number
+	var fuelLevel: Double
 		get() = Client.getVehicleFuelLevel(entity)
 		set(value) = Client.setVehicleFuelLevel(entity, value)
+
+	var oilLevel: Float
+		get() = Client.getVehicleOilLevel(entity)
+		set(value) = Client.setVehicleOilLevel(entity, value)
 
 	//gravityAmount get set
 
@@ -160,12 +174,6 @@ class Vehicle(
 		get() = Client.getVehicleTyreSmokeColor(entity)
 		set(value) = Client.setVehicleTyreSmokeColor(entity, value)
 
-	var brakeLights: Boolean = false
-		set(value) {
-			field = value
-			Client.setVehicleBrakeLights(entity, value)
-		}
-
 	var tyresCanBurst: Boolean
 		get() = Client.getVehicleTyresCanBurst(entity)
 		set(value) = Client.setVehicleTyresCanBurst(entity, value)
@@ -175,15 +183,34 @@ class Vehicle(
 	init {
 		if (Client.doesEntityExist(entity)) throw VehicleDoesntExistsException()
 
+		val networkId = Client.networkGetNetworkIdFromEntity(entity)
+		Client.setNetworkIdCanMigrate(networkId, true)
+
 		wheels = mutableListOf()
 		for (i in 0 until numberOfWheels) {
-			wheels.add(Wheel(entity, i, tickExecutor))
+			wheels.add(Wheel(entity, i))
 		}
 
 		doors = mutableListOf()
 		for (i in 0 until numberOfDoors) {
 			doors.add(Door(entity, i))
 		}
+	}
+
+	override fun equals(other: Any?): Boolean {
+		return other is Vehicle && other.entity == entity
+	}
+
+	fun setUndriveable(undriveable: Boolean = false) {
+		Client.setVehicleUndriveable(entity, undriveable)
+	}
+
+	fun setEngineTorqueMultiplier(value: Double) {
+		Client.setVehicleEngineTorqueMultiplier(entity, value)
+	}
+
+	fun setBrakeLights(value: Boolean = false) {
+		Client.setVehicleBrakeLights(entity, value)
 	}
 
 	fun addEnginePowerMultiplier(percents: Double) {
@@ -194,10 +221,14 @@ class Vehicle(
 		Client.setVehicleForwardSpeed(entity, speed)
 	}
 
-	fun getPassengers(): MutableList<Entity> {
+	fun setOnGroundProperly() {
+		Client.setVehicleOnGroundProperly(entity)
+	}
+
+	fun getPassengers(): List<Entity> {
 		val list = mutableListOf<Entity>()
 
-		for (i in -1 until Client.getVehicleMaxNumberOfPassengers(entity)) {
+		for (i in -1 until numberOfPassengersSeats) {
 			val entity = Client.getPedInVehicleSeat(entity, -1) ?: continue
 			list.add(entity)
 		}
@@ -205,8 +236,8 @@ class Vehicle(
 		return list
 	}
 
-	fun turnEngineOn(value: Boolean) {
-		Client.setVehicleEngineOn(entity, value, false)
+	fun turnEngineOn(value: Boolean, instantly: Boolean = false) {
+		Client.setVehicleEngineOn(entity, value, instantly)
 	}
 
 //	fun setBoostActive(){
@@ -226,8 +257,7 @@ class Vehicle(
 	class Wheel(
 		val index: Int,
 
-		private val vehicle: Entity,
-		private val tickExecutor: TickExecutorModule? = null
+		private val vehicle: Entity
 	) {
 
 		var health: Number
@@ -238,20 +268,15 @@ class Vehicle(
 
 		var xOffset: Number
 			get() = Client.getVehicleWheelXOffset(vehicle, index)
-			set(value) {
-				Client.setVehicleWheelXOffset(vehicle, index, value)
-
-				if (tickExecutor == null) return
-				tickExecutor.remove(xOffsetExecId)
-				xOffsetExecId = tickExecutor.add { Client.setVehicleWheelXOffset(vehicle, index, value) }
-			}
+			set(value) = Client.setVehicleWheelXOffset(vehicle, index, value)
 
 		var xRotation: Number
 			get() = Client.getVehicleWheelXrot(vehicle, index)
 			set(value) = Client.setVehicleWheelXrot(vehicle, index, value)
 
-		private var xOffsetExecId = -1
-		private var xRotationExecId = -1
+		fun burst(onRim: Boolean, damage: Double) {
+			Client.setVehicleTyreBurst(vehicle, index, onRim, damage)
+		}
 	}
 
 	class Door(
@@ -368,37 +393,47 @@ class Vehicle(
 			vehicleModel: NativeVehicles,
 			coordinatesX: CoordinatesX,
 
-			coroutineScope: CoroutineScope,
-			tickExecutor: TickExecutorModule? = null
+			coroutineScope: CoroutineScope
 		): Deferred<Vehicle> {
 			return coroutineScope.async {
 
 				withTimeout(5_000) { Client.requestModel(vehicleModel.hash).join() }//todo test
 
-				val vehicle = withTimeout(5_000) {
-					online.fivem.client.gtav.Client.createVehicle(vehicleModel.hash, coordinatesX).await()
+				val entity = withTimeout(5_000) {
+					Client.createVehicle(vehicleModel.hash, coordinatesX).await()
 				}//todo test
 
-				Client.setVehicleOilLevel(vehicle, id)
+				Client.setModelAsNoLongerNeeded(vehicleModel.hash)
 
-				Client.setVehicleOnGroundProperly(vehicle)
-				Client.setModelAsNoLongerNeeded(vehicle)
-				Client.setVehicleHasBeenOwnedByPlayer(vehicle)
-				val networkId = Client.networkGetNetworkIdFromEntity(vehicle)
-
-				Client.setNetworkIdCanMigrate(networkId, true)
-
-				return@async Vehicle(vehicle, tickExecutor)
+				return@async newInstance(entity, id).apply {
+					ownedByPlayer = true
+					setOnGroundProperly()
+				}
 			}
 		}
 
-		fun fromEntity(list: List<Entity>, tickExecutor: TickExecutorModule? = null): List<Vehicle> {
+		fun fromEntity(list: List<Entity>): List<Vehicle> {
 			return list.map {
 				Vehicle(
-					entity = it,
-					tickExecutor = tickExecutor
+					entity = it
 				)
 			}
+		}
+
+		fun newInstance(
+			entity: Entity,
+			id: Int = -1
+		): Vehicle {
+
+			GlobalCache.getVehicle(entity)?.let {
+				return it
+			}
+
+			val vehicle = Vehicle(entity, id)
+
+			GlobalCache.putVehicle(vehicle)
+
+			return vehicle
 		}
 	}
 
@@ -419,10 +454,22 @@ class Vehicle(
 		var brakeForce: Double by HandlingDelegate("fBrakeForce")
 
 		/**
+		 * Multiplies the game's calculation of damage to the vehicle through collision.
+		 * Value: 0.0 - 10.0. 0.0 = no damage through collision. 10.0 = Ten times damage through collision.
+		 */
+		var collisionDamageMultiplier: Double by HandlingDelegate("fCollisionDamageMult")
+
+		/**
 		 * Multiplies the game's calculation of damage to the vehicle through weapon damage.
 		 * Value: 0.0 - 10.0. 0.0 = no damage through weapons. 10.0 = Ten times damage through weapons.
 		 */
 		var weaponDamageMultiplier: Double by HandlingDelegate("fWeaponDamageMult")
+
+		/**
+		 * Multiplies the game's calculation of damage to the engine, causing explosion or engine failure.
+		 * Value: 0.0 - 10.0. 0.0 = no damage to the engine. 10.0 = Ten times damage to the engine.
+		 */
+		var engineDamageMultiplier: Double by HandlingDelegate("fEngineDamageMult")
 
 		var initialDriveForce: Double by HandlingDelegate("fInitialDriveForce")
 

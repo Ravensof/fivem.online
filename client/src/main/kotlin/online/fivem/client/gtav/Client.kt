@@ -18,6 +18,10 @@ import kotlin.coroutines.CoroutineContext
 object Client : CoroutineScope {
 	override val coroutineContext: CoroutineContext = Job()
 
+	fun setPlayerHealthRechargeMultiplier(player: Int, regenRate: Float) {
+		SetPlayerHealthRechargeMultiplier(player, regenRate)
+	}
+
 	/**
 	 * Plays ambient speech. See also _0x444180DB.
 	 * ped: The ped to play the ambient speech.
@@ -1066,7 +1070,7 @@ object Client : CoroutineScope {
 	 * Gets the vehicle the specified Ped is/was in depending on bool value.
 	 * [False = CurrentVehicle, True = LastVehicle]
 	 */
-	fun getVehiclePedIsIn(ped: Entity, lastVehicle: Boolean = true): Entity {
+	fun getVehiclePedIsIn(ped: Entity, lastVehicle: Boolean = true): Entity? {
 		return GetVehiclePedIsIn(ped, lastVehicle)
 	}
 
@@ -1633,10 +1637,14 @@ object Client : CoroutineScope {
 		return GetEntityHeading(entity)
 	}
 
+	fun setEntityHeading(entity: Entity, heading: Float) {
+		SetEntityHeading(entity, heading)
+	}
+
 	/**
 	 * Gets ID of vehicle player using. It means it can get ID at any interaction with vehicle. Enter\exit for example. And that means it is faster than GET_VEHICLE_PED_IS_IN but less safe.
 	 */
-	fun getVehiclePedIsUsing(ped: Entity): Int? {
+	fun getVehiclePedIsUsing(ped: Entity): Entity? {
 		return GetVehiclePedIsUsing(ped).takeIf { it != 0 }
 	}
 
@@ -1715,8 +1723,9 @@ object Client : CoroutineScope {
 		return GetVehicleNumberPlateText(vehicle)
 	}
 
-	fun getVehicleOilLevel(vehicle: Entity): Float? {
-		return if (getVehicleIndexFromEntityIndex(vehicle) != 0) GetVehicleOilLevel(vehicle).toFloat() else null
+	//warning on null
+	fun getVehicleOilLevel(vehicle: Entity): Float {
+		return GetVehicleOilLevel(vehicle).toFloat()
 	}
 
 	/**
@@ -23326,7 +23335,7 @@ private external fun SetEntityCoordsNoOffset(
 
 //private external fun SetEntityHasGravity(entity: number, toggle: boolean)
 
-//private external fun SetEntityHeading(entity: number, heading: number)
+private external fun SetEntityHeading(entity: Entity, heading: Float)
 
 private external fun SetEntityHealth(entity: Int, health: Int)
 
@@ -25674,7 +25683,7 @@ private external fun SetPlayerControl(player: Int, toggle: Boolean, flags: Numbe
 
 //private external fun SetPlayerHasReserveParachute(player: number)
 
-//private external fun SetPlayerHealthRechargeMultiplier(player: number, regenRate: number)
+private external fun SetPlayerHealthRechargeMultiplier(player: Int, regenRate: Float)
 
 /**
  * Hash collision

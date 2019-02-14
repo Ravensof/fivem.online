@@ -2,16 +2,14 @@ package online.fivem.client.modules.vehicle
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import online.fivem.client.gtav.Client
+import online.fivem.client.entities.Vehicle
+import online.fivem.client.events.PlayerLeftOrJoinVehicleEvent
 import online.fivem.client.modules.nui_event_exchanger.NuiEvent
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.UEvent
-import online.fivem.common.events.local.PlayerLeftOrJoinVehicleEvent
-import online.fivem.common.events.local.PlayerVehicleSeatEvent
 import online.fivem.common.events.nui.SpeedometerDisableEvent
 import online.fivem.common.events.nui.SpeedometerEnableEvent
 import online.fivem.common.events.nui.SpeedometerUpdateEvent
-import online.fivem.common.extensions.orZero
 import online.fivem.common.extensions.repeatJob
 import kotlin.coroutines.CoroutineContext
 
@@ -20,18 +18,16 @@ class Speedometer(override val coroutineContext: CoroutineContext) : AbstractMod
 	private var updateJob: Job? = null
 
 	override fun onInit() {
-		UEvent.on<PlayerVehicleSeatEvent.Join.Driver> { onPlayerJoinVehicle() }
+		UEvent.on<PlayerLeftOrJoinVehicleEvent.Join.Driver> { onPlayerJoinVehicle(it.vehicle) }
 		UEvent.on<PlayerLeftOrJoinVehicleEvent.Left> { onPlayerLeftVehicle() }
 	}
 
-	private fun updateJob(): Job? {
-		val ped = Client.getPlayerPed()
-		val vehicle = Client.getVehiclePedIsUsing(ped) ?: return null
+	private fun onPlayerJoinVehicle(vehicle: Vehicle) {
 
 		var speed: Double
 
-		return repeatJob(UPDATE_RATE) {
-			speed = Client.getVehicleDashboardSpeed(vehicle)
+		updateJob = repeatJob(UPDATE_RATE) {
+			speed = vehicle.dashboardSpeed
 
 			if (!vehicleHasSpeedo && speed > 0) {
 				vehicleHasSpeedo = true
@@ -41,27 +37,23 @@ class Speedometer(override val coroutineContext: CoroutineContext) : AbstractMod
 			if (vehicleHasSpeedo) {
 				NuiEvent.emitUnsafe(
 					SpeedometerUpdateEvent(
-						currentGear = Client.getVehicleCurrentGear(vehicle),
-						currentRpm = Client.getVehicleCurrentRpm(vehicle),
+						currentGear = vehicle.currentGear,
+						currentRpm = vehicle.currentRpm,
 						dashboardSpeed = speed,
-						turboPressure = Client.getVehicleTurboPressure(vehicle),
-						handbrake = Client.getVehicleHandbrake(vehicle),
+						turboPressure = vehicle.turboPressure,
+						handbrake = vehicle.isHandBrake,
 
-						engineTemperature = Client.getVehicleEngineTemperature(vehicle),
-						fuelLevel = Client.getVehicleFuelLevel(vehicle),
-						oilLevel = Client.getVehicleOilLevel(vehicle).orZero(),
-						petrolTankHealth = Client.getVehiclePetrolTankHealth(vehicle),
-						engineRunning = Client.getIsVehicleEngineRunning(vehicle),
-						engineOn = Client.isVehicleEngineOn(vehicle),
-						engineHealth = Client.getVehicleEngineHealth(vehicle)
+						engineTemperature = vehicle.engineTemperature,
+						fuelLevel = vehicle.fuelLevel,
+						oilLevel = vehicle.oilLevel,
+						petrolTankHealth = vehicle.petrolTankHealth,
+						engineRunning = vehicle.isEngineRunning,
+						engineOn = vehicle.isEngineOn,
+						engineHealth = vehicle.engineHealth
 					)
 				)
 			}
 		}
-	}
-
-	private fun onPlayerJoinVehicle() {
-		updateJob = updateJob()
 	}
 
 	private fun onPlayerLeftVehicle() {

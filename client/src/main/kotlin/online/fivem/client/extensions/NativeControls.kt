@@ -32,3 +32,6 @@ fun NativeControls.Keys.isControlPressed() =
 fun NativeControls.Keys.isControlReleased() =
 	Client.isControlReleased(Client.defaultControlGroup.index, index)
 
+fun NativeControls.Keys.getDisabledControlNormal() =
+	Client.getDisabledControlNormal(Client.defaultControlGroup.index, index)
+

@@ -1,13 +1,17 @@
 package online.fivem.client.modules.vehicle
 
 import kotlinx.coroutines.*
+import online.fivem.client.entities.Vehicle
+import online.fivem.client.events.PlayerLeftOrJoinVehicleEvent
+import online.fivem.client.extensions.disableControlAction
+import online.fivem.client.extensions.getDisabledControlNormal
 import online.fivem.client.gtav.Client
 import online.fivem.client.modules.basics.TickExecutorModule
 import online.fivem.common.common.AbstractModule
-import online.fivem.common.common.Entity
+import online.fivem.common.common.Stack
 import online.fivem.common.common.UEvent
-import online.fivem.common.events.local.PlayerVehicleSeatEvent
 import online.fivem.common.extensions.orZero
+import online.fivem.common.gtav.NativeControls
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.pow
 import kotlin.random.Random
@@ -19,9 +23,7 @@ class RealisticFailureModule(
 
 	private val tickExecutorModule by moduleLoader.onReady<TickExecutorModule>()
 
-	private var pedInSameVehicleLast = false
-	private var vehicle: Entity = 0
-	private var lastVehicle: Entity = 0
+	private var lastVehicle: Vehicle? = null
 	private var vehicleClass = 0
 	private var fCollisionDamageMult = 0.0
 	private var fDeformationDamageMult = 0.0
@@ -56,383 +58,322 @@ class RealisticFailureModule(
 		if (Cfg.randomTireBurstInterval != 0) Random.nextInt(tireBurstMaxNumber) else 0
 
 	private var mainJob: Job? = null
+	private var tickHandle = Stack.UNDEFINED_INDEX
 
 	override fun onInit() {
-		moduleLoader.on<TickExecutorModule> { someFunc() }
-		UEvent.on<PlayerVehicleSeatEvent.Join.Driver> { startThings() }
-		UEvent.on<PlayerVehicleSeatEvent.Left> { stopThings() }
+		UEvent.on<PlayerLeftOrJoinVehicleEvent.Join.Driver> { onJoinVehicle(it.vehicle) }
+		UEvent.on<PlayerLeftOrJoinVehicleEvent.Changed> { onChangeVehicle(it.vehicle, it.previousVehicle) }
+		UEvent.on<PlayerLeftOrJoinVehicleEvent.Left> { onLeftVehicle(it.vehicle) }
 	}
 
-	private fun startThings() {
+	private fun onChangeVehicle(newVehicle: Vehicle, previousVehicle: Vehicle) {
+		onLeftVehicle(previousVehicle)
+		onJoinVehicle(newVehicle)
+	}
+
+	private fun preset(vehicle: Vehicle) {
+		// Just got in the vehicle. Damage can not be multiplied this round
+		// Set vehicle handling data
+		fDeformationDamageMult = vehicle.handling.deformationDamageMultiplier
+		fBrakeForce = vehicle.handling.brakeForce
+
+		if (Cfg.weaponsDamageMultiplier != -1.0) {
+			vehicle.handling.weaponDamageMultiplier =
+				Cfg.weaponsDamageMultiplier / Cfg.damageFactorBody// Set weaponsDamageMultiplier && compensate for damageFactorBody
+		}
+		//Get the CollisionDamageMultiplier
+		fCollisionDamageMult = vehicle.handling.collisionDamageMultiplier
+		//Modify it by pulling all number a towards 1.0
+		// Pull the handling file value closer to 1
+		val newFCollisionDamageMultiplier = fCollisionDamageMult.pow(Cfg.collisionDamageExponent)
+		vehicle.handling.collisionDamageMultiplier = newFCollisionDamageMultiplier
+
+		//Get the EngineDamageMultiplier
+		fEngineDamageMult = vehicle.handling.engineDamageMultiplier
+		//Modify it by pulling all number a towards 1.0
+		// Pull the handling file value closer to 1
+		val newFEngineDamageMult = fEngineDamageMult.pow(Cfg.engineDamageExponent)
+		vehicle.handling.engineDamageMultiplier = newFEngineDamageMult
+
+		// If body damage catastrophic, reset somewhat so we can get new damage to multiply
+		if (healthBodyCurrent < Cfg.cascadingFailureThreshold) {
+			healthBodyNew = Cfg.cascadingFailureThreshold
+		}
+	}
+
+	private fun onJoinVehicle(vehicle: Vehicle) {
 		mainJob?.cancel()
 		mainJob = launch {
-			val ped = Client.getPlayerPed()
+
+			vehicleClass = vehicle.classType
+
+			if (!isVehicleCanHandled(vehicleClass)) return@launch
+
+			preset(vehicle)
+			someFunc(vehicle)
 
 			while (isActive) {
 				delay(50)
 
-				if (isPedDrivingAVehicle()) {
-					vehicle = Client.getVehiclePedIsIn(ped, false)
-					vehicleClass = Client.getVehicleClass(vehicle)
-					healthEngineCurrent = Client.getVehicleEngineHealth(vehicle)
+				healthEngineCurrent = vehicle.engineHealth
 
-					healthEngineNew = healthEngineCurrent
-					healthEngineDelta = healthEngineLast - healthEngineCurrent
-					healthEngineDeltaScaled = healthEngineDelta * Cfg.damageFactorEngine *
-							Cfg.classDamageMultiplier[vehicleClass]
+				healthEngineNew = healthEngineCurrent
+				healthEngineDelta = healthEngineLast - healthEngineCurrent
+				healthEngineDeltaScaled = healthEngineDelta * Cfg.damageFactorEngine *
+						Cfg.classDamageMultiplier[vehicleClass]
 
-					healthBodyCurrent = Client.getVehicleBodyHealth(vehicle)
+				healthBodyCurrent = vehicle.bodyHealth
 
-					healthBodyNew = healthBodyCurrent
-					healthBodyDelta = healthBodyLast - healthBodyCurrent
-					healthBodyDeltaScaled = healthBodyDelta * Cfg.damageFactorBody *
-							Cfg.classDamageMultiplier[vehicleClass]
+				healthBodyNew = healthBodyCurrent
+				healthBodyDelta = healthBodyLast - healthBodyCurrent
+				healthBodyDeltaScaled = healthBodyDelta * Cfg.damageFactorBody *
+						Cfg.classDamageMultiplier[vehicleClass]
 
-					healthPetrolTankCurrent = Client.getVehiclePetrolTankHealth(vehicle)
-					if (Cfg.compatibilityMode && healthPetrolTankCurrent < 1) {
-						//	SetVehiclePetrolTankHealth(vehicle, healthPetrolTankLast)
-						//	healthPetrolTankCurrent = healthPetrolTankLast
-						healthPetrolTankLast = healthPetrolTankCurrent
+				healthPetrolTankCurrent = vehicle.petrolTankHealth
+				if (Cfg.compatibilityMode && healthPetrolTankCurrent < 1) {
+					//	SetVehiclePetrolTankHealth(vehicle, healthPetrolTankLast)
+					//	healthPetrolTankCurrent = healthPetrolTankLast
+					healthPetrolTankLast = healthPetrolTankCurrent
+				}
+
+				healthPetrolTankNew = healthPetrolTankCurrent
+				healthPetrolTankDelta = healthPetrolTankLast - healthPetrolTankCurrent
+				healthPetrolTankDeltaScaled = healthPetrolTankDelta * Cfg.damageFactorPetrolTank *
+						Cfg.classDamageMultiplier[vehicleClass]
+
+				if (healthEngineCurrent > Cfg.engineSafeGuard + 1) {
+					vehicle.setUndriveable(false)
+				}
+
+				if (healthEngineCurrent <= Cfg.engineSafeGuard + 1 && !Cfg.limpMode) {
+					vehicle.setUndriveable(true)
+				}
+
+				// Damage happened while in the car = can be multiplied
+
+				// Only do calculations if any damage is present on the car.
+				// Prevents weird behavior when fixing using trainer or other script
+				if (healthEngineCurrent != 1000.0 || healthBodyCurrent != 1000 || healthPetrolTankCurrent != 1000.0) {
+
+					// Combine the delta values (Get the largest of the three)
+					var healthEngineCombinedDelta =
+						arrayOf(
+							healthEngineDeltaScaled,
+							healthBodyDeltaScaled,
+							healthPetrolTankDeltaScaled
+						).max().orZero()
+
+					// If huge damage, scale back a bit
+					if (healthEngineCombinedDelta > (healthEngineCurrent - Cfg.engineSafeGuard)) {
+						healthEngineCombinedDelta *= 0.7
 					}
 
-					healthPetrolTankNew = healthPetrolTankCurrent
-					healthPetrolTankDelta = healthPetrolTankLast - healthPetrolTankCurrent
-					healthPetrolTankDeltaScaled = healthPetrolTankDelta * Cfg.damageFactorPetrolTank *
-							Cfg.classDamageMultiplier[vehicleClass]
-
-					if (healthEngineCurrent > Cfg.engineSafeGuard + 1) {
-						Client.setVehicleUndriveable(vehicle, false)
-					}
-
-					if (healthEngineCurrent <= Cfg.engineSafeGuard + 1 && !Cfg.limpMode) {
-						Client.setVehicleUndriveable(vehicle, true)
-					}
-
-					// If ped spawned a new vehicle while in a vehicle or teleported from one vehicle to another,
-					// handle as if we just entered the car
-					if (vehicle != lastVehicle) {
-						pedInSameVehicleLast = false
+					// If complete damage, but not catastrophic (ie. explosion territory) pull back a bit,
+					// to give a couple of seconds og engine runtime before dying
+					if (healthEngineCombinedDelta > healthEngineCurrent) {
+						healthEngineCombinedDelta = healthEngineCurrent - (Cfg.cascadingFailureThreshold / 5)
 					}
 
 
-					if (pedInSameVehicleLast) {
-						// Damage happened while in the car = can be multiplied
+					//////- Calculate new value
 
-						// Only do calculations if any damage is present on the car.
-						// Prevents weird behavior when fixing using trainer or other script
-						if (healthEngineCurrent != 1000.0 || healthBodyCurrent != 1000 || healthPetrolTankCurrent != 1000.0) {
-
-							// Combine the delta values (Get the largest of the three)
-							var healthEngineCombinedDelta =
-								arrayOf(
-									healthEngineDeltaScaled,
-									healthBodyDeltaScaled,
-									healthPetrolTankDeltaScaled
-								).max().orZero()
-
-							// If huge damage, scale back a bit
-							if (healthEngineCombinedDelta > (healthEngineCurrent - Cfg.engineSafeGuard)) {
-								healthEngineCombinedDelta *= 0.7
-							}
-
-							// If complete damage, but not catastrophic (ie. explosion territory) pull back a bit,
-							// to give a couple of seconds og engine runtime before dying
-							if (healthEngineCombinedDelta > healthEngineCurrent) {
-								healthEngineCombinedDelta = healthEngineCurrent - (Cfg.cascadingFailureThreshold / 5)
-							}
+					healthEngineNew = healthEngineLast - healthEngineCombinedDelta
 
 
-							//////- Calculate new value
+					//////- Sanity Check on new values && further manipulations
 
-							healthEngineNew = healthEngineLast - healthEngineCombinedDelta
+					// If somewhat damaged, slowly degrade until slightly before cascading failure sets in, then stop
 
+					if (healthEngineNew > (Cfg.cascadingFailureThreshold + 5) && healthEngineNew < Cfg.degradingFailureThreshold) {
+						healthEngineNew -= (0.038 * Cfg.degradingHealthSpeedFactor)
+					}
 
-							//////- Sanity Check on new values && further manipulations
+					// If Damage is near catastrophic, cascade the failure
+					if (healthEngineNew < Cfg.cascadingFailureThreshold) {
+						healthEngineNew -= (0.1 * Cfg.cascadingFailureSpeedFactor)
+					}
 
-							// If somewhat damaged, slowly degrade until slightly before cascading failure sets in, then stop
+					// Prevent Engine going to or below zero. Ensures you can reenter a damaged car.
+					if (healthEngineNew < Cfg.engineSafeGuard) {
+						healthEngineNew = Cfg.engineSafeGuard
+					}
 
-							if (healthEngineNew > (Cfg.cascadingFailureThreshold + 5) && healthEngineNew < Cfg.degradingFailureThreshold) {
-								healthEngineNew -= (0.038 * Cfg.degradingHealthSpeedFactor)
-							}
+					// Prevent Explosions
+					if (!Cfg.compatibilityMode && healthPetrolTankCurrent < 750) {
+						healthPetrolTankNew = 750.0
+					}
 
-							// If Damage is near catastrophic, cascade the failure
-							if (healthEngineNew < Cfg.cascadingFailureThreshold) {
-								healthEngineNew -= (0.1 * Cfg.cascadingFailureSpeedFactor)
-							}
+					// Prevent negative body damage.
+					if (healthBodyNew < 0) {
+						healthBodyNew = 0
+					}
+				}
 
-							// Prevent Engine going to or below zero. Ensures you can reenter a damaged car.
-							if (healthEngineNew < Cfg.engineSafeGuard) {
-								healthEngineNew = Cfg.engineSafeGuard
-							}
+				// set the actual new values
+				if (healthEngineNew != healthEngineCurrent) {
+					vehicle.engineHealth = healthEngineNew
+				}
+				if (healthBodyNew != healthBodyCurrent) {
+					vehicle.bodyHealth = healthBodyNew
+				}
+				if (healthPetrolTankNew != healthPetrolTankCurrent) {
+					vehicle.petrolTankHealth = healthPetrolTankNew
+				}
 
-							// Prevent Explosions
-							if (!Cfg.compatibilityMode && healthPetrolTankCurrent < 750) {
-								healthPetrolTankNew = 750.0
-							}
+				// Store current values, so we can calculate delta next time around
+				healthEngineLast = healthEngineNew
+				healthBodyLast = healthBodyNew
+				healthPetrolTankLast = healthPetrolTankNew
+				lastVehicle = vehicle
+				if (Cfg.randomTireBurstInterval != 0 && Client.getEntitySpeed(vehicle.entity) > 10) tireBurstLottery(
+					vehicle
+				)
+			}
+		}
+	}
 
-							// Prevent negative body damage.
-							if (healthBodyNew < 0) {
-								healthBodyNew = 0
-							}
+	private fun onLeftVehicle(lastVehicle: Vehicle) {
+		tickExecutorModule.remove(tickHandle)
+		mainJob?.cancel()
+
+		lastVehicle.handling.brakeForce = fBrakeForce// Restore Brake Force multiplier
+
+		if (Cfg.weaponsDamageMultiplier != -1.0) {
+			lastVehicle.handling.weaponDamageMultiplier =
+				Cfg.weaponsDamageMultiplier// Since we are out of the vehicle, we should no longer compensate for bodyDamageFactor
+		}
+
+		lastVehicle.handling.collisionDamageMultiplier =
+			fCollisionDamageMult// Restore the original CollisionDamageMultiplier
+
+		lastVehicle.handling.engineDamageMultiplier = fEngineDamageMult// Restore the original EngineDamageMultiplier
+	}
+
+	private fun someFunc(vehicle: Vehicle) {
+		tickExecutorModule.remove(tickHandle)
+
+		if (!Cfg.torqueMultiplierEnabled && !Cfg.preventVehicleFlip && !Cfg.limpMode) return
+
+		tickHandle = tickExecutorModule.add {
+			if (Cfg.torqueMultiplierEnabled || Cfg.sundayDriver || Cfg.limpMode) {
+
+				var factor = 1.0
+				if (Cfg.torqueMultiplierEnabled && healthEngineNew < 900) {
+					factor = (healthEngineNew + 200.0) / 1100
+				}
+				if (Cfg.sundayDriver && vehicle.classType != 14) { // Not for boats
+					val accelerator = Client.getControlValue(2, 71)
+					val brake = Client.getControlValue(2, 72)
+					val speed = Client.getEntitySpeedVector(vehicle.entity, true).y
+					// Change Braking force
+					var brk = fBrakeForce
+					if (speed >= 1.0) {
+						// Going forward
+						if (accelerator > 127) {
+							// Forward && accelerating
+							val acc = fscale(
+								accelerator.toDouble(),
+								127.0,
+								254.0,
+								0.1,
+								1.0,
+								10.0 - (Cfg.sundayDriverAcceleratorCurve * 2.0)
+							)
+							factor *= acc
+						}
+						if (brake > 127) {
+							// Forward && braking
+							isBrakingForward = true
+							brk = fscale(
+								brake.toDouble(),
+								127.0,
+								254.0,
+								0.01,
+								fBrakeForce,
+								10.0 - (Cfg.sundayDriverBrakeCurve * 2.0)
+							)
+						}
+					} else if (speed <= -1.0) {
+						// Going reverse
+						if (brake > 127) {
+							// Reversing && accelerating (using the brake)
+							val rev = fscale(
+								brake.toDouble(),
+								127.0,
+								254.0,
+								0.1,
+								1.0,
+								10.0 - (Cfg.sundayDriverAcceleratorCurve * 2.0)
+							)
+							factor *= rev
+						}
+						if (accelerator > 127) {
+							// Reversing && braking (Using the accelerator)
+							isBrakingReverse = true
+							brk = fscale(
+								accelerator.toDouble(),
+								127.0,
+								254.0,
+								0.01,
+								fBrakeForce,
+								10.0 - (Cfg.sundayDriverBrakeCurve * 2.0)
+							)
 						}
 					} else {
-						// Just got in the vehicle. Damage can not be multiplied this round
-						// Set vehicle handling data
-						fDeformationDamageMult =
-								Client.getVehicleHandlingFloat(vehicle, "CHandlingData", "fDeformationDamageMult")
-						fBrakeForce = Client.getVehicleHandlingFloat(vehicle, "CHandlingData", "fBrakeForce")
-						// Pull the handling file value closer to 1
-						val newFDeformationDamageMult = fDeformationDamageMult.pow(Cfg.deformationExponent)
-						if (Cfg.deformationMultiplier != -1) Client.setVehicleHandlingFloat(
-							vehicle,
-							"CHandlingData",
-							"fDeformationDamageMult",
-							newFDeformationDamageMult * Cfg.deformationMultiplier
-						)   // Multiply by our factor
-						if (Cfg.weaponsDamageMultiplier != -1.0) Client.setVehicleHandlingFloat(
-							vehicle,
-							"CHandlingData",
-							"fWeaponDamageMult",
-							Cfg.weaponsDamageMultiplier / Cfg.damageFactorBody
-						)  // Set weaponsDamageMultiplier && compensate for damageFactorBody
-
-						//Get the CollisionDamageMultiplier
-						fCollisionDamageMult =
-								Client.getVehicleHandlingFloat(vehicle, "CHandlingData", "fCollisionDamageMult")
-						//Modify it by pulling all number a towards 1.0
-						// Pull the handling file value closer to 1
-						val newFCollisionDamageMultiplier = fCollisionDamageMult.pow(Cfg.collisionDamageExponent)
-						Client.setVehicleHandlingFloat(
-							vehicle,
-							"CHandlingData",
-							"fCollisionDamageMult",
-							newFCollisionDamageMultiplier
-						)
-
-						//Get the EngineDamageMultiplier
-						fEngineDamageMult =
-								Client.getVehicleHandlingFloat(vehicle, "CHandlingData", "fEngineDamageMult")
-						//Modify it by pulling all number a towards 1.0
-						// Pull the handling file value closer to 1
-						val newFEngineDamageMult = fEngineDamageMult.pow(Cfg.engineDamageExponent)
-						Client.setVehicleHandlingFloat(
-							vehicle,
-							"CHandlingData",
-							"fEngineDamageMult",
-							newFEngineDamageMult
-						)
-
-						// If body damage catastrophic, reset somewhat so we can get new damage to multiply
-						if (healthBodyCurrent < Cfg.cascadingFailureThreshold) {
-							healthBodyNew = Cfg.cascadingFailureThreshold
-						}
-						pedInSameVehicleLast = true
-					}
-
-					// set the actual new values
-					if (healthEngineNew != healthEngineCurrent) {
-						Client.setVehicleEngineHealth(vehicle, healthEngineNew)
-					}
-					if (healthBodyNew != healthBodyCurrent) Client.setVehicleBodyHealth(vehicle, healthBodyNew)
-					if (healthPetrolTankNew != healthPetrolTankCurrent) Client.setVehiclePetrolTankHealth(
-						vehicle,
-						healthPetrolTankNew
-					)
-
-					// Store current values, so we can calculate delta next time around
-					healthEngineLast = healthEngineNew
-					healthBodyLast = healthBodyNew
-					healthPetrolTankLast = healthPetrolTankNew
-					lastVehicle = vehicle
-					if (Cfg.randomTireBurstInterval != 0 && Client.getEntitySpeed(vehicle) > 10) tireBurstLottery()
-				} else {
-					return@launch
-				}
-			}
-		}
-	}
-
-	private fun stopThings() {
-		mainJob?.cancel()
-		val ped = Client.getPlayerPed()
-		if (pedInSameVehicleLast) {
-			// We just got out of the vehicle
-			lastVehicle = Client.getVehiclePedIsIn(ped, true)
-			if (Cfg.deformationMultiplier != -1) Client.setVehicleHandlingFloat(
-				lastVehicle,
-				"CHandlingData",
-				"fDeformationDamageMult",
-				fDeformationDamageMult
-			)  // Restore deformation multiplier
-			Client.setVehicleHandlingFloat(
-				lastVehicle,
-				"CHandlingData",
-				"fBrakeForce",
-				fBrakeForce
-			)  // Restore Brake Force multiplier
-			if (Cfg.weaponsDamageMultiplier != -1.0) Client.setVehicleHandlingFloat(
-				lastVehicle,
-				"CHandlingData",
-				"fWeaponDamageMult",
-				Cfg.weaponsDamageMultiplier
-			)    // Since we are out of the vehicle, we should no longer compensate for bodyDamageFactor
-			Client.setVehicleHandlingFloat(
-				lastVehicle,
-				"CHandlingData",
-				"fCollisionDamageMult",
-				fCollisionDamageMult
-			) // Restore the original CollisionDamageMultiplier
-			Client.setVehicleHandlingFloat(
-				lastVehicle,
-				"CHandlingData",
-				"fEngineDamageMult",
-				fEngineDamageMult
-			) // Restore the original EngineDamageMultiplier
-		}
-		pedInSameVehicleLast = false
-	}
-
-	private fun someFunc() {
-		if (Cfg.torqueMultiplierEnabled || Cfg.preventVehicleFlip || Cfg.limpMode) {
-
-			tickExecutorModule.add {
-				if (Cfg.torqueMultiplierEnabled || Cfg.sundayDriver || Cfg.limpMode) {
-					if (pedInSameVehicleLast) {
-						var factor = 1.0
-						if (Cfg.torqueMultiplierEnabled && healthEngineNew < 900) {
-							factor = (healthEngineNew + 200.0) / 1100
-						}
-						if (Cfg.sundayDriver && Client.getVehicleClass(vehicle) != 14) { // Not for boats
-							val accelerator = Client.getControlValue(2, 71)
-							val brake = Client.getControlValue(2, 72)
-							val speed = Client.getEntitySpeedVector(vehicle, true).y
-							// Change Braking force
-							var brk = fBrakeForce
-							if (speed >= 1.0) {
-								// Going forward
-								if (accelerator > 127) {
-									// Forward && accelerating
-									val acc = fscale(
-										accelerator.toDouble(),
-										127.0,
-										254.0,
-										0.1,
-										1.0,
-										10.0 - (Cfg.sundayDriverAcceleratorCurve * 2.0)
-									)
-									factor *= acc
-								}
-								if (brake > 127) {
-									// Forward && braking
-									isBrakingForward = true
-									brk = fscale(
-										brake.toDouble(),
-										127.0,
-										254.0,
-										0.01,
-										fBrakeForce,
-										10.0 - (Cfg.sundayDriverBrakeCurve * 2.0)
-									)
-								}
-							} else if (speed <= -1.0) {
-								// Going reverse
-								if (brake > 127) {
-									// Reversing && accelerating (using the brake)
-									val rev = fscale(
-										brake.toDouble(),
-										127.0,
-										254.0,
-										0.1,
-										1.0,
-										10.0 - (Cfg.sundayDriverAcceleratorCurve * 2.0)
-									)
-									factor *= rev
-								}
-								if (accelerator > 127) {
-									// Reversing && braking (Using the accelerator)
-									isBrakingReverse = true
-									brk = fscale(
-										accelerator.toDouble(),
-										127.0,
-										254.0,
-										0.01,
-										fBrakeForce,
-										10.0 - (Cfg.sundayDriverBrakeCurve * 2.0)
-									)
-								}
-							} else {
-								// Stopped or almost stopped or sliding sideways
-								val entitySpeed = Client.getEntitySpeed(vehicle)
-								if (entitySpeed < 1) {
-									// Not sliding sideways
-									if (isBrakingForward) {
-										//Stopped or going slightly forward while braking
-										Client.disableControlAction(
-											2,
-											72,
-											true
-										) // Disable Brake until user lets go of brake
-										Client.setVehicleForwardSpeed(vehicle, speed * 0.98)
-										Client.setVehicleBrakeLights(vehicle, true)
-									}
-									if (isBrakingReverse) {
-										//Stopped or going slightly in reverse while braking
-										Client.disableControlAction(
-											2,
-											71,
-											true
-										) // Disable reverse Brake until user lets go of reverse brake (Accelerator)
-										Client.setVehicleForwardSpeed(vehicle, speed * 0.98)
-										Client.setVehicleBrakeLights(vehicle, true)
-									}
-									if (isBrakingForward && Client.getDisabledControlNormal(2, 72) == 0) {
-										// We let go of the brake
-										isBrakingForward = false
-									}
-									if (isBrakingReverse && Client.getDisabledControlNormal(2, 71) == 0) {
-										// We let go of the reverse brake (Accelerator)
-										isBrakingReverse = false
-									}
-								}
+						// Stopped or almost stopped or sliding sideways
+						val entitySpeed = Client.getEntitySpeed(vehicle.entity)
+						if (entitySpeed < 1) {
+							// Not sliding sideways
+							if (isBrakingForward) {
+								//Stopped or going slightly forward while braking
+								NativeControls.Keys.VEH_BRAKE.disableControlAction() // Disable Brake until user lets go of brake
+								vehicle.setForwardSpeed(speed * 0.98)
+								vehicle.setBrakeLights(true)
 							}
-							if (brk > fBrakeForce - 0.02) brk = fBrakeForce // Make sure we can brake max.
-							Client.setVehicleHandlingFloat(
-								vehicle,
-								"CHandlingData",
-								"fBrakeForce",
-								brk
-							)  // Set new Brake Force multiplier
+							if (isBrakingReverse) {
+								//Stopped or going slightly in reverse while braking
+								NativeControls.Keys.VEH_ACCELERATE.disableControlAction() // Disable reverse Brake until user lets go of reverse brake (Accelerator)
+								vehicle.setForwardSpeed(speed * 0.98)
+								vehicle.setBrakeLights(true)
+							}
+							if (isBrakingForward && NativeControls.Keys.VEH_BRAKE.getDisabledControlNormal() == 0) {
+								// We let go of the brake
+								isBrakingForward = false
+							}
+							if (isBrakingReverse && NativeControls.Keys.VEH_ACCELERATE.getDisabledControlNormal() == 0) {
+								// We let go of the reverse brake (Accelerator)
+								isBrakingReverse = false
+							}
 						}
-						if (Cfg.limpMode && healthEngineNew < Cfg.engineSafeGuard + 5) {
-							factor = Cfg.limpModeMultiplier
-						}
-						Client.setVehicleEngineTorqueMultiplier(vehicle, factor)
 					}
+					if (brk > fBrakeForce - 0.02) {
+						brk = fBrakeForce
+					} // Make sure we can brake max.
+
+					vehicle.handling.brakeForce = brk// Set new Brake Force multiplier
 				}
-				if (Cfg.preventVehicleFlip) {
-					val roll = Client.getEntityRoll(vehicle)
-					if ((roll > 75.0 || roll < -75.0) && Client.getEntitySpeed(vehicle) < 2) {
-						Client.disableControlAction(2, 59, true) // Disable left/right
-						Client.disableControlAction(2, 60, true) // Disable up/down
-					}
+				if (Cfg.limpMode && healthEngineNew < Cfg.engineSafeGuard + 5) {
+					factor = Cfg.limpModeMultiplier
+				}
+
+				vehicle.setEngineTorqueMultiplier(factor)
+			}
+			if (Cfg.preventVehicleFlip) {
+				val roll = Client.getEntityRoll(vehicle.entity)
+				if ((roll > 75.0 || roll < -75.0) && Client.getEntitySpeed(vehicle.entity) < 2) {
+					NativeControls.Keys.VEH_MOVE_LR.disableControlAction()// Disable left/right
+					NativeControls.Keys.VEH_MOVE_UD.disableControlAction()// Disable up/down
 				}
 			}
 		}
 	}
 
-	private fun isPedDrivingAVehicle(): Boolean {
-		val ped = Client.getPlayerPed()
-		vehicle = Client.getVehiclePedIsIn(ped, false)
-		if (Client.isPedInAnyVehicle(ped, false)) {
-			// Check if ped is in driver seat
-			if (Client.getPedInVehicleSeat(vehicle, -1) == ped) {
-				val `class` = Client.getVehicleClass(vehicle)
-				// We don"t want planes, helicopters, bicycles && trains
-				if (`class` != 15 && `class` != 16 && `class` != 21 && `class` != 13) {
-					return true
-				}
-			}
+	private fun isVehicleCanHandled(`class`: Int): Boolean {
+		// We don"t want planes, helicopters, bicycles && trains
+		if (`class` != 15 && `class` != 16 && `class` != 21 && `class` != 13) {
+			return true
 		}
+
 		return false
 	}
 
@@ -491,12 +432,12 @@ class RealisticFailureModule(
 	}
 
 
-	private fun tireBurstLottery() {
+	private fun tireBurstLottery(vehicle: Vehicle) {
 		val tireBurstNumber = Random.nextInt(tireBurstMaxNumber)
 		if (tireBurstNumber == tireBurstLuckyNumber) {
 			// We won the lottery, lets burst a tire.
-			if (Client.getVehicleTyresCanBurst(vehicle)) return
-			val numWheels = Client.getVehicleNumberOfWheels(vehicle)
+			if (vehicle.tyresCanBurst) return
+			val numWheels = vehicle.numberOfWheels
 			var affectedTire: Int
 			if (numWheels == 2)
 				affectedTire = (Random.nextInt(2) - 1) * 4  // wheel 0 or 4
@@ -508,7 +449,7 @@ class RealisticFailureModule(
 			else
 				affectedTire = 0
 
-			Client.setVehicleTyreBurst(vehicle, affectedTire, false, 1000.0)
+			vehicle.wheels[affectedTire].burst(false, 1000.0)
 			// Select a new number to hit, just in case some numbers occur more often than others
 			tireBurstLuckyNumber = Random.nextInt(tireBurstMaxNumber)
 
@@ -517,11 +458,6 @@ class RealisticFailureModule(
 
 	companion object {
 		private object Cfg {
-			// How much should the vehicle visually deform from a collision. Range 0.0 to 10.0 Where 0.0 is no deformation and 10.0 is 10x deformation. -1 = Don't touch. Visual damage does not sync well to other players.
-			const val deformationMultiplier = -1
-
-			// How much should the handling file deformation setting be compressed toward 1.0. (Make cars more similar). A value of 1=no change. Lower values will compress more, values above 1 it will expand. Dont set to zero or negative.
-			const val deformationExponent = 0.4
 
 			// How much should the handling file deformation setting be compressed toward 1.0. (Make cars more similar). A value of 1=no change. Lower values will compress more, values above 1 it will expand. Dont set to zero or negative.
 			const val collisionDamageExponent = 0.6

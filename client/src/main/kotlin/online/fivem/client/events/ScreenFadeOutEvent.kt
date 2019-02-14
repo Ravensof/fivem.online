@@ -1,3 +1,3 @@
-package online.fivem.common.events.local
+package online.fivem.client.events
 
 class ScreenFadeOutEvent(val isFadeOut: Boolean)

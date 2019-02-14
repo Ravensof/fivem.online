@@ -3,12 +3,12 @@ package online.fivem.client.modules.basics
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import online.fivem.client.events.PauseMenuStateChangedEvent
 import online.fivem.client.extensions.addText
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Stack
 import online.fivem.common.common.UEvent
-import online.fivem.common.events.local.PauseMenuStateChangedEvent
 import online.fivem.common.gtav.NativeTextEntries
 import kotlin.coroutines.CoroutineContext
 

@@ -26,13 +26,6 @@ fun Client.createVehicle(
 	thisScriptCheck
 )
 
-fun Client.getPassengerSeatOfPedInVehicle(): Int? {
-	val ped = Client.getPlayerPed()
-	val vehicle = Client.getVehiclePedIsUsing(ped) ?: return null
-
-	return Client.getPassengerSeatOfPedInVehicle(vehicle, ped)
-}
-
 fun Client.networkResurrectLocalPlayer(coordinatesX: CoordinatesX, changeTime: Boolean = true) =
 	Client.networkResurrectLocalPlayer(
 		coordinatesX.x,
@@ -125,7 +118,7 @@ fun Client.setVehicleTyreSmokeColor(vehicle: Entity, color: RGB) {
  * 1 позади водителя
  * 2 ...
  */
-fun Client.getPassengerSeatOfPedInVehicle(vehicle: Entity, ped: Entity): Int? {
+fun Client.getSeatOfPedInVehicle(vehicle: Entity, ped: Entity): Int? {
 	for (i in -1 until Client.getVehicleMaxNumberOfPassengers(vehicle)) {
 		if (getPedInVehicleSeat(vehicle, i) == ped) {
 			return i

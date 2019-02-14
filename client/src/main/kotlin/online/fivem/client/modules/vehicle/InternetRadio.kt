@@ -1,6 +1,8 @@
 package online.fivem.client.modules.vehicle
 
 import kotlinx.coroutines.Job
+import online.fivem.client.events.PlayerRadioStationChangedEvent
+import online.fivem.client.events.ProfileSettingUpdatedEvent
 import online.fivem.client.extensions.start
 import online.fivem.client.extensions.stop
 import online.fivem.client.gtav.Client
@@ -12,8 +14,6 @@ import online.fivem.common.entities.InternetRadioStation
 import online.fivem.common.events.InternetRadioChangedEvent
 import online.fivem.common.events.InternetRadioStopEvent
 import online.fivem.common.events.InternetRadioVolumeChangeEvent
-import online.fivem.common.events.local.PlayerRadioStationChangedEvent
-import online.fivem.common.events.local.ProfileSettingUpdatedEvent
 import online.fivem.common.extensions.onNull
 import online.fivem.common.extensions.orZero
 import online.fivem.common.gtav.NativeAudioScenes

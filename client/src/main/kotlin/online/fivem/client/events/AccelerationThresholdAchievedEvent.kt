@@ -1,4 +1,4 @@
-package online.fivem.common.events.local
+package online.fivem.client.events
 
 class AccelerationThresholdAchievedEvent(
 	val acceleration: Double,

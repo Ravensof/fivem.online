@@ -1,6 +1,8 @@
 package online.fivem.client.modules.basics
 
 import kotlinx.coroutines.*
+import online.fivem.client.events.PlayersPedTeleportedEvent
+import online.fivem.client.events.PlayersPedTeleportingEvent
 import online.fivem.client.extensions.start
 import online.fivem.client.extensions.stop
 import online.fivem.client.gtav.Client
@@ -11,8 +13,6 @@ import online.fivem.common.common.Handle
 import online.fivem.common.common.Stack
 import online.fivem.common.common.UEvent
 import online.fivem.common.entities.CoordinatesX
-import online.fivem.common.events.local.PlayersPedTeleportedEvent
-import online.fivem.common.events.local.PlayersPedTeleportingEvent
 import online.fivem.common.events.nui.BlackOutEvent
 import online.fivem.common.events.nui.CancelBlackOutEvent
 import online.fivem.common.events.nui.ShowGuiEvent

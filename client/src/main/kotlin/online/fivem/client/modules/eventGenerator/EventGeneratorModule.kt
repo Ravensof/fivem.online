@@ -3,13 +3,16 @@ package online.fivem.client.modules.eventGenerator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import online.fivem.client.extensions.getPassengerSeatOfPedInVehicle
-import online.fivem.client.extensions.isPedAtGetInAnyVehicle
+import online.fivem.client.entities.Ped
+import online.fivem.client.entities.Vehicle
+import online.fivem.client.events.*
+import online.fivem.client.extensions.getSeatOfPedInVehicle
 import online.fivem.client.gtav.Client
 import online.fivem.common.common.AbstractModule
+import online.fivem.common.common.Entity
 import online.fivem.common.common.UEvent
 import online.fivem.common.entities.CoordinatesX
-import online.fivem.common.events.local.*
+import online.fivem.common.extensions.onNull
 import online.fivem.common.extensions.orZero
 import online.fivem.common.extensions.repeatJob
 import online.fivem.common.gtav.ProfileSetting
@@ -39,25 +42,26 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 	override fun onStart(): Job? {
 
 		repeatJob(50) {
-			if (playerPed == 0) return@repeatJob
-			checkVehicleHealth()
-			checkAcceleration()
+			val playerPed = playerPed ?: return@repeatJob
+
+			checkVehicleHealth(playerPed)
+			checkAcceleration(playerPed)
 		}
 
 		repeatJob(500) {
-			if (playerPed == 0) return@repeatJob
-			checkPlayerSeatIndex(Client.getPassengerSeatOfPedInVehicle())
 			checkPauseMenuState(Client.getPauseMenuState())
-			checkIsPlayerInVehicle()
+
+			val playerPed = playerPed ?: return@repeatJob
+
+			checkIsPlayerInVehicle(playerPed)
 			checkPlayerTryingToGetAnyVehicle()
 			checkRadio()
 		}
 
 		repeatJob(1_000) {
-			checkPlayersPed(Client.getPlayerPed())
-			if (playerPed == 0) return@repeatJob
+			val playerPed = checkPlayersPed(Client.getPlayerPed()) ?: return@repeatJob
 
-			checkCoordinates()
+			checkCoordinates(playerPed)
 			checkAudioMusicLevelInMP(Client.getProfileSetting(ProfileSetting.AUDIO_MUSIC_LEVEL_IN_MP).orZero())
 			checkIsScreenFadedInOut(Client.isScreenFadedOut())
 		}
@@ -72,24 +76,23 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 	}
 
 	private fun checkPlayerTryingToGetAnyVehicle() {
-		val isPedAtGetInAnyVehicleRightNow = Client.isPedAtGetInAnyVehicle(playerPed)
+		val isPedAtGetInAnyVehicleRightNow = playerPed?.isAtGetInAVehicle == true
 
 		if (isPedAtGetInAnyVehicleRightNow != isPedAtGetInAnyVehicle) {
-			if (isPedAtGetInAnyVehicleRightNow) {
-				val vehicle = Client.getVehiclePedIsUsing(playerPed) ?: return
+			playerPed?.getVehicleIsUsing()?.let { vehicle ->
 				UEvent.emit(PlayerTryingToGetVehicle(vehicle))
-			} else {
+			}.onNull {
 				UEvent.emit(PlayerCancelsTryingToGetVehicle())
 			}
 			isPedAtGetInAnyVehicle = isPedAtGetInAnyVehicleRightNow
 		}
 	}
 
-	private fun checkCoordinates() {
-		val currentCoordinates = Client.getEntityCoords(playerPed) ?: return
+	private fun checkCoordinates(playerPed: Ped) {
+		val currentCoordinates = Client.getEntityCoords(playerPed.entity) ?: return
 
 		if (playerCoordinates != currentCoordinates) {
-			val rotation = Client.getEntityHeading(playerPed)
+			val rotation = playerPed.heading
 			val coordinates = CoordinatesX(currentCoordinates, rotation)
 
 			playerCoordinates = coordinates
@@ -103,11 +106,11 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 		}
 	}
 
-	private fun checkAcceleration() {
+	private fun checkAcceleration(playerPed: Ped) {
 		playerCoordinates?.let {
 			val dateNow = Date.now() / 1_000
 			val dt = dateNow - iLastSpeedCheck
-			val iSpeed = Client.getEntitySpeed(playerPed)
+			val iSpeed = Client.getEntitySpeed(playerPed.entity)
 
 			iLastSpeedCheck = dateNow
 
@@ -115,7 +118,7 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 			playerSpeed = iSpeed
 
 			if (playerAcceleration.absoluteValue >= accelerationThreshold) {
-				if (!Client.isPedAtGetInAnyVehicle(playerPed)) {
+				if (!playerPed.isAtGetInAVehicle) {
 					UEvent.emit(
 						AccelerationThresholdAchievedEvent(
 							playerAcceleration,
@@ -135,18 +138,23 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 		}
 	}
 
-	private fun checkPlayersPed(ped: Int) {
-		if (playerPed != ped) {
-			playerPed = ped
+	private fun checkPlayersPed(ped: Entity): Ped? {
+		if (playerPed?.entity != ped) {
+			val newPed = Ped.newInstance(ped)
 
-			UEvent.emit(PlayersPedChangedEvent(ped))
+			playerPed = newPed
+
+			UEvent.emit(PlayersPedChangedEvent(newPed))
+
+			return newPed
 		}
+
+		return null
 	}
 
-	private fun checkVehicleHealth() {
-		if (playerPed == 0) return
+	private fun checkVehicleHealth(playerPed: Ped) {
 
-		val currentPedHealth = Client.getEntityHealth(playerPed)
+		val currentPedHealth = playerPed.health
 		val pedHealthDiff = currentPedHealth - playerPedHealth
 		playerPedHealth = currentPedHealth
 
@@ -171,9 +179,9 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 
 		val vehicle = playersVehicle ?: return
 
-		val bodyHealth = Client.getVehicleBodyHealth(vehicle)
-		val engineHealth = Client.getVehicleEngineHealth(vehicle)
-		val petrolTankHealth = Client.getVehiclePetrolTankHealth(vehicle)
+		val bodyHealth = vehicle.bodyHealth
+		val engineHealth = vehicle.engineHealth
+		val petrolTankHealth = vehicle.petrolTankHealth
 
 		if (bodyHealth == vehicleBodyHealth && engineHealth == vehicleEngineHealth && petrolTankHealth == vehiclePetrolTankHealth) return
 
@@ -245,12 +253,11 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 		}
 
 		playerSeatIndex = seatIndex
-
 	}
 
 	private fun checkRadio() {
 		val currentRadio =
-			if (playersVehicle?.let { Client.getIsVehicleEngineRunning(it) } == true) Client.getRadioStation() else null
+			if (playersVehicle?.isEngineRunning == true) Client.getRadioStation() else null
 
 		if (currentRadio != playerRadioStationName) {
 			UEvent.emit(PlayerRadioStationChangedEvent(currentRadio))
@@ -265,23 +272,30 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 		}
 	}
 
-	private fun checkIsPlayerInVehicle() {
-		val currentVehicle = if (Client.isPedInAnyVehicle(playerPed)) Client.getVehiclePedIsUsing(playerPed) else null
+	private fun checkIsPlayerInVehicle(playerPed: Ped) {
+		val currentVehicle = playerPed.getVehicleIsIn()?.let { Vehicle.newInstance(it) }
 		val previousVehicle = playersVehicle
+
 		if (currentVehicle == previousVehicle) return
 
+		val playerSeatIndex = currentVehicle?.let { Client.getSeatOfPedInVehicle(it.entity, playerPed.entity) }
+		checkPlayerSeatIndex(playerSeatIndex)
+
 		when {
-			previousVehicle != null && currentVehicle != null -> {
-				UEvent.emit(PlayerLeftOrJoinVehicleEvent.Changed(currentVehicle, previousVehicle))
-			}
+			previousVehicle != null && currentVehicle != null -> UEvent.emit(
+				PlayerLeftOrJoinVehicleEvent.Changed(currentVehicle, previousVehicle)
+			)
 
-			previousVehicle != null && currentVehicle == null -> {
-				UEvent.emit(PlayerLeftOrJoinVehicleEvent.Left(previousVehicle))
-			}
+			previousVehicle != null && currentVehicle == null -> UEvent.emit(
+				PlayerLeftOrJoinVehicleEvent.Left(previousVehicle)
+			)
 
-			previousVehicle == null && currentVehicle != null -> {
-				UEvent.emit(PlayerLeftOrJoinVehicleEvent.Join(currentVehicle))
-			}
+			previousVehicle == null && currentVehicle != null -> UEvent.emit(
+				if (playerSeatIndex == -1)
+					PlayerLeftOrJoinVehicleEvent.Join.Driver(currentVehicle)
+				else
+					PlayerLeftOrJoinVehicleEvent.Join.Passenger(currentVehicle)
+			)
 		}
 
 		playersVehicle = currentVehicle
@@ -291,11 +305,11 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 
 		val playerId get() = Client.getPlayerId()
 
-		var playerPed = 0
+		var playerPed: Ped? = null
 			private set
 		var playerPedHealth: Int = 0
 			private set
-		var playersVehicle: Int? = null
+		var playersVehicle: Vehicle? = null
 			private set
 
 		var vehicleBodyHealth: Int? = null

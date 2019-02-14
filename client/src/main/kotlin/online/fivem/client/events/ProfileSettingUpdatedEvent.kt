@@ -1,4 +1,4 @@
-package online.fivem.common.events.local
+package online.fivem.client.events
 
 import online.fivem.common.gtav.ProfileSetting
 

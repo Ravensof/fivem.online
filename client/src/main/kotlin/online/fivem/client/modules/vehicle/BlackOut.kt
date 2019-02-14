@@ -4,6 +4,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import online.fivem.client.events.AccelerationThresholdAchievedEvent
+import online.fivem.client.events.PlayersPedHealthChangedEvent
+import online.fivem.client.events.PlayersPedTeleportedEvent
+import online.fivem.client.events.PlayersPedTeleportingEvent
 import online.fivem.client.extensions.play
 import online.fivem.client.extensions.prefetch
 import online.fivem.client.gtav.Client
@@ -16,10 +20,6 @@ import online.fivem.common.Sounds
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
 import online.fivem.common.common.UEvent
-import online.fivem.common.events.local.AccelerationThresholdAchievedEvent
-import online.fivem.common.events.local.PlayersPedHealthChangedEvent
-import online.fivem.common.events.local.PlayersPedTeleportedEvent
-import online.fivem.common.events.local.PlayersPedTeleportingEvent
 import kotlin.coroutines.CoroutineContext
 
 class BlackOut(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {

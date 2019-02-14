@@ -3,6 +3,7 @@ package online.fivem.client.modules.basics
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import online.fivem.client.events.PlayerSpawnedEvent
 import online.fivem.client.extensions.networkResurrectLocalPlayer
 import online.fivem.client.extensions.setPlayerModelSync
 import online.fivem.client.gtav.Client
@@ -10,7 +11,6 @@ import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Stack
 import online.fivem.common.common.UEvent
 import online.fivem.common.entities.CoordinatesX
-import online.fivem.common.events.local.PlayerSpawnedEvent
 import online.fivem.common.events.net.SpawnVehicleEvent
 import kotlin.coroutines.CoroutineContext
 
