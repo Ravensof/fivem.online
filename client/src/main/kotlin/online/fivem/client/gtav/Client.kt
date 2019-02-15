@@ -5,7 +5,7 @@ package online.fivem.client.gtav
 import kotlinx.coroutines.*
 import online.fivem.client.extensions.invokeNative
 import online.fivem.common.GlobalConfig
-import online.fivem.common.common.Entity
+import online.fivem.common.common.EntityId
 import online.fivem.common.common.Handle
 import online.fivem.common.entities.Coordinates
 import online.fivem.common.entities.RGB
@@ -18,7 +18,20 @@ import kotlin.coroutines.CoroutineContext
 object Client : CoroutineScope {
 	override val coroutineContext: CoroutineContext = Job()
 
-	fun setVehicleExclusiveDriver_2(vehicle: Entity, ped: Entity, p2: Number = 0) {
+	/**
+	 * Set modKit to 0 if you plan to call SET_VEHICLE_MOD. That's what the game does. Most body modifications through SET_VEHICLE_MOD will not take effect until this is set to 0.
+	 * ---------
+	 * Setting the modKit to 0 also seems to load some livery related vehicle information. For example, using GET_LIVERY_NAME() will return NULL if you haven't set the modKit to 0 in advance. As soon as you set it to 0, GET_LIVERY_NAME() will work properly.
+	 */
+	fun setVehicleModKit(vehicle: EntityId, modKit: Int) {
+		SetVehicleModKit(vehicle, modKit)
+	}
+
+	fun getVehicleModKit(vehicle: EntityId): Int {
+		return GetVehicleModKit(vehicle)
+	}
+
+	fun setVehicleExclusiveDriver_2(vehicle: EntityId, ped: EntityId, p2: Number = 0) {
 		SetVehicleExclusiveDriver_2(vehicle, ped, p2)
 	}
 
@@ -32,7 +45,7 @@ object Client : CoroutineScope {
 	 * Left Rear = 1
 	 * RightRear = 2
 	 */
-	fun setPedIntoVehicle(ped: Entity, vehicle: Entity, seatIndex: Int) {
+	fun setPedIntoVehicle(ped: EntityId, vehicle: EntityId, seatIndex: Int) {
 		SetPedIntoVehicle(ped, vehicle, seatIndex)
 	}
 
@@ -41,7 +54,7 @@ object Client : CoroutineScope {
 	 * AI::GET_IS_TASK_ACTIVE(PLAYER::PLAYER_PED_ID(), 2))
 	 * Known Tasks: pastebin.com/2gFqJ3Px
 	 */
-	fun getIsTaskActive(ped: Entity, taskNumber: Int): Boolean {
+	fun getIsTaskActive(ped: EntityId, taskNumber: Int): Boolean {
 		return GetIsTaskActive(ped, taskNumber) == 1
 	}
 
@@ -94,7 +107,7 @@ object Client : CoroutineScope {
 	 * Note: A list of Name and Parameters can be found here pastebin.com/1GZS5dCL
 	 * Full list of speeches and voices names by some spanish shitbag: gist.github.com/alexguirre/0af600eb3d4c91ad4f900120a63b8992
 	 */
-	fun playAmbientSpeech1(ped: Entity, speechName: String, speechParam: String) {
+	fun playAmbientSpeech1(ped: EntityId, speechName: String, speechParam: String) {
 		PlayAmbientSpeech1(ped, speechName, speechParam)
 	}
 
@@ -145,7 +158,7 @@ object Client : CoroutineScope {
 	 * if p2 is set to true, the both entities won't collide with the other until the distance between them is above 4 meters.
 	 */
 	//DetachEntity(PlayerPedId(), true, false)
-	fun detachEntity(entity: Entity, p1: Boolean, collision: Boolean) {
+	fun detachEntity(entity: EntityId, p1: Boolean, collision: Boolean) {
 		DetachEntity(entity, p1, collision)
 	}
 
@@ -160,8 +173,8 @@ object Client : CoroutineScope {
 	 */
 	//AttachEntityToEntity(PlayerPedId(), GetPlayerPed(GetPlayerFromServerId(draggedBy)), 4103, 11816, 0.48, 0.00, 0.0, 0.0, 0.0, 0.0, false, false, false, false, 2, true)
 	fun attachEntityToEntity(
-		entity1: Entity,
-		entity2: Entity,
+		entity1: EntityId,
+		entity2: EntityId,
 		boneIndex: Number,
 		xPos: Number,
 		yPos: Number,
@@ -195,7 +208,7 @@ object Client : CoroutineScope {
 		)
 	}
 
-	fun networkSetInSpectatorMode(toggle: Boolean, playerPed: Entity) {
+	fun networkSetInSpectatorMode(toggle: Boolean, playerPed: EntityId) {
 		NetworkSetInSpectatorMode(toggle, playerPed)
 	}
 
@@ -226,7 +239,7 @@ object Client : CoroutineScope {
 	 * 126 - in am_hunt_the_beast
 	 * 256 &amp; 287 - in fm_mission_controller
 	 */
-	fun hasEntityClearLosToEntity(entity1: Entity, entity2: Entity, traceType: Int = 17): Boolean {
+	fun hasEntityClearLosToEntity(entity1: EntityId, entity2: EntityId, traceType: Int = 17): Boolean {
 		return HasEntityClearLosToEntity(entity1, entity2, traceType) == 1
 	}
 
@@ -411,7 +424,7 @@ object Client : CoroutineScope {
 	 * Has the entity1 got a clear line of sight to the other entity2 from the direction entity1 is facing.
 	 * This is one of the most CPU demanding BOOL natives in the game; avoid calling this in things like nested for-loops
 	 */
-	fun hasEntityClearLosToEntityInFront(entity1: Entity, entity2: Entity): Boolean {
+	fun hasEntityClearLosToEntityInFront(entity1: EntityId, entity2: EntityId): Boolean {
 		return HasEntityClearLosToEntityInFront(entity1, entity2) == 1
 	}
 
@@ -468,14 +481,14 @@ object Client : CoroutineScope {
 		return GetPlayerWantedLevel(player).toInt()
 	}
 
-	fun canPedHearPlayer(player: Int, ped: Entity): Boolean {
+	fun canPedHearPlayer(player: Int, ped: EntityId): Boolean {
 		return CanPedHearPlayer(player, ped) == 1
 	}
 
 	/**
 	 * Returns true if ped1 can see ped2 in their line of vision
 	 */
-	fun canPedSeePed(ped1: Entity, ped2: Entity): Boolean {
+	fun canPedSeePed(ped1: EntityId, ped2: EntityId): Boolean {
 		return CanPedSeePed(ped1, ped2) == 1
 	}
 
@@ -568,11 +581,11 @@ object Client : CoroutineScope {
 	 * Note:
 	 * setting r,g,b to 0 will give the car independance day tyre smoke
 	 */
-	fun setVehicleTyreSmokeColor(vehicle: Entity, r: Int, g: Int, b: Int) {
+	fun setVehicleTyreSmokeColor(vehicle: EntityId, r: Int, g: Int, b: Int) {
 		SetVehicleTyreSmokeColor(vehicle, r, g, b)
 	}
 
-	fun getVehicleTyreSmokeColor(vehicle: Entity): RGB {
+	fun getVehicleTyreSmokeColor(vehicle: EntityId): RGB {
 		val color = GetVehicleTyreSmokeColor(vehicle)
 		return RGB(color[0], color[1], color[2])
 	}
@@ -581,7 +594,7 @@ object Client : CoroutineScope {
 	 * Sets the color of the neon lights of the specified vehicle.
 	 * More info: pastebin.com/G49gqy8b
 	 */
-	fun setVehicleNeonLightsColour(vehicle: Entity, r: Int, g: Int, b: Int) {
+	fun setVehicleNeonLightsColour(vehicle: EntityId, r: Int, g: Int, b: Int) {
 		SetVehicleNeonLightsColour(vehicle, r, g, b)
 	}
 
@@ -589,7 +602,7 @@ object Client : CoroutineScope {
 	 * Gets the color of the neon lights of the specified vehicle.
 	 * See _SET_VEHICLE_NEON_LIGHTS_COLOUR (0x8E0A582209A62695) for more information
 	 */
-	fun getVehicleNeonLightsColour(vehicle: Entity): RGB {
+	fun getVehicleNeonLightsColour(vehicle: EntityId): RGB {
 		val color = GetVehicleNeonLightsColour(vehicle)
 		return RGB(color[0], color[1], color[2])
 	}
@@ -602,7 +615,7 @@ object Client : CoroutineScope {
 	 * 2 = Front
 	 * 3 = Back
 	 */
-	fun setVehicleNeonLightEnabled(vehicle: Entity, index: Int, toggle: Boolean) {
+	fun setVehicleNeonLightEnabled(vehicle: EntityId, index: Int, toggle: Boolean) {
 		SetVehicleNeonLightEnabled(vehicle, index, toggle)
 	}
 
@@ -613,7 +626,7 @@ object Client : CoroutineScope {
 	 * 2 = Front
 	 * 3 = Back
 	 */
-	fun isVehicleNeonLightEnabled(vehicle: Entity, index: Int): Boolean {
+	fun isVehicleNeonLightEnabled(vehicle: EntityId, index: Int): Boolean {
 		return IsVehicleNeonLightEnabled(vehicle, index) == 1
 	}
 
@@ -629,11 +642,11 @@ object Client : CoroutineScope {
 	 * WINDOWTINT_GREEN
 	 * };
 	 */
-	fun setVehicleWindowTint(vehicle: Entity, tint: Int) {
+	fun setVehicleWindowTint(vehicle: EntityId, tint: Int) {
 		SetVehicleWindowTint(vehicle, tint)
 	}
 
-	fun getVehicleWindowTint(vehicle: Entity): Int {
+	fun getVehicleWindowTint(vehicle: EntityId): Int {
 		return GetVehicleWindowTint(vehicle)
 	}
 
@@ -646,7 +659,7 @@ object Client : CoroutineScope {
 	 * Blue/White3
 	 * Yankton
 	 */
-	fun setVehicleNumberPlateTextIndex(vehicle: Entity, plateIndex: Int) {
+	fun setVehicleNumberPlateTextIndex(vehicle: EntityId, plateIndex: Int) {
 		SetVehicleNumberPlateTextIndex(vehicle, plateIndex)
 	}
 
@@ -659,18 +672,18 @@ object Client : CoroutineScope {
 	 * Yellow_on_Black = 1,
 	 * North_Yankton = 5,
 	 */
-	fun getVehicleNumberPlateTextIndex(elegy: Entity): Int {
+	fun getVehicleNumberPlateTextIndex(elegy: EntityId): Int {
 		return GetVehicleNumberPlateTextIndex(elegy)
 	}
 
 	/**
 	 * Note: Only seems to work on Emergency Vehicles
 	 */
-	fun setVehicleLivery(vehicle: Entity, liveryIndex: Int) {
+	fun setVehicleLivery(vehicle: EntityId, liveryIndex: Int) {
 		SetVehicleLivery(vehicle, liveryIndex)
 	}
 
-	fun getVehicleLivery(trailers2: Entity): Int? {
+	fun getVehicleLivery(trailers2: EntityId): Int? {
 		return GetVehicleLivery(trailers2).takeIf { it != -1 }
 	}
 
@@ -710,7 +723,7 @@ object Client : CoroutineScope {
 	 * Livery
 	 * ENUMS: pastebin.com/QzEAn02v
 	 */
-	fun setVehicleMod(vehicle: Entity, modType: Int, modIndex: Int, customTires: Boolean) {
+	fun setVehicleMod(vehicle: EntityId, modType: Int, modIndex: Int, customTires: Boolean) {
 		SetVehicleMod(vehicle, modType, modIndex, customTires)
 	}
 
@@ -718,7 +731,7 @@ object Client : CoroutineScope {
 	 * In b944, there are 50 (0 - 49) mod types.
 	 * Returns -1 if the vehicle mod is stock
 	 */
-	fun getVehicleMod(vehicle: Entity, modType: Int): Int? {
+	fun getVehicleMod(vehicle: EntityId, modType: Int): Int? {
 		return GetVehicleMod(vehicle, modType).takeIf { it != -1 }
 	}
 
@@ -726,15 +739,15 @@ object Client : CoroutineScope {
 	 * Returns the model hash from the entity
 	 * Sometimes throws an exception, idk what causes it though.
 	 */
-	fun getEntityModel(entity: Entity): Int {
+	fun getEntityModel(entity: EntityId): Int {
 		return GetEntityModel(entity)
 	}
 
-	fun setVehicleExtraColours(vehicle: Entity, pearlescentColor: Int, wheelColor: Int) {
+	fun setVehicleExtraColours(vehicle: EntityId, pearlescentColor: Int, wheelColor: Int) {
 		SetVehicleExtraColours(vehicle, pearlescentColor, wheelColor)
 	}
 
-	fun getVehicleExtraColours(vehicle: Entity): Pair<Int, Int> {
+	fun getVehicleExtraColours(vehicle: EntityId): Pair<Int, Int> {
 		val colors = GetVehicleExtraColours(vehicle)
 		return colors[0] to colors[1]
 	}
@@ -746,11 +759,11 @@ object Client : CoroutineScope {
 	 * Use this to get the number of color indices: pastebin.com/RQEeqTSM
 	 * Note: minimum color index is 0, maximum color index is (numColorIndices - 1)
 	 */
-	fun setVehicleColours(vehicle: Entity, colorPrimary: Int, colorSecondary: Int = colorPrimary) {
+	fun setVehicleColours(vehicle: EntityId, colorPrimary: Int, colorSecondary: Int = colorPrimary) {
 		SetVehicleColours(vehicle, colorPrimary, colorSecondary)
 	}
 
-	fun getVehicleColours(vehicle: Entity): Pair<Int, Int> {
+	fun getVehicleColours(vehicle: EntityId): Pair<Int, Int> {
 		val colors = GetVehicleColours(vehicle)
 		return colors[0] to colors[1]
 	}
@@ -775,7 +788,7 @@ object Client : CoroutineScope {
 	 * VEHICLE::_SET_VEHICLE_ENGINE_POWER_MULTIPLIER(myVehicle, 30.0)
 	 * will have this effect: DriveForce *= 1.3
 	 */
-	fun setVehicleEnginePowerMultiplier(vehicle: Entity, value: Double) {
+	fun setVehicleEnginePowerMultiplier(vehicle: EntityId, value: Double) {
 		SetVehicleEnginePowerMultiplier(vehicle, value)
 	}
 
@@ -789,7 +802,7 @@ object Client : CoroutineScope {
 	 * 6: Bike Wheels
 	 * 7: High End
 	 */
-	fun setVehicleWheelType(vehicle: Entity, wheelType: Int) {
+	fun setVehicleWheelType(vehicle: EntityId, wheelType: Int) {
 		SetVehicleWheelType(vehicle, wheelType)
 	}
 
@@ -806,7 +819,7 @@ object Client : CoroutineScope {
 	 * 7: High End
 	 * Tested in Los Santos Customs
 	 */
-	fun getVehicleWheelType(vehicle: Entity): Int {
+	fun getVehicleWheelType(vehicle: EntityId): Int {
 		return GetVehicleWheelType(vehicle)
 	}
 
@@ -815,11 +828,11 @@ object Client : CoroutineScope {
 	 * Return Native.Function.Call(Of Boolean)(Hash.IS_VEHICLE_ON_ALL_WHEELS, vh)
 	 * End Function
 	 */
-	fun isVehicleOnAllWheels(vehicle: Entity): Boolean {
+	fun isVehicleOnAllWheels(vehicle: EntityId): Boolean {
 		return IsVehicleOnAllWheels(vehicle) == 1
 	}
 
-	fun isVehiclePreviouslyOwnedByPlayer(vehicle: Entity): Boolean {
+	fun isVehiclePreviouslyOwnedByPlayer(vehicle: EntityId): Boolean {
 		return IsVehiclePreviouslyOwnedByPlayer(vehicle) == 1
 	}
 
@@ -827,14 +840,14 @@ object Client : CoroutineScope {
 	 * 1000 is max health
 	 * Begins leaking gas at around 650 health
 	 */
-	fun setVehiclePetrolTankHealth(vehicle: Entity, health: Double) {
+	fun setVehiclePetrolTankHealth(vehicle: EntityId, health: Double) {
 		SetVehiclePetrolTankHealth(vehicle, health)
 	}
 
 	/**
 	 * p2 often set to 1000.0 in the decompiled scripts.
 	 */
-	fun setVehicleBodyHealth(vehicle: Entity, value: Int) {
+	fun setVehicleBodyHealth(vehicle: EntityId, value: Int) {
 		SetVehicleBodyHealth(vehicle, value)
 	}
 
@@ -850,14 +863,14 @@ object Client : CoroutineScope {
 	 * 300: Engine is smoking and losing functionality
 	 * 1000: Engine is perfect
 	 */
-	fun setVehicleEngineHealth(vehicle: Entity, health: Double) {
+	fun setVehicleEngineHealth(vehicle: EntityId, health: Double) {
 		SetVehicleEngineHealth(vehicle, health)
 	}
 
 	/**
 	 * Player won't be able to drive the car or enter it, unless you task him to get into any other seat than the driver one.
 	 */
-	fun setVehicleUndriveable(vehicle: Entity, toggle: Boolean) {
+	fun setVehicleUndriveable(vehicle: EntityId, toggle: Boolean) {
 		SetVehicleUndriveable(vehicle, toggle)
 	}
 
@@ -865,7 +878,7 @@ object Client : CoroutineScope {
 	 * Displays the current ROLL axis of the entity [-180.0000/180.0000+]
 	 * (Sideways Roll) such as a vehicle tipped on its side
 	 */
-	fun getEntityRoll(entity: Entity): Double {
+	fun getEntityRoll(entity: EntityId): Double {
 		return GetEntityRoll(entity)
 	}
 
@@ -877,7 +890,7 @@ object Client : CoroutineScope {
 	 * value - is between 0.2 and 1.8 in the decompiled scripts.
 	 * This needs to be called every frame to take effect.
 	 */
-	fun setVehicleEngineTorqueMultiplier(vehicle: Entity, value: Double) {
+	fun setVehicleEngineTorqueMultiplier(vehicle: EntityId, value: Double) {
 		SetVehicleEngineTorqueMultiplier(vehicle, value)
 	}
 
@@ -889,7 +902,7 @@ object Client : CoroutineScope {
 	 * @param fieldName The field name to set. These match the keys in `handling.meta`.
 	 * @param value The floating-point value to set.
 	 */
-	fun setVehicleHandlingFloat(vehicle: Entity, _class: String, fieldName: String, value: Double) {
+	fun setVehicleHandlingFloat(vehicle: EntityId, _class: String, fieldName: String, value: Double) {
 		SetVehicleHandlingFloat(vehicle, _class, fieldName, value)
 	}
 
@@ -900,7 +913,7 @@ object Client : CoroutineScope {
 	 * @param fieldName The field name to set. These match the keys in `handling.meta`.
 	 * @param value The integer value to set.
 	 */
-	fun setVehicleHandlingInt(vehicle: Entity, _class: String, fieldName: String, value: Int) {
+	fun setVehicleHandlingInt(vehicle: EntityId, _class: String, fieldName: String, value: Int) {
 		SetVehicleHandlingInt(vehicle, _class, fieldName, value)
 	}
 
@@ -912,14 +925,14 @@ object Client : CoroutineScope {
 		return GetDisabledControlNormal(inputGroup, control)
 	}
 
-	fun setVehicleBrakeLights(vehicle: Entity, toggle: Boolean) {
+	fun setVehicleBrakeLights(vehicle: EntityId, toggle: Boolean) {
 		SetVehicleBrakeLights(vehicle, toggle)
 	}
 
 	/**
 	 * Relative can be used for getting speed relative to the frame of the vehicle, to determine for example, if you are going in reverse (-y speed) or not (+y speed).
 	 */
-	fun getEntitySpeedVector(entity: Entity, relative: Boolean): Coordinates {
+	fun getEntitySpeedVector(entity: EntityId, relative: Boolean): Coordinates {
 		GetEntitySpeedVector(entity, relative).let {
 			return Coordinates(it[0], it[1], it[2])
 		}
@@ -945,18 +958,18 @@ object Client : CoroutineScope {
 	 * '45 = 6 wheels trailer mid wheel left
 	 * '47 = 6 wheels trailer mid wheel right
 	 */
-	fun setVehicleTyreBurst(vehicle: Entity, index: Int, onRim: Boolean, p3: Number) {
+	fun setVehicleTyreBurst(vehicle: EntityId, index: Int, onRim: Boolean, p3: Number) {
 		SetVehicleTyreBurst(vehicle, index, onRim, p3)
 	}
 
 	/**
 	 * Allows you to toggle bulletproof tires.
 	 */
-	fun setVehicleTyresCanBurst(vehicle: Entity, toggle: Boolean) {
+	fun setVehicleTyresCanBurst(vehicle: EntityId, toggle: Boolean) {
 		SetVehicleTyresCanBurst(vehicle, toggle)
 	}
 
-	fun getVehicleTyresCanBurst(vehicle: Entity): Boolean {
+	fun getVehicleTyresCanBurst(vehicle: EntityId): Boolean {
 		return GetVehicleTyresCanBurst(vehicle) == 1
 	}
 
@@ -991,7 +1004,7 @@ object Client : CoroutineScope {
 		return DrawNotification(blink, showInBrief)
 	}
 
-	fun getVehicleClass(vehicle: Entity): Int {
+	fun getVehicleClass(vehicle: EntityId): Int {
 		return GetVehicleClass(vehicle)
 	}
 
@@ -1028,7 +1041,7 @@ object Client : CoroutineScope {
 		SetNotificationTextEntry(text)
 	}
 
-	fun isToggleModOn(vehicle: Entity, modType: Int): Boolean {
+	fun isToggleModOn(vehicle: EntityId, modType: Int): Boolean {
 		return IsToggleModOn(vehicle, modType) == 1
 	}
 
@@ -1041,7 +1054,7 @@ object Client : CoroutineScope {
 	 * UNK21
 	 * Xenon Headlights
 	 */
-	fun toggleVehicleMod(vehicle: Entity, modType: Int, toggle: Boolean) {
+	fun toggleVehicleMod(vehicle: EntityId, modType: Int, toggle: Boolean) {
 		ToggleVehicleMod(vehicle, modType, toggle)
 	}
 
@@ -1061,11 +1074,11 @@ object Client : CoroutineScope {
 		return GetControlNormal(inputGroup, control)
 	}
 
-	fun getVehicleMaxSpeed(vehicle: Entity): Double {
+	fun getVehicleMaxSpeed(vehicle: EntityId): Double {
 		return GetVehicleMaxSpeed(vehicle).toDouble()
 	}
 
-	fun setEntityMaxSpeed(entity: Entity, speed: Number) {
+	fun setEntityMaxSpeed(entity: EntityId, speed: Number) {
 		SetEntityMaxSpeed(entity, speed)
 	}
 
@@ -1077,7 +1090,7 @@ object Client : CoroutineScope {
 	 * @param fieldName The field name to get. These match the keys in `handling.meta`.
 	 * @return A floating-point value.
 	 */
-	fun getVehicleHandlingFloat(vehicle: Entity, _class: String, fieldName: String): Double {
+	fun getVehicleHandlingFloat(vehicle: EntityId, _class: String, fieldName: String): Double {
 		return GetVehicleHandlingFloat(vehicle, _class, fieldName).toDouble()
 	}
 
@@ -1089,7 +1102,7 @@ object Client : CoroutineScope {
 	 * @param fieldName The field name to get. These match the keys in `handling.meta`.
 	 * @return An integer.
 	 */
-	fun getVehicleHandlingInt(vehicle: Entity, _class: String, fieldName: String): Int {
+	fun getVehicleHandlingInt(vehicle: EntityId, _class: String, fieldName: String): Int {
 		return GetVehicleHandlingInt(vehicle, _class, fieldName)
 	}
 
@@ -1097,7 +1110,7 @@ object Client : CoroutineScope {
 	 * Gets the vehicle the specified Ped is/was in depending on bool value.
 	 * [False = CurrentVehicle, True = LastVehicle]
 	 */
-	fun getVehiclePedIsIn(ped: Entity, lastVehicle: Boolean = true): Entity? {
+	fun getVehiclePedIsIn(ped: EntityId, lastVehicle: Boolean = true): EntityId? {
 		return GetVehiclePedIsIn(ped, lastVehicle).takeIf { it != 0 }
 	}
 
@@ -1208,11 +1221,11 @@ object Client : CoroutineScope {
 		SetTextFont(fontType)
 	}
 
-	fun setVehicleHighGear(vehicle: Entity, gear: Int) {
+	fun setVehicleHighGear(vehicle: EntityId, gear: Int) {
 		SetVehicleHighGear(vehicle, gear)
 	}
 
-	fun getVehicleHighGear(vehicle: Entity): Int {
+	fun getVehicleHighGear(vehicle: EntityId): Int {
 		return GetVehicleHighGear(vehicle)
 	}
 
@@ -1230,7 +1243,7 @@ object Client : CoroutineScope {
 	 * SET_VEHICLE_BOOST_ACTIVE(vehicle, 0, 0);
 	 * Will give a boost-soundeffect.
 	 */
-	fun setVehicleBoostActive(vehicle: Entity, Toggle: Boolean) {
+	fun setVehicleBoostActive(vehicle: EntityId, Toggle: Boolean) {
 		SetVehicleBoostActive(vehicle, Toggle)
 	}
 
@@ -1240,18 +1253,18 @@ object Client : CoroutineScope {
 	 * You can convert meters/s to mph here:
 	 * http://www.calculateme.com/Speed/MetersperSecond/ToMilesperHour.htm
 	 */
-	fun setVehicleForwardSpeed(vehicle: Entity, speed: Number) {
+	fun setVehicleForwardSpeed(vehicle: EntityId, speed: Number) {
 		SetVehicleForwardSpeed(vehicle, speed)
 	}
 
 	/**
 	 * Quick disassembly and test seems to indicate that this native gets the Ped currently using the specified door.
 	 */
-	fun getPedUsingVehicleDoor(vehicle: Entity, index: Int): Entity {
+	fun getPedUsingVehicleDoor(vehicle: EntityId, index: Int): EntityId {
 		return GetPedUsingVehicleDoor(vehicle, index)
 	}
 
-	fun getNumberOfVehicleDoors(vehicle: Entity): Int {
+	fun getNumberOfVehicleDoors(vehicle: EntityId): Int {
 		return GetNumberOfVehicleDoors(vehicle)
 	}
 
@@ -1265,45 +1278,45 @@ object Client : CoroutineScope {
 	 * 5 = Trunk
 	 * Changed last paramater from CreateDoorObject To NoDoorOnTheFloor because when on false, the door object is created,and not created when on true...the former parameter name was counter intuitive...(by Calderon)
 	 */
-	fun setVehicleDoorBroken(vehicle: Entity, doorIndex: Int, deleteDoor: Boolean) {
+	fun setVehicleDoorBroken(vehicle: EntityId, doorIndex: Int, deleteDoor: Boolean) {
 		SetVehicleDoorBroken(vehicle, doorIndex, deleteDoor)
 	}
 
 	/**
 	 * doorID starts at 0, not seeming to skip any numbers. Four door vehicles intuitively range from 0 to 3.
 	 */
-	fun isVehicleDoorDamaged(vehicle: Entity, index: Int): Boolean {
+	fun isVehicleDoorDamaged(vehicle: EntityId, index: Int): Boolean {
 		return IsVehicleDoorDamaged(vehicle, index) == 1
 	}
 
-	fun setVehicleClutch(vehicle: Entity, clutch: Number) {
+	fun setVehicleClutch(vehicle: EntityId, clutch: Number) {
 		SetVehicleClutch(vehicle, clutch)
 	}
 
-	fun getVehicleClutch(vehicle: Entity): Number {
+	fun getVehicleClutch(vehicle: EntityId): Number {
 		return GetVehicleClutch(vehicle)
 	}
 
-	fun setVehicleAsNoLongerNeeded(vehicle: Entity) {
+	fun setVehicleAsNoLongerNeeded(vehicle: EntityId) {
 		SetVehicleAsNoLongerNeeded(vehicle)
 	}
 
-	fun isVehicleWanted(vehicle: Entity): Boolean {
+	fun isVehicleWanted(vehicle: EntityId): Boolean {
 		return IsVehicleWanted(vehicle) == 1
 	}
 
 	/**
 	 * Sets the wanted state of this vehicle.
 	 */
-	fun setVehicleIsWanted(vehicle: Entity, state: Boolean) {
+	fun setVehicleIsWanted(vehicle: EntityId, state: Boolean) {
 		SetVehicleIsWanted(vehicle, state)
 	}
 
-	fun isVehicleEngineStarting(vehicle: Entity): Boolean {
+	fun isVehicleEngineStarting(vehicle: EntityId): Boolean {
 		return IsVehicleEngineStarting(vehicle) == 1
 	}
 
-	fun isVehicleAlarmSet(vehicle: Entity): Boolean {
+	fun isVehicleAlarmSet(vehicle: EntityId): Boolean {
 		return IsVehicleAlarmSet(vehicle) == 1
 	}
 
@@ -1318,38 +1331,38 @@ object Client : CoroutineScope {
 	 * end
 	 * ```
 	 */
-	fun setVehicleWheelXOffset(vehicle: Entity, wheelIndex: Int, offset: Number) {
+	fun setVehicleWheelXOffset(vehicle: EntityId, wheelIndex: Int, offset: Number) {
 		SetVehicleWheelXOffset(vehicle, wheelIndex, offset)
 	}
 
-	fun setVehicleWheelXrot(vehicle: Entity, wheelIndex: Int, value: Number) {
+	fun setVehicleWheelXrot(vehicle: EntityId, wheelIndex: Int, value: Number) {
 		SetVehicleWheelXrot(vehicle, wheelIndex, value)
 	}
 
 	/**
 	 * Returns the offset of the specified wheel relative to the wheel's axle center.
 	 */
-	fun getVehicleWheelXOffset(vehicle: Entity, wheelIndex: Int): Number {
+	fun getVehicleWheelXOffset(vehicle: EntityId, wheelIndex: Int): Number {
 		return GetVehicleWheelXOffset(vehicle, wheelIndex)
 	}
 
-	fun getVehicleWheelXrot(vehicle: Entity, wheelIndex: Int): Number {
+	fun getVehicleWheelXrot(vehicle: EntityId, wheelIndex: Int): Number {
 		return GetVehicleWheelXrot(vehicle, wheelIndex)
 	}
 
-	fun getVehicleNumberOfWheels(vehicle: Entity): Int {
+	fun getVehicleNumberOfWheels(vehicle: EntityId): Int {
 		return GetVehicleNumberOfWheels(vehicle)
 	}
 
-	fun getVehicleAlarmTimeLeft(vehicle: Entity): Int {
+	fun getVehicleAlarmTimeLeft(vehicle: EntityId): Int {
 		return GetVehicleAlarmTimeLeft(vehicle)
 	}
 
-	fun setVehicleAlarm(vehicle: Entity, state: Boolean) {
+	fun setVehicleAlarm(vehicle: EntityId, state: Boolean) {
 		SetVehicleAlarm(vehicle, state)
 	}
 
-	fun setVehicleAlarmTimeLeft(vehicle: Entity, time: Int) {
+	fun setVehicleAlarmTimeLeft(vehicle: EntityId, time: Int) {
 		SetVehicleAlarmTimeLeft(vehicle, time)
 	}
 
@@ -1360,11 +1373,11 @@ object Client : CoroutineScope {
 		SetNetworkIdCanMigrate(netId, toggle)
 	}
 
-	fun networkGetNetworkIdFromEntity(entity: Entity): Int {
+	fun networkGetNetworkIdFromEntity(entity: EntityId): Int {
 		return NetworkGetNetworkIdFromEntity(entity)
 	}
 
-	fun setVehicleHasBeenOwnedByPlayer(vehicle: Entity, owned: Boolean = true) {
+	fun setVehicleHasBeenOwnedByPlayer(vehicle: EntityId, owned: Boolean = true) {
 		SetVehicleHasBeenOwnedByPlayer(vehicle, owned)
 	}
 
@@ -1372,7 +1385,7 @@ object Client : CoroutineScope {
 	 * Sets a vehicle on the ground on all wheels.  Returns whether or not the operation was successful.
 	 * sfink: This has an additional param(Vehicle vehicle, float p1) which is always set to 5.0f in the b944 scripts.
 	 */
-	fun setVehicleOnGroundProperly(vehicle: Entity): Number {
+	fun setVehicleOnGroundProperly(vehicle: EntityId): Number {
 		return SetVehicleOnGroundProperly(vehicle)
 	}
 
@@ -1381,15 +1394,15 @@ object Client : CoroutineScope {
 	 * Max number of wheels can be retrieved with the native GET_VEHICLE_NUMBER_OF_WHEELS.
 	 * @return An integer.
 	 */
-	fun getVehicleWheelSpeed(vehicle: Entity, wheelIndex: Int): Int {
+	fun getVehicleWheelSpeed(vehicle: EntityId, wheelIndex: Int): Int {
 		return GetVehicleWheelSpeed(vehicle, wheelIndex).toInt()
 	}
 
-	fun getVehicleWheelHealth(vehicle: Entity, wheelIndex: Int): Number {
+	fun getVehicleWheelHealth(vehicle: EntityId, wheelIndex: Int): Number {
 		return GetVehicleWheelHealth(vehicle, wheelIndex)
 	}
 
-	fun setVehicleWheelHealth(vehicle: Entity, wheelIndex: Int, health: Number) {
+	fun setVehicleWheelHealth(vehicle: EntityId, wheelIndex: Int, health: Number) {
 		SetVehicleWheelHealth(vehicle, wheelIndex, health)
 	}
 
@@ -1397,7 +1410,7 @@ object Client : CoroutineScope {
 		EndFindPickup(findHandle)
 	}
 
-	fun findFirstPickup(): Pair<Handle, Entity> {
+	fun findFirstPickup(): Pair<Handle, EntityId> {
 		val data = FindFirstPickup()
 		return data[0] to data[1]
 	}
@@ -1411,7 +1424,7 @@ object Client : CoroutineScope {
 		EndFindPed(findHandle)
 	}
 
-	fun findFirstPed(): Pair<Handle, Entity> {
+	fun findFirstPed(): Pair<Handle, EntityId> {
 		val data = FindFirstPed()
 		return data[0] to data[1]
 	}
@@ -1425,7 +1438,7 @@ object Client : CoroutineScope {
 		EndFindObject(findHandle)
 	}
 
-	fun findFirstObject(): Pair<Handle, Entity> {
+	fun findFirstObject(): Pair<Handle, EntityId> {
 		val data = FindFirstObject()
 		return data[0] to data[1]
 	}
@@ -1439,7 +1452,7 @@ object Client : CoroutineScope {
 		EndFindVehicle(findHandle)
 	}
 
-	fun findFirstVehicle(): Pair<Handle, Entity> {
+	fun findFirstVehicle(): Pair<Handle, EntityId> {
 		val data = FindFirstVehicle()
 		return data[0] to data[1]
 	}
@@ -1465,7 +1478,7 @@ object Client : CoroutineScope {
 		DrawRect(x, y, width, height, r, g, b, a)
 	}
 
-	fun doesEntityExist(entity: Entity): Boolean {
+	fun doesEntityExist(entity: EntityId): Boolean {
 		return DoesEntityExist(entity) == 1
 	}
 
@@ -1473,14 +1486,14 @@ object Client : CoroutineScope {
 	 * p1 is always 0 in the scripts.
 	 * p1 = check if vehicle is on fire
 	 */
-	fun isVehicleDriveable(vehicle: Entity, isOnFireCheck: Boolean = false): Boolean {
+	fun isVehicleDriveable(vehicle: EntityId, isOnFireCheck: Boolean = false): Boolean {
 		return IsVehicleDriveable(vehicle, isOnFireCheck) == 1
 	}
 
 	/**
 	 * Dirt level 0..15
 	 */
-	fun getVehicleDirtLevel(vehicle: Entity): Int {
+	fun getVehicleDirtLevel(vehicle: EntityId): Int {
 		return GetVehicleDirtLevel(vehicle)
 	}
 
@@ -1489,7 +1502,7 @@ object Client : CoroutineScope {
 	 * You can see why here: pastebin.com/Wbn34fGD
 	 * Also, R* does (float)(rand() % 15) to get a random dirt level when generating a vehicle.
 	 */
-	fun setVehicleDirtLevel(vehicle: Entity, dirtLevel: Int) {
+	fun setVehicleDirtLevel(vehicle: EntityId, dirtLevel: Int) {
 		SetVehicleDirtLevel(vehicle, dirtLevel)
 	}
 
@@ -1506,7 +1519,7 @@ object Client : CoroutineScope {
 		thisScriptCheck: Boolean = false
 	): Deferred<Int> {
 		return async {
-			requestModel(modelHash)
+			requestModelJob(modelHash)
 			while (!hasModelLoaded(modelHash)) {
 				delay(100)
 			}
@@ -1517,7 +1530,7 @@ object Client : CoroutineScope {
 	/**
 	 * Turns the desired ped into a cop. If you use this on the player ped, you will become almost invisible to cops dispatched for you. You will also report your own crimes, get a generic cop voice, get a cop-vision-cone on the radar, and you will be unable to shoot at other cops. SWAT and Army will still shoot at you. Toggling ped as "false" has no effect; you must change p0's ped model to disable the effect.
 	 */
-	fun setPedAsCop(ped: Entity) {
+	fun setPedAsCop(ped: EntityId) {
 		SetPedAsCop(ped, true)
 	}
 
@@ -1619,7 +1632,7 @@ object Client : CoroutineScope {
 	/**
 	 * p1 = !IS_ENTITY_DEAD
 	 */
-	fun getEntityCoords(entity: Entity, alive: Boolean = true): Coordinates {
+	fun getEntityCoords(entity: EntityId, alive: Boolean = true): Coordinates {
 		val coords = GetEntityCoords(entity, alive)
 
 		val x = coords[0]
@@ -1632,21 +1645,21 @@ object Client : CoroutineScope {
 	/**
 	 * Gets the entity's forward vector.
 	 */
-	fun getEntityForwardVector(entity: Entity): Array<Float> {
+	fun getEntityForwardVector(entity: EntityId): Array<Float> {
 		return GetEntityForwardVector(entity)
 	}
 
 	/**
 	 * Gets the X-component of the entity's forward vector.
 	 */
-	fun getEntityForwardX(entity: Entity): Float {
+	fun getEntityForwardX(entity: EntityId): Float {
 		return GetEntityForwardX(entity)
 	}
 
 	/**
 	 * Gets the Y-component of the entity's forward vector.
 	 */
-	fun getEntityForwardY(entity: Entity): Float {
+	fun getEntityForwardY(entity: EntityId): Float {
 		return GetEntityForwardY(entity)
 	}
 
@@ -1656,22 +1669,22 @@ object Client : CoroutineScope {
 	/**
 	 * Returns the heading of the entity in degrees. Also know as the "Yaw" of an entity.
 	 */
-	fun getEntityHeading(entity: Entity): Float {
+	fun getEntityHeading(entity: EntityId): Float {
 		return GetEntityHeading(entity)
 	}
 
-	fun setEntityHeading(entity: Entity, heading: Float) {
+	fun setEntityHeading(entity: EntityId, heading: Float) {
 		SetEntityHeading(entity, heading)
 	}
 
 	/**
 	 * Gets ID of vehicle player using. It means it can get ID at any interaction with vehicle. Enter\exit for example. And that means it is faster than GET_VEHICLE_PED_IS_IN but less safe.
 	 */
-	fun getVehiclePedIsUsing(ped: Entity): Entity? {
+	fun getVehiclePedIsUsing(ped: EntityId): EntityId? {
 		return GetVehiclePedIsUsing(ped).takeIf { it != 0 }
 	}
 
-	fun setVehicleNextGear(vehicle: Entity, gear: Int) {
+	fun setVehicleNextGear(vehicle: EntityId, gear: Int) {
 		invokeNative("SET_VEHICLE_NEXT_GEAR", vehicle, gear)
 	}
 
@@ -1679,51 +1692,51 @@ object Client : CoroutineScope {
 		return GetVehicleNextGear(vehicle)
 	}
 
-	fun setVehicleCurrentGear(vehicle: Entity, gear: Int) {
+	fun setVehicleCurrentGear(vehicle: EntityId, gear: Int) {
 		invokeNative("SET_VEHICLE_CURRENT_GEAR", vehicle, gear)
 	}
 
-	fun getVehicleCurrentGear(vehicle: Entity): Int {
+	fun getVehicleCurrentGear(vehicle: EntityId): Int {
 		return GetVehicleCurrentGear(vehicle)
 	}
 
 	//0.0-1.0
-	fun getVehicleCurrentRpm(vehicle: Entity): Double {
+	fun getVehicleCurrentRpm(vehicle: EntityId): Double {
 		return GetVehicleCurrentRpm(vehicle)
 	}
 
-	fun setVehicleCurrentRpm(vehicle: Entity, rpm: Double) {
+	fun setVehicleCurrentRpm(vehicle: EntityId, rpm: Double) {
 		SetVehicleCurrentRpm(vehicle, rpm)
 	}
 
-	fun getVehicleDashboardSpeed(vehicle: Entity): Double {
+	fun getVehicleDashboardSpeed(vehicle: EntityId): Double {
 		return GetVehicleDashboardSpeed(vehicle)
 	}
 
-	fun getVehicleEngineTemperature(vehicle: Entity): Float {
+	fun getVehicleEngineTemperature(vehicle: EntityId): Float {
 		return GetVehicleEngineTemperature(vehicle)
 	}
 
-	fun setVehicleEngineTemperature(vehicle: Entity, temperature: Float) {
+	fun setVehicleEngineTemperature(vehicle: EntityId, temperature: Float) {
 		SetVehicleEngineTemperature(vehicle, temperature)
 	}
 
-	fun getVehicleFuelLevel(vehicle: Entity): Double {
+	fun getVehicleFuelLevel(vehicle: EntityId): Double {
 		return GetVehicleFuelLevel(vehicle).toDouble()
 	}
 
-	fun getVehicleHandbrake(vehicle: Entity): Boolean {
+	fun getVehicleHandbrake(vehicle: EntityId): Boolean {
 		return GetVehicleHandbrake(vehicle) == 1
 	}
 
-	fun setVehicleHandbrake(vehicle: Entity, toggle: Boolean) {
+	fun setVehicleHandbrake(vehicle: EntityId, toggle: Boolean) {
 		SetVehicleHandbrake(vehicle, toggle)
 	}
 
 	/**
 	 * Simply returns whatever is passed to it (Regardless of whether the handle is valid or not).
 	 */
-	fun getVehicleIndexFromEntityIndex(entity: Entity): Int {
+	fun getVehicleIndexFromEntityIndex(entity: EntityId): Int {
 		return GetVehicleIndexFromEntityIndex(entity)
 	}
 
@@ -1735,19 +1748,18 @@ object Client : CoroutineScope {
 	 * char *plateText = "KING";
 	 * VEHICLE::SET_VEHICLE_NUMBER_PLATE_TEXT(veh, plateText);
 	 */
-	fun setVehicleNumberPlateText(vehicle: Entity, plateText: String) {
+	fun setVehicleNumberPlateText(vehicle: EntityId, plateText: String) {
 		SetVehicleNumberPlateText(vehicle, plateText)
 	}
 
 	/**
 	 * Returns the license plate text from a vehicle.  8 chars maximum.
 	 */
-	fun getVehicleNumberPlateText(vehicle: Entity): String? {
+	fun getVehicleNumberPlateText(vehicle: EntityId): String? {
 		return GetVehicleNumberPlateText(vehicle)
 	}
 
-	//warning on null
-	fun getVehicleOilLevel(vehicle: Entity): Float {
+	fun getVehicleOilLevel(vehicle: EntityId): Float {
 		return GetVehicleOilLevel(vehicle).toFloat()
 	}
 
@@ -1755,25 +1767,25 @@ object Client : CoroutineScope {
 	 * 1000 is max health
 	 * Begins leaking gas at around 650 health
 	 */
-	fun getVehiclePetrolTankHealth(vehicle: Entity): Double {
+	fun getVehiclePetrolTankHealth(vehicle: EntityId): Double {
 		return GetVehiclePetrolTankHealth(vehicle).toDouble()
 	}
 
 	// no such entity warning
-	fun getVehicleTurboPressure(vehicle: Entity): Int? {
+	fun getVehicleTurboPressure(vehicle: EntityId): Int? {
 		val value = invokeNative("GET_VEHICLE_TURBO_PRESSURE", vehicle)
 
 		return if (value == false) null else value as Int
 	}
 
-	fun setVehicleTurboPressure(vehicle: Entity, pressure: Int) {
+	fun setVehicleTurboPressure(vehicle: EntityId, pressure: Int) {
 		SetVehicleTurboPressure(vehicle, pressure)
 	}
 
 	/**
 	 * Returns true when in a vehicle, false whilst entering/exiting.
 	 */
-	fun getIsVehicleEngineRunning(vehicle: Entity): Boolean {
+	fun getIsVehicleEngineRunning(vehicle: EntityId): Boolean {
 		return GetIsVehicleEngineRunning(vehicle) == 1
 	}
 
@@ -1787,14 +1799,14 @@ object Client : CoroutineScope {
 	 * --------------------------------------
 	 * And what's with BOOL otherwise, what does it do???
 	 */
-	fun setVehicleEngineOn(vehicle: Entity, value: Boolean, instantly: Boolean, otherwise: Boolean = true) {
+	fun setVehicleEngineOn(vehicle: EntityId, value: Boolean, instantly: Boolean, otherwise: Boolean = true) {
 		SetVehicleEngineOn(vehicle, value, instantly, otherwise)
 	}
 
 	/**
 	 * Returns true when in a vehicle, false whilst entering/exiting.
 	 */
-	fun isVehicleEngineOn(vehicle: Entity): Boolean {
+	fun isVehicleEngineOn(vehicle: EntityId): Boolean {
 		return IsVehicleEngineOn(vehicle) == 1
 	}
 
@@ -1807,7 +1819,7 @@ object Client : CoroutineScope {
 	 * 300: Engine is smoking and losing functionality
 	 * 1000: Engine is perfect
 	 */
-	fun getVehicleEngineHealth(vehicle: Entity): Double {
+	fun getVehicleEngineHealth(vehicle: EntityId): Double {
 		return GetVehicleEngineHealth(vehicle).toDouble()
 	}
 
@@ -1819,35 +1831,35 @@ object Client : CoroutineScope {
 	 * float kmh = (speed * 3.6);
 	 * float mph = (speed * 2.236936);
 	 */
-	fun getEntitySpeed(entity: Entity): Double {
+	fun getEntitySpeed(entity: EntityId): Double {
 		return GetEntitySpeed(entity)
 	}
 
 	/**
 	 * -1 (driver) &lt;= index &lt; GET_VEHICLE_MAX_NUMBER_OF_PASSENGERS(vehicle)
 	 */
-	fun getPedInVehicleSeat(vehicle: Entity, index: Int): Entity? {//todo check return of empty seat
+	fun getPedInVehicleSeat(vehicle: EntityId, index: Int): EntityId? {//todo check return of empty seat
 		return GetPedInVehicleSeat(vehicle, index)
 	}
 
 	/**
 	 * количество ПАССАЖИРСКИХ мест в машине
 	 */
-	fun getVehicleMaxNumberOfPassengers(vehicle: Entity): Int {
+	fun getVehicleMaxNumberOfPassengers(vehicle: EntityId): Int {
 		return GetVehicleMaxNumberOfPassengers(vehicle)
 	}
 
 	/**
 	 * max level 65
 	 */
-	fun setVehicleFuelLevel(vehicle: Entity, level: Number) {
+	fun setVehicleFuelLevel(vehicle: EntityId, level: Number) {
 		SetVehicleFuelLevel(vehicle, level)
 	}
 
 	/**
 	 * max level 1
 	 */
-	fun setVehicleOilLevel(vehicle: Entity, level: Number) {
+	fun setVehicleOilLevel(vehicle: EntityId, level: Number) {
 		SetVehicleOilLevel(vehicle, level)
 	}
 
@@ -2046,7 +2058,7 @@ object Client : CoroutineScope {
 	 * How can i convert it to meters?
 	 * Everything seems to be in meters, probably this too.
 	 */
-	fun getEntityHeightAboveGround(entity: Entity): Float {
+	fun getEntityHeightAboveGround(entity: EntityId): Float {
 		return GetEntityHeightAboveGround(entity)
 	}
 
@@ -2115,7 +2127,7 @@ object Client : CoroutineScope {
 	 * Max 1000, min 0.
 	 * Vehicle does not necessarily explode or become undrivable at 0.
 	 */
-	fun getVehicleBodyHealth(vehicle: Entity): Int {
+	fun getVehicleBodyHealth(vehicle: EntityId): Int {
 		return GetVehicleBodyHealth(vehicle).toInt()
 	}
 
@@ -2130,25 +2142,25 @@ object Client : CoroutineScope {
 	 * In order to get the actual value, do:
 	 * float health = *(float *)(entityAddress + 0x280);
 	 */
-	fun getEntityHealth(entity: Entity): Int {
+	fun getEntityHealth(entity: EntityId): Int {
 		return GetEntityHealth(entity)
 	}
 
 	/**
 	 * health &gt;= 0
 	 */
-	fun setEntityHealth(entity: Entity, health: Int) {
+	fun setEntityHealth(entity: EntityId, health: Int) {
 		SetEntityHealth(entity, health)
 	}
 
-	fun setPedCanRagdollFromPlayerImpact(ped: Entity, toggle: Boolean) {
+	fun setPedCanRagdollFromPlayerImpact(ped: EntityId, toggle: Boolean) {
 		SetPedCanRagdollFromPlayerImpact(ped, toggle)
 	}
 
 	/**
 	 * Causes Ped to ragdoll on collision with any object (e.g Running into trashcan). If applied to player you will sometimes trip on the sidewalk.
 	 */
-	fun setPedRagdollOnCollision(ped: Entity, toggle: Boolean) {
+	fun setPedRagdollOnCollision(ped: EntityId, toggle: Boolean) {
 		SetPedRagdollOnCollision(ped, toggle)
 	}
 
@@ -2165,7 +2177,7 @@ object Client : CoroutineScope {
 	 * Edit Mar 21, 2017: removed part about time2 being the microseconds version of time1. this just isn't correct. time2 is in milliseconds, and time1 and time2 don't seem to be connected in any way.
 	 */
 	fun setPedToRagdoll(
-		ped: Entity,
+		ped: EntityId,
 		time1: Int = 1000,
 		time2: Int = 1000,
 		ragdollType: Short = 0,
@@ -2182,7 +2194,7 @@ object Client : CoroutineScope {
 	 * Axis - Invert Axis Flags
 	 */
 	fun setEntityCoords(
-		entity: Entity,
+		entity: EntityId,
 		xPos: Number,
 		yPos: Number,
 		zPos: Number,
@@ -2207,15 +2219,15 @@ object Client : CoroutineScope {
 		SetPlayerControl(player, toggle, flags)
 	}
 
-	fun isEntityVisible(entity: Entity): Boolean {
+	fun isEntityVisible(entity: EntityId): Boolean {
 		return IsEntityVisible(entity) == 1
 	}
 
-	fun getPlayerPed(id: Int): Entity? {
+	fun getPlayerPed(id: Int): EntityId? {
 		return GetPlayerPed(id).takeIf { it != 0 }
 	}
 
-	fun setEntityVisible(entity: Entity, toggle: Boolean) {
+	fun setEntityVisible(entity: EntityId, toggle: Boolean) {
 		SetEntityVisible(entity, toggle, false)
 	}
 
@@ -2223,11 +2235,11 @@ object Client : CoroutineScope {
 	 * Gets a value indicating whether the specified ped is in any vehicle.
 	 * If 'atGetIn' is false, the function will not return true until the ped is sitting in the vehicle and is about to close the door. If it's true, the function returns true the moment the ped starts to get onto the seat (after opening the door). Eg. if false, and the ped is getting into a submersible, the function will not return true until the ped has descended down into the submersible and gotten into the seat, while if it's true, it'll return true the moment the hatch has been opened and the ped is about to descend into the submersible.
 	 */
-	fun isPedInAnyVehicle(ped: Entity, atGetIn: Boolean = false): Boolean {
+	fun isPedInAnyVehicle(ped: EntityId, atGetIn: Boolean = false): Boolean {
 		return IsPedInAnyVehicle(ped, atGetIn) == 1
 	}
 
-	fun setEntityCollision(entity: Entity, toggle: Boolean, keepPhysics: Boolean = true) {
+	fun setEntityCollision(entity: EntityId, toggle: Boolean, keepPhysics: Boolean = true) {
 		SetEntityCollision(entity, toggle, keepPhysics)
 	}
 
@@ -2235,7 +2247,7 @@ object Client : CoroutineScope {
 	 * No, this should be called SET_ENTITY_KINEMATIC. It does more than just "freeze" it's position.
 	 * ^Rockstar Devs named it like that, Now cry about it.
 	 */
-	fun setEntityKinematic(entity: Entity, toggle: Boolean) {
+	fun setEntityKinematic(entity: EntityId, toggle: Boolean) {
 		FreezeEntityPosition(entity, toggle)
 	}
 
@@ -2248,14 +2260,14 @@ object Client : CoroutineScope {
 		SetPlayerInvincible(player, toggle)
 	}
 
-	fun isPedFatallyInjured(ped: Entity): Boolean {
+	fun isPedFatallyInjured(ped: EntityId): Boolean {
 		return IsPedFatallyInjured(ped) == 1
 	}
 
 	/**
 	 * Immediately stops the pedestrian from whatever it's doing. They stop fighting, animations, etc. they forget what they were doing.
 	 */
-	fun clearPedTasksImmediately(ped: Entity) {
+	fun clearPedTasksImmediately(ped: EntityId) {
 		ClearPedTasksImmediately(ped)
 	}
 
@@ -2270,7 +2282,7 @@ object Client : CoroutineScope {
 	/**
 	 * Returns current player ped
 	 */
-	fun getPlayerPedId(): Entity {
+	fun getPlayerPedId(): EntityId {
 		return PlayerPedId()
 	}
 
@@ -2278,7 +2290,7 @@ object Client : CoroutineScope {
 	 * Request a model to be loaded into memory
 	 * Looking it the disassembly, it seems like it actually returns the model if it's already loaded.
 	 */
-	fun requestModel(hash: Int): Job {
+	fun requestModelJob(hash: Int): Job {
 		return launch {
 			RequestModel(hash)
 			while (!hasModelLoaded(hash)) {
@@ -2316,7 +2328,7 @@ object Client : CoroutineScope {
 	 * Axis - Invert Axis Flags
 	 */
 	fun setEntityCoordsNoOffset(
-		entity: Entity,
+		entity: EntityId,
 		xPos: Number,
 		yPos: Number,
 		zPos: Number,
@@ -2340,7 +2352,7 @@ object Client : CoroutineScope {
 	/**
 	 * setting the last params to false it does that same so I would suggest its not a toggle
 	 */
-	fun removeAllPedWeapons(ped: Entity) {
+	fun removeAllPedWeapons(ped: EntityId) {
 		RemoveAllPedWeapons(ped, true)
 	}
 
@@ -2352,7 +2364,7 @@ object Client : CoroutineScope {
 		ClearPlayerWantedLevel(player)
 	}
 
-	fun hasCollisionLoadedAroundEntity(entity: Entity): Boolean {
+	fun hasCollisionLoadedAroundEntity(entity: EntityId): Boolean {
 		return HasCollisionLoadedAroundEntity(entity) == 1
 	}
 
@@ -2387,7 +2399,7 @@ object Client : CoroutineScope {
 	/**
 	 * fucks up on mount chilliad
 	 */
-	fun switchOutPlayer(ped: Entity): Job {
+	fun switchOutPlayerJob(ped: EntityId): Job {
 		return launch {
 			SwitchOutPlayer(ped, 0, 1)
 			while (getPlayerSwitchState() != 5) {
@@ -2396,7 +2408,7 @@ object Client : CoroutineScope {
 		}
 	}
 
-	fun switchInPlayer(ped: Entity): Job {
+	fun switchInPlayerJob(ped: EntityId): Job {
 		return launch {
 			SwitchInPlayer(ped)
 			while (getPlayerSwitchState() != 12) {
@@ -2466,7 +2478,7 @@ object Client : CoroutineScope {
 	class ModelLoadingTimeoutException(message: String) : Exception(message)
 }
 
-private external fun SwitchInPlayer(ped: Entity)
+private external fun SwitchInPlayer(ped: EntityId)
 
 /**
  * Aborts the current message in the text chat.
@@ -3362,8 +3374,8 @@ private external fun AddTextEntry(entryKey: String, entryText: String)
 //private external fun AttachEntitiesToRope(rope: number, ent1: number, ent2: number, ent1_x: number, ent1_y: number, ent1_z: number, ent2_x: number, ent2_y: number, ent2_z: number, length: number, p10: boolean, p11: boolean, boneName1: string, boneName2: string)
 
 private external fun AttachEntityToEntity(
-	entity1: Entity,
-	entity2: Entity,
+	entity1: EntityId,
+	entity2: EntityId,
 	boneIndex: Number,
 	xPos: Number,
 	yPos: Number,
@@ -3878,7 +3890,7 @@ private external fun SetTextEntry(text: String)
 
 //private external fun CanKnockPedOffVehicle(ped: number): number;
 
-private external fun CanPedHearPlayer(player: Int, ped: Entity): Number
+private external fun CanPedHearPlayer(player: Int, ped: EntityId): Number
 
 //private external fun CanPedInCombatSeeTarget(ped: number, target: number): number;
 
@@ -3888,7 +3900,7 @@ private external fun CanPedHearPlayer(player: Int, ped: Entity): Number
  */
 //private external fun CanPedRagdoll(ped: number): number;
 
-private external fun CanPedSeePed(ped1: Entity, ped2: Entity): Number
+private external fun CanPedSeePed(ped1: EntityId, ped2: EntityId): Number
 /**
  * Returns true if ped1 can see ped2 in their line of vision
  */
@@ -4178,7 +4190,7 @@ private external fun ClearOverrideWeather()
 
 //private external fun ClearPedTasks(ped: number)
 
-private external fun ClearPedTasksImmediately(ped: Entity)
+private external fun ClearPedTasksImmediately(ped: EntityId)
 
 /**
  * It clears the wetness of the selected Ped/Player. Clothes have to be wet to notice the difference.
@@ -5034,7 +5046,7 @@ private external fun DestroyMobilePhone()
 
 //private external fun DetachCam(cam: number)
 
-private external fun DetachEntity(entity: Entity, p1: Boolean, collision: Boolean)
+private external fun DetachEntity(entity: EntityId, p1: Boolean, collision: Boolean)
 
 //private external fun DetachPortablePickupFromPed(ped: number)
 
@@ -5356,7 +5368,7 @@ private external fun DoScreenFadeOut(duration: Int)
 
 //private external fun DoesEntityBelongToThisScript(entity: number, p2: boolean): number;
 
-private external fun DoesEntityExist(entity: Entity): Number
+private external fun DoesEntityExist(entity: EntityId): Number
 
 //private external fun DoesEntityHaveDrawable(entity: number): number;
 
@@ -6717,7 +6729,7 @@ private external fun FindNextVehicle(findHandle: Number): Array<Any>
 //private external fun FormatFocusHeading(x: number, y: number, z: number, rad: number, p4: number, p5: number): number;
 //private external fun N_0x219c7b8d53e429fd(x: number, y: number, z: number, rad: number, p4: number, p5: number): number;
 
-private external fun FreezeEntityPosition(entity: Entity, toggle: Boolean)
+private external fun FreezeEntityPosition(entity: EntityId, toggle: Boolean)
 
 //private external fun FreezePedCameraRotation(ped: number)
 //private external fun N_0xff287323b0e2c69a(ped: number)
@@ -7560,7 +7572,7 @@ private external fun GetEntityHeightAboveGround(entity: Int): Float
  */
 //private external fun GetEntityMaxHealth(entity: number): number;
 
-private external fun GetEntityModel(entity: Entity): Int
+private external fun GetEntityModel(entity: EntityId): Int
 
 /**
  * Gets the heading of the entity physics in degrees, which tends to be more accurate than just "GET_ENTITY_HEADING". This can be clearly seen while, for example, ragdolling a ped/player.
@@ -7596,7 +7608,7 @@ private external fun GetEntityModel(entity: Entity): Int
  */
 //private external fun GetEntityQuaternion(entity: number): [number, number, number, number];
 
-private external fun GetEntityRoll(entity: Entity): Double
+private external fun GetEntityRoll(entity: EntityId): Double
 
 /**
  * rotationOrder refers to the order yaw pitch roll is applied
@@ -7628,7 +7640,7 @@ private external fun GetEntityRoll(entity: Entity): Double
 
 private external fun GetEntitySpeed(entity: Int): Double
 
-private external fun GetEntitySpeedVector(entity: Entity, relative: Boolean): Array<Float>
+private external fun GetEntitySpeedVector(entity: EntityId, relative: Boolean): Array<Float>
 
 /**
  * Get how much of the entity is submerged.  1.0f is whole entity.
@@ -8020,7 +8032,7 @@ private external fun GetHashKey(_string: String): Number
  */
 //private external fun N_0x4f5070aa58f69279(nodeID: number): number;
 
-private external fun GetIsTaskActive(ped: Entity, taskNumber: Int): Number
+private external fun GetIsTaskActive(ped: EntityId, taskNumber: Int): Number
 
 private external fun GetIsVehicleEngineRunning(vehicle: Int): Int
 
@@ -8636,7 +8648,7 @@ private external fun GetNumberOfPlayers(): Int
  */
 //private external fun GetNumberOfVehicleColours(vehicle: number): number;
 
-private external fun GetNumberOfVehicleDoors(vehicle: Entity): Int
+private external fun GetNumberOfVehicleDoors(vehicle: EntityId): Int
 
 /**
  * Returns the number of *types* of licence plates, enumerated below in SET_VEHICLE_NUMBER_PLATE_TEXT_INDEX.
@@ -8996,7 +9008,7 @@ private external fun GetPedInVehicleSeat(vehicle: Int, index: Int): Int
  */
 //private external fun GetPedType(ped: number): number;
 
-private external fun GetPedUsingVehicleDoor(vehicle: Entity, doorIndex: Int): Entity
+private external fun GetPedUsingVehicleDoor(vehicle: EntityId, doorIndex: Int): EntityId
 /**
  * Quick disassembly and test seems to indicate that this native gets the Ped currently using the specified door.
  */
@@ -9810,7 +9822,7 @@ private external fun World3dToScreen2d(worldX: Number, worldY: Number, worldZ: N
 
 //private external fun GetVehicleAcceleration(vehicle: number): number;
 
-private external fun GetVehicleAlarmTimeLeft(vehicle: Entity): Int
+private external fun GetVehicleAlarmTimeLeft(vehicle: EntityId): Int
 
 /**
  * Returns attached vehicle (Vehicle in parameter must be cargobob)
@@ -9858,7 +9870,7 @@ private external fun GetVehicleBodyHealth(vehicle: Int): Number
  */
 //private external fun GetVehicleCauseOfDestruction(vehicle: number): number;
 
-private external fun GetVehicleClass(vehicle: Entity): Int
+private external fun GetVehicleClass(vehicle: EntityId): Int
 
 /**
  * For a full enum, see here : pastebin.com/i2GGAjY0
@@ -9885,7 +9897,7 @@ private external fun GetVehicleClass(vehicle: Entity): Int
 
 //private external fun GetVehicleClassMaxTraction(vehicleClass: number): number;
 
-private external fun GetVehicleClutch(vehicle: Entity): Number
+private external fun GetVehicleClutch(vehicle: EntityId): Number
 
 /**
  * What's this for? Primary and Secondary RGB have their own natives and this one doesn't seem specific.
@@ -9894,7 +9906,7 @@ private external fun GetVehicleClutch(vehicle: Entity): Number
 
 //private external fun GetVehicleColourCombination(vehicle: number): number;
 
-private external fun GetVehicleColours(vehicle: Entity): Array<Int>
+private external fun GetVehicleColours(vehicle: EntityId): Array<Int>
 
 private external fun GetVehicleCurrentGear(vehicle: Int): Int
 
@@ -9923,7 +9935,7 @@ private external fun GetVehicleDashboardSpeed(vehicle: Int): Double
  */
 //private external fun GetVehicleDeformationAtPos(vehicle: number, offsetX: number, offsetY: number, offsetZ: number): number[];//
 
-private external fun GetVehicleDirtLevel(vehicle: Entity): Int
+private external fun GetVehicleDirtLevel(vehicle: EntityId): Int
 
 /**
  * example in vb:
@@ -9960,7 +9972,7 @@ private external fun GetVehicleEngineTemperature(vehicle: Int): Float
  */
 //private external fun GetVehiclePaintFade(vehicle: number): number;
 
-private external fun GetVehicleExtraColours(vehicle: Entity): Array<Int>
+private external fun GetVehicleExtraColours(vehicle: EntityId): Array<Int>
 
 private external fun GetVehicleFuelLevel(vehicle: Int): Int
 
@@ -9968,9 +9980,9 @@ private external fun GetVehicleFuelLevel(vehicle: Int): Int
 
 private external fun GetVehicleHandbrake(vehicle: Int): Int
 
-private external fun GetVehicleHandlingFloat(vehicle: Entity, _class: String, fieldName: String): Number
+private external fun GetVehicleHandlingFloat(vehicle: EntityId, _class: String, fieldName: String): Number
 
-private external fun GetVehicleHandlingInt(vehicle: Entity, _class: String, fieldName: String): Int
+private external fun GetVehicleHandlingInt(vehicle: EntityId, _class: String, fieldName: String): Int
 
 /**
  * Returns the effective handling data of a vehicle as a vector value.
@@ -9982,7 +9994,7 @@ private external fun GetVehicleHandlingInt(vehicle: Entity, _class: String, fiel
  */
 //private external fun GetVehicleHandlingVector(vehicle: number, _class: string, fieldName: string): number[];
 
-private external fun GetVehicleHighGear(vehicle: Entity): Int
+private external fun GetVehicleHighGear(vehicle: EntityId): Int
 
 /**
  * Seems to get the hash of the vehicle's currently installed horn?
@@ -10010,7 +10022,7 @@ private external fun GetVehicleIndexFromEntityIndex(entity: Int): Int
 /**
  * -1 = no livery
  */
-private external fun GetVehicleLivery(trailers2: Entity): Int
+private external fun GetVehicleLivery(trailers2: EntityId): Int
 
 /**
  * Returns -1 if the vehicle has no livery
@@ -10021,12 +10033,12 @@ private external fun GetVehicleLivery(trailers2: Entity): Int
 
 private external fun GetVehicleMaxNumberOfPassengers(vehicle: Int): Int
 
-private external fun GetVehicleMaxSpeed(vehicle: Entity): Number
+private external fun GetVehicleMaxSpeed(vehicle: EntityId): Number
 //private external fun N_0x53af99baa671ca47(vehicle: number): number;
 
 //private external fun GetVehicleMaxTraction(vehicle: number): number;
 
-private external fun GetVehicleMod(vehicle: Entity, modType: Int): Int
+private external fun GetVehicleMod(vehicle: EntityId, modType: Int): Int
 
 /**
  * p3 seems to be the pearlescent highlight color.
@@ -10065,9 +10077,9 @@ private external fun GetVehicleMod(vehicle: Entity, modType: Int): Int
  */
 //private external fun N_0x4593cf82aa179706(vehicle: number, modType: number, modIndex: number): number;
 
-//private external fun GetVehicleModKit(vehicle: number): number;
+private external fun GetVehicleModKit(vehicle: EntityId): Int
 
-//private external fun GetVehicleModKitType(vehicle: number): number;
+//private external fun GetVehicleModKitType(vehicle: Entity): Int
 
 //private external fun GetVehicleModModifierValue(vehicle: number, modType: number, modIndex: number): number;
 
@@ -10172,7 +10184,7 @@ private external fun GetVehicleMod(vehicle: Entity, modType: Int): Int
  */
 //private external fun GetVehicleModelMaxNumberOfPassengers(modelHash: string | number): number;
 
-private external fun GetVehicleNeonLightsColour(vehicle: Entity): Array<Int>
+private external fun GetVehicleNeonLightsColour(vehicle: EntityId): Array<Int>
 
 private external fun GetVehicleNextGear(vehicle: Int): Int
 
@@ -10229,11 +10241,11 @@ private external fun GetVehicleNextGear(vehicle: Int): Int
  */
 //private external fun GetVehicleNumberOfPassengers(vehicle: number): number;
 
-private external fun GetVehicleNumberOfWheels(vehicle: Entity): Int
+private external fun GetVehicleNumberOfWheels(vehicle: EntityId): Int
 
 private external fun GetVehicleNumberPlateText(vehicle: Int): String?
 
-private external fun GetVehicleNumberPlateTextIndex(elegy: Entity): Int
+private external fun GetVehicleNumberPlateTextIndex(elegy: EntityId): Int
 
 private external fun GetVehicleOilLevel(vehicle: Int): Number
 
@@ -10245,7 +10257,7 @@ private external fun GetVehicleOilLevel(vehicle: Int): Number
  */
 //private external fun GetVehicleOwner(vehicle: number, entity: number): number;
 
-private external fun GetVehiclePedIsIn(ped: Entity, lastVehicle: Boolean): Entity
+private external fun GetVehiclePedIsIn(ped: EntityId, lastVehicle: Boolean): EntityId
 
 /**
  * Should be renamed GET_CAR_PED_IS_TRYING_TO_ENTER...
@@ -10282,25 +10294,25 @@ private external fun GetVehiclePetrolTankHealth(vehicle: Int): Number
 
 //private external fun GetVehicleTurboPressure(vehicle: Int): Float
 
-private external fun GetVehicleTyreSmokeColor(vehicle: Entity): Array<Int>
+private external fun GetVehicleTyreSmokeColor(vehicle: EntityId): Array<Int>
 
-private external fun GetVehicleTyresCanBurst(vehicle: Entity): Number
+private external fun GetVehicleTyresCanBurst(vehicle: EntityId): Number
 
 //private external fun GetVehicleWaypointProgress(vehicle: number): number;
 
 //private external fun GetVehicleWaypointTargetPoint(p0: number): number;
 
-private external fun GetVehicleWheelHealth(vehicle: Entity, wheelIndex: Int): Number
+private external fun GetVehicleWheelHealth(vehicle: EntityId, wheelIndex: Int): Number
 
-private external fun GetVehicleWheelSpeed(vehicle: Entity, wheelIndex: Int): Number
+private external fun GetVehicleWheelSpeed(vehicle: EntityId, wheelIndex: Int): Number
 
-private external fun GetVehicleWheelType(vehicle: Entity): Int
+private external fun GetVehicleWheelType(vehicle: EntityId): Int
 
-private external fun GetVehicleWheelXOffset(vehicle: Entity, wheelIndex: Int): Number
+private external fun GetVehicleWheelXOffset(vehicle: EntityId, wheelIndex: Int): Number
 
-private external fun GetVehicleWheelXrot(vehicle: Entity, wheelIndex: Int): Number
+private external fun GetVehicleWheelXrot(vehicle: EntityId, wheelIndex: Int): Number
 
-private external fun GetVehicleWindowTint(vehicle: Entity): Int
+private external fun GetVehicleWindowTint(vehicle: EntityId): Int
 
 /**
  * Remnant from GTA IV. Does nothing in GTA V.
@@ -10705,7 +10717,7 @@ private external fun GetVehicleWindowTint(vehicle: Entity): Int
 
 //private external fun HasCollisionForModelLoaded(model: string | number): number;
 
-private external fun HasCollisionLoadedAroundEntity(entity: Entity): Number
+private external fun HasCollisionLoadedAroundEntity(entity: EntityId): Number
 
 //private external fun HasCutsceneFinished(): number;
 
@@ -10738,9 +10750,9 @@ private external fun HasCollisionLoadedAroundEntity(entity: Entity): Number
  */
 //private external fun HasEntityBeenDamagedByWeapon(entity: number, weaponHash: string | number, weaponType: number): number;
 
-private external fun HasEntityClearLosToEntity(entity1: Entity, entity2: Entity, traceType: Int): Number
+private external fun HasEntityClearLosToEntity(entity1: EntityId, entity2: EntityId, traceType: Int): Number
 
-private external fun HasEntityClearLosToEntityInFront(entity1: Entity, entity2: Entity): Number
+private external fun HasEntityClearLosToEntityInFront(entity1: EntityId, entity2: EntityId): Number
 
 /**
  * Called on tick.
@@ -11278,7 +11290,7 @@ private external fun IsDisabledControlPressed(inputGroup: Int, control: Int): In
 
 //private external fun IsEntityUpsidedown(entity: number): number;
 
-private external fun IsEntityVisible(entity: Entity): Number
+private external fun IsEntityVisible(entity: EntityId): Number
 
 //private external fun IsEntityVisibleToScript(entity: number): number;
 
@@ -11649,7 +11661,7 @@ private external fun IsEntityVisible(entity: Entity): Number
 
 //private external fun IsPedFalling(ped: number): number;
 
-private external fun IsPedFatallyInjured(ped: Entity): Number
+private external fun IsPedFatallyInjured(ped: EntityId): Number
 
 //private external fun IsPedFleeing(ped: number): number;
 
@@ -11694,7 +11706,7 @@ private external fun IsPedFatallyInjured(ped: Entity): Number
 
 //private external fun IsPedInAnyTrain(ped: number): number;
 
-private external fun IsPedInAnyVehicle(ped: Entity, atGetIn: Boolean): Number
+private external fun IsPedInAnyVehicle(ped: EntityId, atGetIn: Boolean): Number
 
 /**
  * Checks to see if ped and target are in combat with eachother. Only goes one-way: if target is engaged in combat with ped but ped has not yet reacted, the function will return false until ped starts fighting back.
@@ -12237,7 +12249,7 @@ private external fun IsScreenFadingOut(): Any
  */
 //private external fun SubtractAFromBAndCheckIfNegative(timeA: number, timeB: number): number;
 
-private external fun IsToggleModOn(vehicle: Entity, modType: Int): Number
+private external fun IsToggleModOn(vehicle: EntityId, modType: Int): Number
 
 /**
  * returns whether or not a ped is visible within your FOV, not this check auto's to false after a certain distance.
@@ -12263,7 +12275,7 @@ private external fun IsToggleModOn(vehicle: Entity, modType: Int): Number
 
 //private external fun IsVehicleAlarmActivated(vehicle: number): number;
 
-private external fun IsVehicleAlarmSet(vehicle: Entity): Number
+private external fun IsVehicleAlarmSet(vehicle: EntityId): Number
 
 //private external fun IsVehicleAttachedToCargobob(cargobob: number, vehicleAttached: number): number;
 
@@ -12286,7 +12298,7 @@ private external fun IsVehicleAlarmSet(vehicle: Entity): Number
  */
 //private external fun IsVehicleDamaged(vehicle: number): number;
 
-private external fun IsVehicleDoorDamaged(veh: Entity, doorID: Int): Number
+private external fun IsVehicleDoorDamaged(veh: EntityId, doorID: Int): Number
 
 /**
  * doorIndex:
@@ -12300,9 +12312,9 @@ private external fun IsVehicleDoorDamaged(veh: Entity, doorID: Int): Number
  */
 //private external fun IsVehicleDoorFullyOpen(v: number, rwing: number): number;
 
-private external fun IsVehicleDriveable(vehicle: Entity, isOnFireCheck: Boolean): Number
+private external fun IsVehicleDriveable(vehicle: EntityId, isOnFireCheck: Boolean): Number
 
-private external fun IsVehicleEngineStarting(vehicle: Entity): Number
+private external fun IsVehicleEngineStarting(vehicle: EntityId): Number
 
 //private external fun IsVehicleExtraTurnedOn(vehicle: number, extraId: number): number;
 
@@ -12340,16 +12352,16 @@ private external fun IsVehicleEngineStarting(vehicle: Entity): Number
 
 //private external fun IsVehicleNeedsToBeHotwired(vehicle: number): number;
 
-private external fun IsVehicleNeonLightEnabled(vehicle: Entity, index: Int): Number
+private external fun IsVehicleNeonLightEnabled(vehicle: EntityId, index: Int): Number
 
 /**
  * Returns true if the id is non zero.
  */
 //private external fun IsVehicleNodeIdValid(vehicleNodeId: number): number;
 
-private external fun IsVehicleOnAllWheels(vehicle: Entity): Number
+private external fun IsVehicleOnAllWheels(vehicle: EntityId): Number
 
-private external fun IsVehiclePreviouslyOwnedByPlayer(vehicle: Entity): Number
+private external fun IsVehiclePreviouslyOwnedByPlayer(vehicle: EntityId): Number
 
 //private external fun IsVehicleRadioLoud(vehicle: number): number;
 
@@ -12421,7 +12433,7 @@ private external fun IsVehiclePreviouslyOwnedByPlayer(vehicle: Entity): Number
  */
 //private external fun IsVehicleVisible(vehicle: number): number;
 
-private external fun IsVehicleWanted(vehicle: Entity): Number
+private external fun IsVehicleWanted(vehicle: EntityId): Number
 
 //private external fun IsVehicleWindowIntact(vehicle: number, windowIndex: number): number;
 
@@ -19318,7 +19330,7 @@ private external fun LoadResourceFile(resourceName: String, fileName: String): S
  */
 //private external fun NetworkGetMaxFriends(): number;
 
-private external fun NetworkGetNetworkIdFromEntity(entity: Entity): Int
+private external fun NetworkGetNetworkIdFromEntity(entity: EntityId): Int
 
 /**
  * Returns the amount of players connected in the current session. Only works when connected to a session/server.
@@ -20236,7 +20248,7 @@ private external fun NetworkResurrectLocalPlayer(
 
 //private external fun NetworkSetInMpCutscene(p0: boolean, p1: boolean)
 
-private external fun NetworkSetInSpectatorMode(toggle: Boolean, playerPed: Entity)
+private external fun NetworkSetInSpectatorMode(toggle: Boolean, playerPed: EntityId)
 
 /**
  * hash collision???
@@ -20802,7 +20814,7 @@ private external fun NetworkSetTalkerProximity(p0: Int)
 
 //private external fun PlaceObjectOnGroundProperly(object: number): number;
 
-private external fun PlayAmbientSpeech1(ped: Entity, speechName: String, speechParam: String)
+private external fun PlayAmbientSpeech1(ped: EntityId, speechName: String, speechParam: String)
 
 /**
  * Plays ambient speech. See also _0x5C57B85D.
@@ -20984,7 +20996,7 @@ private external fun PlayerId(): Int
 /**
  * Returns current player ped
  */
-private external fun PlayerPedId(): Entity
+private external fun PlayerPedId(): EntityId
 
 //private external fun PlaystatsAmbientMissionCrateCreated(p0: number, p1: number, p2: number)
 //private external fun N_0xafc7e5e075a96f46(p0: number, p1: number, p2: number)
@@ -21214,7 +21226,7 @@ private external fun PlayerPedId(): Entity
 
 //private external fun RemoveAllCoverBlockingAreas()
 
-private external fun RemoveAllPedWeapons(ped: Entity, p1: Boolean)
+private external fun RemoveAllPedWeapons(ped: EntityId, p1: Boolean)
 
 /**
  * Pickup hashes: pastebin.com/8EuSv2r1
@@ -23285,7 +23297,7 @@ private external fun SetDrawOrigin(x: Number, y: Number, z: Number, p3: Int)
  */
 //private external fun SetEntityCanBeTargetedWithoutLos(entity: number, toggle: boolean)
 
-private external fun SetEntityCollision(entity: Entity, toggle: Boolean, keepPhysics: Boolean)
+private external fun SetEntityCollision(entity: EntityId, toggle: Boolean, keepPhysics: Boolean)
 
 /**
  * console hash: 0xBD0D4831
@@ -23334,7 +23346,7 @@ private external fun SetEntityCoords(
 )
 
 private external fun SetEntityCoordsNoOffset(
-	entity: Entity,
+	entity: EntityId,
 	xPos: Number,
 	yPos: Number,
 	zPos: Number,
@@ -23353,7 +23365,7 @@ private external fun SetEntityCoordsNoOffset(
 
 //private external fun SetEntityHasGravity(entity: number, toggle: boolean)
 
-private external fun SetEntityHeading(entity: Entity, heading: Float)
+private external fun SetEntityHeading(entity: EntityId, heading: Float)
 
 private external fun SetEntityHealth(entity: Int, health: Int)
 
@@ -23408,7 +23420,7 @@ private external fun SetEntityHealth(entity: Int, health: Int)
  */
 //private external fun SetEntityMaxHealth(entity: number, value: number)
 
-private external fun SetEntityMaxSpeed(entity: Entity, speed: Number)
+private external fun SetEntityMaxSpeed(entity: EntityId, speed: Number)
 
 //private external fun SetEntityMotionBlur(entity: number, toggle: boolean)
 
@@ -23516,7 +23528,7 @@ private external fun SetEntityMaxSpeed(entity: Entity, speed: Number)
 /**
  * unk was always 0.
  */
-private external fun SetEntityVisible(entity: Entity, toggle: Boolean, unk: Boolean)
+private external fun SetEntityVisible(entity: EntityId, toggle: Boolean, unk: Boolean)
 
 //private external fun SetEntityVisibleInCutscene(p0: number, p1: boolean, p2: boolean)
 
@@ -24649,7 +24661,7 @@ private external fun SetNuiFocus(hasFocus: Boolean, hasCursor: Boolean)
  */
 //private external fun SetPedArmour(ped: number, amount: number)
 
-private external fun SetPedAsCop(ped: Entity, toggle: Boolean)
+private external fun SetPedAsCop(ped: EntityId, toggle: Boolean)
 
 //private external fun SetPedAsEnemy(ped: number, toggle: boolean)
 
@@ -25207,7 +25219,7 @@ private external fun SetPedCanRagdollFromPlayerImpact(ped: Int, toggle: Boolean)
 
 //private external fun SetPedInfiniteAmmoClip(ped: number, toggle: boolean)
 
-private external fun SetPedIntoVehicle(ped: Entity, vehicle: Entity, seatIndex: Int)
+private external fun SetPedIntoVehicle(ped: EntityId, vehicle: EntityId, seatIndex: Int)
 
 /**
  * Sets the ped drunk sounds.  Only works with PLAYER_PED_ID
@@ -26470,9 +26482,9 @@ private external fun SetTextScale(scale: Number, size: Number)
  */
 //private external fun SetVehRadioStation(vehicle: number, radioStation: string)
 
-private external fun SetVehicleAlarm(vehicle: Entity, state: Boolean)
+private external fun SetVehicleAlarm(vehicle: EntityId, state: Boolean)
 
-private external fun SetVehicleAlarmTimeLeft(vehicle: Entity, time: Int)
+private external fun SetVehicleAlarmTimeLeft(vehicle: EntityId, time: Int)
 
 /**
  * Makes the vehicle accept no passengers.
@@ -26482,7 +26494,7 @@ private external fun SetVehicleAlarmTimeLeft(vehicle: Entity, time: Int)
 /**
  * This is an alias of SET_ENTITY_AS_NO_LONGER_NEEDED.
  */
-private external fun SetVehicleAsNoLongerNeeded(vehicle: Entity)
+private external fun SetVehicleAsNoLongerNeeded(vehicle: EntityId)
 
 /**
  * Disables the vehicle from being repaired when a vehicle extra is enabled.
@@ -26496,11 +26508,11 @@ private external fun SetVehicleAsNoLongerNeeded(vehicle: Entity)
  */
 //private external fun SetVehicleAutomaticallyAttaches(vehicle: number, p1: boolean, p2: number): number;
 
-private external fun SetVehicleBodyHealth(vehicle: Entity, value: Int)
+private external fun SetVehicleBodyHealth(vehicle: EntityId, value: Int)
 
-private external fun SetVehicleBoostActive(vehicle: Entity, Toggle: Boolean)
+private external fun SetVehicleBoostActive(vehicle: EntityId, Toggle: Boolean)
 
-private external fun SetVehicleBrakeLights(vehicle: Entity, toggle: Boolean)
+private external fun SetVehicleBrakeLights(vehicle: EntityId, toggle: Boolean)
 
 /**
  * On accelerating, spins the driven wheels with the others braked, so you don't go anywhere.
@@ -26532,14 +26544,14 @@ private external fun SetVehicleBrakeLights(vehicle: Entity, toggle: Boolean)
  */
 //private external fun GetVehicleDeformationGetTree(vehicle: number, p1: number)
 
-private external fun SetVehicleClutch(vehicle: Entity, clutch: Number)
+private external fun SetVehicleClutch(vehicle: EntityId, clutch: Number)
 
 /**
  * dont be a dick
  */
 //private external fun SetVehicleColourCombination(vehicle: number, colorCombination: number)
 
-private external fun SetVehicleColours(vehicle: Entity, colorPrimary: Int, colorSecondary: Int)
+private external fun SetVehicleColours(vehicle: EntityId, colorPrimary: Int, colorSecondary: Int)
 
 /**
  * Money pickups are created around cars when they explodes. Only works when the vehicle model is a car. A single pickup is between 1 and 18 dollars in size. All car models seems to give the same amount of money.
@@ -26564,7 +26576,7 @@ private external fun SetVehicleColours(vehicle: Entity, colorPrimary: Int, color
  */
 //private external fun N_0x068f64f2470f9656(vehicle: number, toggle: boolean)
 
-private external fun SetVehicleCurrentRpm(vehicle: Entity, rpm: Number)
+private external fun SetVehicleCurrentRpm(vehicle: EntityId, rpm: Number)
 
 /**
  * p1, p2, p3 are RGB values for color (255,0,0 for Red, ect)
@@ -26598,9 +26610,9 @@ private external fun SetVehicleCurrentRpm(vehicle: Entity, rpm: Number)
  */
 //private external fun SetVehicleDensityMultiplierThisFrame(multiplier: number)
 
-private external fun SetVehicleDirtLevel(vehicle: Entity, dirtLevel: Int)
+private external fun SetVehicleDirtLevel(vehicle: EntityId, dirtLevel: Int)
 
-private external fun SetVehicleDoorBroken(vehicle: Entity, doorIndex: Int, deleteDoor: Boolean)
+private external fun SetVehicleDoorBroken(vehicle: EntityId, doorIndex: Int, deleteDoor: Boolean)
 
 /**
  * Keeps Vehicle Doors/Hood/Trunk from breaking off
@@ -26697,15 +26709,15 @@ private external fun SetVehicleDoorBroken(vehicle: Entity, doorIndex: Int, delet
 
 //private external fun SetVehicleEngineCanDegrade(vehicle: number, toggle: boolean)
 
-private external fun SetVehicleEngineHealth(vehicle: Entity, health: Double)
+private external fun SetVehicleEngineHealth(vehicle: EntityId, health: Double)
 
-private external fun SetVehicleEngineOn(vehicle: Entity, value: Boolean, instantly: Boolean, otherwise: Boolean)
+private external fun SetVehicleEngineOn(vehicle: EntityId, value: Boolean, instantly: Boolean, otherwise: Boolean)
 
-private external fun SetVehicleEnginePowerMultiplier(vehicle: Entity, value: Number)
+private external fun SetVehicleEnginePowerMultiplier(vehicle: EntityId, value: Number)
 
-private external fun SetVehicleEngineTemperature(vehicle: Entity, temperature: Float)
+private external fun SetVehicleEngineTemperature(vehicle: EntityId, temperature: Float)
 
-private external fun SetVehicleEngineTorqueMultiplier(vehicle: Entity, value: Double)
+private external fun SetVehicleEngineTorqueMultiplier(vehicle: EntityId, value: Double)
 
 /**
  * formerly known as _SET_VEHICLE_PAINT_FADE
@@ -26739,7 +26751,7 @@ private external fun SetVehicleEngineTorqueMultiplier(vehicle: Entity, value: Do
  */
 //private external fun N_0x41062318f23ed854(vehicle: number, ped: number)
 
-private external fun SetVehicleExclusiveDriver_2(vehicle: Entity, ped: Entity, p2: Number)
+private external fun SetVehicleExclusiveDriver_2(vehicle: EntityId, ped: EntityId, p2: Number)
 //private external fun N_0xb5c51b5502e85e83(vehicle: number, ped: number, p2: number)
 
 /**
@@ -26763,11 +26775,11 @@ private external fun SetVehicleExclusiveDriver_2(vehicle: Entity, ped: Entity, p
 /**
  * They use the same color indexs as SET_VEHICLE_COLOURS.
  */
-private external fun SetVehicleExtraColours(vehicle: Entity, pearlescentColor: Int, wheelColor: Int)
+private external fun SetVehicleExtraColours(vehicle: EntityId, pearlescentColor: Int, wheelColor: Int)
 
 //private external fun SetVehicleFixed(vehicle: number)
 
-private external fun SetVehicleForwardSpeed(vehicle: Entity, speed: Number)
+private external fun SetVehicleForwardSpeed(vehicle: EntityId, speed: Number)
 
 /**
  * Seems to be related to the metal parts, not tyres (like i was expecting lol)
@@ -26799,7 +26811,7 @@ private external fun SetVehicleFuelLevel(vehicle: Int, level: Number)
  */
 //private external fun N_0x260be8f09e326a20(vehicle: number, distance: number, killEngine: number, unknown: boolean)
 
-private external fun SetVehicleHandbrake(vehicle: Entity, toggle: Boolean)
+private external fun SetVehicleHandbrake(vehicle: EntityId, toggle: Boolean)
 
 /**
  * Sets a handling override for a specific vehicle. Certain handling flags can only be set globally using `SET_HANDLING_FIELD`, this might require some experimentation.
@@ -26811,9 +26823,9 @@ private external fun SetVehicleHandbrake(vehicle: Entity, toggle: Boolean)
  */
 //private external fun SetVehicleHandlingField(vehicle: number, _class: string, fieldName: string, value: number)
 
-private external fun SetVehicleHandlingFloat(vehicle: Entity, _class: String, fieldName: String, value: Double)
+private external fun SetVehicleHandlingFloat(vehicle: EntityId, _class: String, fieldName: String, value: Double)
 
-private external fun SetVehicleHandlingInt(vehicle: Entity, _class: String, fieldName: String, value: Int)
+private external fun SetVehicleHandlingInt(vehicle: EntityId, _class: String, fieldName: String, value: Int)
 
 /**
  * Sets a handling override for a specific vehicle. Certain handling flags can only be set globally using `SET_HANDLING_VECTOR`, this might require some experimentation.
@@ -26824,14 +26836,14 @@ private external fun SetVehicleHandlingInt(vehicle: Entity, _class: String, fiel
  */
 //private external fun SetVehicleHandlingVector(vehicle: number, _class: string, fieldName: string)
 
-private external fun SetVehicleHasBeenOwnedByPlayer(vehicle: Entity, owned: Boolean)
+private external fun SetVehicleHasBeenOwnedByPlayer(vehicle: EntityId, owned: Boolean)
 
 /**
  * if true, axles won't bend.
  */
 //private external fun SetVehicleHasStrongAxles(vehicle: number, toggle: boolean)
 
-private external fun SetVehicleHighGear(vehicle: Entity, gear: Int)
+private external fun SetVehicleHighGear(vehicle: EntityId, gear: Int)
 
 /**
  * console hash: 0x71CDD52F
@@ -26859,7 +26871,7 @@ private external fun SetVehicleHighGear(vehicle: Entity, gear: Int)
 
 //private external fun SetVehicleIsStolen(vehicle: number, isStolen: boolean): number;
 
-private external fun SetVehicleIsWanted(vehicle: Entity, state: Boolean)
+private external fun SetVehicleIsWanted(vehicle: EntityId, state: Boolean)
 
 /**
  * VEHICLE::SET_VEHICLE_ENGINE_ON is not enough to start jet engines when not inside the vehicle. But with this native set to true it works: youtu.be/OK0ps2fDpxs
@@ -26940,11 +26952,11 @@ private external fun SetVehicleIsWanted(vehicle: Entity, state: Boolean)
  */
 //private external fun N_0x1fd09e7390a74d54(vehicle: number, p1: number)
 
-private external fun SetVehicleLivery(vehicle: Entity, liveryIndex: Int)
+private external fun SetVehicleLivery(vehicle: EntityId, liveryIndex: Int)
 
 //private external fun SetVehicleLodMultiplier(vehicle: number, multiplier: number)
 
-private external fun SetVehicleMod(vehicle: Entity, modType: Int, modIndex: Int, customTires: Boolean)
+private external fun SetVehicleMod(vehicle: EntityId, modType: Int, modIndex: Int, customTires: Boolean)
 
 /**
  * paintType:
@@ -26972,12 +26984,7 @@ private external fun SetVehicleMod(vehicle: Entity, modType: Int, modIndex: Int,
  */
 //private external fun SetVehicleModColor_2(vehicle: number, paintType: number, color: number)
 
-/**
- * Set modKit to 0 if you plan to call SET_VEHICLE_MOD. That's what the game does. Most body modifications through SET_VEHICLE_MOD will not take effect until this is set to 0.
- * ---------
- * Setting the modKit to 0 also seems to load some livery related vehicle information. For example, using GET_LIVERY_NAME() will return NULL if you haven't set the modKit to 0 in advance. As soon as you set it to 0, GET_LIVERY_NAME() will work properly.
- */
-//private external fun SetVehicleModKit(vehicle: number, modKit: number)
+private external fun SetVehicleModKit(vehicle: EntityId, modKit: Int)
 
 /**
  * seems to make the vehicle stop spawning naturally in traffic. Here's an essential example:
@@ -26994,17 +27001,17 @@ private external fun SetVehicleMod(vehicle: Entity, modType: Int, modIndex: Int,
 
 //private external fun SetVehicleNeedsToBeHotwired(vehicle: number, toggle: boolean)
 
-private external fun SetVehicleNeonLightEnabled(vehicle: Entity, index: Int, toggle: Boolean)
+private external fun SetVehicleNeonLightEnabled(vehicle: EntityId, index: Int, toggle: Boolean)
 
-private external fun SetVehicleNeonLightsColour(vehicle: Entity, r: Int, g: Int, b: Int)
+private external fun SetVehicleNeonLightsColour(vehicle: EntityId, r: Int, g: Int, b: Int)
 
-private external fun SetVehicleNumberPlateText(vehicle: Entity, plateText: String)
+private external fun SetVehicleNumberPlateText(vehicle: EntityId, plateText: String)
 
-private external fun SetVehicleNumberPlateTextIndex(vehicle: Entity, plateIndex: Int)
+private external fun SetVehicleNumberPlateTextIndex(vehicle: EntityId, plateIndex: Int)
 
 private external fun SetVehicleOilLevel(vehicle: Int, level: Number)
 
-private external fun SetVehicleOnGroundProperly(vehicle: Entity): Number
+private external fun SetVehicleOnGroundProperly(vehicle: EntityId): Number
 
 /**
  * Tested on the player's current vehicle. Unless you kill the driver, the vehicle doesn't loose control, however, if enabled, explodeOnImpact is still active. The moment you crash, boom.
@@ -27013,7 +27020,7 @@ private external fun SetVehicleOnGroundProperly(vehicle: Entity): Number
 
 //private external fun SetVehicleParachuteActive(vehicle: number, active: boolean)
 
-private external fun SetVehiclePetrolTankHealth(vehicle: Entity, health: Double)
+private external fun SetVehiclePetrolTankHealth(vehicle: EntityId, health: Double)
 
 //private external fun SetVehiclePopulationBudget(p0: number)
 
@@ -27118,9 +27125,9 @@ private external fun SetVehiclePetrolTankHealth(vehicle: Entity, health: Double)
  */
 //private external fun SetVehicleTimedExplosion(vehicle: number, ped: number, toggle: boolean)
 
-private external fun SetVehicleTurboPressure(vehicle: Entity, pressure: Number)
+private external fun SetVehicleTurboPressure(vehicle: EntityId, pressure: Number)
 
-private external fun SetVehicleTyreBurst(vehicle: Entity, index: Int, onRim: Boolean, p3: Number)
+private external fun SetVehicleTyreBurst(vehicle: EntityId, index: Int, onRim: Boolean, p3: Number)
 
 /**
  * tyreIndex = 0 to 4 on normal vehicles
@@ -27135,26 +27142,26 @@ private external fun SetVehicleTyreBurst(vehicle: Entity, index: Int, onRim: Boo
  */
 //private external fun SetVehicleTyreFixed(vehicle: number, tyreIndex: number)
 
-private external fun SetVehicleTyreSmokeColor(vehicle: Entity, r: Int, g: Int, b: Int)
+private external fun SetVehicleTyreSmokeColor(vehicle: EntityId, r: Int, g: Int, b: Int)
 
-private external fun SetVehicleTyresCanBurst(vehicle: Entity, toggle: Boolean)
+private external fun SetVehicleTyresCanBurst(vehicle: EntityId, toggle: Boolean)
 
-private external fun SetVehicleUndriveable(vehicle: Entity, toggle: Boolean)
+private external fun SetVehicleUndriveable(vehicle: EntityId, toggle: Boolean)
 
 private external fun SetVehicleWheelHealth(vehicle: Number, wheelIndex: Int, health: Number)
 
-private external fun SetVehicleWheelType(vehicle: Entity, WheelType: Int)
+private external fun SetVehicleWheelType(vehicle: EntityId, WheelType: Int)
 
-private external fun SetVehicleWheelXOffset(vehicle: Entity, wheelIndex: Int, offset: Number)
+private external fun SetVehicleWheelXOffset(vehicle: EntityId, wheelIndex: Int, offset: Number)
 
-private external fun SetVehicleWheelXrot(vehicle: Entity, wheelIndex: Int, value: Number)
+private external fun SetVehicleWheelXrot(vehicle: EntityId, wheelIndex: Int, value: Number)
 
 //private external fun SetVehicleWheelsCanBreak(vehicle: number, enabled: boolean): number;
 
 //private external fun SetVehicleWheelsCanBreakOffWhenBlowUp(vehicle: number, toggle: boolean)
 //private external fun SetVehicleMaxStrTrap(vehicle: number, toggle: boolean)
 
-private external fun SetVehicleWindowTint(vehicle: Entity, tint: Int)
+private external fun SetVehicleWindowTint(vehicle: EntityId, tint: Int)
 
 /**
  * MulleDK19: This immediately sets the VTOL engines at the specified angle ratio (0f-1f).
@@ -28301,7 +28308,7 @@ private external fun StopAudioScene(scene: String)
  */
 //private external fun N_0x9a987297ed8bd838(player: number, p1: number)
 
-private external fun SwitchOutPlayer(ped: Entity, flags: Number, unknown: Number)
+private external fun SwitchOutPlayer(ped: EntityId, flags: Number, unknown: Number)
 /**
  * fucks up on mount chilliad
  */
@@ -29417,7 +29424,7 @@ private external fun SwitchOutPlayer(ped: Entity, flags: Number, unknown: Number
 
 //private external fun ToggleStealthRadar(toggle: boolean)
 
-private external fun ToggleVehicleMod(vehicle: Entity, modType: Int, toggle: Boolean)
+private external fun ToggleVehicleMod(vehicle: EntityId, modType: Int, toggle: Boolean)
 
 //private external fun TrackObjectVisibility(p0: number)
 

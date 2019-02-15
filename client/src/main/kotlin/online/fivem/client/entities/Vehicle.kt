@@ -5,11 +5,10 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withTimeout
 import online.fivem.client.common.GlobalCache
-import online.fivem.client.extensions.createVehicle
-import online.fivem.client.extensions.setVehicleNeonLightsColour
-import online.fivem.client.extensions.setVehicleTyreSmokeColor
+import online.fivem.client.extensions.*
 import online.fivem.client.gtav.Client
-import online.fivem.common.common.Entity
+import online.fivem.common.common.EntityId
+import online.fivem.common.common.Utils
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.entities.RGB
 import online.fivem.common.extensions.orZero
@@ -17,9 +16,9 @@ import online.fivem.common.gtav.NativeVehicles
 import kotlin.reflect.KProperty
 
 class Vehicle private constructor(
-	val entity: Entity,
+	entity: EntityId,
 	val id: Int = -1
-) {
+) : Entity(entity) {
 
 	val handling = Handling(entity)
 	val wheels: List<Wheel>
@@ -27,17 +26,17 @@ class Vehicle private constructor(
 	val numberOfWheels = Client.getVehicleNumberOfWheels(entity)
 	val numberOfDoors = Client.getNumberOfVehicleDoors(entity)
 	val numberOfPassengersSeats = Client.getVehicleMaxNumberOfPassengers(entity)
+	val mod = Mod(entity)
 
 	val isEngineStarting: Boolean get() = Client.isVehicleEngineStarting(entity)
 	val isEngineRunning: Boolean get() = Client.getIsVehicleEngineRunning(entity)
 
-	val model = Client.getEntityModel(entity)
 	val isOnAllWheels: Boolean get() = Client.isVehicleOnAllWheels(entity)
-	val classType: Int get() = Client.getVehicleClass(entity)
+	val classType: Int = Client.getVehicleClass(entity)
 
-	var heading: Float
-		get() = Client.getEntityHeading(entity)
-		set(value) = Client.setEntityHeading(entity, value)
+	var modKit: Int
+		get() = Client.getVehicleModKit(entity)
+		set(value) = Client.setVehicleModKit(entity, value)
 
 	var ownedByPlayer: Boolean
 		get() = Client.isVehiclePreviouslyOwnedByPlayer(entity)
@@ -142,7 +141,7 @@ class Vehicle private constructor(
 		get() = Client.getVehicleWheelType(entity)
 		set(value) = Client.setVehicleWheelType(entity, value)
 
-	var colours: Pair<Int, Int>
+	var colors: Pair<Int, Int>
 		get() = Client.getVehicleColours(entity)
 		set(value) = Client.setVehicleColours(entity, value.first, value.second)
 
@@ -178,13 +177,13 @@ class Vehicle private constructor(
 		get() = Client.getVehicleTyresCanBurst(entity)
 		set(value) = Client.setVehicleTyresCanBurst(entity, value)
 
-	//todo mod, neon
-
 	init {
 		if (!Client.doesEntityExist(entity)) throw VehicleDoesntExistsException("vehicle $entity doesnt exists")
 
 		val networkId = Client.networkGetNetworkIdFromEntity(entity)
 		Client.setNetworkIdCanMigrate(networkId, true)
+
+		modKit = 0
 
 		wheels = mutableListOf()
 		for (i in 0 until numberOfWheels) {
@@ -225,11 +224,11 @@ class Vehicle private constructor(
 		Client.setVehicleOnGroundProperly(entity)
 	}
 
-	fun getPassengers(): List<Entity> {
-		val list = mutableListOf<Entity>()
+	fun getPassengers(): List<EntityId> {
+		val list = mutableListOf<EntityId>()
 
 		for (i in -1 until numberOfPassengersSeats) {
-			val entity = Client.getPedInVehicleSeat(entity, -1) ?: continue
+			val entity = Client.getPedInVehicleSeat(entity, i) ?: continue
 			list.add(entity)
 		}
 
@@ -238,6 +237,15 @@ class Vehicle private constructor(
 
 	fun turnEngineOn(value: Boolean, instantly: Boolean = false) {
 		Client.setVehicleEngineOn(entity, value, instantly)
+	}
+
+	fun getTurboPressureRPMBased(vehicle: EntityId, startRPM: Double = 0.6, endRPM: Double = 1.0): Double {
+		return (
+				Utils.normalizeToLimits(
+					currentRpm, startRPM, endRPM
+				) - startRPM
+
+				) / (endRPM - startRPM)
 	}
 
 //	fun setBoostActive(){
@@ -254,10 +262,20 @@ class Vehicle private constructor(
 		Client.setVehicleAsNoLongerNeeded(entity)
 	}
 
+	class Mod(private val vehicle: EntityId) {
+		operator fun get(mod: NativeVehicles.Mod): Int {
+			return mod.getOn(vehicle) ?: -1
+		}
+
+		operator fun set(mod: NativeVehicles.Mod, value: Int) {
+			mod.setOn(vehicle, value)
+		}
+	}
+
 	class Wheel(
 		val index: Int,
 
-		private val vehicle: Entity
+		private val vehicle: EntityId
 	) {
 
 		var health: Number
@@ -281,112 +299,10 @@ class Vehicle private constructor(
 
 	class Door(
 		val index: Int,
-		private val vehicle: Entity
+		private val vehicle: EntityId
 	)
 
 	companion object {
-//		fun getProperties(vehicle: Entity): Any {
-//
-//			val color1: Int
-//			val color2: Int
-//
-//			Client.getVehicleColours(vehicle).let {
-//				color1 = it.first
-//				color2 = it.second
-//			}
-//
-//			val pearlescentColor: Int
-//			val wheelColor: Int
-//
-//			Client.getVehicleExtraColours(vehicle).let {
-//				pearlescentColor = it.first
-//				wheelColor = it.second
-//			}
-//
-//			return object {
-//
-//				val model = Client.getEntityModel(vehicle)
-//
-//				val plate = Client.getVehicleNumberPlateText(vehicle)
-//				val plateIndex = Client.getVehicleNumberPlateTextIndex(vehicle)
-//
-//				val health = Client.getEntityHealth(vehicle)
-//				val dirtLevel = Client.getVehicleDirtLevel(vehicle)
-//
-//				val color1 = color1
-//				val color2 = color2
-//
-//				val pearlescentColor = pearlescentColor
-//				val wheelColor = wheelColor
-//
-//				val wheels = Client.getVehicleWheelType(vehicle)
-//				val windowTint = Client.getVehicleWindowTint(vehicle)
-//
-//				val neonEnabled = {
-//					Client.isVehicleNeonLightEnabled(vehicle, 0)
-//					Client.isVehicleNeonLightEnabled(vehicle, 1)
-//					Client.isVehicleNeonLightEnabled(vehicle, 2)
-//					Client.isVehicleNeonLightEnabled(vehicle, 3)
-//				}
-//
-//				val extras = {
-//
-//				}
-//
-//				val neonColor = Client.getVehicleNeonLightsColour(vehicle)
-//				val tyreSmokeColor = Client.getVehicleTyreSmokeColor(vehicle)
-//
-//				val modSpoilers = Client.getVehicleMod(vehicle, 0)
-//				val modFrontBumper = Client.getVehicleMod(vehicle, 1)
-//				val modRearBumper = Client.getVehicleMod(vehicle, 2)
-//				val modSideSkirt = Client.getVehicleMod(vehicle, 3)
-//				val modExhaust = Client.getVehicleMod(vehicle, 4)
-//				val modFrame = Client.getVehicleMod(vehicle, 5)
-//				val modGrille = Client.getVehicleMod(vehicle, 6)
-//				val modHood = Client.getVehicleMod(vehicle, 7)
-//				val modFender = Client.getVehicleMod(vehicle, 8)
-//				val modRightFender = Client.getVehicleMod(vehicle, 9)
-//				val modRoof = Client.getVehicleMod(vehicle, 10)
-//
-//				val modEngine = Client.getVehicleMod(vehicle, 11)
-//				val modBrakes = Client.getVehicleMod(vehicle, 12)
-//				val modTransmission = Client.getVehicleMod(vehicle, 13)
-//				val modHorns = Client.getVehicleMod(vehicle, 14)
-//				val modSuspension = Client.getVehicleMod(vehicle, 15)
-//				val modArmor = Client.getVehicleMod(vehicle, 16)
-//
-//				val modTurbo = Client.isToggleModOn(vehicle, 18)
-//				val modSmokeEnabled = Client.isToggleModOn(vehicle, 20)
-//				val modXenon = Client.isToggleModOn(vehicle, 22)
-//
-//				val modFrontWheels = Client.getVehicleMod(vehicle, 23)
-//				val modBackWheels = Client.getVehicleMod(vehicle, 24)
-//
-//				val modPlateHolder = Client.getVehicleMod(vehicle, 25)
-//				val modVanityPlate = Client.getVehicleMod(vehicle, 26)
-//				val modTrimA = Client.getVehicleMod(vehicle, 27)
-//				val modOrnaments = Client.getVehicleMod(vehicle, 28)
-//				val modDashboard = Client.getVehicleMod(vehicle, 29)
-//				val modDial = Client.getVehicleMod(vehicle, 30)
-//				val modDoorSpeaker = Client.getVehicleMod(vehicle, 31)
-//				val modSeats = Client.getVehicleMod(vehicle, 32)
-//				val modSteeringWheel = Client.getVehicleMod(vehicle, 33)
-//				val modShifterLeavers = Client.getVehicleMod(vehicle, 34)
-//				val modAPlate = Client.getVehicleMod(vehicle, 35)
-//				val modSpeakers = Client.getVehicleMod(vehicle, 36)
-//				val modTrunk = Client.getVehicleMod(vehicle, 37)
-//				val modHydrolic = Client.getVehicleMod(vehicle, 38)
-//				val modEngineBlock = Client.getVehicleMod(vehicle, 39)
-//				val modAirFilter = Client.getVehicleMod(vehicle, 40)
-//				val modStruts = Client.getVehicleMod(vehicle, 41)
-//				val modArchCover = Client.getVehicleMod(vehicle, 42)
-//				val modAerials = Client.getVehicleMod(vehicle, 43)
-//				val modTrimB = Client.getVehicleMod(vehicle, 44)
-//				val modTank = Client.getVehicleMod(vehicle, 45)
-//				val modWindows = Client.getVehicleMod(vehicle, 46)
-//				val modLivery = Client.getVehicleLivery(vehicle)
-//			}
-//		}
 
 		fun create(
 			id: Int,
@@ -397,7 +313,7 @@ class Vehicle private constructor(
 		): Deferred<Vehicle> {
 			return coroutineScope.async {
 
-				withTimeout(5_000) { Client.requestModel(vehicleModel.hash).join() }//todo test
+				withTimeout(5_000) { Client.requestModelJob(vehicleModel.hash).join() }//todo test
 
 				val entity = withTimeout(5_000) {
 					Client.createVehicle(vehicleModel.hash, coordinatesX).await()
@@ -412,7 +328,7 @@ class Vehicle private constructor(
 			}
 		}
 
-		fun fromEntity(list: List<Entity>): List<Vehicle> {
+		fun fromEntity(list: List<EntityId>): List<Vehicle> {
 			return list.map {
 				Vehicle(
 					entity = it
@@ -421,7 +337,7 @@ class Vehicle private constructor(
 		}
 
 		fun newInstance(
-			entity: Entity,
+			entity: EntityId,
 			id: Int = -1
 		): Vehicle {
 
@@ -437,7 +353,7 @@ class Vehicle private constructor(
 		}
 	}
 
-	class Handling(private val entity: Entity) {
+	class Handling(private val entity: EntityId) {
 		// https://gtamods.com/wiki/Handling.meta
 
 		/**

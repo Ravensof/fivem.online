@@ -9,7 +9,7 @@ import online.fivem.client.events.*
 import online.fivem.client.extensions.getSeatOfPedInVehicle
 import online.fivem.client.gtav.Client
 import online.fivem.common.common.AbstractModule
-import online.fivem.common.common.Entity
+import online.fivem.common.common.EntityId
 import online.fivem.common.common.UEvent
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.extensions.onNull
@@ -91,7 +91,7 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 	}
 
 	private fun checkCoordinates(playerPed: Ped) {
-		val currentCoordinates = Client.getEntityCoords(playerPed.entity) ?: return
+		val currentCoordinates = playerPed.coordinates
 
 		if (playerCoordinates != currentCoordinates) {
 			val rotation = playerPed.heading
@@ -112,7 +112,7 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 		playerCoordinates?.let {
 			val dateNow = Date.now() / 1_000
 			val dt = dateNow - iLastSpeedCheck
-			val iSpeed = Client.getEntitySpeed(playerPed.entity)
+			val iSpeed = playerPed.getSpeed()
 
 			iLastSpeedCheck = dateNow
 
@@ -140,7 +140,7 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 		}
 	}
 
-	private fun checkPlayersPed(ped: Entity): Ped? {
+	private fun checkPlayersPed(ped: EntityId): Ped? {
 		if (playerPed?.entity != ped) {
 			val newPed = Ped.newInstance(ped)
 

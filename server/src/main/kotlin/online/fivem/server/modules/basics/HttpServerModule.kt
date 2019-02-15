@@ -3,6 +3,7 @@ package online.fivem.server.modules.basics
 
 import external.nodejs.express.Express
 import external.nodejs.express.getInstance
+import external.nodejs.require
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -11,8 +12,7 @@ import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
 import online.fivem.common.extensions.forEach
-import online.fivem.server.gtav.Natives
-import require
+import online.fivem.server.ServerConfig.CURRENT_RESOURCE_PATH
 import kotlin.coroutines.CoroutineContext
 
 class HttpServerModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
@@ -46,6 +46,6 @@ class HttpServerModule(override val coroutineContext: CoroutineContext) : Abstra
 
 	companion object {
 		private const val HTTP_PORT = GlobalConfig.HTTP_PORT
-		private val ROOT_DIR = Natives.getResourcePath(Natives.getCurrentResourceName()) + "/"
+		private val ROOT_DIR = CURRENT_RESOURCE_PATH
 	}
 }

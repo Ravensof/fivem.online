@@ -5,7 +5,7 @@ import kotlinx.coroutines.launch
 import online.fivem.server.entities.Player
 import online.fivem.server.gtav.Natives.registerCommand
 
-private typealias Handler = (Player, Array<String>, String) -> Unit
+private typealias Handler = (Player?, Array<String>, String) -> Unit
 
 object CommandEvent {
 

@@ -25,9 +25,9 @@ class JoinTransitionModule(override val coroutineContext: CoroutineContext) : Ab
 				switchingPlayerJob?.join()
 
 				Client.shutdownLoadingScreen()
-				val fadeHandle = api.doScreenFadeOut(0).await()
+//				val fadeHandle = api.doScreenFadeOutAsync(0).await()
 				Client.shutdownLoadingScreenNui()
-				api.doScreenFadeIn(fadeHandle, 500).join()
+//				api.doScreenFadeInJob(fadeHandle, 500).join()
 			}
 		}
 	}
@@ -38,22 +38,22 @@ class JoinTransitionModule(override val coroutineContext: CoroutineContext) : Ab
 
 		return launch {
 			if (!Client.isPlayerSwitchInProgress()) {
-				switchingPlayerJob = Client.switchOutPlayer(Client.getPlayerPedId())
+				switchingPlayerJob = Client.switchOutPlayerJob(Client.getPlayerPedId())
 				switchingPlayerJob?.join()
 			}
 		}
 	}
 
 	fun endTransitionJob(): Job = launch {
-			val execId = tickExecutor.add { clearScreen() }
+		val execId = tickExecutor.add { clearScreen() }
 
-			switchingPlayerJob?.join()
-			api.unMuteSound(muteHandle)
+		switchingPlayerJob?.join()
+		api.unMuteSound(muteHandle)
 
-		Client.switchInPlayer(Client.getPlayerPedId()).join()
-			tickExecutor.remove(execId)
-			Client.clearDrawOrigin()
-		}
+		Client.switchInPlayerJob(Client.getPlayerPedId()).join()
+		tickExecutor.remove(execId)
+		Client.clearDrawOrigin()
+	}
 
 	private fun clearScreen() {
 		Client.setCloudHatOpacity(CLOUD_OPACITY)

@@ -1,4 +1,4 @@
 package online.fivem.common.common
 
-typealias Entity = Int
+typealias EntityId = Int
 typealias Handle = Int

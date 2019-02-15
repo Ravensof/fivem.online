@@ -1,12 +1,12 @@
 package online.fivem.client.common
 
 import online.fivem.client.gtav.Client
-import online.fivem.common.common.Entity
+import online.fivem.common.common.EntityId
 import online.fivem.common.common.Handle
 
-class VehiclesIterator : Iterator<Entity> {
+class VehiclesIterator : Iterator<EntityId> {
 
-	private var currentEntity: Entity = -1
+	private var currentEntity: EntityId = -1
 	private var handle: Handle = 0
 
 	init {
@@ -17,7 +17,7 @@ class VehiclesIterator : Iterator<Entity> {
 		return currentEntity != -1
 	}
 
-	override fun next(): Entity {
+	override fun next(): EntityId {
 		val entity = currentEntity
 		val nextResult = Client.findNextVehicle(handle)
 		currentEntity = nextResult.second

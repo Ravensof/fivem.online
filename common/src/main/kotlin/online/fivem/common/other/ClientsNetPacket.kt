@@ -1,4 +1,4 @@
-package online.fivem.common.entities
+package online.fivem.common.other
 
 class ClientsNetPacket(
 	hash: Int,

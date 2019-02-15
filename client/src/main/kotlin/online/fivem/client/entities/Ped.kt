@@ -3,30 +3,18 @@ package online.fivem.client.entities
 import online.fivem.client.common.GlobalCache
 import online.fivem.client.extensions.isPedAtGetInAnyVehicle
 import online.fivem.client.gtav.Client
-import online.fivem.client.gtav.Client.getEntityHeading
-import online.fivem.client.gtav.Client.getEntityHealth
 import online.fivem.client.gtav.Client.isPedInAnyVehicle
-import online.fivem.client.gtav.Client.setEntityHeading
-import online.fivem.client.gtav.Client.setEntityHealth
-import online.fivem.common.common.Entity
+import online.fivem.common.common.EntityId
 
 class Ped private constructor(
-	val entity: Entity
-) {
+	entity: EntityId
+) : Entity(entity) {
 	init {
 		if (!Client.doesEntityExist(entity)) throw PedDoesntExistsException("ped $entity doesnt exists")
 	}
 
 	val isAtGetInAVehicle: Boolean get() = Client.isPedAtGetInAnyVehicle(entity)
 	val isInAVehicle: Boolean get() = isPedInAnyVehicle(entity, false)
-
-	var heading: Float
-		get() = getEntityHeading(entity)
-		set(value) = setEntityHeading(entity, value)
-
-	var health: Int
-		get() = getEntityHealth(entity)
-		set(value) = setEntityHealth(entity, value)
 
 	fun getVehicleIsUsing(): Vehicle? {
 		Client.getVehiclePedIsUsing(entity)?.let { entity ->
@@ -36,7 +24,7 @@ class Ped private constructor(
 		return null
 	}
 
-	fun getVehicleIsIn(lastVehicle: Boolean = false): Entity? {
+	fun getVehicleIsIn(lastVehicle: Boolean = false): EntityId? {
 		return Client.getVehiclePedIsIn(entity, lastVehicle)
 	}
 
@@ -44,7 +32,7 @@ class Ped private constructor(
 
 	companion object {
 
-		fun newInstance(entity: Entity): Ped {
+		fun newInstance(entity: EntityId): Ped {
 			GlobalCache.getPed(entity)?.let {
 				return it
 			}
@@ -56,7 +44,7 @@ class Ped private constructor(
 			return ped
 		}
 
-		fun fromEntity(list: List<Entity>): List<Ped> {
+		fun fromEntity(list: List<EntityId>): List<Ped> {
 			return list.map { Ped(it) }
 		}
 	}

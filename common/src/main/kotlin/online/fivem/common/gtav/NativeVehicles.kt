@@ -601,6 +601,7 @@ enum class NativeVehicles(val hash: Int, val category: Category) {
 		AERIALS(43),
 		TRIM_B(44),
 		TANK(45),
-		WINDOWS(46)
+		WINDOWS(46),
+		LIVERY(48),
 	}
 }

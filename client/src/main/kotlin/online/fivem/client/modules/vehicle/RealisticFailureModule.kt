@@ -225,7 +225,7 @@ class RealisticFailureModule(
 				healthBodyLast = healthBodyNew
 				healthPetrolTankLast = healthPetrolTankNew
 				lastVehicle = vehicle
-				if (Cfg.randomTireBurstInterval != 0 && Client.getEntitySpeed(vehicle.entity) > 10) tireBurstLottery(
+				if (Cfg.randomTireBurstInterval != 0 && vehicle.getSpeed() > 10) tireBurstLottery(
 					vehicle
 				)
 			}
@@ -264,7 +264,7 @@ class RealisticFailureModule(
 				if (Cfg.sundayDriver && vehicle.classType != 14) { // Not for boats
 					val accelerator = Client.getControlValue(2, 71)
 					val brake = Client.getControlValue(2, 72)
-					val speed = Client.getEntitySpeedVector(vehicle.entity, true).y
+					val speed = vehicle.getSpeedVector(true).y
 					// Change Braking force
 					var brk = fBrakeForce
 					if (speed >= 1.0) {
@@ -321,7 +321,7 @@ class RealisticFailureModule(
 						}
 					} else {
 						// Stopped or almost stopped or sliding sideways
-						val entitySpeed = Client.getEntitySpeed(vehicle.entity)
+						val entitySpeed = vehicle.getSpeed()
 						if (entitySpeed < 1) {
 							// Not sliding sideways
 							if (isBrakingForward) {
@@ -359,8 +359,8 @@ class RealisticFailureModule(
 				vehicle.setEngineTorqueMultiplier(factor)
 			}
 			if (Cfg.preventVehicleFlip) {
-				val roll = Client.getEntityRoll(vehicle.entity)
-				if ((roll > 75.0 || roll < -75.0) && Client.getEntitySpeed(vehicle.entity) < 2) {
+				val roll = vehicle.getRoll()
+				if ((roll > 75.0 || roll < -75.0) && vehicle.getSpeed() < 2) {
 					NativeControls.Keys.VEH_MOVE_LR.disableControlAction()// Disable left/right
 					NativeControls.Keys.VEH_MOVE_UD.disableControlAction()// Disable up/down
 				}

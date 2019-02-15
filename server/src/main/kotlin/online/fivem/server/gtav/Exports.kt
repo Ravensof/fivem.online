@@ -16,6 +16,10 @@ private external val exports: dynamic
 object Exports {
 	private val exports = online.fivem.server.gtav.exports[GlobalConfig.MODULE_NAME]
 
+	fun executeCommand(command: String, delay: Int = 1_000) {
+		exports.executeCommand(command, delay)
+	}
+
 	fun performHttpRequest(
 		coroutineScope: CoroutineScope,
 		url: String,

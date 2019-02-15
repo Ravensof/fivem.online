@@ -2,9 +2,10 @@ package online.fivem.server
 
 import external.nodejs.mysql.Params
 import online.fivem.common.GlobalConfig
+import online.fivem.server.gtav.Natives
 
 object ServerConfig {
-	const val MYSQL_HTTP_API = "http://localhost/fivemapi/mysql.php"
+
 	const val SYNCHRONIZATION_PERIOD_SECONDS = GlobalConfig.MAX_PLAYERS
 	const val KICK_FOR_PACKET_OVERFLOW = true
 
@@ -14,4 +15,7 @@ object ServerConfig {
 		user = "fivem",
 		password = "qwerta"
 	)
+
+	val CURRENT_RESOURCE_NAME = Natives.getCurrentResourceName()
+	val CURRENT_RESOURCE_PATH = Natives.getResourcePath(CURRENT_RESOURCE_NAME) + "/"
 }

@@ -3,12 +3,10 @@ package online.fivem.client.extensions
 import online.fivem.client.gtav.Client
 import online.fivem.client.gtav.Natives
 import online.fivem.common.GlobalConfig
-import online.fivem.common.common.Entity
-import online.fivem.common.common.Utils
+import online.fivem.common.common.EntityId
 import online.fivem.common.entities.Coordinates
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.entities.RGB
-import online.fivem.common.gtav.NativeVehicles
 import online.fivem.common.gtav.NativeWeather
 
 fun Client.createVehicle(
@@ -36,12 +34,12 @@ fun Client.networkResurrectLocalPlayer(coordinatesX: CoordinatesX, changeTime: B
 	)
 
 //ped садится в машину
-fun Client.isPedAtGetInAnyVehicle(ped: Entity): Boolean {
+fun Client.isPedAtGetInAnyVehicle(ped: EntityId): Boolean {
 	return Client.isPedInAnyVehicle(ped) != (Client.getVehiclePedIsUsing(ped) != null)
 }
 
 //ped пытается сесть в машину
-fun Client.isPedGettingInAnyVehicle(ped: Entity): Boolean {
+fun Client.isPedGettingInAnyVehicle(ped: EntityId): Boolean {
 	return Client.isPedInAnyVehicle(ped, true) != Client.isPedInAnyVehicle(ped, false)
 }
 
@@ -88,14 +86,6 @@ fun Client.drawScreenText3D(
 	}
 }
 
-fun Client.isToggleModOn(vehicle: Entity, modType: NativeVehicles.Mod): Boolean {
-	return isToggleModOn(vehicle, modType.id)
-}
-
-fun Client.toggleVehicleMod(vehicle: Entity, modType: NativeVehicles.Mod, toggle: Boolean) {
-	toggleVehicleMod(vehicle, modType.id, toggle)
-}
-
 fun Client.getAverageFPS(): Double {
 	return getFrameCount().toDouble() / getGameTimer()
 }
@@ -104,11 +94,11 @@ fun Client.getCurrentFPS(): Double {
 	return 1f / getFrameTime()
 }
 
-fun Client.setVehicleNeonLightsColour(vehicle: Entity, color: RGB) {
+fun Client.setVehicleNeonLightsColour(vehicle: EntityId, color: RGB) {
 	setVehicleNeonLightsColour(vehicle, color.red, color.green, color.blue)
 }
 
-fun Client.setVehicleTyreSmokeColor(vehicle: Entity, color: RGB) {
+fun Client.setVehicleTyreSmokeColor(vehicle: EntityId, color: RGB) {
 	setVehicleTyreSmokeColor(vehicle, color.red, color.green, color.blue)
 }
 
@@ -118,7 +108,7 @@ fun Client.setVehicleTyreSmokeColor(vehicle: Entity, color: RGB) {
  * 1 позади водителя
  * 2 ...
  */
-fun Client.getSeatOfPedInVehicle(vehicle: Entity, ped: Entity): Int? {
+fun Client.getSeatOfPedInVehicle(vehicle: EntityId, ped: EntityId): Int? {
 	for (i in -1 until Client.getVehicleMaxNumberOfPassengers(vehicle)) {
 		if (getPedInVehicleSeat(vehicle, i) == ped) {
 			return i
@@ -129,22 +119,13 @@ fun Client.getSeatOfPedInVehicle(vehicle: Entity, ped: Entity): Int? {
 }
 
 suspend fun Client.setPlayerModelSync(player: Int, hash: Int) {
-	requestModel(hash).join()
+	requestModelJob(hash).join()
 	setPlayerModel(player, hash)
 	setModelAsNoLongerNeeded(hash)
 }
 
 fun Client.requestCollisionAtCoordinates(coordinates: Coordinates) =
 	requestCollisionAtCoordinates(coordinates.x, coordinates.y, coordinates.z)
-
-fun Client.getVehicleTurboPressureRPMBased(vehicle: Entity, startRPM: Double = 0.6, endRPM: Double = 1.0): Double {
-	return (
-			Utils.normalizeToLimits(
-				getVehicleCurrentRpm(vehicle), startRPM, endRPM
-			) - startRPM
-
-			) / (endRPM - startRPM)
-}
 
 fun Client.getHexHashKey(functionName: String): String {
 	return "0x" + (getHashKey(functionName) and 0xFFFFFFFF).toString(16)

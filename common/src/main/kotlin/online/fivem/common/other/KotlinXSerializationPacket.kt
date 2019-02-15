@@ -1,4 +1,4 @@
-package online.fivem.common.entities
+package online.fivem.common.other
 
 open class KotlinXSerializationPacket(
 	val hash: Int,

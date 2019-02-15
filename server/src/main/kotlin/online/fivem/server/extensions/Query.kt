@@ -1,11 +1,11 @@
 package online.fivem.server.extensions
 
 import external.nodejs.mysql.Connection
+import external.nodejs.require
 import external.nodejs.stream.Stream
 import external.nodejs.stream.TransformParams
 import kotlinx.coroutines.channels.Channel
 import online.fivem.common.extensions.forEach
-import require
 
 suspend fun <T> Connection.Query.forEach(function: (T) -> Unit) {
 	val stream = require("stream").unsafeCast<Stream>()

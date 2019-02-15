@@ -9,10 +9,10 @@ import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
 import online.fivem.common.common.KSerializer
 import online.fivem.common.common.Serializer
-import online.fivem.common.entities.ClientsNetPacket
-import online.fivem.common.entities.ServersNetPacket
 import online.fivem.common.events.net.EstablishConnectionEvent
 import online.fivem.common.events.net.ImReadyEvent
+import online.fivem.common.other.ClientsNetPacket
+import online.fivem.common.other.ServersNetPacket
 import kotlin.coroutines.CoroutineContext
 
 class ServerEventExchangerModule : AbstractModule(), CoroutineScope {

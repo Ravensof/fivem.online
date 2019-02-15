@@ -15,7 +15,8 @@ class CommandsModule(override val coroutineContext: CoroutineContext) : Abstract
 	override fun onStart(): Job? {
 		launch {
 			for (command in executionQueue) {
-				val player = sessionModule.getPlayer(command.playerSrc) ?: continue
+				val player =
+					if (command.playerSrc == 0) null else sessionModule.getPlayer(command.playerSrc) ?: continue
 
 				CommandEvent.handle(
 					Command(
@@ -45,7 +46,7 @@ class CommandsModule(override val coroutineContext: CoroutineContext) : Abstract
 	)
 
 	class Command(
-		val player: Player,
+		val player: Player?,
 		val command: String,
 		val args: Array<String>,
 		val raw: String

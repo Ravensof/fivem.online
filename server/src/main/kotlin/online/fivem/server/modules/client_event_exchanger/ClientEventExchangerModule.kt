@@ -7,13 +7,13 @@ import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
 import online.fivem.common.common.KSerializer
 import online.fivem.common.common.Serializer
-import online.fivem.common.entities.ClientsNetPacket
 import online.fivem.common.entities.PlayerSrc
-import online.fivem.common.entities.ServersNetPacket
 import online.fivem.common.events.net.EstablishConnectionEvent
 import online.fivem.common.events.net.ImReadyEvent
 import online.fivem.common.extensions.onNull
 import online.fivem.common.gtav.NativeEvents
+import online.fivem.common.other.ClientsNetPacket
+import online.fivem.common.other.ServersNetPacket
 import online.fivem.server.ServerConfig
 import online.fivem.server.Strings
 import online.fivem.server.gtav.Exports

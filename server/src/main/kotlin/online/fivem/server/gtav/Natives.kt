@@ -7,6 +7,14 @@ import online.fivem.common.gtav.entities.PlayerIdentifiers
 
 object Natives {
 
+	fun startResource(resourceName: String) {
+		StartResource(resourceName)
+	}
+
+	fun stopResource(resourceName: String) {
+		StopResource(resourceName)
+	}
+
 	/**
 	 * Returns the physical on-disk path of the specified resource.
 	 * @param resourceName The name of the resource.

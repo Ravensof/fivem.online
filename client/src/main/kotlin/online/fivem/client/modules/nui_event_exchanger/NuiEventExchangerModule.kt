@@ -12,9 +12,9 @@ import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
 import online.fivem.common.common.KSerializer
 import online.fivem.common.common.Serializer
-import online.fivem.common.entities.NuiPacket
-import online.fivem.common.entities.NuiUnsafePacket
 import online.fivem.common.events.net.ImReadyEvent
+import online.fivem.common.other.NuiPacket
+import online.fivem.common.other.NuiUnsafePacket
 import kotlin.coroutines.CoroutineContext
 
 class NuiEventExchangerModule : AbstractModule(), CoroutineScope {
