@@ -31,6 +31,8 @@ private fun start() {
 
 		add(RolePlaySystemModule())
 
+		add(VoiceTransmissionModule())
+
 		add(Test())
 
 		add(ClientEventExchangerModule())//last

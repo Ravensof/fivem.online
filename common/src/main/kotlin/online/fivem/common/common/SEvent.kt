@@ -7,23 +7,21 @@ import kotlinx.coroutines.launch
 import online.fivem.common.extensions.forEach
 import kotlin.reflect.KClass
 
-private typealias EventType = Any
-
 open class SEvent {
 
-	val channels = mutableMapOf<KClass<out EventType>, BroadcastChannel<EventType>>()
+	val channels = mutableMapOf<KClass<out Any>, BroadcastChannel<Any>>()
 
-	inline fun <reified T : EventType> openSubscription(): ReceiveChannel<T> {
-		return getChannel(T::class).openSubscription()
+	fun <T : Any> openSubscription(kClass: KClass<T>): ReceiveChannel<T> {
+		return getChannel(kClass).openSubscription()
 	}
 
-	inline fun <reified T : EventType> CoroutineScope.on(noinline action: (T) -> Unit) {
+	inline fun <reified T : Any> CoroutineScope.on(noinline action: (T) -> Unit) {
 		launch {
-			openSubscription<T>().forEach(action)
+			openSubscription(T::class).forEach(action)
 		}
 	}
 
-	suspend fun emit(data: EventType) {
+	suspend fun emit(data: Any) {
 		channels.filter {
 			it.key.isInstance(data)
 		}.forEach {
@@ -31,13 +29,13 @@ open class SEvent {
 		}
 	}
 
-	fun <T : EventType> getChannel(kClass: KClass<T>): BroadcastChannel<T> {
+	private fun <T : Any> getChannel(kClass: KClass<T>): BroadcastChannel<T> {
 
 		channels[kClass]?.let {
 			return it.unsafeCast<BroadcastChannel<T>>()
 		}
 
-		val channel = BroadcastChannel<EventType>(1)
+		val channel = BroadcastChannel<Any>(1)
 
 		channels[kClass] = channel
 

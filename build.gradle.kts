@@ -1,7 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
 buildscript {
+	repositories {
+	}
 
+	dependencies {
+	}
 }
 
 plugins {

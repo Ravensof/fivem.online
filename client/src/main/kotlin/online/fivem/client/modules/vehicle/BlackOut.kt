@@ -23,11 +23,12 @@ class BlackOut(override val coroutineContext: CoroutineContext) : AbstractModule
 
 	private val api by moduleLoader.onReady<API>()
 	private var timeLeft: Long = 0
-	private var isAllowed = true
+	private var isAllowed = false
 
 	override fun onInit() {
 		UEvent.on<PlayersPedTeleportingEvent> { isAllowed = false }
 		UEvent.on<PlayersPedTeleportedEvent> { isAllowed = true }
+		UEvent.on<PlayerSpawnedEvent> { isAllowed = true }
 
 		UEvent.on<PlayersPedHealthChangedEvent.Zero> {
 			if (!isAllowed || it.diff == 0) return@on
