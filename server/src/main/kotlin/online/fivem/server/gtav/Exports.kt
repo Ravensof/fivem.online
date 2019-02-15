@@ -14,10 +14,15 @@ import online.fivem.common.entities.PlayerSrc
 private external val exports: dynamic
 
 object Exports {
-	private val exports = online.fivem.server.gtav.exports[GlobalConfig.MODULE_NAME]
+	private val external = online.fivem.server.gtav.exports
+	private val exports = external[GlobalConfig.MODULE_NAME]
 
 	fun executeCommand(command: String, delay: Int = 1_000) {
-		exports.executeCommand(command, delay)
+		external["resourceManager"].executeCommand(command, delay)
+	}
+
+	fun restartResource(resource: String) {
+		external["resourceManager"].restartResource(resource)
 	}
 
 	fun performHttpRequest(

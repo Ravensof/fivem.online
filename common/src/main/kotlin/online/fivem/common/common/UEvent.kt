@@ -5,6 +5,7 @@ import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.KClass
 
+@Deprecated("use SEvent")
 open class UEvent(override val coroutineContext: CoroutineContext) : CoroutineScope {
 
 	open val printType = "local"

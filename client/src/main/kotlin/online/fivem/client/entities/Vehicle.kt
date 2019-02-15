@@ -313,10 +313,10 @@ class Vehicle private constructor(
 		): Deferred<Vehicle> {
 			return coroutineScope.async {
 
-				withTimeout(5_000) { Client.requestModelJob(vehicleModel.hash).join() }//todo test
+				withTimeout(5_000) { Client.requestModel(vehicleModel.hash) }//todo test
 
 				val entity = withTimeout(5_000) {
-					Client.createVehicle(vehicleModel.hash, coordinatesX).await()
+					Client.createVehicle(vehicleModel.hash, coordinatesX)
 				}//todo test
 
 				Client.setModelAsNoLongerNeeded(vehicleModel.hash)

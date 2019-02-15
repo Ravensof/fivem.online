@@ -2,7 +2,7 @@
 
 package online.fivem.client.gtav
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.delay
 import online.fivem.client.extensions.invokeNative
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.EntityId
@@ -13,10 +13,8 @@ import online.fivem.common.entities.Time
 import online.fivem.common.gtav.NativeControls
 import online.fivem.common.gtav.ProfileSetting
 import online.fivem.common.gtav.RadioStation
-import kotlin.coroutines.CoroutineContext
 
-object Client : CoroutineScope {
-	override val coroutineContext: CoroutineContext = Job()
+object Client {
 
 	/**
 	 * Set modKit to 0 if you plan to call SET_VEHICLE_MOD. That's what the game does. Most body modifications through SET_VEHICLE_MOD will not take effect until this is set to 0.
@@ -1509,7 +1507,7 @@ object Client : CoroutineScope {
 	/**
 	 * thisScriptCheck - can be destroyed if it belongs to the calling script.
 	 */
-	fun createVehicle(
+	suspend fun createVehicle(
 		modelHash: Int,
 		x: Float,
 		y: Float,
@@ -1517,14 +1515,12 @@ object Client : CoroutineScope {
 		heading: Float,
 		isNetwork: Boolean = true,
 		thisScriptCheck: Boolean = false
-	): Deferred<Int> {
-		return async {
-			requestModelJob(modelHash)
-			while (!hasModelLoaded(modelHash)) {
-				delay(100)
-			}
-			return@async CreateVehicle(modelHash, x, y, z, heading, isNetwork, thisScriptCheck)
+	): Int {
+		requestModel(modelHash)
+		while (!hasModelLoaded(modelHash)) {
+			delay(100)
 		}
+		return CreateVehicle(modelHash, x, y, z, heading, isNetwork, thisScriptCheck)
 	}
 
 	/**
@@ -2083,12 +2079,10 @@ object Client : CoroutineScope {
 	 * duration: The time the fade should take, in milliseconds.
 	 */
 	@Deprecated("use api.doScreenFadeInJob")
-	fun doScreenFadeIn(duration: Int): Job {
-		return launch {
-			DoScreenFadeIn(duration)
-			while (!isScreenFadedIn() && !isScreenFadingOut()) {
-				delay(25)
-			}
+	suspend fun doScreenFadeIn(duration: Int) {
+		DoScreenFadeIn(duration)
+		while (!isScreenFadedIn() && !isScreenFadingOut()) {
+			delay(25)
 		}
 	}
 
@@ -2101,12 +2095,10 @@ object Client : CoroutineScope {
 	 * duration: The time the fade should take, in milliseconds.
 	 */
 	@Deprecated("use api.doScreenFadeOutAsync")
-	fun doScreenFadeOut(duration: Int): Job {
-		return launch {
-			DoScreenFadeOut(duration)
-			while (!isScreenFadedOut() && !isScreenFadingIn()) {
-				delay(25)
-			}
+	suspend fun doScreenFadeOut(duration: Int) {
+		DoScreenFadeOut(duration)
+		while (!isScreenFadedOut() && !isScreenFadingIn()) {
+			delay(25)
 		}
 	}
 
@@ -2290,12 +2282,10 @@ object Client : CoroutineScope {
 	 * Request a model to be loaded into memory
 	 * Looking it the disassembly, it seems like it actually returns the model if it's already loaded.
 	 */
-	fun requestModelJob(hash: Int): Job {
-		return launch {
-			RequestModel(hash)
-			while (!hasModelLoaded(hash)) {
-				delay(25)
-			}
+	suspend fun requestModel(hash: Int) {
+		RequestModel(hash)
+		while (!hasModelLoaded(hash)) {
+			delay(25)
 		}
 	}
 
@@ -2399,21 +2389,17 @@ object Client : CoroutineScope {
 	/**
 	 * fucks up on mount chilliad
 	 */
-	fun switchOutPlayerJob(ped: EntityId): Job {
-		return launch {
-			SwitchOutPlayer(ped, 0, 1)
-			while (getPlayerSwitchState() != 5) {
-				delay(25)
-			}
+	suspend fun switchOutPlayer(ped: EntityId) {
+		SwitchOutPlayer(ped, 0, 1)
+		while (getPlayerSwitchState() != 5) {
+			delay(25)
 		}
 	}
 
-	fun switchInPlayerJob(ped: EntityId): Job {
-		return launch {
-			SwitchInPlayer(ped)
-			while (getPlayerSwitchState() != 12) {
-				delay(25)
-			}
+	suspend fun switchInPlayer(ped: EntityId) {
+		SwitchInPlayer(ped)
+		while (getPlayerSwitchState() != 12) {
+			delay(25)
 		}
 	}
 

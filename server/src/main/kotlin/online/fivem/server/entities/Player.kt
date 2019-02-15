@@ -1,6 +1,7 @@
 package online.fivem.server.entities
 
 import online.fivem.common.entities.PlayerSrc
+import online.fivem.server.gtav.Natives
 
 class Player(
 	val playerSrc: PlayerSrc,
@@ -8,4 +9,8 @@ class Player(
 
 	val sessionId: Int,
 	var characterId: Int = -1
-)
+) {
+	fun drop(reason: String) {
+		Natives.dropPlayer(playerSrc, reason)
+	}
+}

@@ -11,6 +11,7 @@ import online.fivem.common.common.KSerializer
 import online.fivem.common.common.Serializer
 import online.fivem.common.events.net.EstablishConnectionEvent
 import online.fivem.common.events.net.ImReadyEvent
+import online.fivem.common.events.net.StopResourceEvent
 import online.fivem.common.other.ClientsNetPacket
 import online.fivem.common.other.ServersNetPacket
 import kotlin.coroutines.CoroutineContext
@@ -33,6 +34,8 @@ class ServerEventExchangerModule : AbstractModule(), CoroutineScope {
 				Console.error("${e.message} ${JSON.stringify(rawPacket)}")
 			}
 		}
+
+		ServerEvent.on<StopResourceEvent> { moduleLoader.stop() }
 	}
 
 	@ExperimentalCoroutinesApi

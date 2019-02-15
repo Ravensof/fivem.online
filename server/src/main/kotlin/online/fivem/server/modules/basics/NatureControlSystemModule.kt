@@ -3,7 +3,6 @@ package online.fivem.server.modules.basics
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import online.fivem.common.common.AbstractModule
-import online.fivem.common.common.Console
 import online.fivem.common.common.Utils
 import online.fivem.common.common.VDate
 import online.fivem.common.entities.Weather
@@ -84,7 +83,7 @@ class NatureControlSystemModule(override val coroutineContext: CoroutineContext)
 				}
 			}
 
-			Console.debug("weather calculated: ${weather.name} ${currentTemperature}tC (f'(x)=$f -> $diff)")
+//			Console.debug("weather calculated: ${weather.name} ${currentTemperature}tC (f'(x)=$derivative -> $diff)")
 
 			synchronizationModule.syncData.weather = Weather(
 				weather = weather,

@@ -38,7 +38,7 @@ class JoinTransitionModule(override val coroutineContext: CoroutineContext) : Ab
 
 		return launch {
 			if (!Client.isPlayerSwitchInProgress()) {
-				switchingPlayerJob = Client.switchOutPlayerJob(Client.getPlayerPedId())
+				switchingPlayerJob = launch { Client.switchOutPlayer(Client.getPlayerPedId()) }
 				switchingPlayerJob?.join()
 			}
 		}
@@ -50,7 +50,7 @@ class JoinTransitionModule(override val coroutineContext: CoroutineContext) : Ab
 		switchingPlayerJob?.join()
 		api.unMuteSound(muteHandle)
 
-		Client.switchInPlayerJob(Client.getPlayerPedId()).join()
+		Client.switchInPlayer(Client.getPlayerPedId())
 		tickExecutor.remove(execId)
 		Client.clearDrawOrigin()
 	}

@@ -10,6 +10,7 @@ import online.fivem.common.common.Serializer
 import online.fivem.common.entities.PlayerSrc
 import online.fivem.common.events.net.EstablishConnectionEvent
 import online.fivem.common.events.net.ImReadyEvent
+import online.fivem.common.events.net.StopResourceEvent
 import online.fivem.common.extensions.onNull
 import online.fivem.common.gtav.NativeEvents
 import online.fivem.common.other.ClientsNetPacket
@@ -139,9 +140,14 @@ class ClientEventExchangerModule : AbstractModule(), CoroutineScope {
 	}
 
 	override fun onStop(): Job? {
-		cancel()
+		ClientEvent.emit(StopResourceEvent())
 
-		return super.onStop()
+		return launch {
+
+			delay(10_000)
+
+			coroutineContext.cancel()
+		}
 	}
 
 	private fun onPlayerDropped(playerId: Int) {

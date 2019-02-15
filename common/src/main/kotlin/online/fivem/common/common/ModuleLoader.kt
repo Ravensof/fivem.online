@@ -71,7 +71,6 @@ class ModuleLoader : CoroutineScope {
 		modules.asReversed().forEach {
 			try {
 				Console.log("stop module ${it::class.simpleName}")
-				modules.remove(it)
 				it.onStop()?.join()
 			} catch (exception: Throwable) {
 				Console.error(
@@ -95,12 +94,6 @@ class ModuleLoader : CoroutineScope {
 		return OnLocalModuleLoaded(ModuleType::class)
 	}
 
-//	companion object {
-//		inline fun <reified ModuleType : AbstractModule> onReady(): OnGlobalModuleLoaded<ModuleType> {
-//			return OnGlobalModuleLoaded(ModuleType::class)
-//		}
-//	}
-
 	class OnLocalModuleLoaded<T : AbstractModule>(private val kClass: KClass<T>) {
 		private var value: T? = null
 
@@ -117,26 +110,6 @@ class ModuleLoader : CoroutineScope {
 			return module
 		}
 	}
-
-//	class OnGlobalModuleLoaded<T : AbstractModule>(private val kClass: KClass<T>) {
-//		private var value: T? = null
-//
-//		init {
-//			UEvent.on<ModuleLoadedEvent> {
-//				if (kClass.isInstance(it)) {
-//					value = it.module.unsafeCast<T>()
-//				}
-//			}
-//		}
-//
-//		operator fun getValue(thisRef: AbstractModule, property: KProperty<*>): T {
-//			value?.let {
-//				return it
-//			}
-//
-//			throw Exception("module ${kClass.simpleName} used in ${property.name} have not been loaded")
-//		}
-//	}
 
 	private class Event(coroutineContext: CoroutineContext) : UEvent(coroutineContext) {
 		fun <T : AbstractModule> on(kClass: KClass<T>, function: (T) -> Unit) {

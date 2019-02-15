@@ -86,14 +86,14 @@ class API(
 
 	fun doScreenFadeOutAsync(duration: Int) = setJob(fadeScreenStack) {
 		@Suppress("DEPRECATION")
-		Client.doScreenFadeOut(duration).join()
+		Client.doScreenFadeOut(duration)
 	}
 
 	private val fadeScreenStack = UnitStack()
 
 	fun doScreenFadeInJob(handle: Handle, duration: Int) = unsetJob(fadeScreenStack, handle) {
 		@Suppress("DEPRECATION")
-		Client.doScreenFadeIn(duration).join()
+		Client.doScreenFadeIn(duration)
 	}
 
 	private val ragdollStack = UnitStack()

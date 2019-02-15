@@ -9,7 +9,7 @@ import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.entities.RGB
 import online.fivem.common.gtav.NativeWeather
 
-fun Client.createVehicle(
+suspend fun Client.createVehicle(
 	modelHash: Int,
 	coordinatesX: CoordinatesX,
 	isNetwork: Boolean = true,
@@ -119,7 +119,7 @@ fun Client.getSeatOfPedInVehicle(vehicle: EntityId, ped: EntityId): Int? {
 }
 
 suspend fun Client.setPlayerModelSync(player: Int, hash: Int) {
-	requestModelJob(hash).join()
+	requestModel(hash)
 	setPlayerModel(player, hash)
 	setModelAsNoLongerNeeded(hash)
 }

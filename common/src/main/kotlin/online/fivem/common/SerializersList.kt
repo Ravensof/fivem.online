@@ -18,6 +18,8 @@ fun initSerializableClasses() {
 		ClientSideSynchronizeEvent::class to ClientSideSynchronizeEvent.serializer(),
 		ServerSideSynchronizationEvent::class to ServerSideSynchronizationEvent.serializer(),
 
+		StopResourceEvent::class to StopResourceEvent.serializer(),
+
 		//nui
 		BlackOutEvent::class to BlackOutEvent.serializer(),
 		CancelBlackOutEvent::class to CancelBlackOutEvent.serializer(),
