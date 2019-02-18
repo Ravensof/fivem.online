@@ -53,27 +53,27 @@ class SpeedometerModule(override val coroutineContext: CoroutineContext) : Abstr
 	}
 
 	override fun onInit() {
-		ClientEvent.on<SpeedometerUpdateEvent> {
-			if (speedometerInterpolatorChannel.isFull) return@on
+		ClientEvent.apply {
+			on<SpeedometerUpdateEvent> {
+				if (speedometerInterpolatorChannel.isFull) return@on
 
-			launch {
-				speedometerInterpolatorChannel.send(
-					SpeedometerData(
-						speed = it.dashboardSpeed,
-						rpm = it.currentRpm
+				launch {
+					speedometerInterpolatorChannel.send(
+						SpeedometerData(
+							speed = it.dashboardSpeed,
+							rpm = it.currentRpm
+						)
 					)
-				)
+				}
 			}
-		}
-
-		ClientEvent.on<SpeedometerEnableEvent> {
-			runSpeedometer()
-			speedometerBlock.fadeIn()
-		}
-
-		ClientEvent.on<SpeedometerDisableEvent> {
-			speedometerBlock.fadeOut()
-			drawInterpolatorJob?.cancel()
+			on<SpeedometerEnableEvent> {
+				runSpeedometer()
+				speedometerBlock.fadeIn()
+			}
+			on<SpeedometerDisableEvent> {
+				speedometerBlock.fadeOut()
+				drawInterpolatorJob?.cancel()
+			}
 		}
 	}
 

@@ -5,7 +5,7 @@ import kotlinx.coroutines.channels.Channel
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
-import online.fivem.common.common.UEvent
+import online.fivem.common.common.SEvent
 import online.fivem.common.common.VDate
 import online.fivem.common.entities.PlayerSrc
 import online.fivem.common.events.net.ClientSideSynchronizeEvent
@@ -46,7 +46,9 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 			}
 		}
 
-		UEvent.on<PlayerConnectedEvent> { syncDataFor(it.player.playerSrc) }
+		SEvent.apply {
+			on<PlayerConnectedEvent> { syncDataFor(it.player.playerSrc) }
+		}
 	}
 
 	@ExperimentalCoroutinesApi

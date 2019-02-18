@@ -8,8 +8,8 @@ import online.fivem.client.extensions.getDisabledControlNormal
 import online.fivem.client.gtav.Client
 import online.fivem.client.modules.basics.TickExecutorModule
 import online.fivem.common.common.AbstractModule
+import online.fivem.common.common.SEvent
 import online.fivem.common.common.Stack
-import online.fivem.common.common.UEvent
 import online.fivem.common.extensions.orZero
 import online.fivem.common.gtav.NativeControls
 import kotlin.coroutines.CoroutineContext
@@ -61,9 +61,11 @@ class RealisticFailureModule(
 	private var tickHandle = Stack.UNDEFINED_INDEX
 
 	override fun onInit() {
-		UEvent.on<PlayerLeftOrJoinVehicleEvent.Join.Driver> { onJoinVehicle(it.vehicle) }
-		UEvent.on<PlayerLeftOrJoinVehicleEvent.Changed> { onChangeVehicle(it.vehicle, it.previousVehicle) }
-		UEvent.on<PlayerLeftOrJoinVehicleEvent.Left> { onLeftVehicle(it.vehicle) }
+		SEvent.apply {
+			on<PlayerLeftOrJoinVehicleEvent.Join.Driver> { onJoinVehicle(it.vehicle) }
+			on<PlayerLeftOrJoinVehicleEvent.Changed> { onChangeVehicle(it.vehicle, it.previousVehicle) }
+			on<PlayerLeftOrJoinVehicleEvent.Left> { onLeftVehicle(it.vehicle) }
+		}
 	}
 
 	private fun onChangeVehicle(newVehicle: Vehicle, previousVehicle: Vehicle) {

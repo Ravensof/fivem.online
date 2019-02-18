@@ -13,6 +13,7 @@ import online.fivem.common.common.Console
 import online.fivem.common.common.KSerializer
 import online.fivem.common.common.Serializer
 import online.fivem.common.events.net.ImReadyEvent
+import online.fivem.common.extensions.forEach
 import online.fivem.common.other.NuiPacket
 import online.fivem.common.other.NuiUnsafePacket
 import kotlin.coroutines.CoroutineContext
@@ -28,7 +29,9 @@ class NuiEventExchangerModule : AbstractModule(), CoroutineScope {
 				val data = KSerializer.deserialize(packet.hash, packet.serialized)
 					?: throw Exception("KSerializer.deserialize returns null")
 
-				NuiEvent.handle(Serializer.unpack(data))
+				launch {
+					NuiEvent.handle(Serializer.unpack(data))
+				}
 			} catch (exception: Throwable) {
 				Console.error("NuiEventExchangerModule: ${exception.message}")
 			}
@@ -69,15 +72,12 @@ class NuiEventExchangerModule : AbstractModule(), CoroutineScope {
 
 		val channel = Channel<Unit>()
 
-		NuiEvent.on<ImReadyEvent> {
-			launch {
-				channel.send(Unit)
-			}
+		NuiEvent.on<ImReadyEvent>(this) {
+			channel.close()
 		}
 
 		return launch {
-			channel.receive()
-			channel.close()
+			channel.forEach {}
 			NuiEvent.emit(ImReadyEvent())
 		}
 	}

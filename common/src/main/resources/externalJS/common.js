@@ -1,3 +1,3 @@
-async function delay(ms) {
-	await new Promise(resolve => setTimeout(resolve, ms))
+var navigator = {//fix для корутин
+	product: 'ReactNative'
 }

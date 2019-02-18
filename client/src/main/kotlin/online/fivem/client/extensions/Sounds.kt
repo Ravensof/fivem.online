@@ -5,7 +5,7 @@ import online.fivem.common.Sounds
 import online.fivem.common.events.nui.PlaySoundEvent
 import online.fivem.common.events.nui.PrefetchFileEvent
 
-fun Sounds.play(volume: Double = 1.0) {
+suspend fun Sounds.play(volume: Double = 1.0) {
 	NuiEvent.emit(
 		PlaySoundEvent(
 			sound = file,
@@ -15,5 +15,5 @@ fun Sounds.play(volume: Double = 1.0) {
 }
 
 fun Sounds.prefetch() {
-	NuiEvent.emit(PrefetchFileEvent(Sounds.PATH + file))
+	NuiEvent.emitAsync(PrefetchFileEvent(Sounds.PATH + file))
 }

@@ -4,7 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
-import online.fivem.common.common.UEvent
+import online.fivem.common.common.SEvent
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.entities.PlayerSrc
 import online.fivem.common.events.net.ImReadyEvent
@@ -116,7 +116,7 @@ class SessionModule(override val coroutineContext: CoroutineContext) : AbstractM
 			), character.pedestrian
 		)
 
-		UEvent.emit(PlayerConnectedEvent(player))
+		SEvent.emit(PlayerConnectedEvent(player))
 	}
 
 	private fun onPlayerDropped(playerId: Int, reason: String) {

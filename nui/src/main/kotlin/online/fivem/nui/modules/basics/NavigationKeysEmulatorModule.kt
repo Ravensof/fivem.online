@@ -16,23 +16,23 @@ import kotlin.coroutines.CoroutineContext
 
 class NavigationKeysEmulatorModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
 	override fun onInit() {
-		ClientEvent.on<NuiEmulateKeyDownEvent> {
-			//			val event=jQuery.Event("keydown", it.code)
-			//			jQuery().trigger(event)
+		ClientEvent.apply {
+			on<NuiEmulateKeyDownEvent> {
+				//			val event=jQuery.Event("keydown", it.code)
+				//			jQuery().trigger(event)
 
 
-			emitEvent(KeyEvent("keydown", it.code))
-		}
-
-		ClientEvent.on<NuiEmulateKeyUpEvent> {
-			emitEvent(KeyEvent("keyup", it.code))
-		}
-
-		ClientEvent.on<NuiEmulateKeyJustPressedEvent> {
-			launch {
 				emitEvent(KeyEvent("keydown", it.code))
-				delay(it.durability)
+			}
+			on<NuiEmulateKeyUpEvent> {
 				emitEvent(KeyEvent("keyup", it.code))
+			}
+			on<NuiEmulateKeyJustPressedEvent> {
+				launch {
+					emitEvent(KeyEvent("keydown", it.code))
+					delay(it.durability)
+					emitEvent(KeyEvent("keyup", it.code))
+				}
 			}
 		}
 

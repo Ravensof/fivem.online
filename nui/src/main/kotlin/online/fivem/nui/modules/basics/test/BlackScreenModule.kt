@@ -24,15 +24,18 @@ class BlackScreenModule(override val coroutineContext: CoroutineContext) :
 		blackBlock.hide()
 		jQuery("body").append(blackBlock)
 
-		ClientEvent.on<BlackOutEvent> {
-			if (it.duration == 0) {
-				blackBlock.show()
-			} else {
-				blackBlock.fadeIn(it.duration)
+		ClientEvent.apply {
+			on<BlackOutEvent> {
+				if (it.duration == 0) {
+					blackBlock.show()
+				} else {
+					blackBlock.fadeIn(it.duration)
+				}
 			}
-		}
-		ClientEvent.on<CancelBlackOutEvent> {
-			blackBlock.fadeOut(it.duration)
+
+			on<CancelBlackOutEvent> {
+				blackBlock.fadeOut(it.duration)
+			}
 		}
 	}
 }

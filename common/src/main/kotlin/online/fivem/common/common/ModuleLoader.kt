@@ -18,7 +18,7 @@ class ModuleLoader : CoroutineScope {
 
 	private val modules = mutableListOf<AbstractModule>()
 
-	private val events = Event(coroutineContext)
+	private val events = SEvent()
 
 	fun add(module: AbstractModule) {
 		try {
@@ -54,7 +54,7 @@ class ModuleLoader : CoroutineScope {
 
 				val event = ModuleLoadedEvent(module)
 
-				UEvent.emit(event)
+				SEvent.emit(event)
 				events.emit(module)
 			} catch (exception: Throwable) {
 				Console.error(
@@ -82,12 +82,21 @@ class ModuleLoader : CoroutineScope {
 		}
 	}
 
-	inline fun <reified T : AbstractModule> on(noinline function: (T) -> Unit) {
+	inline fun <reified T : AbstractModule> on(coroutineScope: CoroutineScope = this, noinline function: (T) -> Unit) {
 		on(T::class, function)
 	}
 
-	fun <T : AbstractModule> on(kClass: KClass<T>, function: (T) -> Unit) {
-		events.on(kClass, function)
+	inline fun <reified T : AbstractModule> CoroutineScope.on(noinline function: (T) -> Unit) {
+		on(T::class, function)
+	}
+
+	fun <T : AbstractModule> CoroutineScope.on(kClass: KClass<T>, function: (T) -> Unit) {
+		launch {
+			events.openSubscription(kClass).apply {
+				function(receive())
+				cancel()
+			}
+		}
 	}
 
 	inline fun <reified ModuleType : AbstractModule> onReady(): OnLocalModuleLoaded<ModuleType> {
@@ -108,12 +117,6 @@ class ModuleLoader : CoroutineScope {
 			value = module
 
 			return module
-		}
-	}
-
-	private class Event(coroutineContext: CoroutineContext) : UEvent(coroutineContext) {
-		fun <T : AbstractModule> on(kClass: KClass<T>, function: (T) -> Unit) {
-			handlers.add(kClass to function.unsafeCast<(Any) -> Unit>())
 		}
 	}
 }

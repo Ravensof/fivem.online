@@ -97,6 +97,7 @@ object Natives {
 		var steam: String? = null
 		var license: String? = null
 		var ip: String? = null
+		var discord: String? = null
 
 		for (i in 0 until getNumPlayerIdentifiers(playerSrc)) {
 
@@ -109,6 +110,7 @@ object Natives {
 						"steam" -> steam = identifier[1]
 						"license" -> license = identifier[1]
 						"ip" -> ip = identifier[1]
+						"discord" -> discord = identifier[1]
 					}
 				}
 			}
@@ -118,7 +120,8 @@ object Natives {
 			steam = steam,
 			license = license,
 			ip = ip,
-			name = getPlayerName(playerSrc)
+			name = getPlayerName(playerSrc),
+			discord = discord
 		)
 	}
 

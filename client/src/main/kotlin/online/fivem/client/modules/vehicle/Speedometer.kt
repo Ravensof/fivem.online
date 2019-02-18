@@ -6,7 +6,7 @@ import online.fivem.client.entities.Vehicle
 import online.fivem.client.events.PlayerLeftOrJoinVehicleEvent
 import online.fivem.client.modules.nui_event_exchanger.NuiEvent
 import online.fivem.common.common.AbstractModule
-import online.fivem.common.common.UEvent
+import online.fivem.common.common.SEvent
 import online.fivem.common.events.nui.SpeedometerDisableEvent
 import online.fivem.common.events.nui.SpeedometerEnableEvent
 import online.fivem.common.events.nui.SpeedometerUpdateEvent
@@ -18,8 +18,10 @@ class Speedometer(override val coroutineContext: CoroutineContext) : AbstractMod
 	private var updateJob: Job? = null
 
 	override fun onInit() {
-		UEvent.on<PlayerLeftOrJoinVehicleEvent.Join.Driver> { onPlayerJoinVehicle(it.vehicle) }
-		UEvent.on<PlayerLeftOrJoinVehicleEvent.Left> { onPlayerLeftVehicle() }
+		SEvent.apply {
+			on<PlayerLeftOrJoinVehicleEvent.Join.Driver> { onPlayerJoinVehicle(it.vehicle) }
+			on<PlayerLeftOrJoinVehicleEvent.Left> { onPlayerLeftVehicle() }
+		}
 	}
 
 	private fun onPlayerJoinVehicle(vehicle: Vehicle) {
@@ -47,7 +49,7 @@ class Speedometer(override val coroutineContext: CoroutineContext) : AbstractMod
 						fuelLevel = vehicle.fuelLevel,
 						oilLevel = vehicle.oilLevel,
 						petrolTankHealth = vehicle.petrolTankHealth,
-						engineRunning = vehicle.isEngineRunning,
+						isEngineRunning = vehicle.isEngineRunning(),
 						engineOn = vehicle.isEngineOn,
 						engineHealth = vehicle.engineHealth
 					)
@@ -56,7 +58,7 @@ class Speedometer(override val coroutineContext: CoroutineContext) : AbstractMod
 		}
 	}
 
-	private fun onPlayerLeftVehicle() {
+	private suspend fun onPlayerLeftVehicle() {
 		updateJob?.cancel()
 		vehicleHasSpeedo = false
 		NuiEvent.emit(SpeedometerDisableEvent())

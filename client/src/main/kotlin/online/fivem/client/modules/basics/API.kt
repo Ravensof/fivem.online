@@ -10,8 +10,8 @@ import online.fivem.client.modules.eventGenerator.EventGeneratorModule
 import online.fivem.client.modules.nui_event_exchanger.NuiEvent
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Handle
+import online.fivem.common.common.SEvent
 import online.fivem.common.common.Stack
-import online.fivem.common.common.UEvent
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.events.nui.BlackOutEvent
 import online.fivem.common.events.nui.CancelBlackOutEvent
@@ -45,18 +45,18 @@ class API(
 	private val hideNui = UnitStack()
 
 	fun hideNui() = hideNui.set {
-		NuiEvent.emit(ShowGuiEvent(false))
+		NuiEvent.emitAsync(ShowGuiEvent(false))
 	}
 
 	fun cancelHideNui(handle: Handle) = hideNui.unset(handle) {
-		NuiEvent.emit(ShowGuiEvent(true))
+		NuiEvent.emitAsync(ShowGuiEvent(true))
 	}
 
-	fun setPlayerCoordinates(coordinates: CoordinatesX) {
-		UEvent.emit(PlayersPedTeleportingEvent())
+	suspend fun setPlayerCoordinates(coordinates: CoordinatesX) {
+		SEvent.emit(PlayersPedTeleportingEvent())
 		EventGeneratorModule.playerCoordinates = coordinates
 		Client.setEntityCoordsNoOffset(Client.getPlayerPedId(), coordinates.x, coordinates.y, coordinates.z)
-		UEvent.emit(PlayersPedTeleportedEvent())
+		SEvent.emit(PlayersPedTeleportedEvent())
 	}
 
 	private val nuiBlackOutScreenStack = UnitStack()

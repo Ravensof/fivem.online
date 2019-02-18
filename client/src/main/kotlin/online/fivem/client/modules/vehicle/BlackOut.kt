@@ -16,7 +16,7 @@ import online.fivem.common.GlobalConfig.BlackOut.WAKING_UP_TIME
 import online.fivem.common.Sounds
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
-import online.fivem.common.common.UEvent
+import online.fivem.common.common.SEvent
 import kotlin.coroutines.CoroutineContext
 
 class BlackOut(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
@@ -26,31 +26,31 @@ class BlackOut(override val coroutineContext: CoroutineContext) : AbstractModule
 	private var isAllowed = false
 
 	override fun onInit() {
-		UEvent.on<PlayersPedTeleportingEvent> { isAllowed = false }
-		UEvent.on<PlayersPedTeleportedEvent> { isAllowed = true }
-		UEvent.on<PlayerSpawnedEvent> { isAllowed = true }
+		SEvent.apply {
+			on<PlayersPedTeleportingEvent> { isAllowed = false }
+			on<PlayersPedTeleportedEvent> { isAllowed = true }
+			on<PlayerSpawnedEvent> { isAllowed = true }
+			on<PlayersPedHealthChangedEvent.Zero> {
+				if (!isAllowed || it.diff == 0) return@on
+				blackOut(BLACKOUT_TIME_FROM_COMMAS * 1_000)
+			}
+			on<AccelerationThresholdAchievedEvent> {
+				if (!isAllowed || it.accelerationModule < ACCELERATION_THRESHOLD) return@on
 
-		UEvent.on<PlayersPedHealthChangedEvent.Zero> {
-			if (!isAllowed || it.diff == 0) return@on
-			blackOut(BLACKOUT_TIME_FROM_COMMAS * 1_000)
-		}
+				val playerPed = Client.getPlayerPedId()
+				val currentHealth = Client.getEntityHealth(playerPed)
 
-		UEvent.on<AccelerationThresholdAchievedEvent> {
-			if (!isAllowed || it.accelerationModule < ACCELERATION_THRESHOLD) return@on
-
-			val playerPed = Client.getPlayerPedId()
-			val currentHealth = Client.getEntityHealth(playerPed)
-
-			Client.setEntityHealth(playerPed, currentHealth - it.accelerationModule.toInt() / 50)
-			Console.debug("blackout from ${it.accelerationModule} m/s^2")
-			blackOut(
-				(
-						if (timeLeft > 0)
-							it.accelerationModule - ACCELERATION_THRESHOLD
-						else
-							it.accelerationModule
-						).toLong() * 100
-			)
+				Client.setEntityHealth(playerPed, currentHealth - it.accelerationModule.toInt() / 50)
+				Console.debug("blackout from ${it.accelerationModule} m/s^2")
+				blackOut(
+					(
+							if (timeLeft > 0)
+								it.accelerationModule - ACCELERATION_THRESHOLD
+							else
+								it.accelerationModule
+							).toLong() * 100
+				)
+			}
 		}
 
 		Sounds.SHOCK_EFFECT.prefetch()

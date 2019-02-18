@@ -2,14 +2,16 @@ package online.fivem.client.modules.basics
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import online.fivem.client.events.PlayerSpawnedEvent
 import online.fivem.client.extensions.networkResurrectLocalPlayer
+import online.fivem.client.extensions.requestCollisionAtCoordinates
 import online.fivem.client.extensions.setPlayerModelSync
 import online.fivem.client.gtav.Client
 import online.fivem.common.common.AbstractModule
+import online.fivem.common.common.SEvent
 import online.fivem.common.common.Stack
-import online.fivem.common.common.UEvent
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.events.net.SpawnVehicleEvent
 import kotlin.coroutines.CoroutineContext
@@ -19,12 +21,13 @@ class SpawnManagerModule(override val coroutineContext: CoroutineContext) : Abst
 	private val api by moduleLoader.onReady<API>()
 
 	private fun vehicleSpawn(event: SpawnVehicleEvent) {
-		launch {
-			//			val vehicle = withTimeout(5_000) { Client.createVehicle(event.vehicleModel, event.coordinatesX).await() }
+
+//		launch {
+//			val vehicle = withTimeout(5_000) { Client.createVehicle(event.vehicleModel, event.coordinatesX).await() }
 //
 //			Client.setVehicleOilLevel(vehicle, event.vehicleId)
 //			Client.setVehicleWheelHealth(vehicle)
-		}
+//		}
 	}
 
 	fun spawnPlayerJob(coordinatesX: CoordinatesX, modelHash: Int?): Job = launch {
@@ -39,26 +42,25 @@ class SpawnManagerModule(override val coroutineContext: CoroutineContext) : Abst
 			Client.setPlayerModelSync(playerId, it)
 		}
 
-//			Client.requestCollisionAtCoordinates(coordinatesX)//todo не работает?
-
 		val ped = Client.getPlayerPedId()
 
-		api.setPlayerCoordinates(coordinatesX)
 		Client.networkResurrectLocalPlayer(coordinatesX)
 		Client.clearPedTasksImmediately(ped)
 		Client.removeAllPedWeapons(ped)
 		Client.clearPlayerWantedLevel(playerId)
 
-//			while (!Client.hasCollisionLoadedAroundEntity(ped)) {
-//				delay(1000)
-//			}
+		Client.requestCollisionAtCoordinates(coordinatesX)//todo не работает?
+		while (!Client.hasCollisionLoadedAroundEntity(ped)) {
+			delay(1000)
+		}
+		api.setPlayerCoordinates(coordinatesX)
 
 		Client.shutdownLoadingScreen()
 
 		api.doScreenFadeInJob(fadeHandle, 500).join()
 		freezePlayer(playerId, false)
 
-		UEvent.emit(PlayerSpawnedEvent())
+		SEvent.emit(PlayerSpawnedEvent())
 	}
 
 	private var lockControlHandle = Stack.UNDEFINED_INDEX

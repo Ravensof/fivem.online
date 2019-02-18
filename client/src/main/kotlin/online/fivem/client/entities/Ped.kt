@@ -24,8 +24,8 @@ class Ped private constructor(
 		return null
 	}
 
-	fun getVehicleIsIn(lastVehicle: Boolean = false): EntityId? {
-		return Client.getVehiclePedIsIn(entity, lastVehicle)
+	fun getVehicleIsIn(lastVehicle: Boolean = false): Vehicle? {
+		return Client.getVehiclePedIsIn(entity, lastVehicle)?.let { Vehicle.newInstance(it) }
 	}
 
 	class PedDoesntExistsException(message: String) : Exception(message)

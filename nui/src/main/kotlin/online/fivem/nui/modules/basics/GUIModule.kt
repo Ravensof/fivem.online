@@ -13,7 +13,7 @@ class GUIModule(override val coroutineContext: CoroutineContext) : AbstractModul
 	private val mainView = MainView()
 
 	override fun onInit() {
-		ClientEvent.on<ShowGuiEvent> { onShowGui(it.show) }
+		ClientEvent.on<ShowGuiEvent>(this) { onShowGui(it.show) }
 		moduleLoader.add(DebugModule(coroutineContext, mainView))
 		moduleLoader.add(BlackScreenModule(coroutineContext))
 	}

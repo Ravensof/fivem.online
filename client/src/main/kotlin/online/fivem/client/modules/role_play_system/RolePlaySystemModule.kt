@@ -9,8 +9,8 @@ import online.fivem.client.events.PlayersPedChangedEvent
 import online.fivem.client.gtav.Client
 import online.fivem.client.modules.basics.TickExecutorModule
 import online.fivem.common.common.AbstractModule
+import online.fivem.common.common.SEvent
 import online.fivem.common.common.Stack
-import online.fivem.common.common.UEvent
 import kotlin.coroutines.CoroutineContext
 
 class RolePlaySystemModule : AbstractModule(), CoroutineScope {
@@ -20,13 +20,16 @@ class RolePlaySystemModule : AbstractModule(), CoroutineScope {
 	private val tickExecutor by moduleLoader.onReady<TickExecutorModule>()
 
 	override fun onInit() {
-		UEvent.on<PlayerVehicleSeatEvent.Join.Passenger> {
-			if (it.seatIndex == 0) {
-				disableSeatShuffling(true)
+		SEvent.apply {
+			on<PlayerVehicleSeatEvent.Join.Passenger> {
+				if (it.seatIndex == 0) {
+					disableSeatShuffling(true)
+				}
 			}
+			on<PlayerVehicleSeatEvent.Left> { disableSeatShuffling(false) }
+			on<PlayersPedChangedEvent> { onPedChanged(it.ped) }
 		}
-		UEvent.on<PlayerVehicleSeatEvent.Left> { disableSeatShuffling(false) }
-		UEvent.on<PlayersPedChangedEvent> { onPedChanged(it.ped) }
+
 	}
 
 	override fun onStart(): Job? {

@@ -21,7 +21,7 @@ class PhoneMenu(
 	private var navigatorListener: NavigationControlsHandler? = null
 
 	override fun onInit() {
-		moduleLoader.on<MainControlListener> {
+		moduleLoader.on<MainControlListener>(this) {
 			it.onShortPressListener(
 				NativeControls.Keys.PHONE,
 				::onPhoneOpenButton

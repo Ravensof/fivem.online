@@ -28,10 +28,6 @@ class Vehicle private constructor(
 	val numberOfPassengersSeats = Client.getVehicleMaxNumberOfPassengers(entity)
 	val mod = Mod(entity)
 
-	val isEngineStarting: Boolean get() = Client.isVehicleEngineStarting(entity)
-	val isEngineRunning: Boolean get() = Client.getIsVehicleEngineRunning(entity)
-
-	val isOnAllWheels: Boolean get() = Client.isVehicleOnAllWheels(entity)
 	val classType: Int = Client.getVehicleClass(entity)
 
 	var modKit: Int
@@ -235,6 +231,12 @@ class Vehicle private constructor(
 		return list
 	}
 
+	fun isEngineStarting() = Client.isVehicleEngineStarting(entity)
+
+	fun isEngineRunning() = Client.getIsVehicleEngineRunning(entity)
+
+	fun isOnAllWheels() = Client.isVehicleOnAllWheels(entity)
+
 	fun turnEngineOn(value: Boolean, instantly: Boolean = false) {
 		Client.setVehicleEngineOn(entity, value, instantly)
 	}
@@ -357,6 +359,33 @@ class Vehicle private constructor(
 		// https://gtamods.com/wiki/Handling.meta
 
 		/**
+		 * This is the weight of the vehicle in kilograms. Only used when the vehicle collides with another vehicle or non-static object.
+		 * Value: 0.0 - 10000.0 and above.
+		 */
+		var mass: Double by HandlingDelegate("fMass")
+
+		/**
+		 * This value is used to determine whether a vehicle is front, rear, or four wheel drive.
+		 * Value: 0.0 is rear wheel drive, 1.0 is front wheel drive, and any value between 0.01 and 0.99 is four wheel
+		 * drive (0.5 give both front and rear axles equal force, being perfect 4WD.)
+		 */
+		var driveBiasFront: Double by HandlingDelegate("fDriveBiasFront")
+
+		/**
+		 * How many forward speeds a transmission contains.
+		 * Value: 1-16 or more.
+		 */
+		var initialDriveGears: Int by HandlingDelegate("nInitialDriveGears")
+
+		/**
+		 * This multiplier modifies the game's calculation of drive force (from the output of the transmission).
+		 * Drive force formula TBD
+		 * Value: 0.01 - 2.0 and above. 1.0 uses drive force calculation unmodified. Values less than 1.0 will in effect
+		 * give the vehicle less drive force and values greater than 1.0 will produce more drive force. Most cars have between 0.10 and 0.25.
+		 */
+		var initialDriveForce: Double by HandlingDelegate("fInitialDriveForce")
+
+		/**
 		 * Multiplies the game's calculation of deformation-causing damage.
 		 * Value: 0.0 - 10.0. 0.0 = no deformation through damage is possible. 10.0 = Ten times deformation-causing damage.
 		 */
@@ -387,13 +416,6 @@ class Vehicle private constructor(
 		 */
 		var engineDamageMultiplier: Double by HandlingDelegate("fEngineDamageMult")
 
-		var initialDriveForce: Double by HandlingDelegate("fInitialDriveForce")
-
-		/**
-		 * How many forward speeds a transmission contains.
-		 * Value: 1-16 or more.
-		 */
-		var initialDriveGears: Int by HandlingDelegate("nInitialDriveGears")
 
 		private class HandlingDelegate(private val fieldName: String) {
 			operator fun <T> getValue(handling: Handling, property: KProperty<*>): T = when (fieldName[0]) {

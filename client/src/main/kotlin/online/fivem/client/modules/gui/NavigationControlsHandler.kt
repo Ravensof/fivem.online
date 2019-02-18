@@ -117,7 +117,7 @@ class NavigationControlsHandler(
 
 	private fun repeat(function: () -> Unit) {
 		repeatTask?.cancel()
-		repeatTask = repeatJob(KEY_INTERVAL_CLICK, function)
+		repeatTask = repeatJob(KEY_INTERVAL_CLICK) { function() }
 	}
 
 	private fun stopRepeat() {

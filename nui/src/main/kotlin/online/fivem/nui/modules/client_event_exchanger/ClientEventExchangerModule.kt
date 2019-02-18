@@ -26,10 +26,8 @@ class ClientEventExchangerModule : AbstractModule(), EventListener, CoroutineSco
 
 		val channel = Channel<Unit>()
 
-		ClientEvent.on<ImReadyEvent> {
-			launch {
-				channel.send(Unit)
-			}
+		ClientEvent.on<ImReadyEvent>(this) {
+			channel.send(Unit)
 		}
 
 		launch {
@@ -75,7 +73,9 @@ class ClientEventExchangerModule : AbstractModule(), EventListener, CoroutineSco
 			val data = KSerializer.deserialize(kotlinXSerializationPacket.hash, kotlinXSerializationPacket.serialized)
 				?: throw Exception("KSerializer.deserialize returns null")
 
-			ClientEvent.handle(data)
+			launch {
+				ClientEvent.handle(data)
+			}
 		} catch (exception: Throwable) {
 			Console.error(
 				"ClientEventExchangerModule: ${exception.message}\r\n " +
@@ -86,7 +86,9 @@ class ClientEventExchangerModule : AbstractModule(), EventListener, CoroutineSco
 
 	private fun handleUnsafePacket(unsafeData: Any) {
 		val data = Serializer.unpack<Any>(unsafeData.unsafeCast<NuiUnsafePacket>().data)
-		ClientEvent.handle(data)
+		launch {
+			ClientEvent.handle(data)
+		}
 	}
 
 	companion object {

@@ -15,10 +15,10 @@ class BasicsModule : AbstractModule(), CoroutineScope {
 	override val coroutineContext: CoroutineContext = SupervisorJob()
 
 	override fun onInit() {
-		ClientEvent.on<PrefetchFileEvent> { Html.prefetch(it.files.map { Html.nuiResourcesLink(it) }) }
+		ClientEvent.on<PrefetchFileEvent>(this) { Html.prefetch(it.files.map { Html.nuiResourcesLink(it) }) }
 
 		moduleLoader.add(GUIModule(coroutineContext))
-		moduleLoader.add(PlaySoundModule())
+		moduleLoader.add(PlaySoundModule(coroutineContext))
 		moduleLoader.add(LocalStorageModule())
 	}
 }

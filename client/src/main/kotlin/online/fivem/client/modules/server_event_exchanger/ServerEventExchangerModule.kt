@@ -12,6 +12,7 @@ import online.fivem.common.common.Serializer
 import online.fivem.common.events.net.EstablishConnectionEvent
 import online.fivem.common.events.net.ImReadyEvent
 import online.fivem.common.events.net.StopResourceEvent
+import online.fivem.common.extensions.forEach
 import online.fivem.common.other.ClientsNetPacket
 import online.fivem.common.other.ServersNetPacket
 import kotlin.coroutines.CoroutineContext
@@ -29,13 +30,15 @@ class ServerEventExchangerModule : AbstractModule(), CoroutineScope {
 				val obj = KSerializer.deserialize(packet.hash, packet.serialized)
 					?: throw Exception("wrong net packet format")
 
-				ServerEvent.handle(obj)
+				launch {
+					ServerEvent.handle(obj)
+				}
 			} catch (e: Throwable) {
 				Console.error("${e.message} ${JSON.stringify(rawPacket)}")
 			}
 		}
 
-		ServerEvent.on<StopResourceEvent> { moduleLoader.stop() }
+		ServerEvent.on<StopResourceEvent>(this) { moduleLoader.stop() }
 	}
 
 	@ExperimentalCoroutinesApi
@@ -43,10 +46,12 @@ class ServerEventExchangerModule : AbstractModule(), CoroutineScope {
 
 		val pauseChannel = Channel<Boolean>()
 
-		ServerEvent.on<EstablishConnectionEvent> {
-			key = it.key
-			ServerEvent.emit(ImReadyEvent())
-			launch { pauseChannel.send(true) }
+		launch {
+			ServerEvent.openSubscription(EstablishConnectionEvent::class).forEach {
+				key = it.key
+				ServerEvent.emit(ImReadyEvent())
+				pauseChannel.close()
+			}
 		}
 
 		launch {
@@ -66,16 +71,15 @@ class ServerEventExchangerModule : AbstractModule(), CoroutineScope {
 		}
 
 		launch {
+			Console.log("connecting to server..")
 			while (!pauseChannel.isClosedForSend) {
 				startHandshaking()
-				delay(5_000)
+				delay(10_000)
 			}
 		}
 
 		return launch {
-			Console.log("connecting to server..")
-			pauseChannel.receive()
-			pauseChannel.close()
+			pauseChannel.forEach { }
 			Console.log("connected to server")
 		}
 	}

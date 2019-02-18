@@ -1,20 +1,18 @@
 package online.fivem.nui.modules.client_event_exchanger
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import online.fivem.common.common.UEvent
+import online.fivem.common.common.SEvent
+import kotlin.coroutines.CoroutineContext
 
-object ClientEvent : UEvent(Job()) {
+object ClientEvent : SEvent(), CoroutineScope {
+	override val coroutineContext: CoroutineContext = Job()
 
-	override val printType = "nui"
-
-	override fun emit(data: Any) {
-		launch {
-			ClientEventExchangerModule.channel.send(data)
-		}
+	override suspend fun emit(data: Any) {
+		ClientEventExchangerModule.channel.send(data)
 	}
 
-	fun handle(data: Any) {
+	suspend fun handle(data: Any) {
 		super.emit(data)
 	}
 }

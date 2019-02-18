@@ -7,7 +7,7 @@ import online.fivem.client.events.PauseMenuStateChangedEvent
 import online.fivem.client.gtav.Client
 import online.fivem.client.modules.server_event_exchanger.ServerEvent
 import online.fivem.common.common.AbstractModule
-import online.fivem.common.common.UEvent
+import online.fivem.common.common.SEvent
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.events.net.ClientSideSynchronizeEvent
 import online.fivem.common.events.net.ServerSideSynchronizationEvent
@@ -27,12 +27,17 @@ class SynchronizationModule : AbstractModule(), CoroutineScope {
 	private var lastSync = 0.0
 
 	override fun onInit() {
-		ServerEvent.on<ServerSideSynchronizationEvent> { onServerRequest(it) }
-		ServerEvent.on<SpawnPlayerEvent> { onPlayerSpawn(it.coordinatesX, it.model) }
-		UEvent.on<PauseMenuStateChangedEvent> {
-			if (it.pauseMenuState != 0 && Date.now() - lastSync >= SYNC_TIME_THRESHOLD_MILLISECONDS) synchronizeToServer()
+		ServerEvent.apply {
+			on<ServerSideSynchronizationEvent> { onServerRequest(it) }
+			on<SpawnPlayerEvent> { onPlayerSpawn(it.coordinatesX, it.model) }
 		}
-//		ServerEvent.on<SpawnVehicleEvent> { onVehicleSpawn(it) }
+
+		SEvent.apply {
+			on<PauseMenuStateChangedEvent> {
+				if (it.pauseMenuState != 0 && Date.now() - lastSync >= SYNC_TIME_THRESHOLD_MILLISECONDS) synchronizeToServer()
+			}
+//			on<SpawnVehicleEvent> { onVehicleSpawn(it) }
+		}
 	}
 
 //	private fun onVehicleSpawn(event: SpawnVehicleEvent) {
@@ -50,27 +55,25 @@ class SynchronizationModule : AbstractModule(), CoroutineScope {
 		joinTransition.endTransitionJob()
 	}
 
-	private fun onServerRequest(event: ServerSideSynchronizationEvent) {
+	private suspend fun onServerRequest(event: ServerSideSynchronizationEvent) {
 
 		dateTime.date.serverRealTime = event.serverTime
 
 		event.weather?.let {
-			launch { weatherModule.weatherQueue.send(it) }
+			weatherModule.weatherQueue.send(it)
 		}
 
 		synchronizeToServer()
 	}
 
-	private fun synchronizeToServer() {
+	private suspend fun synchronizeToServer() {
 		val playerPed = Client.getPlayerPedId()
 
 		ServerEvent.emit(ClientSideSynchronizeEvent(
-			coordinatesX = Client.getEntityCoords(playerPed)?.let {
-				CoordinatesX(
-					it,
-					Client.getEntityHeading(playerPed)
-				)
-			}
+			coordinatesX = CoordinatesX(
+				Client.getEntityCoords(playerPed),
+				Client.getEntityHeading(playerPed)
+			)
 		))
 
 		lastSync = Date.now()

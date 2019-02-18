@@ -10,7 +10,7 @@ class VehicleModule : AbstractModule(), CoroutineScope {
 
 	override fun onInit() {
 		moduleLoader.apply {
-			add(InternetRadio())
+			add(InternetRadio(coroutineContext))
 			add(Speedometer(coroutineContext))
 			add(BlackOut(coroutineContext))
 			add(RealisticFailureModule(coroutineContext))

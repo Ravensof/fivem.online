@@ -1,6 +1,8 @@
 package online.fivem.client.modules.vehicle
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import online.fivem.client.events.PlayerRadioStationChangedEvent
 import online.fivem.client.events.ProfileSettingUpdatedEvent
 import online.fivem.client.extensions.start
@@ -9,7 +11,7 @@ import online.fivem.client.gtav.Client
 import online.fivem.client.modules.nui_event_exchanger.NuiEvent
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
-import online.fivem.common.common.UEvent
+import online.fivem.common.common.SEvent
 import online.fivem.common.entities.InternetRadioStation
 import online.fivem.common.events.InternetRadioChangedEvent
 import online.fivem.common.events.InternetRadioStopEvent
@@ -19,8 +21,9 @@ import online.fivem.common.extensions.orZero
 import online.fivem.common.gtav.NativeAudioScenes
 import online.fivem.common.gtav.ProfileSetting
 import online.fivem.common.gtav.RadioStation
+import kotlin.coroutines.CoroutineContext
 
-class InternetRadio : AbstractModule() {
+class InternetRadio(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
 
 	private var volume = getSettingsMusicLevel().toDouble() / 10 * MAX_VOLUME
 
@@ -33,26 +36,28 @@ class InternetRadio : AbstractModule() {
 			}
 		}
 
-		UEvent.on<PlayerRadioStationChangedEvent> { onPlayerVehicleRadioStationChanged(it.radioStation) }
-
-		UEvent.on<ProfileSettingUpdatedEvent.AudioMusicLevelInMP> {
-			onSettingsMusicLevelChanged(it.value)
+		SEvent.apply {
+			on<PlayerRadioStationChangedEvent> { onPlayerVehicleRadioStationChanged(it.radioStation) }
+			on<ProfileSettingUpdatedEvent.AudioMusicLevelInMP> {
+				onSettingsMusicLevelChanged(it.value)
+			}
 		}
 	}
 
 	override fun onStart(): Job? {
-		NuiEvent.emit(InternetRadioVolumeChangeEvent(this@InternetRadio.volume))
 
-		return super.onStart()
+		return launch {
+			NuiEvent.emit(InternetRadioVolumeChangeEvent(this@InternetRadio.volume))
+		}
 	}
 
-	fun playRadio(radio: InternetRadioStation) {
+	suspend fun playRadio(radio: InternetRadioStation) {
 		muteNativeRadio(true)
 
 		NuiEvent.emit(InternetRadioChangedEvent(radio))
 	}
 
-	fun stopRadio() {
+	suspend fun stopRadio() {
 		muteNativeRadio(false)
 
 		NuiEvent.emit(InternetRadioStopEvent())
@@ -62,7 +67,7 @@ class InternetRadio : AbstractModule() {
 		return radioStation?.let { radioStationList[it.name] }
 	}
 
-	private fun onPlayerVehicleRadioStationChanged(radioStation: RadioStation?) {
+	private suspend fun onPlayerVehicleRadioStationChanged(radioStation: RadioStation?) {
 
 		val internetRadioStation = getInternetRadioStation(radioStation)
 
@@ -73,7 +78,7 @@ class InternetRadio : AbstractModule() {
 		}
 	}
 
-	private fun onSettingsMusicLevelChanged(volume: Int) {
+	private suspend fun onSettingsMusicLevelChanged(volume: Int) {
 		this.volume = volume.toDouble() / 10 * MAX_VOLUME
 
 		NuiEvent.emit(InternetRadioVolumeChangeEvent(this@InternetRadio.volume))

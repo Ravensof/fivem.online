@@ -34,11 +34,11 @@ class InternetRadio : AbstractModule(), CoroutineScope {
 	private var internetRadioStation: InternetRadioStation? = null
 
 	override fun onStart(): Job? {
-		ClientEvent.on<InternetRadioChangedEvent> { changeStation(it.internetRadioStation) }
-
-		ClientEvent.on<InternetRadioStopEvent> { disable() }
-
-		ClientEvent.on<InternetRadioVolumeChangeEvent> { changeVolume(it.volume) }
+		ClientEvent.apply {
+			on<InternetRadioChangedEvent> { changeStation(it.internetRadioStation) }
+			on<InternetRadioStopEvent> { disable() }
+			on<InternetRadioVolumeChangeEvent> { changeVolume(it.volume) }
+		}
 
 		return super.onStart()
 	}

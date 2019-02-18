@@ -8,15 +8,17 @@ import kotlin.browser.localStorage
 class LocalStorageModule : AbstractModule() {
 
 	init {
-		ClientEvent.on<LocalStorageEvent.Request> {
-			ClientEvent.emit(
-				LocalStorageEvent.Response(
-					responseId = it.requestId,
-					data = get(it.key)
+		ClientEvent.apply {
+			on<LocalStorageEvent.Request> {
+				ClientEvent.emit(
+					LocalStorageEvent.Response(
+						responseId = it.requestId,
+						data = get(it.key)
+					)
 				)
-			)
+			}
+			on<LocalStorageEvent.Post> { set(it.key, it.value) }
 		}
-		ClientEvent.on<LocalStorageEvent.Post> { set(it.key, it.value) }
 	}
 
 	fun get(key: String): String? {

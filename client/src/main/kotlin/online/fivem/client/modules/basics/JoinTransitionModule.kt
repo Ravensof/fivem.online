@@ -17,7 +17,7 @@ class JoinTransitionModule(override val coroutineContext: CoroutineContext) : Ab
 	private var muteHandle = Stack.UNDEFINED_INDEX
 
 	override fun onInit() {
-		moduleLoader.on<API> {
+		moduleLoader.on<API>(this) {
 			Client.setManualShutdownLoadingScreenNui(true)
 			startTransitionJob()
 

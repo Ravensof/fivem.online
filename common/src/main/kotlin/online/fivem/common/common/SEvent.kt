@@ -9,19 +9,28 @@ import kotlin.reflect.KClass
 
 open class SEvent {
 
-	val channels = mutableMapOf<KClass<out Any>, BroadcastChannel<Any>>()
+	private val channels = mutableMapOf<KClass<out Any>, BroadcastChannel<Any>>()
 
 	fun <T : Any> openSubscription(kClass: KClass<T>): ReceiveChannel<T> {
 		return getChannel(kClass).openSubscription()
 	}
 
-	inline fun <reified T : Any> CoroutineScope.on(noinline action: (T) -> Unit) {
+	inline fun <reified T : Any> on(
+		coroutineScope: CoroutineScope,
+		noinline action: suspend (T) -> Unit
+	) {
+		coroutineScope.apply {
+			on(action)
+		}
+	}
+
+	inline fun <reified T : Any> CoroutineScope.on(noinline action: suspend (T) -> Unit) {
 		launch {
 			openSubscription(T::class).forEach(action)
 		}
 	}
 
-	suspend fun emit(data: Any) {
+	open suspend fun emit(data: Any) {
 		channels.filter {
 			it.key.isInstance(data)
 		}.forEach {

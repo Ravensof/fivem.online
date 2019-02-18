@@ -16,10 +16,8 @@ class LocalStorageModule(override val coroutineContext: CoroutineContext) : Abst
 	private val pendingChannels = mutableMapOf<Int, Channel<Data>>()
 
 	override fun onInit() {
-		NuiEvent.on<LocalStorageEvent.Response> {
-			launch {
-				pendingChannels[it.responseId]?.send(it.data)
-			}
+		NuiEvent.on<LocalStorageEvent.Response>(this) {
+			pendingChannels[it.responseId]?.send(it.data)
 		}
 	}
 
@@ -53,7 +51,7 @@ class LocalStorageModule(override val coroutineContext: CoroutineContext) : Abst
 		return@async get(key)
 	}
 
-	fun set(key: String, value: String) {
+	fun set(key: String, value: String) = launch {
 		NuiEvent.emit(
 			LocalStorageEvent.Post(
 				key = key,

@@ -3,7 +3,7 @@ package online.fivem.common.extensions
 import kotlinx.coroutines.*
 import kotlin.js.Date
 
-fun CoroutineScope.repeatJob(timeMillis: Long, function: () -> Unit): Job = launch {
+fun CoroutineScope.repeatJob(timeMillis: Long, function: suspend CoroutineScope. () -> Unit): Job = launch {
 	var startTime: Double
 	var endTime: Double
 
