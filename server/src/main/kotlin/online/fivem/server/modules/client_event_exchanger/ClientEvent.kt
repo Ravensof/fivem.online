@@ -29,27 +29,9 @@ open class ClientEvent : CoroutineScope {
 	): Job {
 		return launch {
 			ClientEventExchangerModule.channel.send(
-				ClientEventExchangerModule.Packet<Any>(
-					playerSrc = playerSrc,
-					data = data
-				)
-			)
-		}
-	}
-
-	fun <Response> emit(
-		data: Any,
-		playerSrc: PlayerSrc? = null,
-		timeout: Long = 5_000,
-		callback: ((PlayerSrc, Response) -> Unit)? = null
-	): Job {
-		return launch {
-			ClientEventExchangerModule.channel.send(
 				ClientEventExchangerModule.Packet(
 					playerSrc = playerSrc,
-					data = data,
-					timeout = timeout,
-					callback = callback
+					data = data
 				)
 			)
 		}

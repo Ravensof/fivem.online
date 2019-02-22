@@ -27,10 +27,10 @@ private typealias Data = Any
 
 class ClientEventExchangerModule : AbstractModule(), CoroutineScope {
 
-	override val coroutineContext: CoroutineContext = SupervisorJob()
+	override val coroutineContext: CoroutineContext = createSupervisorJob()
 
 	private val playersSendChannels = createChannels<Data>()
-	private val playersReceiveChannels = createChannels<Packet<*>>()
+	private val playersReceiveChannels = createChannels<Packet>()
 
 	private val playersList = mutableMapOf<Int, Double>()
 
@@ -62,7 +62,7 @@ class ClientEventExchangerModule : AbstractModule(), CoroutineScope {
 				}
 
 				launch {
-					channel.send(Packet<Any>(playerSrc, data))
+					channel.send(Packet(playerSrc, data))
 				}
 			} catch (exception: Throwable) {
 				return@onNet Natives.dropPlayer(
@@ -99,12 +99,12 @@ class ClientEventExchangerModule : AbstractModule(), CoroutineScope {
 		playersReceiveChannels.forEach { channel ->
 			launch {
 				for (packet in channel) {
-					packet.playerSrc ?: throw Exception("null pointer exception")
+					val playerSrc = packet.playerSrc ?: throw Exception("null pointer exception")
 
-					sessionModule.getPlayer(packet.playerSrc.value)?.let {
+					sessionModule.getPlayer(playerSrc.value)?.let {
 						ClientEvent.handle(it, packet.data)
 					}.onNull {
-						ClientEvent.handle(packet.playerSrc, packet.data)
+						ClientEvent.handle(playerSrc, packet.data)
 					}
 				}
 			}
@@ -189,16 +189,14 @@ class ClientEventExchangerModule : AbstractModule(), CoroutineScope {
 		return list
 	}
 
-	class Packet<Response>(
+	class Packet(
 		val playerSrc: PlayerSrc? = null,
-		val data: Data,
-		val timeout: Long = 0,
-		val callback: ((PlayerSrc, Response) -> Unit)? = null
+		val data: Data
 	)
 
 	companion object {
 		private const val PLAYERS_CHANNEL_SIZE = 128 * GlobalConfig.MAX_PLAYERS
 
-		val channel = Channel<Packet<*>>(PLAYERS_CHANNEL_SIZE)
+		val channel = Channel<Packet>(PLAYERS_CHANNEL_SIZE)
 	}
 }
