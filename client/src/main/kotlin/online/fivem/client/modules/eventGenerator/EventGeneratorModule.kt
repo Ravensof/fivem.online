@@ -10,7 +10,7 @@ import online.fivem.client.extensions.getSeatOfPedInVehicle
 import online.fivem.client.gtav.Client
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.EntityId
-import online.fivem.common.common.SEvent
+import online.fivem.common.common.Event
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.extensions.onNull
 import online.fivem.common.extensions.orZero
@@ -78,13 +78,13 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 	}
 
 	private suspend fun checkPlayerTryingToGetAnyVehicle() {
-		val isPedAtGetInAnyVehicleRightNow = playerPed?.isAtGetInAVehicle == true
+		val isPedAtGetInAnyVehicleRightNow = playerPed?.isAtGetInAVehicle() == true
 
 		if (isPedAtGetInAnyVehicleRightNow != isPedAtGetInAnyVehicle) {
 			playerPed?.getVehicleIsUsing()?.let { vehicle ->
-				SEvent.emit(PlayerTryingToGetVehicle(vehicle))
+				Event.emit(PlayerTryingToGetVehicle(vehicle))
 			}.onNull {
-				SEvent.emit(PlayerCancelsTryingToGetVehicle())
+				Event.emit(PlayerCancelsTryingToGetVehicle())
 			}
 			isPedAtGetInAnyVehicle = isPedAtGetInAnyVehicleRightNow
 		}
@@ -99,7 +99,7 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 
 			playerCoordinates = coordinates
 
-			SEvent.emit(
+			Event.emit(
 				PlayerCoordinatesChangedEvent(
 					coordinates
 				)
@@ -120,8 +120,8 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 			playerSpeed = iSpeed
 
 			if (playerAcceleration.absoluteValue >= accelerationThreshold) {
-				if (!playerPed.isAtGetInAVehicle) {
-					SEvent.emit(
+				if (!playerPed.isAtGetInAVehicle()) {
+					Event.emit(
 						AccelerationThresholdAchievedEvent(
 							playerAcceleration,
 							playerAcceleration.absoluteValue,
@@ -136,7 +136,7 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 	private suspend fun checkIsScreenFadedInOut(isFadeOut: Boolean) {
 		if (isFadeOut != this.isFadeOut) {
 			this.isFadeOut = isFadeOut
-			SEvent.emit(ScreenFadeOutEvent(isFadeOut))
+			Event.emit(ScreenFadeOutEvent(isFadeOut))
 		}
 	}
 
@@ -146,7 +146,7 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 
 			playerPed = newPed
 
-			SEvent.emit(PlayersPedChangedEvent(newPed))
+			Event.emit(PlayersPedChangedEvent(newPed))
 
 			return newPed
 		}
@@ -162,12 +162,12 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 
 		if (pedHealthDiff != 0) {
 			if (currentPedHealth == 0) {
-				SEvent.emit(PlayersPedHealthChangedEvent.Zero(currentPedHealth))
+				Event.emit(PlayersPedHealthChangedEvent.Zero(pedHealthDiff))
 			} else {
 				if (pedHealthDiff > 0) {
-					SEvent.emit(PlayersPedHealthChangedEvent.Increased(currentPedHealth, pedHealthDiff))
+					Event.emit(PlayersPedHealthChangedEvent.Increased(currentPedHealth, pedHealthDiff))
 				} else {
-					SEvent.emit(PlayersPedHealthChangedEvent.Dropped(currentPedHealth, pedHealthDiff))
+					Event.emit(PlayersPedHealthChangedEvent.Dropped(currentPedHealth, pedHealthDiff))
 				}
 			}
 		}
@@ -187,7 +187,7 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 
 		if (bodyHealth == vehicleBodyHealth && engineHealth == vehicleEngineHealth && petrolTankHealth == vehiclePetrolTankHealth) return
 
-		SEvent.emit(
+		Event.emit(
 			PlayersVehicleHealthChangedEvent(
 				bodyHealth = bodyHealth,
 				bodyDiff = bodyHealth - (vehicleBodyHealth ?: bodyHealth),
@@ -211,9 +211,9 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 	private suspend fun checkPauseMenuState(state: Int) {
 		if (pauseMenuState != state) {
 			if (state == 0) {
-				SEvent.emit(PauseMenuStateChangedEvent.Disabled())
+				Event.emit(PauseMenuStateChangedEvent.Disabled())
 			} else {
-				SEvent.emit(PauseMenuStateChangedEvent.Switched(state))
+				Event.emit(PauseMenuStateChangedEvent.Switched(state))
 			}
 
 			pauseMenuState = state
@@ -222,7 +222,7 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 
 	private suspend fun checkAudioMusicLevelInMP(volume: Int) {
 		if (audioMusicLevelInMP != volume) {
-			SEvent.emit(ProfileSettingUpdatedEvent.AudioMusicLevelInMP(volume))
+			Event.emit(ProfileSettingUpdatedEvent.AudioMusicLevelInMP(volume))
 
 			audioMusicLevelInMP = volume
 		}
@@ -234,18 +234,18 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 		if (seatIndex == previousSeat) return
 
 		when {
-			previousSeat != null && seatIndex != null -> SEvent.emit(
+			previousSeat != null && seatIndex != null -> Event.emit(
 				if (seatIndex == -1)
 					PlayerVehicleSeatEvent.Changed.AsDriver(seatIndex)
 				else
 					PlayerVehicleSeatEvent.Changed.AsPassenger(previousSeat, seatIndex)
 			)
 
-			previousSeat != null && seatIndex == null -> SEvent.emit(
+			previousSeat != null && seatIndex == null -> Event.emit(
 				PlayerVehicleSeatEvent.Left(previousSeat)
 			)
 
-			previousSeat == null && seatIndex != null -> SEvent.emit(
+			previousSeat == null && seatIndex != null -> Event.emit(
 				if (seatIndex == -1) {
 					PlayerVehicleSeatEvent.Join.Driver()
 				} else {
@@ -262,14 +262,14 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 			if (playersVehicle?.isEngineRunning() == true) Client.getRadioStation() else null
 
 		if (currentRadio != playerRadioStationName) {
-			SEvent.emit(PlayerRadioStationChangedEvent(currentRadio))
+			Event.emit(PlayerRadioStationChangedEvent(currentRadio))
 
 			playerRadioStationName = currentRadio
 
 			if (currentRadio != null) {
-				SEvent.emit(PlayerVehicleRadioToggledEvent.Enabled(currentRadio))
+				Event.emit(PlayerVehicleRadioToggledEvent.Enabled(currentRadio))
 			} else {
-				SEvent.emit(PlayerVehicleRadioToggledEvent.Disabled())
+				Event.emit(PlayerVehicleRadioToggledEvent.Disabled())
 			}
 		}
 	}
@@ -284,15 +284,15 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 		checkPlayerSeatIndex(playerSeatIndex)
 
 		when {
-			previousVehicle != null && currentVehicle != null -> SEvent.emit(
+			previousVehicle != null && currentVehicle != null -> Event.emit(
 				PlayerLeftOrJoinVehicleEvent.Changed(currentVehicle, previousVehicle)
 			)
 
-			previousVehicle != null && currentVehicle == null -> SEvent.emit(
+			previousVehicle != null && currentVehicle == null -> Event.emit(
 				PlayerLeftOrJoinVehicleEvent.Left(previousVehicle)
 			)
 
-			previousVehicle == null && currentVehicle != null -> SEvent.emit(
+			previousVehicle == null && currentVehicle != null -> Event.emit(
 				if (playerSeatIndex == -1)
 					PlayerLeftOrJoinVehicleEvent.Join.Driver(currentVehicle)
 				else
@@ -305,25 +305,22 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 
 	companion object {
 
-		val playerId get() = Client.getPlayerId()
+		private var playerPed: Ped? = null
 
-		var playerPed: Ped? = null
-			private set
-		var playerPedHealth: Int = 0
-			private set
-		var playersVehicle: Vehicle? = null
-			private set
+		private var playerPedHealth: Int = 0
 
-		var vehicleBodyHealth: Int? = null
-			private set
-		var vehicleEngineHealth: Double? = null
-			private set
-		var vehiclePetrolTankHealth: Double? = null
-			private set
+		private var playersVehicle: Vehicle? = null
+
+		private var vehicleBodyHealth: Int? = null
+
+		private var vehicleEngineHealth: Double? = null
+
+		private var vehiclePetrolTankHealth: Double? = null
+
 		var playerCoordinates: CoordinatesX? = null
 
-		var playerSeatIndex: Int? = null
-			private set
+		private var playerSeatIndex: Int? = null
+
 		var pauseMenuState: Int? = null
 			private set
 		var audioMusicLevelInMP: Int? = null

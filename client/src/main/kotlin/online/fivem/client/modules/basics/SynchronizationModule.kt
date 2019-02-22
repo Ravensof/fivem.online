@@ -7,7 +7,7 @@ import online.fivem.client.events.PauseMenuStateChangedEvent
 import online.fivem.client.gtav.Client
 import online.fivem.client.modules.server_event_exchanger.ServerEvent
 import online.fivem.common.common.AbstractModule
-import online.fivem.common.common.SEvent
+import online.fivem.common.common.Event
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.events.net.ClientSideSynchronizeEvent
 import online.fivem.common.events.net.ServerSideSynchronizationEvent
@@ -32,7 +32,7 @@ class SynchronizationModule : AbstractModule(), CoroutineScope {
 			on<SpawnPlayerEvent> { onPlayerSpawn(it.coordinatesX, it.model) }
 		}
 
-		SEvent.apply {
+		Event.apply {
 			on<PauseMenuStateChangedEvent> {
 				if (it.pauseMenuState != 0 && Date.now() - lastSync >= SYNC_TIME_THRESHOLD_MILLISECONDS) synchronizeToServer()
 			}
@@ -49,7 +49,6 @@ class SynchronizationModule : AbstractModule(), CoroutineScope {
 //	}
 
 	private fun onPlayerSpawn(coordinatesX: CoordinatesX, model: Int) = launch {
-		//		val blackoutHandle=
 		joinTransition.startTransitionJob().join()
 		spawnManager.spawnPlayerJob(coordinatesX, model).join()
 		joinTransition.endTransitionJob()

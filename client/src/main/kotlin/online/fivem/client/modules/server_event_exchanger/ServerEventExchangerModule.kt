@@ -26,7 +26,7 @@ class ServerEventExchangerModule : AbstractModule(), CoroutineScope {
 	override fun onInit() {
 		Natives.onNet(GlobalConfig.NET_EVENT_NAME) { rawPacket: Any ->
 			try {
-				val packet = rawPacket.unsafeCast<ServersNetPacket>()//JSON.parse<ServersNetPacket>(String())
+				val packet = rawPacket.unsafeCast<ServersNetPacket>()
 				val obj = KSerializer.deserialize(packet.hash, packet.serialized)
 					?: throw Exception("wrong net packet format")
 

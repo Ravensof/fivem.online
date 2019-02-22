@@ -5,7 +5,7 @@ import kotlinx.coroutines.channels.Channel
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
-import online.fivem.common.common.SEvent
+import online.fivem.common.common.Event
 import online.fivem.common.common.VDate
 import online.fivem.common.entities.PlayerSrc
 import online.fivem.common.events.net.ClientSideSynchronizeEvent
@@ -46,7 +46,7 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 			}
 		}
 
-		SEvent.apply {
+		Event.apply {
 			on<PlayerConnectedEvent> { syncDataFor(it.player.playerSrc) }
 		}
 	}
@@ -63,7 +63,27 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 		requestJob.cancel()
 		synchronizationJob.cancel()
 
-		return super.onStop()
+		return null
+//		Console.info("saving player data")
+//
+//		return launch {
+//			val players = sessionModule.getConnectedPlayers()
+//
+//			val syncJob = launch {
+//				withTimeoutOrNull(15_000) {
+//					repeat(players.size) {
+//						val data = syncDataChannel.receive()
+//						saveData(data.first, data.second)
+//					}
+//				}
+//			}
+//
+//			for (playerSrc in players) {
+//				syncDataFor(playerSrc)
+//			}
+//
+//			syncJob.join()
+//		}
 	}
 
 	private fun syncDataFor(playerSrc: PlayerSrc) {
@@ -89,12 +109,15 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 
 	private fun synchronizationJob() = launch {
 		for (obj in syncDataChannel) {
-			val player = obj.first
-			val data = obj.second
+			saveData(obj.first, obj.second)
+		}
+	}
 
-			data.coordinatesX?.let {
-				mySQL.connection.send(
-					"""UPDATE characters
+	private suspend fun saveData(player: Player, data: ClientSideSynchronizeEvent) {
+
+		data.coordinatesX?.let {
+			mySQL.connection.send(
+				"""UPDATE characters
 							|SET
 							|   coord_x=?,
 							|   coord_y=?,
@@ -103,15 +126,14 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 							|WHERE id=?
 							|LIMIT 1
 						""".trimMargin(),
-					arrayOf(
-						it.x,
-						it.y,
-						it.z,
-						it.rotation,
-						player.characterId
-					)
+				arrayOf(
+					it.x,
+					it.y,
+					it.z,
+					it.rotation,
+					player.characterId
 				)
-			}
+			)
 		}
 	}
 

@@ -2,6 +2,7 @@ package online.fivem.server.modules.basics
 
 
 import external.nodejs.express.Express
+import external.nodejs.express.Server
 import external.nodejs.express.getInstance
 import external.nodejs.require
 import kotlinx.coroutines.CoroutineScope
@@ -19,6 +20,7 @@ class HttpServerModule(override val coroutineContext: CoroutineContext) : Abstra
 
 	private val express = require("express").unsafeCast<Express>()
 	private val app = express.getInstance()
+	private var server: Server? = null
 
 	override fun onInit() {
 		app.use("/common", express.static(ROOT_DIR + "common"))
@@ -30,7 +32,7 @@ class HttpServerModule(override val coroutineContext: CoroutineContext) : Abstra
 		return launch {
 			val pauseChannel = Channel<Unit>()
 
-			app.listen(HTTP_PORT) { error ->
+			server = app.listen(HTTP_PORT) { error ->
 				pauseChannel.close()
 
 				error?.let {
@@ -42,6 +44,11 @@ class HttpServerModule(override val coroutineContext: CoroutineContext) : Abstra
 
 			pauseChannel.forEach { }
 		}
+	}
+
+	override fun onStop(): Job? {
+		server?.close()
+		return super.onStop()
 	}
 
 	companion object {

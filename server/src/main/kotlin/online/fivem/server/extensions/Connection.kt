@@ -16,7 +16,7 @@ suspend fun <T> Connection.row(query: String, params: Any? = null): T? {
 
 		error?.let {
 			pauseChannel.close()
-			throw Exception(it.code)
+			throw Exception("${it.code}: ${it.sqlMessage}\r\n${it.sql}")
 		}
 
 		GlobalScope.launch {
@@ -28,9 +28,9 @@ suspend fun <T> Connection.row(query: String, params: Any? = null): T? {
 	}
 
 	params?.let {
-		this.query("$query LIMIT 1", it, callback)
+		query("$query LIMIT 1", it, callback)
 	}.onNull {
-		this.query("$query LIMIT 1", callback)
+		query("$query LIMIT 1", callback)
 	}
 
 	return pauseChannel.receive()
@@ -48,7 +48,7 @@ suspend fun Connection.send(query: String, params: Any? = null): Connection.Resu
 
 		error?.let {
 			pauseChannel.close()
-			throw Exception(it.code)
+			throw Exception("${it.code}: ${it.sqlMessage}\r\n${it.sql}")
 		}
 
 		GlobalScope.launch {
@@ -58,9 +58,9 @@ suspend fun Connection.send(query: String, params: Any? = null): Connection.Resu
 	}
 
 	params?.let {
-		this.query(query, it, callback)
+		query(query, it, callback)
 	}.onNull {
-		this.query(query, callback)
+		query(query, callback)
 	}
 
 	return pauseChannel.receive()

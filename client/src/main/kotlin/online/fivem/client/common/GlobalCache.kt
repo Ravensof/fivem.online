@@ -3,10 +3,11 @@ package online.fivem.client.common
 import online.fivem.client.entities.Ped
 import online.fivem.client.entities.Vehicle
 import online.fivem.client.gtav.Client
-import online.fivem.client.gtav.Client.doesEntityExist
 import online.fivem.common.common.EntityId
 
 object GlobalCache {
+
+	val player = Player(Client.getPlayerId())
 
 	private val vehicles = mutableMapOf<EntityId, Vehicle>()
 	private val peds = mutableMapOf<EntityId, Ped>()
@@ -39,16 +40,16 @@ object GlobalCache {
 		peds[ped.entity] = ped
 	}
 
-	private fun cleanUp() {
-		vehicles.forEach {
-			if (!doesEntityExist(it.key)) {
-				vehicles.remove(it.key)
-			}
-		}
-		peds.forEach {
-			if (!doesEntityExist(it.key)) {
-				peds.remove(it.key)
-			}
-		}
-	}
+//	private fun cleanUp() {//todo куда-нибудь воткнуть
+//		vehicles.forEach {
+//			if (!doesEntityExist(it.key)) {
+//				vehicles.remove(it.key)
+//			}
+//		}
+//		peds.forEach {
+//			if (!doesEntityExist(it.key)) {
+//				peds.remove(it.key)
+//			}
+//		}
+//	}
 }

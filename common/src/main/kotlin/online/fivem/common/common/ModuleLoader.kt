@@ -18,7 +18,7 @@ class ModuleLoader : CoroutineScope {
 
 	private val modules = mutableListOf<AbstractModule>()
 
-	private val events = SEvent()
+	private val events = Event()
 
 	fun add(module: AbstractModule) {
 		try {
@@ -54,7 +54,7 @@ class ModuleLoader : CoroutineScope {
 
 				val event = ModuleLoadedEvent(module)
 
-				SEvent.emit(event)
+				Event.emit(event)
 				events.emit(module)
 			} catch (exception: Throwable) {
 				Console.error(

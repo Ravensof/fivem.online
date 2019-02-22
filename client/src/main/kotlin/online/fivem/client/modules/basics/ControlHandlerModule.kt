@@ -43,38 +43,57 @@ class ControlHandlerModule(override val coroutineContext: CoroutineContext) : Ab
 	}
 
 	private fun checkPressedKeys() {
-		val group = NativeControls.Groups.MOVE
 
-		val activeHandler = handlers.lastOrNull() ?: return
-
-		activeHandler.registeredKeys.forEach {
-			val isControlPressed = it.isControlPressed()
+		getRegisteredKeys().forEach { control ->
+			val isControlPressed = control.isControlPressed()
 
 			if (isControlPressed) {
 
-				if (pressedKeys[it] == 0.0) {
-					pressedKeys[it] = Date.now()
+				if (pressedKeys[control] == 0.0) {
+					pressedKeys[control] = Date.now()
 
-					if (activeHandler.onJustPressed(it)) return disableAllKeys()
-				} else if (pressedKeys[it].orZero() > 0 && Date.now() - pressedKeys[it].orZero() > KEY_HOLD_TIME) {
-					pressedKeys[it] = -1.0
+					if (onJustPressed(control)) return disableAllKeys()
+				} else if (pressedKeys[control].orZero() > 0 && Date.now() - pressedKeys[control].orZero() > KEY_HOLD_TIME) {
+					pressedKeys[control] = -1.0
 
-					if (activeHandler.onLongPressed(it)) return disableAllKeys()
+					if (onLongPressed(control)) return disableAllKeys()
 				}
 
 			} else {
 
-				if (pressedKeys[it] != 0.0) {
-					pressedKeys[it] = 0.0
+				if (pressedKeys[control] != 0.0) {
+					pressedKeys[control] = 0.0
 
-					if (pressedKeys[it] != -1.0) {
-						if (activeHandler.onShortPressed(it)) return disableAllKeys()
+					if (pressedKeys[control] != -1.0) {
+						if (onShortPressed(control)) return disableAllKeys()
 					} else {
-						if (activeHandler.onJustReleased(it)) return disableAllKeys()
+						if (onJustReleased(control)) return disableAllKeys()
 					}
 				}
 			}
 		}
+	}
+
+	private fun getRegisteredKeys(): Set<NativeControls.Keys> {
+		val set = mutableSetOf<NativeControls.Keys>()
+		handlers.forEach { set.addAll(it.registeredKeys) }
+		return set
+	}
+
+	private fun onShortPressed(control: NativeControls.Keys): Boolean {
+		return handlers.asReversed().any { it.onShortPressed(control) }
+	}
+
+	private fun onLongPressed(control: NativeControls.Keys): Boolean {
+		return handlers.asReversed().any { it.onLongPressed(control) }
+	}
+
+	private fun onJustReleased(control: NativeControls.Keys): Boolean {
+		return handlers.asReversed().any { it.onJustReleased(control) }
+	}
+
+	private fun onJustPressed(control: NativeControls.Keys): Boolean {
+		return handlers.asReversed().any { it.onJustPressed(control) }
 	}
 
 	private fun disableAllKeys() {

@@ -13,8 +13,9 @@ class Ped private constructor(
 		if (!Client.doesEntityExist(entity)) throw PedDoesntExistsException("ped $entity doesnt exists")
 	}
 
-	val isAtGetInAVehicle: Boolean get() = Client.isPedAtGetInAnyVehicle(entity)
-	val isInAVehicle: Boolean get() = isPedInAnyVehicle(entity, false)
+	fun isAtGetInAVehicle() = Client.isPedAtGetInAnyVehicle(entity)
+
+	fun isInAVehicle() = isPedInAnyVehicle(entity, false)
 
 	fun getVehicleIsUsing(): Vehicle? {
 		Client.getVehiclePedIsUsing(entity)?.let { entity ->
@@ -27,6 +28,10 @@ class Ped private constructor(
 	fun getVehicleIsIn(lastVehicle: Boolean = false): Vehicle? {
 		return Client.getVehiclePedIsIn(entity, lastVehicle)?.let { Vehicle.newInstance(it) }
 	}
+
+	fun clearTasksImmediately() = Client.clearPedTasksImmediately(entity)
+
+	fun removeAllWeapons() = Client.removeAllPedWeapons(entity)
 
 	class PedDoesntExistsException(message: String) : Exception(message)
 
@@ -42,10 +47,6 @@ class Ped private constructor(
 			GlobalCache.putPed(ped)
 
 			return ped
-		}
-
-		fun fromEntity(list: List<EntityId>): List<Ped> {
-			return list.map { Ped(it) }
 		}
 	}
 }

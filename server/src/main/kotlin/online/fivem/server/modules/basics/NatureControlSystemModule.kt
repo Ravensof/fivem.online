@@ -2,6 +2,7 @@ package online.fivem.server.modules.basics
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Utils
 import online.fivem.common.common.VDate
@@ -94,6 +95,11 @@ class NatureControlSystemModule(override val coroutineContext: CoroutineContext)
 		}
 
 		return super.onStart()
+	}
+
+	override fun onStop(): Job? {
+		cancel()
+		return super.onStop()
 	}
 
 	private fun derivative(currentTime: Double): Double {

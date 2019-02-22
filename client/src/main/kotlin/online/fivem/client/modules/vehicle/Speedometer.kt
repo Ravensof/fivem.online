@@ -6,7 +6,7 @@ import online.fivem.client.entities.Vehicle
 import online.fivem.client.events.PlayerLeftOrJoinVehicleEvent
 import online.fivem.client.modules.nui_event_exchanger.NuiEvent
 import online.fivem.common.common.AbstractModule
-import online.fivem.common.common.SEvent
+import online.fivem.common.common.Event
 import online.fivem.common.events.nui.SpeedometerDisableEvent
 import online.fivem.common.events.nui.SpeedometerEnableEvent
 import online.fivem.common.events.nui.SpeedometerUpdateEvent
@@ -18,7 +18,7 @@ class Speedometer(override val coroutineContext: CoroutineContext) : AbstractMod
 	private var updateJob: Job? = null
 
 	override fun onInit() {
-		SEvent.apply {
+		Event.apply {
 			on<PlayerLeftOrJoinVehicleEvent.Join.Driver> { onPlayerJoinVehicle(it.vehicle) }
 			on<PlayerLeftOrJoinVehicleEvent.Left> { onPlayerLeftVehicle() }
 		}

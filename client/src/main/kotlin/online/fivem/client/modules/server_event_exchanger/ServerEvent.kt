@@ -1,8 +1,8 @@
 package online.fivem.client.modules.server_event_exchanger
 
-import online.fivem.common.common.SEvent
+import online.fivem.common.common.Event
 
-object ServerEvent : SEvent() {
+object ServerEvent : Event() {
 
 	override suspend fun emit(data: Any) {
 		ServerEventExchangerModule.channel.send(data)

@@ -7,7 +7,7 @@ import kotlinx.coroutines.launch
 import online.fivem.common.extensions.forEach
 import kotlin.reflect.KClass
 
-open class SEvent {
+open class Event {
 
 	private val channels = mutableMapOf<KClass<out Any>, BroadcastChannel<Any>>()
 
@@ -51,5 +51,5 @@ open class SEvent {
 		return channel.unsafeCast<BroadcastChannel<T>>()
 	}
 
-	companion object : SEvent()
+	companion object : Event()
 }

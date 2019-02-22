@@ -4,7 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
-import online.fivem.common.common.SEvent
+import online.fivem.common.common.Event
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.entities.PlayerSrc
 import online.fivem.common.events.net.ImReadyEvent
@@ -15,6 +15,7 @@ import online.fivem.server.entities.mysqlEntities.BlackListTable
 import online.fivem.server.entities.mysqlEntities.CharacterEntity
 import online.fivem.server.entities.mysqlEntities.UserEntity
 import online.fivem.server.events.PlayerConnectedEvent
+import online.fivem.server.extensions.row
 import online.fivem.server.extensions.rowAsync
 import online.fivem.server.extensions.send
 import online.fivem.server.extensions.sendAsync
@@ -56,7 +57,7 @@ class SessionModule(override val coroutineContext: CoroutineContext) : AbstractM
 
 		val identifiers = Natives.getPlayerIdentifiers(playerSrc)
 
-		val user = mySQL.connection.rowAsync<UserEntity>(
+		val user = mySQL.connection.row<UserEntity>(
 			"""SELECT id
 					|FROM users
 					|WHERE
@@ -67,17 +68,16 @@ class SessionModule(override val coroutineContext: CoroutineContext) : AbstractM
 				identifiers.steam,
 				identifiers.license
 			)
-		).await() ?: return@launch Natives.dropPlayer(playerSrc, Strings.NO_SUCH_USER)
+		) ?: return@launch Natives.dropPlayer(playerSrc, Strings.NO_SUCH_USER)
 
 		val character =
-			mySQL.connection.rowAsync<CharacterEntity>(
+			mySQL.connection.row<CharacterEntity>(
 				"""SELECT *
 						|FROM characters
 						|WHERE user_id=?
 						|""".trimMargin(),
 				arrayOf(user.id)
-			).await()
-				?: return@launch Natives.dropPlayer(playerSrc, Strings.NO_SUCH_CHARACTER)
+			) ?: return@launch Natives.dropPlayer(playerSrc, Strings.NO_SUCH_CHARACTER)
 
 		val sessionId = mySQL.connection.send(
 			"""INSERT INTO sessions
@@ -85,13 +85,15 @@ class SessionModule(override val coroutineContext: CoroutineContext) : AbstractM
 					|  user_id=?,
 					|  character_id=?,
 					|  steam=?,
+					|  discord=?,
 					|  license=?,
 					|  ip=?
 					|""".trimMargin(),
 			arrayOf(
 				user.id,
 				character.id,
-				identifiers.steam.orEmpty(),
+				identifiers.steam,
+				identifiers.discord,
 				identifiers.license,
 				identifiers.ip
 			)
@@ -116,7 +118,7 @@ class SessionModule(override val coroutineContext: CoroutineContext) : AbstractM
 			), character.pedestrian
 		)
 
-		SEvent.emit(PlayerConnectedEvent(player))
+		Event.emit(PlayerConnectedEvent(player))
 	}
 
 	private fun onPlayerDropped(playerId: Int, reason: String) {

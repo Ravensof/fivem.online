@@ -1,16 +1,15 @@
 package online.fivem.client.modules.basics
 
 import kotlinx.coroutines.*
-import online.fivem.client.events.PlayersPedTeleportedEvent
-import online.fivem.client.events.PlayersPedTeleportingEvent
+import online.fivem.client.common.GlobalCache.player
 import online.fivem.client.extensions.start
 import online.fivem.client.extensions.stop
 import online.fivem.client.gtav.Client
+import online.fivem.client.gtav.Natives
 import online.fivem.client.modules.eventGenerator.EventGeneratorModule
 import online.fivem.client.modules.nui_event_exchanger.NuiEvent
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Handle
-import online.fivem.common.common.SEvent
 import online.fivem.common.common.Stack
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.events.nui.BlackOutEvent
@@ -52,11 +51,11 @@ class API(
 		NuiEvent.emitAsync(ShowGuiEvent(true))
 	}
 
-	suspend fun setPlayerCoordinates(coordinates: CoordinatesX) {
-		SEvent.emit(PlayersPedTeleportingEvent())
-		EventGeneratorModule.playerCoordinates = coordinates
-		Client.setEntityCoordsNoOffset(Client.getPlayerPedId(), coordinates.x, coordinates.y, coordinates.z)
-		SEvent.emit(PlayersPedTeleportedEvent())
+	fun setPlayerCoordinatesAsync(coordinates: CoordinatesX) {
+		Natives.mainThread {
+			EventGeneratorModule.playerCoordinates = coordinates
+			player.ped.coordinates = coordinates
+		}
 	}
 
 	private val nuiBlackOutScreenStack = UnitStack()

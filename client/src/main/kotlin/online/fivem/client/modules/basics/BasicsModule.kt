@@ -7,7 +7,7 @@ import online.fivem.client.events.PauseMenuStateChangedEvent
 import online.fivem.client.extensions.addText
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
-import online.fivem.common.common.SEvent
+import online.fivem.common.common.Event
 import online.fivem.common.common.Stack
 import online.fivem.common.gtav.NativeTextEntries
 import kotlin.coroutines.CoroutineContext
@@ -20,7 +20,7 @@ class BasicsModule : AbstractModule(), CoroutineScope {
 	private var handleShowNui = Stack.UNDEFINED_INDEX
 
 	override fun onInit() {
-		SEvent.on<PauseMenuStateChangedEvent>(this) { onPauseMenuStateChanged(it.pauseMenuState) }
+		Event.on<PauseMenuStateChangedEvent>(this) { onPauseMenuStateChanged(it.pauseMenuState) }
 
 		moduleLoader.apply {
 			add(LocalStorageModule(coroutineContext))

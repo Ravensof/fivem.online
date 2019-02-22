@@ -21,5 +21,5 @@ external interface App : ConnectionListener {
 
 	fun all(expression: RegExp, function: (Request, Response) -> Unit)
 
-	fun listen(port: Int, function: (String?) -> Unit)
+	fun listen(port: Int, function: (String?) -> Unit): Server
 }

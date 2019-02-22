@@ -25,9 +25,19 @@ abstract class Entity(val entity: Int) {
 			}
 		}
 
+	var isVisible: Boolean
+		get() = Client.isEntityVisible(entity)
+		set(value) = Client.setEntityVisible(entity, value)
+
 	fun getSpeed() = Client.getEntitySpeed(entity)
 
 	fun getSpeedVector(relative: Boolean) = Client.getEntitySpeedVector(entity, relative)
 
 	fun getRoll() = Client.getEntityRoll(entity)
+
+	fun freezePosition(freeze: Boolean) = Client.freezeEntityPosition(entity, freeze)
+
+	fun setCollision(toggle: Boolean, keepPhysics: Boolean = true) =
+		Client.setEntityCollision(entity, toggle, keepPhysics)
+
 }

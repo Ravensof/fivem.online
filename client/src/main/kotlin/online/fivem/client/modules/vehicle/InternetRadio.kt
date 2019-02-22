@@ -11,7 +11,7 @@ import online.fivem.client.gtav.Client
 import online.fivem.client.modules.nui_event_exchanger.NuiEvent
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.AbstractModule
-import online.fivem.common.common.SEvent
+import online.fivem.common.common.Event
 import online.fivem.common.entities.InternetRadioStation
 import online.fivem.common.events.InternetRadioChangedEvent
 import online.fivem.common.events.InternetRadioStopEvent
@@ -36,7 +36,7 @@ class InternetRadio(override val coroutineContext: CoroutineContext) : AbstractM
 			}
 		}
 
-		SEvent.apply {
+		Event.apply {
 			on<PlayerRadioStationChangedEvent> { onPlayerVehicleRadioStationChanged(it.radioStation) }
 			on<ProfileSettingUpdatedEvent.AudioMusicLevelInMP> {
 				onSettingsMusicLevelChanged(it.value)

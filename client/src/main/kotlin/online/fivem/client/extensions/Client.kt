@@ -118,12 +118,6 @@ fun Client.getSeatOfPedInVehicle(vehicle: EntityId, ped: EntityId): Int? {
 	return null
 }
 
-suspend fun Client.setPlayerModelSync(player: Int, hash: Int) {
-	requestModel(hash)
-	setPlayerModel(player, hash)
-	setModelAsNoLongerNeeded(hash)
-}
-
 fun Client.requestCollisionAtCoordinates(coordinates: Coordinates) =
 	requestCollisionAtCoordinates(coordinates.x, coordinates.y, coordinates.z)
 

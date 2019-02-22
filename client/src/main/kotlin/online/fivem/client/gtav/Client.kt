@@ -2239,7 +2239,7 @@ object Client {
 	 * No, this should be called SET_ENTITY_KINEMATIC. It does more than just "freeze" it's position.
 	 * ^Rockstar Devs named it like that, Now cry about it.
 	 */
-	fun setEntityKinematic(entity: EntityId, toggle: Boolean) {
+	fun freezeEntityPosition(entity: EntityId, toggle: Boolean) {
 		FreezeEntityPosition(entity, toggle)
 	}
 
@@ -2250,6 +2250,26 @@ object Client {
 	 */
 	fun setPlayerInvincible(player: Int, toggle: Boolean) {
 		SetPlayerInvincible(player, toggle)
+	}
+
+	/**
+	 * Returns the Player's Invincible status.
+	 * This function will always return false if 0x733A643B5B0C53C1 is used to set the invincibility status. To always get the correct result, use this:
+	 * bool IsPlayerInvincible(Player player)
+	 * {
+	 * auto addr = getScriptHandleBaseAddress(GET_PLAYER_PED(player));
+	 * if (addr)
+	 * {
+	 * DWORD flag = *(DWORD *)(addr + 0x188);
+	 * return ((flag &amp; (1 &lt;&lt; 8)) != 0) || ((flag &amp; (1 &lt;&lt; 9)) != 0);
+	 * }
+	 * return false;
+	 * }
+	 * ============================================================
+	 * This has bothered me for too long, whoever may come across this, where did anyone ever come up with this made up hash? 0x733A643B5B0C53C1 I've looked all over old hash list, and this nativedb I can not find that PC hash anywhere. What native name is it now or was it?
+	 */
+	fun getPlayerInvincible(player: Int): Boolean {
+		return GetPlayerInvincible(player) == 1
 	}
 
 	fun isPedFatallyInjured(ped: EntityId): Boolean {
@@ -29743,23 +29763,7 @@ private external fun GetPlayerPed(playerId: Int): Int
  */
 private external fun GetPlayerIndex(): Int
 
-/**
- * Returns the Player's Invincible status.
- * This function will always return false if 0x733A643B5B0C53C1 is used to set the invincibility status. To always get the correct result, use this:
- * bool IsPlayerInvincible(Player player)
- * {
- * auto addr = getScriptHandleBaseAddress(GET_PLAYER_PED(player));
- * if (addr)
- * {
- * DWORD flag = *(DWORD *)(addr + 0x188);
- * return ((flag &amp; (1 &lt;&lt; 8)) != 0) || ((flag &amp; (1 &lt;&lt; 9)) != 0);
- * }
- * return false;
- * }
- * ============================================================
- * This has bothered me for too long, whoever may come across this, where did anyone ever come up with this made up hash? 0x733A643B5B0C53C1 I've looked all over old hash list, and this nativedb I can not find that PC hash anywhere. What native name is it now or was it?
- */
-//private external fun GetPlayerInvincible(player: number): number;
+private external fun GetPlayerInvincible(player: Int): Number
 
 //private external fun GetPlayerMaxArmour(player: number): number;
 

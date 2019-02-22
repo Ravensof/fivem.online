@@ -1,8 +1,5 @@
 package online.fivem.client.entities
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
 import kotlinx.coroutines.withTimeout
 import online.fivem.client.common.GlobalCache
 import online.fivem.client.extensions.*
@@ -220,12 +217,12 @@ class Vehicle private constructor(
 		Client.setVehicleOnGroundProperly(entity)
 	}
 
-	fun getPassengers(): List<EntityId> {
-		val list = mutableListOf<EntityId>()
+	fun getPassengers(): List<Ped> {
+		val list = mutableListOf<Ped>()
 
 		for (i in -1 until numberOfPassengersSeats) {
 			val entity = Client.getPedInVehicleSeat(entity, i) ?: continue
-			list.add(entity)
+			list.add(Ped.newInstance(entity))
 		}
 
 		return list
@@ -306,35 +303,22 @@ class Vehicle private constructor(
 
 	companion object {
 
-		fun create(
+		suspend fun create(
 			id: Int,
 			vehicleModel: NativeVehicles,
-			coordinatesX: CoordinatesX,
+			coordinatesX: CoordinatesX
+		): Vehicle {
+			withTimeout(5_000) { Client.requestModel(vehicleModel.hash) }//todo test
 
-			coroutineScope: CoroutineScope
-		): Deferred<Vehicle> {
-			return coroutineScope.async {
+			val entity = withTimeout(5_000) {
+				Client.createVehicle(vehicleModel.hash, coordinatesX)
+			}//todo test
 
-				withTimeout(5_000) { Client.requestModel(vehicleModel.hash) }//todo test
+			Client.setModelAsNoLongerNeeded(vehicleModel.hash)
 
-				val entity = withTimeout(5_000) {
-					Client.createVehicle(vehicleModel.hash, coordinatesX)
-				}//todo test
-
-				Client.setModelAsNoLongerNeeded(vehicleModel.hash)
-
-				return@async newInstance(entity, id).apply {
-					ownedByPlayer = true
-					setOnGroundProperly()
-				}
-			}
-		}
-
-		fun fromEntity(list: List<EntityId>): List<Vehicle> {
-			return list.map {
-				Vehicle(
-					entity = it
-				)
+			return newInstance(entity, id).apply {
+				ownedByPlayer = true
+				setOnGroundProperly()
 			}
 		}
 
@@ -355,8 +339,11 @@ class Vehicle private constructor(
 		}
 	}
 
+	/**
+	 * https://gtamods.com/wiki/Handling.meta for more params
+	 */
+	@Suppress("unused")
 	class Handling(private val entity: EntityId) {
-		// https://gtamods.com/wiki/Handling.meta
 
 		/**
 		 * This is the weight of the vehicle in kilograms. Only used when the vehicle collides with another vehicle or non-static object.

@@ -4,7 +4,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import online.fivem.client.events.*
+import online.fivem.client.events.AccelerationThresholdAchievedEvent
+import online.fivem.client.events.PlayerSpawnedEvent
+import online.fivem.client.events.PlayersPedHealthChangedEvent
 import online.fivem.client.extensions.play
 import online.fivem.client.extensions.prefetch
 import online.fivem.client.gtav.Client
@@ -16,7 +18,7 @@ import online.fivem.common.GlobalConfig.BlackOut.WAKING_UP_TIME
 import online.fivem.common.Sounds
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
-import online.fivem.common.common.SEvent
+import online.fivem.common.common.Event
 import kotlin.coroutines.CoroutineContext
 
 class BlackOut(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
@@ -26,12 +28,11 @@ class BlackOut(override val coroutineContext: CoroutineContext) : AbstractModule
 	private var isAllowed = false
 
 	override fun onInit() {
-		SEvent.apply {
-			on<PlayersPedTeleportingEvent> { isAllowed = false }
-			on<PlayersPedTeleportedEvent> { isAllowed = true }
+		Event.apply {
 			on<PlayerSpawnedEvent> { isAllowed = true }
 			on<PlayersPedHealthChangedEvent.Zero> {
-				if (!isAllowed || it.diff == 0) return@on
+				if (!isAllowed) return@on
+				Console.debug("blackout from death (${it.diff})")
 				blackOut(BLACKOUT_TIME_FROM_COMMAS * 1_000)
 			}
 			on<AccelerationThresholdAchievedEvent> {
