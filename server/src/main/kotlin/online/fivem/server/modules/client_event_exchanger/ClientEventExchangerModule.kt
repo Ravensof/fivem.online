@@ -39,51 +39,10 @@ class ClientEventExchangerModule : AbstractModule(), CoroutineScope {
 	override fun onInit() {
 		Exports.on(NativeEvents.Server.PLAYER_DROPPED) { playerId: Int, _: String -> onPlayerDropped(playerId) }
 
-		Natives.onNet(GlobalConfig.NET_EVENT_NAME) { playerSrc: PlayerSrc, rawPacket: Any ->
+		Natives.onNet(GlobalConfig.NET_EVENT_NAME, ::onNetEvent)
 
-			try {
-				val packet = rawPacket.unsafeCast<ClientsNetPacket>()
+		Natives.onNet(GlobalConfig.NET_EVENT_ESTABLISHING_NAME, ::onEstablishingConnection)
 
-				val data = KSerializer.deserialize(packet.hash, packet.serialized)
-					?: throw Exception(Strings.CLIENT_WRONG_PACKET_FORMAT)
-
-				if (playersList[playerSrc.value] != packet.key) throw Exception(Strings.CLIENT_WRONG_PACKET_FORMAT)
-
-//			if (netPacket.playersCount == 1 && Natives.getPlayers().count() > 1) return@onNet Natives.dropPlayer(
-//				playerSrc,
-//				Strings.CLIENT_SINGLE_SESSION
-//			)
-
-				val channel = playersReceiveChannels[playerSrc.value]
-				if (channel.isFull) {
-					Console.warn("ClientEventExchanger: receive channel for player ${playerSrc.value} is full")
-
-					if (ServerConfig.KICK_FOR_PACKET_OVERFLOW) throw Exception(Strings.CLIENT_PACKETS_OVERFLOW)
-				}
-
-				launch {
-					channel.send(Packet(playerSrc, data))
-				}
-			} catch (exception: Throwable) {
-				return@onNet Natives.dropPlayer(
-					playerSrc,
-					exception.message.toString()
-				)
-			}
-		}
-
-		Natives.onNet(GlobalConfig.NET_EVENT_ESTABLISHING_NAME) { playerSrc: PlayerSrc, netPacket: Any ->
-			try {
-//				val netPacket =
-				Serializer.unpack<ImReadyEvent>(netPacket)
-				onClientReady(playerSrc)
-			} catch (e: Serializer.DeserializationException) {
-				Natives.dropPlayer(
-					playerSrc,
-					Strings.CLIENT_WRONG_PACKET_FORMAT
-				)
-			}
-		}
 	}
 
 	@ExperimentalCoroutinesApi
@@ -150,6 +109,51 @@ class ClientEventExchangerModule : AbstractModule(), CoroutineScope {
 		}
 	}
 
+	private fun onEstablishingConnection(playerSrc: PlayerSrc, netPacket: Any) {
+		try {
+//				val netPacket =
+			Serializer.unpack<ImReadyEvent>(netPacket)
+			onClientReady(playerSrc)
+		} catch (e: Serializer.DeserializationException) {
+			Natives.dropPlayer(
+				playerSrc,
+				Strings.CLIENT_WRONG_PACKET_FORMAT
+			)
+		}
+	}
+
+	private fun onNetEvent(playerSrc: PlayerSrc, rawPacket: Any) {
+		try {
+			val packet = rawPacket.unsafeCast<ClientsNetPacket>()
+
+			val data = KSerializer.deserialize(packet.hash, packet.serialized)
+				?: throw Exception(Strings.CLIENT_WRONG_PACKET_FORMAT)
+
+			if (playersList[playerSrc.value] != packet.key) throw Exception(Strings.CLIENT_WRONG_PACKET_FORMAT)
+
+//			if (netPacket.playersCount == 1 && Natives.getPlayers().count() > 1) return@onNet Natives.dropPlayer(
+//				playerSrc,
+//				Strings.CLIENT_SINGLE_SESSION
+//			)
+
+			val channel = playersReceiveChannels[playerSrc.value]
+			if (channel.isFull) {
+				Console.warn("ClientEventExchanger: receive channel for player ${playerSrc.value} is full")
+
+				if (ServerConfig.KICK_FOR_PACKET_OVERFLOW) throw Exception(Strings.CLIENT_PACKETS_OVERFLOW)
+			}
+
+			launch {
+				channel.send(Packet(playerSrc, data))
+			}
+		} catch (exception: Throwable) {
+			return Natives.dropPlayer(
+				playerSrc,
+				exception.message.toString()
+			)
+		}
+	}
+
 	private fun onPlayerDropped(playerId: Int) {
 		playersList.remove(playerId)
 	}
@@ -168,14 +172,16 @@ class ClientEventExchangerModule : AbstractModule(), CoroutineScope {
 	}
 
 	private fun emit(playerSrc: Int, data: Any) {
+		val packet = ServersNetPacket(
+			hash = KSerializer.getSerializerHash(data::class)
+				?: throw KSerializer.UnregisteredClassException(data::class),
+			serialized = KSerializer.serialize(data)
+		)
+
 		Natives.emitNet(
 			eventName = GlobalConfig.NET_EVENT_NAME,
 			playerSrc = playerSrc,
-			data = ServersNetPacket(
-				hash = KSerializer.getSerializerHash(data::class)
-					?: throw KSerializer.UnregisteredClassException(data::class),
-				serialized = KSerializer.serialize(data)
-			)
+			data = packet
 		)
 	}
 

@@ -3,14 +3,15 @@ package online.fivem.client.modules.eventGenerator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import online.fivem.client.common.GlobalCache.player
 import online.fivem.client.entities.Ped
 import online.fivem.client.entities.Vehicle
 import online.fivem.client.events.*
 import online.fivem.client.extensions.getSeatOfPedInVehicle
 import online.fivem.client.gtav.Client
 import online.fivem.common.common.AbstractModule
-import online.fivem.common.common.EntityId
 import online.fivem.common.common.Event
+import online.fivem.common.entities.Coordinates
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.extensions.onNull
 import online.fivem.common.extensions.orZero
@@ -42,18 +43,14 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 	override fun onStart(): Job? {
 
 		repeatJob(50) {
-			val playerPed = playerPed ?: return@repeatJob
-
-			checkVehicleHealth(playerPed)
-			checkAcceleration(playerPed)
+			checkVehicleHealth(player.ped)
+			checkAcceleration(player.ped)
 		}
 
 		repeatJob(500) {
 			checkPauseMenuState(Client.getPauseMenuState())
 
-			val playerPed = playerPed ?: return@repeatJob
-
-			checkIsPlayerInVehicle(playerPed)
+			checkIsPlayerInVehicle(player.ped)
 			checkPlayerTryingToGetAnyVehicle()
 			checkRadio()
 		}
@@ -62,10 +59,9 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 			checkAudioMusicLevelInMP(Client.getProfileSetting(ProfileSetting.AUDIO_MUSIC_LEVEL_IN_MP).orZero())
 			checkIsScreenFadedInOut(Client.isScreenFadedOut())
 
-			val pedIndex = Client.getPlayerPedId().takeIf { it != 0 } ?: return@repeatJob
-			val playerPed = checkPlayersPed(pedIndex) ?: return@repeatJob
+			checkPlayersPed(player.ped)
 
-			checkCoordinates(playerPed)
+			checkCoordinates(player.ped)
 		}
 
 		return super.onStart()
@@ -140,18 +136,13 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 		}
 	}
 
-	private suspend fun checkPlayersPed(ped: EntityId): Ped? {
-		if (playerPed?.entity != ped) {
-			val newPed = Ped.newInstance(ped)
+	private suspend fun checkPlayersPed(ped: Ped) {
+		if (playerPed?.entity != ped.entity) {
 
-			playerPed = newPed
+			playerPed = ped
 
-			Event.emit(PlayersPedChangedEvent(newPed))
-
-			return newPed
+			Event.emit(PlayersPedChangedEvent(ped))
 		}
-
-		return playerPed
 	}
 
 	private suspend fun checkVehicleHealth(playerPed: Ped) {
@@ -317,7 +308,7 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 
 		private var vehiclePetrolTankHealth: Double? = null
 
-		var playerCoordinates: CoordinatesX? = null
+		var playerCoordinates: Coordinates? = null
 
 		private var playerSeatIndex: Int? = null
 

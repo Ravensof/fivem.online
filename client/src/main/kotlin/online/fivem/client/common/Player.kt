@@ -12,6 +12,7 @@ class Player(
 	val id: Int
 ) {
 	var ped = Ped.newInstance(Client.getPlayerPedId())
+		private set
 
 	var isInvincible: Boolean
 		get() = getPlayerInvincible(id)

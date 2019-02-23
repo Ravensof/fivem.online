@@ -1,6 +1,7 @@
 package online.fivem.client.entities
 
 import online.fivem.client.gtav.Client
+import online.fivem.client.modules.eventGenerator.EventGeneratorModule
 import online.fivem.common.entities.Coordinates
 import online.fivem.common.entities.CoordinatesX
 
@@ -20,6 +21,7 @@ abstract class Entity(val entity: Int) {
 		get() = Client.getEntityCoords(entity)
 		set(value) {
 			Client.setEntityCoordsNoOffset(entity, value.x, value.y, value.z)
+			EventGeneratorModule.playerCoordinates = value
 			if (value is CoordinatesX) {
 				heading = value.rotation
 			}
