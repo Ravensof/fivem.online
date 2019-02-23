@@ -7,7 +7,7 @@ import online.fivem.common.common.EntityId
 
 object GlobalCache {
 
-	val player = Player(Client.getPlayerId())
+	val player by lazy { Player(Client.getPlayerId()) }
 
 	private val vehicles = mutableMapOf<EntityId, Vehicle>()
 	private val peds = mutableMapOf<EntityId, Ped>()
