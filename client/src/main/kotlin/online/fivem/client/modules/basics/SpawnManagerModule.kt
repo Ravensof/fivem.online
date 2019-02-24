@@ -1,9 +1,6 @@
 package online.fivem.client.modules.basics
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import online.fivem.client.common.GlobalCache.player
 import online.fivem.client.common.Player
 import online.fivem.client.events.PlayerSpawnedEvent
@@ -11,9 +8,11 @@ import online.fivem.client.extensions.networkResurrectLocalPlayer
 import online.fivem.client.extensions.requestCollisionAtCoordinates
 import online.fivem.client.gtav.Client
 import online.fivem.common.common.AbstractModule
+import online.fivem.common.common.Console
 import online.fivem.common.common.Event
 import online.fivem.common.common.Stack
 import online.fivem.common.entities.CoordinatesX
+import online.fivem.common.extensions.onNull
 import kotlin.coroutines.CoroutineContext
 
 class SpawnManagerModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
@@ -42,17 +41,21 @@ class SpawnManagerModule(override val coroutineContext: CoroutineContext) : Abst
 
 		val ped = player.ped
 
+		Client.requestCollisionAtCoordinates(coordinatesX)
+		ped.coordinates = coordinatesX
+
+		withTimeoutOrNull(10_000) {
+			while (!Client.hasCollisionLoadedAroundEntity(ped.entity)) {
+				delay(100)
+			}
+		}.onNull {
+			Console.warn("failed to request collision at spawn coordinates")
+		}
+
 		Client.networkResurrectLocalPlayer(coordinatesX)
 		ped.clearTasksImmediately()
 		ped.removeAllWeapons()
 		player.clearWantedLevel()
-
-		Client.requestCollisionAtCoordinates(coordinatesX)
-		while (!Client.hasCollisionLoadedAroundEntity(ped.entity)) {
-			delay(100)
-		}
-
-		player.ped.coordinates = coordinatesX
 
 		freezePlayer(player, false)
 

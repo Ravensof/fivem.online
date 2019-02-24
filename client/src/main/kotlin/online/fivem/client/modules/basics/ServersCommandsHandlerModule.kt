@@ -5,6 +5,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import online.fivem.client.events.PauseMenuStateChangedEvent
 import online.fivem.client.gtav.Client
+import online.fivem.client.modules.nui_event_exchanger.NuiEvent
 import online.fivem.client.modules.server_event_exchanger.ServerEvent
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Event
@@ -12,6 +13,7 @@ import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.events.net.ClientSideSynchronizeEvent
 import online.fivem.common.events.net.ServerSideSynchronizationEvent
 import online.fivem.common.events.net.SpawnPlayerEvent
+import online.fivem.common.events.net.StopResourceEvent
 import kotlin.coroutines.CoroutineContext
 import kotlin.js.Date
 
@@ -47,6 +49,13 @@ class ServersCommandsHandlerModule : AbstractModule(), CoroutineScope {
 //			Client.setVehicleOilLevel(vehicle, event.vehicleId)
 //		}
 //	}
+
+	override fun onStop(): Job? {
+		return launch {
+			synchronizeToServer()
+			NuiEvent.emit(StopResourceEvent())
+		}
+	}
 
 	private fun onPlayerSpawn(coordinatesX: CoordinatesX, model: Int) = launch {
 		joinTransition.startTransitionJob().join()

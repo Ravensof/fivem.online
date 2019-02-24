@@ -57,6 +57,12 @@ class BlackOut(override val coroutineContext: CoroutineContext) : AbstractModule
 		Sounds.SHOCK_EFFECT.prefetch()
 	}
 
+	override fun onStop(): Job? {
+		timeLeft = 0
+
+		return null
+	}
+
 	private fun addBlackOut(timeMillis: Long) {
 		timeLeft += timeMillis
 	}

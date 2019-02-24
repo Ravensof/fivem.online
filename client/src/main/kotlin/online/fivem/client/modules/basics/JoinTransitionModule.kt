@@ -31,6 +31,10 @@ class JoinTransitionModule(override val coroutineContext: CoroutineContext) : Ab
 		}
 	}
 
+	override fun onStop(): Job? = launch {
+		startTransitionJob().join()
+	}
+
 	fun startTransitionJob(): Job {
 		api.unMuteSound(muteHandle)
 		muteHandle = api.muteSound()

@@ -42,6 +42,12 @@ class BasicsModule : AbstractModule(), CoroutineScope {
 		return super.onStart()
 	}
 
+	override fun onStop(): Job? {
+		API.hideNui()
+
+		return super.onStop()
+	}
+
 	private fun onPauseMenuStateChanged(previousState: Int) {
 		API.cancelHideNui(handleShowNui)
 		if (previousState == 0) {

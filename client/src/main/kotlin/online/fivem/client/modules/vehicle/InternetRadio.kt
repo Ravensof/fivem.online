@@ -45,10 +45,13 @@ class InternetRadio(override val coroutineContext: CoroutineContext) : AbstractM
 	}
 
 	override fun onStart(): Job? {
-
 		return launch {
 			NuiEvent.emit(InternetRadioVolumeChangeEvent(this@InternetRadio.volume))
 		}
+	}
+
+	override fun onStop(): Job? = launch {
+		stopRadio()
 	}
 
 	suspend fun playRadio(radio: InternetRadioStation) {

@@ -24,6 +24,12 @@ class Speedometer(override val coroutineContext: CoroutineContext) : AbstractMod
 		}
 	}
 
+	override fun onStop(): Job? {
+		updateJob?.cancel()
+
+		return super.onStop()
+	}
+
 	private fun onPlayerJoinVehicle(vehicle: Vehicle) {
 
 		var speed: Double

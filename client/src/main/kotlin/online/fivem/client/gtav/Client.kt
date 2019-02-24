@@ -2329,6 +2329,7 @@ object Client {
 		SetModelAsNoLongerNeeded(hash)
 	}
 
+	//непонятно при каких условиях будет работать
 	fun requestCollisionAtCoordinates(x: Number, y: Number, z: Number): Number {
 		return RequestCollisionAtCoord(x, y, z)
 	}

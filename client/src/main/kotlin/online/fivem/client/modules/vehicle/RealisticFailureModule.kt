@@ -10,7 +10,6 @@ import online.fivem.client.modules.basics.TickExecutorModule
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Event
 import online.fivem.common.common.Stack
-import online.fivem.common.extensions.orZero
 import online.fivem.common.gtav.NativeControls
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.pow
@@ -66,6 +65,13 @@ class RealisticFailureModule(
 			on<PlayerLeftOrJoinVehicleEvent.Changed> { onChangeVehicle(it.vehicle, it.previousVehicle) }
 			on<PlayerLeftOrJoinVehicleEvent.Left> { onLeftVehicle(it.vehicle) }
 		}
+	}
+
+	override fun onStop(): Job? {
+		mainJob?.cancel()
+		tickExecutorModule.remove(tickHandle)
+
+		return super.onStop()
 	}
 
 	private fun onChangeVehicle(newVehicle: Vehicle, previousVehicle: Vehicle) {
@@ -158,12 +164,7 @@ class RealisticFailureModule(
 				if (healthEngineCurrent != 1000.0 || healthBodyCurrent != 1000 || healthPetrolTankCurrent != 1000.0) {
 
 					// Combine the delta values (Get the largest of the three)
-					var healthEngineCombinedDelta =
-						arrayOf(
-							healthEngineDeltaScaled,
-							healthBodyDeltaScaled,
-							healthPetrolTankDeltaScaled
-						).max().orZero()
+					var healthEngineCombinedDelta = healthEngineDeltaScaled
 
 					// If huge damage, scale back a bit
 					if (healthEngineCombinedDelta > (healthEngineCurrent - Cfg.engineSafeGuard)) {
