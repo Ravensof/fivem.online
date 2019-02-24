@@ -13,7 +13,6 @@ import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Event
 import online.fivem.common.entities.Coordinates
 import online.fivem.common.entities.CoordinatesX
-import online.fivem.common.extensions.onNull
 import online.fivem.common.extensions.orZero
 import online.fivem.common.extensions.repeatJob
 import online.fivem.common.gtav.ProfileSetting
@@ -35,7 +34,7 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 		}
 	private var iLastSpeedCheck = 0.0
 
-	private var isPedAtGetInAnyVehicle: Boolean? = null
+	private var vehiclePlayerTryingToGet: Vehicle? = null
 
 	override fun onStart(): Job? {
 
@@ -48,7 +47,7 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 			checkPauseMenuState(Client.getPauseMenuState())
 
 			checkIsPlayerInVehicle(player.ped)
-			checkPlayerTryingToGetAnyVehicle()
+			checkPlayerTryingToGetAnyVehicle(player.ped)
 			checkRadio()
 		}
 
@@ -70,16 +69,21 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 		return super.onStop()
 	}
 
-	private suspend fun checkPlayerTryingToGetAnyVehicle() {
-		val isPedAtGetInAnyVehicleRightNow = playerPed?.isTryingToGetInAnyVehicle() == true
+	private suspend fun checkPlayerTryingToGetAnyVehicle(playerPed: Ped) {
+		val vehiclePlayerTryingToGetNow =
+			if (playerPed.isTryingToGetInAnyVehicle()) playerPed.getVehicleIsUsing() else null
 
-		if (isPedAtGetInAnyVehicleRightNow != isPedAtGetInAnyVehicle) {
-			playerPed?.getVehicleIsUsing()?.let { vehicle ->
-				Event.emit(PlayerTryingToGetVehicle(vehicle))
-			}.onNull {
-				Event.emit(PlayerCancelsTryingToGetVehicle())
+		if (vehiclePlayerTryingToGetNow != vehiclePlayerTryingToGet) {
+
+			vehiclePlayerTryingToGet?.let {
+				Event.emit(PlayerTryingToGetVehicleEvent.End(it))
 			}
-			isPedAtGetInAnyVehicle = isPedAtGetInAnyVehicleRightNow
+
+			vehiclePlayerTryingToGetNow?.let {
+				Event.emit(PlayerTryingToGetVehicleEvent.Start(it))
+			}
+
+			vehiclePlayerTryingToGet = vehiclePlayerTryingToGetNow
 		}
 	}
 

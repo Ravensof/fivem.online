@@ -180,12 +180,12 @@ class Vehicle private constructor(
 
 		wheels = mutableListOf()
 		for (i in 0 until numberOfWheels) {
-			wheels.add(Wheel(entity, i))
+			wheels.add(Wheel(i, entity))
 		}
 
 		doors = mutableListOf()
 		for (i in 0 until numberOfDoors) {
-			doors.add(Door(entity, i))
+			doors.add(Door(i, entity))
 		}
 	}
 

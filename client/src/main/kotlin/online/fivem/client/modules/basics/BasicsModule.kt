@@ -19,7 +19,7 @@ class BasicsModule : AbstractModule(), CoroutineScope {
 	private var handleShowNui = Stack.UNDEFINED_INDEX
 
 	override fun onInit() {
-		Event.on<PauseMenuStateChangedEvent>(this) { onPauseMenuStateChanged(it.currentState) }
+		Event.on<PauseMenuStateChangedEvent>(this) { onPauseMenuStateChanged(it.previousState) }
 
 		moduleLoader.apply {
 			add(LocalStorageModule(coroutineContext))
@@ -42,9 +42,9 @@ class BasicsModule : AbstractModule(), CoroutineScope {
 		return super.onStart()
 	}
 
-	private fun onPauseMenuStateChanged(state: Int) {
+	private fun onPauseMenuStateChanged(previousState: Int) {
 		API.cancelHideNui(handleShowNui)
-		if (state != 0) {
+		if (previousState == 0) {
 			handleShowNui = API.hideNui()
 		}
 	}
