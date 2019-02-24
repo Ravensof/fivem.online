@@ -23,7 +23,7 @@ import kotlin.js.Date
 import kotlin.math.absoluteValue
 
 class EventGeneratorModule : AbstractModule(), CoroutineScope {
-	override val coroutineContext: CoroutineContext = Job()
+	override val coroutineContext: CoroutineContext = createJob()
 
 	private var isFadeOut: Boolean = true
 
@@ -36,9 +36,6 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 	private var iLastSpeedCheck = 0.0
 
 	private var isPedAtGetInAnyVehicle: Boolean? = null
-
-	override fun onInit() {
-	}
 
 	override fun onStart(): Job? {
 
@@ -74,7 +71,7 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 	}
 
 	private suspend fun checkPlayerTryingToGetAnyVehicle() {
-		val isPedAtGetInAnyVehicleRightNow = playerPed?.isAtGetInAVehicle() == true
+		val isPedAtGetInAnyVehicleRightNow = playerPed?.isTryingToGetInAnyVehicle() == true
 
 		if (isPedAtGetInAnyVehicleRightNow != isPedAtGetInAnyVehicle) {
 			playerPed?.getVehicleIsUsing()?.let { vehicle ->
@@ -116,7 +113,7 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 			playerSpeed = iSpeed
 
 			if (playerAcceleration.absoluteValue >= accelerationThreshold) {
-				if (!playerPed.isAtGetInAVehicle()) {
+				if (!playerPed.isTryingToGetInAnyVehicle()) {
 					Event.emit(
 						AccelerationThresholdAchievedEvent(
 							playerAcceleration,
@@ -201,10 +198,18 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 
 	private suspend fun checkPauseMenuState(state: Int) {
 		if (pauseMenuState != state) {
-			if (state == 0) {
-				Event.emit(PauseMenuStateChangedEvent.Disabled())
-			} else {
-				Event.emit(PauseMenuStateChangedEvent.Switched(state))
+			when {
+				state == 0 -> Event.emit(
+					PauseMenuStateChangedEvent.Disabled(pauseMenuState)
+				)
+
+				pauseMenuState == 0 -> Event.emit(
+					PauseMenuStateChangedEvent.Enabled(state)
+				)
+
+				else -> Event.emit(
+					PauseMenuStateChangedEvent.Switched(state, pauseMenuState)
+				)
 			}
 
 			pauseMenuState = state
@@ -312,7 +317,7 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 
 		private var playerSeatIndex: Int? = null
 
-		var pauseMenuState: Int? = null
+		var pauseMenuState: Int = 0
 			private set
 		var audioMusicLevelInMP: Int? = null
 			private set

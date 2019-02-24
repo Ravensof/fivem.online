@@ -1,12 +1,11 @@
 package online.fivem.client.modules.vehicle
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import online.fivem.common.common.AbstractModule
 import kotlin.coroutines.CoroutineContext
 
 class VehicleModule : AbstractModule(), CoroutineScope {
-	override val coroutineContext: CoroutineContext = Job()
+	override val coroutineContext: CoroutineContext = createJob()
 
 	override fun onInit() {
 		moduleLoader.apply {

@@ -32,8 +32,7 @@ class SpawnManagerModule(override val coroutineContext: CoroutineContext) : Abst
 
 	fun spawnPlayerJob(coordinatesX: CoordinatesX, modelHash: Int?): Job = launch {
 
-		val fadeHandle = api.doScreenFadeOutAsync(500).await()
-		player.ped.coordinates = CoordinatesX(0f, 0f, 0f, 0f)
+		player.ped.coordinates = CoordinatesX.ZERO
 
 		freezePlayer(player, true)
 
@@ -50,13 +49,11 @@ class SpawnManagerModule(override val coroutineContext: CoroutineContext) : Abst
 
 		Client.requestCollisionAtCoordinates(coordinatesX)
 		while (!Client.hasCollisionLoadedAroundEntity(ped.entity)) {
-			delay(1000)
+			delay(100)
 		}
+
 		player.ped.coordinates = coordinatesX
 
-		Client.shutdownLoadingScreen()
-
-		api.doScreenFadeInJob(fadeHandle, 500).join()
 		freezePlayer(player, false)
 
 		Event.emit(PlayerSpawnedEvent())

@@ -54,7 +54,7 @@ object GlobalConfig {
 		RadioStation.RADIO_08_MEXICAN.name to InternetRadioStation(
 			url = "http://162.247.76.193:7000/stream",
 			name = "Cacoteo Radio",
-			defaultVolume = 0.5
+			defaultVolume = 0.7
 		),     // East Los FM
 
 		RadioStation.RADIO_09_HIPHOP_OLD.name to InternetRadioStation(

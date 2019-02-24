@@ -2,7 +2,6 @@ package online.fivem.client.modules.basics
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
 import online.fivem.client.events.PauseMenuStateChangedEvent
 import online.fivem.client.extensions.addText
 import online.fivem.common.GlobalConfig
@@ -14,13 +13,13 @@ import kotlin.coroutines.CoroutineContext
 
 class BasicsModule : AbstractModule(), CoroutineScope {
 
-	override val coroutineContext: CoroutineContext = SupervisorJob()
+	override val coroutineContext: CoroutineContext = createSupervisorJob()
 	private val API by moduleLoader.onReady<API>()
 
 	private var handleShowNui = Stack.UNDEFINED_INDEX
 
 	override fun onInit() {
-		Event.on<PauseMenuStateChangedEvent>(this) { onPauseMenuStateChanged(it.pauseMenuState) }
+		Event.on<PauseMenuStateChangedEvent>(this) { onPauseMenuStateChanged(it.currentState) }
 
 		moduleLoader.apply {
 			add(LocalStorageModule(coroutineContext))
@@ -33,7 +32,7 @@ class BasicsModule : AbstractModule(), CoroutineScope {
 			add(WeatherModule(coroutineContext))
 			add(VoiceTransmissionModule(coroutineContext))
 
-			add(SynchronizationModule())
+			add(ServersCommandsHandlerModule())
 		}
 	}
 

@@ -2078,7 +2078,6 @@ object Client {
 	 * Fades the screen in.
 	 * duration: The time the fade should take, in milliseconds.
 	 */
-	@Deprecated("use api.doScreenFadeInJob")
 	suspend fun doScreenFadeIn(duration: Int) {
 		DoScreenFadeIn(duration)
 		while (!isScreenFadedIn() && !isScreenFadingOut()) {

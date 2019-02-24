@@ -1,9 +1,12 @@
 package online.fivem.client.events
 
 sealed class PauseMenuStateChangedEvent(
-	val pauseMenuState: Int
+	val currentState: Int,
+	val previousState: Int
 ) {
-	class Disabled : PauseMenuStateChangedEvent(0)
+	class Disabled(previousState: Int) : PauseMenuStateChangedEvent(0, previousState)
 
-	class Switched(pauseMenuState: Int) : PauseMenuStateChangedEvent(pauseMenuState)
+	class Enabled(currentState: Int) : PauseMenuStateChangedEvent(currentState, 0)
+
+	class Switched(pauseMenuState: Int, previousState: Int) : PauseMenuStateChangedEvent(pauseMenuState, previousState)
 }

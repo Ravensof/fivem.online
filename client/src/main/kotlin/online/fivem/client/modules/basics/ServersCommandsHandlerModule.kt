@@ -15,7 +15,7 @@ import online.fivem.common.events.net.SpawnPlayerEvent
 import kotlin.coroutines.CoroutineContext
 import kotlin.js.Date
 
-class SynchronizationModule : AbstractModule(), CoroutineScope {
+class ServersCommandsHandlerModule : AbstractModule(), CoroutineScope {
 	override val coroutineContext: CoroutineContext = Job()
 
 	private val dateTime by moduleLoader.onReady<DateTimeModule>()
@@ -33,8 +33,8 @@ class SynchronizationModule : AbstractModule(), CoroutineScope {
 		}
 
 		Event.apply {
-			on<PauseMenuStateChangedEvent> {
-				if (it.pauseMenuState != 0 && Date.now() - lastSync >= SYNC_TIME_THRESHOLD_MILLISECONDS) synchronizeToServer()
+			on<PauseMenuStateChangedEvent.Enabled> {
+				if (Date.now() - lastSync >= SYNC_TIME_THRESHOLD_MILLISECONDS) synchronizeToServer()
 			}
 //			on<SpawnVehicleEvent> { onVehicleSpawn(it) }
 		}
@@ -68,12 +68,14 @@ class SynchronizationModule : AbstractModule(), CoroutineScope {
 	private suspend fun synchronizeToServer() {
 		val playerPed = Client.getPlayerPedId()
 
-		ServerEvent.emit(ClientSideSynchronizeEvent(
-			coordinatesX = CoordinatesX(
-				Client.getEntityCoords(playerPed),
-				Client.getEntityHeading(playerPed)
+		ServerEvent.emit(
+			ClientSideSynchronizeEvent(
+				coordinatesX = CoordinatesX(
+					Client.getEntityCoords(playerPed),
+					Client.getEntityHeading(playerPed)
+				)
 			)
-		))
+		)
 
 		lastSync = Date.now()
 	}

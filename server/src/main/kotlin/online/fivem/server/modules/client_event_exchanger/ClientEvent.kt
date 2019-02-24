@@ -49,20 +49,6 @@ open class ClientEvent : CoroutineScope {
 		Console.info("$printType event ${T::class} registered")
 	}
 
-	inline fun <reified T : Any> once(noinline function: (PlayerSrc, T) -> Unit) {
-		var handler: (PlayerSrc, T) -> Unit = { _, _ -> }
-
-		handler = { playerSrc, data ->
-			function(playerSrc, data)
-			unSubscribe(handler)
-		}
-
-		@Suppress("UNCHECKED_CAST")
-		handlers.add(T::class to handler.unsafeCast<((PlayerSrc, Any) -> Unit)>())
-
-		Console.info("$printType event ${T::class} registered")
-	}
-
 	inline fun <reified T : Any> unSubscribe(noinline function: (PlayerSrc, T) -> Unit) {
 		handlers.forEach {
 			if (it.second == function) {

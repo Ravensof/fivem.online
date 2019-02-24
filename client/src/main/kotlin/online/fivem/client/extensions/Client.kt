@@ -33,16 +33,6 @@ fun Client.networkResurrectLocalPlayer(coordinatesX: CoordinatesX, changeTime: B
 		changeTime
 	)
 
-//ped садится в машину
-fun Client.isPedAtGetInAnyVehicle(ped: EntityId): Boolean {
-	return Client.isPedInAnyVehicle(ped) != (Client.getVehiclePedIsUsing(ped) != null)
-}
-
-//ped пытается сесть в машину
-fun Client.isPedGettingInAnyVehicle(ped: EntityId): Boolean {
-	return Client.isPedInAnyVehicle(ped, true) != Client.isPedInAnyVehicle(ped, false)
-}
-
 fun Client.drawScreenText2D(
 	x: Double,
 	y: Double,

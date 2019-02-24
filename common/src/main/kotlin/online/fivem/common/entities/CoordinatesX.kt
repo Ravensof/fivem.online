@@ -27,4 +27,8 @@ class CoordinatesX(
 		result = 31 * result + rotation.hashCode()
 		return result
 	}
+
+	companion object {
+		val ZERO = CoordinatesX(0f, 0f, 0f, 0f)
+	}
 }

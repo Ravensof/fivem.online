@@ -24,10 +24,9 @@ class JoinTransitionModule(override val coroutineContext: CoroutineContext) : Ab
 			launch {
 				switchingPlayerJob?.join()
 
+				Client.doScreenFadeIn(1)
 				Client.shutdownLoadingScreen()
-//				val fadeHandle = api.doScreenFadeOutAsync(0).await()
 				Client.shutdownLoadingScreenNui()
-//				api.doScreenFadeInJob(fadeHandle, 500).join()
 			}
 		}
 	}

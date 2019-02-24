@@ -1,7 +1,6 @@
 package online.fivem.client.entities
 
 import online.fivem.client.common.GlobalCache
-import online.fivem.client.extensions.isPedAtGetInAnyVehicle
 import online.fivem.client.gtav.Client
 import online.fivem.client.gtav.Client.isPedInAnyVehicle
 import online.fivem.common.common.EntityId
@@ -13,7 +12,7 @@ class Ped private constructor(
 		if (!Client.doesEntityExist(entity)) throw PedDoesntExistsException("ped $entity doesnt exists")
 	}
 
-	fun isAtGetInAVehicle() = Client.isPedAtGetInAnyVehicle(entity)
+	fun isTryingToGetInAnyVehicle() = Client.isPedInAnyVehicle(entity) != (Client.getVehiclePedIsUsing(entity) != null)
 
 	fun isInAVehicle() = isPedInAnyVehicle(entity, false)
 
