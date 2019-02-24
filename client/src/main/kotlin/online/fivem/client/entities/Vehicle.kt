@@ -17,6 +17,7 @@ class Vehicle private constructor(
 	val id: Int = -1
 ) : Entity(entity) {
 
+	val networkId = Client.networkGetNetworkIdFromEntity(entity)
 	val handling = Handling(entity)
 	val wheels: List<Wheel>
 	val doors: List<Door>
@@ -173,7 +174,6 @@ class Vehicle private constructor(
 	init {
 		if (!Client.doesEntityExist(entity)) throw VehicleDoesntExistsException("vehicle $entity doesnt exists")
 
-		val networkId = Client.networkGetNetworkIdFromEntity(entity)
 		Client.setNetworkIdCanMigrate(networkId, true)
 
 		modKit = 0
