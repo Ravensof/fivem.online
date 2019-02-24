@@ -1,713 +1,709 @@
 package online.fivem.common.gtav
 
-object NativePeds {
-	class Ped(
-		val name: String,
-		val hash: Int
-	)
+enum class NativePeds(val hash: Int) {
 
-	val ABIGAIL = Ped("abigail", 1074457665)
-	val ABIGAILCUTSCENE = Ped("abigailcutscene", -1988720319)
-	val ABNER = Ped("abner", -257153498)
-	val ACULT01AMM = Ped("acult01amm", 1413662315)
-	val ACULT01AMO = Ped("acult01amo", 1430544400)
-	val ACULT01AMY = Ped("acult01amy", -1251702741)
-	val ACULT02AMO = Ped("acult02amo", 1268862154)
-	val ACULT02AMY = Ped("acult02amy", -2132435154)
-	val AFRIAMER01AMM = Ped("afriamer01amm", -781039234)
-	val AGENT14 = Ped("agent14", -67533719)
-	val AGENT14CUTSCENE = Ped("agent14cutscene", 1841036427)
-	val AGENTCUTSCENE = Ped("agentcutscene", -680474188)
-	val AIRHOSTESS01SFY = Ped("airhostess01sfy", 1567728751)
-	val AIRWORKERSMY = Ped("airworkersmy", 1644266841)
-	val ALDINAPOLI = Ped("aldinapoli", -252946718)
-	val AMANDATOWNLEY = Ped("amandatownley", 1830688247)
-	val AMANDATOWNLEYCUTSCENE = Ped("amandatownleycutscene", -1779492637)
-	val AMMUCITY01SMY = Ped("ammucity01smy", -1643617475)
-	val AMMUCOUNTRYSMM = Ped("ammucountrysmm", 233415434)
-	val ANDREAS = Ped("andreas", 1206185632)
-	val ANDREASCUTSCENE = Ped("andreascutscene", -413773017)
-	val ANITACUTSCENE = Ped("anitacutscene", 117698822)
-	val ANTONB = Ped("antonb", -815646164)
-	val ANTONCUTSCENE = Ped("antoncutscene", -1513650250)
-	val ARMBOSS01GMM = Ped("armboss01gmm", -236444766)
-	val ARMGOON01GMM = Ped("armgoon01gmm", -39239064)
-	val ARMGOON02GMY = Ped("armgoon02gmy", -984709238)
-	val ARMLIEUT01GMM = Ped("armlieut01gmm", -412008429)
-	val ARMOURED01 = Ped("armoured01", -839953400)
-	val ARMOURED01SMM = Ped("armoured01smm", -1782092083)
-	val ARMOURED02SMM = Ped("armoured02smm", 1669696074)
-	val ARMYMECH01SMY = Ped("armymech01smy", 1657546978)
-	val ASHLEY = Ped("ashley", 2129936603)
-	val ASHLEYCUTSCENE = Ped("ashleycutscene", 650367097)
-	val AUTOPSY01SMY = Ped("autopsy01smy", -1306051250)
-	val AUTOSHOP01SMM = Ped("autoshop01smm", 68070371)
-	val AUTOSHOP02SMM = Ped("autoshop02smm", -261389155)
-	val AVISCHWARTZMAN = Ped("avischwartzman", 939183526)
-	val AVISCHWARTZMANCUTSCENE = Ped("avischwartzmancutscene", -1734476390)
-	val AZTECA01GMY = Ped("azteca01gmy", 1752208920)
-	val BABYD = Ped("babyd", -636391810)
-	val BALLAEAST01GMY = Ped("ballaeast01gmy", -198252413)
-	val BALLAORIG01GMY = Ped("ballaorig01gmy", 588969535)
-	val BALLAS01GFY = Ped("ballas01gfy", 361513884)
-	val BALLASOG = Ped("ballasog", -1492432238)
-	val BALLASOGCUTSCENE = Ped("ballasogcutscene", -1410400252)
-	val BALLASOUT01GMY = Ped("ballasout01gmy", 599294057)
-	val BANKMAN01 = Ped("bankman01", -1022961931)
-	val BANKMAN = Ped("bankman", -1868718465)
-	val BANKMANCUTSCENE = Ped("bankmancutscene", -1755309778)
-	val BARMAN01SMY = Ped("barman01smy", -442429178)
-	val BARRY = Ped("barry", 797459875)
-	val BARRYCUTSCENE = Ped("barrycutscene", 1767447799)
-	val BARTENDER01SFY = Ped("bartender01sfy", 2014052797)
-	val BAYGOR = Ped("baygor", 1380197501)
-	val BAYWATCH01SFY = Ped("baywatch01sfy", 1250841910)
-	val BAYWATCH01SMY = Ped("baywatch01smy", 189425762)
-	val BEACH01AFM = Ped("beach01afm", 808859815)
-	val BEACH01AFY = Ped("beach01afy", -945854168)
-	val BEACH01AMM = Ped("beach01amm", 1077785853)
-	val BEACH01AMO = Ped("beach01amo", -2077764712)
-	val BEACH01AMY = Ped("beach01amy", -771835772)
-	val BEACH02AMM = Ped("beach02amm", 2021631368)
-	val BEACH02AMY = Ped("beach02amy", 600300561)
-	val BEACH03AMY = Ped("beach03amy", -408329255)
-	val BEACHVESP01AMY = Ped("beachvesp01amy", 2114544056)
-	val BEACHVESP02AMY = Ped("beachvesp02amy", -900269486)
-	val BENNY = Ped("benny", -994634286)
-	val BESTMEN = Ped("bestmen", 1464257942)
-	val BEVERLY = Ped("beverly", -1113448868)
-	val BEVERLYCUTSCENE = Ped("beverlycutscene", -1267809450)
-	val BEVHILLS01AFM = Ped("bevhills01afm", -1106743555)
-	val BEVHILLS01AFY = Ped("bevhills01afy", 1146800212)
-	val BEVHILLS01AMM = Ped("bevhills01amm", 1423699487)
-	val BEVHILLS01AMY = Ped("bevhills01amy", 1982350912)
-	val BEVHILLS02AFM = Ped("bevhills02afm", -1606864033)
-	val BEVHILLS02AFY = Ped("bevhills02afy", 1546450936)
-	val BEVHILLS02AMM = Ped("bevhills02amm", 1068876755)
-	val BEVHILLS02AMY = Ped("bevhills02amy", 1720428295)
-	val BEVHILLS03AFY = Ped("bevhills03afy", 549978415)
-	val BEVHILLS04AFY = Ped("bevhills04afy", 920595805)
-	val BIKEHIRE01 = Ped("bikehire01", 1984382277)
-	val BIKERCHIC = Ped("bikerchic", -96953009)
-	val BLACKOPS01SMY = Ped("blackops01smy", -1275859404)
-	val BLACKOPS02SMY = Ped("blackops02smy", 2047212121)
-	val BLACKOPS03SMY = Ped("blackops03smy", 1349953339)
-	val BOAR = Ped("boar", -832573324)
-	val BOATSTAFF01F = Ped("boatstaff01f", 848542878)
-	val BOATSTAFF01M = Ped("boatstaff01m", -933295480)
-	val BODYBUILD01AFM = Ped("bodybuild01afm", 1004114196)
-	val BOUNCER01SMM = Ped("bouncer01smm", -1613485779)
-	val BRAD = Ped("brad", -1111799518)
-	val BRADCADAVERCUTSCENE = Ped("bradcadavercutscene", 1915268960)
-	val BRADCUTSCENE = Ped("bradcutscene", -270159898)
-	val BREAKDANCE01AMY = Ped("breakdance01amy", 933205398)
-	val BRIDE = Ped("bride", 1633872967)
-	val BRIDECUTSCENE = Ped("bridecutscene", -2101379423)
-	val BURGERDRUG = Ped("burgerdrug", -1954728090)
-	val BURGERDRUGCUTSCENE = Ped("burgerdrugcutscene", -1931689897)
-	val BUSBOY01SMY = Ped("busboy01smy", -654717625)
-	val BUSICAS01AMY = Ped("busicas01amy", -1697435671)
-	val BUSINESS01AFY = Ped("business01afy", 664399832)
-	val BUSINESS01AMM = Ped("business01amm", 2120901815)
-	val BUSINESS01AMY = Ped("business01amy", -912318012)
-	val BUSINESS02AFM = Ped("business02afm", 532905404)
-	val BUSINESS02AFY = Ped("business02afy", 826475330)
-	val BUSINESS02AMY = Ped("business02amy", -1280051738)
-	val BUSINESS03AFY = Ped("business03afy", -1366884940)
-	val BUSINESS03AMY = Ped("business03amy", -1589423867)
-	val BUSINESS04AFY = Ped("business04afy", -1211756494)
-	val BUSKER01SMO = Ped("busker01smo", -1382092357)
-	val CAR3GUY1 = Ped("car3guy1", -2063996617)
-	val CAR3GUY1CUTSCENE = Ped("car3guy1cutscene", 71501447)
-	val CAR3GUY2 = Ped("car3guy2", 1975732938)
-	val CAR3GUY2CUTSCENE = Ped("car3guy2cutscene", 327394568)
-	val CARBUYERCUTSCENE = Ped("carbuyercutscene", -1932625649)
-	val CASEY = Ped("casey", -520477356)
-	val CASEYCUTSCENE = Ped("caseycutscene", -359228352)
-	val CAT = Ped("cat", 1462895032)
-	val CCREW01SMM = Ped("ccrew01smm", -907676309)
-	val CHEF01SMY = Ped("chef01smy", 261586155)
-	val CHEF2 = Ped("chef2", -2054645053)
-	val CHEF2CUTSCENE = Ped("chef2cutscene", -1369710022)
-	val CHEF = Ped("chef", 1240128502)
-	val CHEFCUTSCENE = Ped("chefcutscene", -1555576182)
-	val CHEMSEC01SMM = Ped("chemsec01smm", 788443093)
-	val CHEMWORK01GMM = Ped("chemwork01gmm", -166363761)
-	val CHIBOSS01GMM = Ped("chiboss01gmm", -1176698112)
-	val CHICKENHAWK = Ped("chickenhawk", -1430839454)
-	val CHICOLD01GMM = Ped("chicold01gmm", 275618457)
-	val CHIGOON01GMM = Ped("chigoon01gmm", 2119136831)
-	val CHIGOON02GMM = Ped("chigoon02gmm", -9308122)
-	val CHIMP = Ped("chimp", -1469565163)
-	val CHINGOONCUTSCENE = Ped("chingooncutscene", -1463670378)
-	val CHIP = Ped("chip", 610290475)
-	val CHOP = Ped("chop", 351016938)
-	val CIASEC01SMM = Ped("ciasec01smm", 1650288984)
-	val CLAUDE01 = Ped("claude01", -1057787465)
-	val CLAY = Ped("clay", 1825562762)
-	val CLAYCUTSCENE = Ped("claycutscene", -607414220)
-	val CLAYPAIN = Ped("claypain", -1660909656)
-	val CLETUS = Ped("cletus", -429715051)
-	val CLETUSCUTSCENE = Ped("cletuscutscene", -890640939)
-	val CLOWN01SMY = Ped("clown01smy", 71929310)
-	val CNTRYBAR01SMM = Ped("cntrybar01smm", 436345731)
-	val COMJANE = Ped("comjane", -1230338610)
-	val RUCT01SMY = Ped("ruct01smy", -673538407)
-	val RUCT02SMY = Ped("ruct02smy", -973145378)
-	val COP01SFY = Ped("cop01sfy", 368603149)
-	val COP01SMY = Ped("cop01smy", 1581098148)
-	val COPCUTSCENE = Ped("copcutscene", -1699520669)
-	val CORMORANT = Ped("cormorant", 1457690978)
-	val CORPSE01 = Ped("corpse01", 773063444)
-	val CORPSE02 = Ped("corpse02", 228356856)
-	val COW = Ped("cow", -50684386)
-	val COYOTE = Ped("coyote", 1682622302)
-	val CRISFORMAGE = Ped("crisformage", 678319271)
-	val CRISFORMAGECUTSCENE = Ped("crisformagecutscene", -1041006362)
-	val CROW = Ped("crow", 402729631)
-	val CUSTOMERCUTSCENE = Ped("customercutscene", -1538297973)
-	val CYCLIST01 = Ped("cyclist01", 755956971)
-	val CYCLIST01AMY = Ped("cyclist01amy", -37334073)
-	val DALE = Ped("dale", 1182012905)
-	val DALECUTSCENE = Ped("dalecutscene", 216536661)
-	val DAVENORTON = Ped("davenorton", 365775923)
-	val DAVENORTONCUTSCENE = Ped("davenortoncutscene", -2054740852)
-	val DEALER01SMY = Ped("dealer01smy", -459818001)
-	val DEBRACUTSCENE = Ped("debracutscene", -321892375)
-	val DEER = Ped("deer", -664053099)
-	val DENISE = Ped("denise", -2113195075)
-	val DENISECUTSCENE = Ped("denisecutscene", 1870669624)
-	val DENISEFRIENDCUTSCENE = Ped("denisefriendcutscene", -1249041111)
-	val DEVIN = Ped("devin", 1952555184)
-	val DEVINCUTSCENE = Ped("devincutscene", 788622594)
-	val DEVINSEC01SMY = Ped("devinsec01smy", -1688898956)
-	val DHILL01AMY = Ped("dhill01amy", -12678997)
-	val DOAMAN = Ped("doaman", 1646160893)
-	val DOCKWORK01SMM = Ped("dockwork01smm", 349680864)
-	val DOCKWORK01SMY = Ped("dockwork01smy", -2039072303)
-	val DOCTOR01SMM = Ped("doctor01smm", -730659924)
-	val DOLPHIN = Ped("dolphin", -1950698411)
-	val DOM = Ped("dom", -1674727288)
-	val DOMCUTSCENE = Ped("domcutscene", 1198698306)
-	val DOORMAN01SMY = Ped("doorman01smy", 579932932)
-	val DOWNTOWN01AFM = Ped("downtown01afm", 1699403886)
-	val DOWNTOWN01AMY = Ped("downtown01amy", 766375082)
-	val DREYFUSS = Ped("dreyfuss", -628553422)
-	val DREYFUSSCUTSCENE = Ped("dreyfusscutscene", 1012965715)
-	val DRFRIEDLANDER = Ped("drfriedlander", -872673803)
-	val DRFRIEDLANDERCUTSCENE = Ped("drfriedlandercutscene", -1549575121)
-	val DROWNED = Ped("drowned", 1943971979)
-	val DWSERVICE01SMY = Ped("dwservice01smy", 1976765073)
-	val DWSERVICE02SMY = Ped("dwservice02smy", -175076858)
-	val EASTSA01AFM = Ped("eastsa01afm", -1656894598)
-	val EASTSA01AFY = Ped("eastsa01afy", -173013091)
-	val EASTSA01AMM = Ped("eastsa01amm", -106498753)
-	val EASTSA01AMY = Ped("eastsa01amy", -1538846349)
-	val EASTSA02AFM = Ped("eastsa02afm", 1674107025)
-	val EASTSA02AFY = Ped("eastsa02afy", 70821038)
-	val EASTSA02AMM = Ped("eastsa02amm", 131961260)
-	val EASTSA02AMY = Ped("eastsa02amy", 377976310)
-	val EASTSA03AFY = Ped("eastsa03afy", 1371553700)
-	val EDTOH = Ped("edtoh", 712602007)
-	val EPSILON01AFY = Ped("epsilon01afy", 1755064960)
-	val EPSILON01AMY = Ped("epsilon01amy", 2010389054)
-	val EPSILON02AMY = Ped("epsilon02amy", -1434255461)
-	val EXARMY01 = Ped("exarmy01", 1161072059)
-	val FABIEN = Ped("fabien", -795819184)
-	val FABIENCUTSCENE = Ped("fabiencutscene", 1191403201)
-	val FACTORY01SFY = Ped("factory01sfy", 1777626099)
-	val FACTORY01SMY = Ped("factory01smy", 1097048408)
-	val FAMCA01GMY = Ped("famca01gmy", -398748745)
-	val FAMDD01 = Ped("famdd01", 866411749)
-	val FAMDNF01GMY = Ped("famdnf01gmy", -613248456)
-	val FAMFOR01GMY = Ped("famfor01gmy", -2077218039)
-	val FAMILIES01GFY = Ped("families01gfy", 1309468115)
-	val FARMER01AMM = Ped("farmer01amm", -1806291497)
-	val FATBLA01AFM = Ped("fatbla01afm", -88831029)
-	val FATCULT01AFM = Ped("fatcult01afm", -1244692252)
-	val FATLATIN01AMM = Ped("fatlatin01amm", 1641152947)
-	val FATWHITE01AFM = Ped("fatwhite01afm", 951767867)
-	val FBISUIT01 = Ped("fbisuit01", 988062523)
-	val FBISUIT01CUTSCENE = Ped("fbisuit01cutscene", 1482427218)
-	val FEMBARBERSFM = Ped("fembarbersfm", 373000027)
-	val FIBARCHITECT = Ped("fibarchitect", 874722259)
-	val FIBMUGGER01 = Ped("fibmugger01", -2051422616)
-	val FIBOFFICE01SMM = Ped("fiboffice01smm", -306416314)
-	val FIBOFFICE02SMM = Ped("fiboffice02smm", 653289389)
-	val FIBSEC01 = Ped("fibsec01", 1558115333)
-	val FIBSEC01SMM = Ped("fibsec01smm", 2072724299)
-	val FILMDIRECTOR = Ped("filmdirector", 728636342)
-	val FILMNOIR = Ped("filmnoir", 732742363)
-	val FINGURU01 = Ped("finguru01", 1189322339)
-	val FIREMAN01SMY = Ped("fireman01smy", -1229853272)
-	val FISH = Ped("fish", 802685111)
-	val FITNESS01AFY = Ped("fitness01afy", 1165780219)
-	val FITNESS02AFY = Ped("fitness02afy", 331645324)
-	val FLOYD = Ped("floyd", -1313761614)
-	val FLOYDCUTSCENE = Ped("floydcutscene", 103106535)
-	val FOSREPCUTSCENE = Ped("fosrepcutscene", 466359675)
-	val FRANKLIN = Ped("franklin", -1692214353)
-	val FREEMODEFEMALE01 = Ped("freemodefemale01", -1667301416)
-	val FREEMODEMALE01 = Ped("freemodemale01", 1885233650)
-	val G = Ped("g", -2078561997)
-	val GAFFER01SMM = Ped("gaffer01smm", -1453933154)
-	val GARBAGESMY = Ped("garbagesmy", -294281201)
-	val GARDENER01SMM = Ped("gardener01smm", 1240094341)
-	val GAY01AMY = Ped("gay01amy", -775102410)
-	val GAY02AMY = Ped("gay02amy", -1519253631)
-	val GCUTSCENE = Ped("gcutscene", -1567723049)
-	val GENFAT01AMM = Ped("genfat01amm", 115168927)
-	val GENFAT02AMM = Ped("genfat02amm", 330231874)
-	val GENHOT01AFY = Ped("genhot01afy", 793439294)
-	val GENSTREET01AFO = Ped("genstreet01afo", 1640504453)
-	val GENSTREET01AMO = Ped("genstreet01amo", -1386944600)
-	val GENSTREET01AMY = Ped("genstreet01amy", -1736970383)
-	val GENSTREET02AMY = Ped("genstreet02amy", 891398354)
-	val GENTRANSPORTSMM = Ped("gentransportsmm", 411102470)
-	val GLENSTANK01 = Ped("glenstank01", 1169888870)
-	val GOLFER01AFY = Ped("golfer01afy", 2111372120)
-	val GOLFER01AMM = Ped("golfer01amm", -1444213182)
-	val GOLFER01AMY = Ped("golfer01amy", -685776591)
-	val GRIFF01 = Ped("griff01", -1001079621)
-	val GRIP01SMY = Ped("grip01smy", 815693290)
-	val GROOM = Ped("groom", -20018299)
-	val GROOMCUTSCENE = Ped("groomcutscene", 2058033618)
-	val GROVESTRDLRCUTSCENE = Ped("grovestrdlrcutscene", -396800478)
-	val GUADALOPECUTSCENE = Ped("guadalopecutscene", 261428209)
-	val GUIDO01 = Ped("guido01", -961242577)
-	val GUNVEND01 = Ped("gunvend01", -1289578670)
-	val GURKCUTSCENE = Ped("gurkcutscene", -1022036185)
-	val HACKER = Ped("hacker", -1715797768)
-	val HAIRDRESS01SMM = Ped("hairdress01smm", 1099825042)
-	val HAMMERSHARK = Ped("hammershark", 1015224100)
-	val HAO = Ped("hao", 1704428387)
-	val HAOCUTSCENE = Ped("haocutscene", -325152996)
-	val HASJEW01AMM = Ped("hasjew01amm", 1809430156)
-	val HASJEW01AMY = Ped("hasjew01amy", -512913663)
-	val HEN = Ped("hen", 1794449327)
-	val HIGHSEC01SMM = Ped("highsec01smm", -245247470)
-	val HIGHSEC02SMM = Ped("highsec02smm", 691061163)
-	val HIKER01AFY = Ped("hiker01afy", 813893651)
-	val HIKER01AMY = Ped("hiker01amy", 1358380044)
-	val HILLBILLY01AMM = Ped("hillbilly01amm", 1822107721)
-	val HILLBILLY02AMM = Ped("hillbilly02amm", 2064532783)
-	val HIPPIE01 = Ped("hippie01", -264140789)
-	val HIPPIE01AFY = Ped("hippie01afy", 343259175)
-	val HIPPY01AMY = Ped("hippy01amy", 2097407511)
-	val HIPSTER01AFY = Ped("hipster01afy", -2109222095)
-	val HIPSTER01AMY = Ped("hipster01amy", 587703123)
-	val HIPSTER02AFY = Ped("hipster02afy", -1745486195)
-	val HIPSTER02AMY = Ped("hipster02amy", 349505262)
-	val HIPSTER03AFY = Ped("hipster03afy", -1514497514)
-	val HIPSTER03AMY = Ped("hipster03amy", 1312913862)
-	val HIPSTER04AFY = Ped("hipster04afy", 429425116)
-	val HOOKER01SFY = Ped("hooker01sfy", 42647445)
-	val HOOKER02SFY = Ped("hooker02sfy", 348382215)
-	val HOOKER03SFY = Ped("hooker03sfy", 51789996)
-	val HOTPOSH01 = Ped("hotposh01", -1768198658)
-	val HUGHCUTSCENE = Ped("hughcutscene", 1863555924)
-	val HUMPBACK = Ped("humpback", 1193010354)
-	val HUNTER = Ped("hunter", -837606178)
-	val HUNTERCUTSCENE = Ped("huntercutscene", 1531218220)
-	val HUSKY = Ped("husky", 1318032802)
-	val HWAYCOP01SMY = Ped("hwaycop01smy", 1939545845)
-	val IMPORAGE = Ped("imporage", 880829941)
-	val IMRANCUTSCENE = Ped("imrancutscene", -482210853)
-	val INDIAN01AFO = Ped("indian01afo", -1160266880)
-	val INDIAN01AFY = Ped("indian01afy", 153984193)
-	val INDIAN01AMM = Ped("indian01amm", -573920724)
-	val INDIAN01AMY = Ped("indian01amy", 706935758)
-	val JACKHOWITZERCUTSCENE = Ped("jackhowitzercutscene", 1153203121)
-	val JANET = Ped("janet", 225287241)
-	val JANETCUTSCENE = Ped("janetcutscene", 808778210)
-	val JANITORCUTSCENE = Ped("janitorcutscene", -1040164288)
-	val JANITORSMM = Ped("janitorsmm", -1452549652)
-	val JAYNORRIS = Ped("jaynorris", 2050158196)
-	val JESUS01 = Ped("jesus01", -835930287)
-	val JETSKI01AMY = Ped("jetski01amy", 767028979)
-	val JEWELASS01 = Ped("jewelass01", -254493138)
-	val JEWELASS = Ped("jewelass", 257763003)
-	val JEWELASSCUTSCENE = Ped("jewelasscutscene", 1145088004)
-	val JEWELSEC01 = Ped("jewelsec01", -1395868234)
-	val JEWELTHIEF = Ped("jewelthief", -422822692)
-	val JIMMYBOSTON = Ped("jimmyboston", -308279251)
-	val JIMMYBOSTONCUTSCENE = Ped("jimmybostoncutscene", 60192701)
-	val JIMMYDISANTO = Ped("jimmydisanto", 1459905209)
-	val JIMMYDISANTOCUTSCENE = Ped("jimmydisantocutscene", -1194552652)
-	val JOEMINUTEMAN = Ped("joeminuteman", -1105179493)
-	val JOEMINUTEMANCUTSCENE = Ped("joeminutemancutscene", -258122199)
-	val JOHNNYKLEBITZ = Ped("johnnyklebitz", -2016771922)
-	val JOHNNYKLEBITZCUTSCENE = Ped("johnnyklebitzcutscene", -91572095)
-	val JOSEF = Ped("josef", -518348876)
-	val JOSEFCUTSCENE = Ped("josefcutscene", 1167549130)
-	val JOSH = Ped("josh", 2040438510)
-	val JOSHCUTSCENE = Ped("joshcutscene", 1158606749)
-	val JUGGALO01AFY = Ped("juggalo01afy", -619494093)
-	val JUGGALO01AMY = Ped("juggalo01amy", -1849016788)
-	val JUSTIN = Ped("justin", 2109968527)
-	val KARENDANIELS = Ped("karendaniels", -346957479)
-	val KARENDANIELSCUTSCENE = Ped("karendanielscutscene", 1269774364)
-	val KERRYMCINTOSH = Ped("kerrymcintosh", 1530648845)
-	val KILLERWHALE = Ped("killerwhale", -1920284487)
-	val KORBOSS01GMM = Ped("korboss01gmm", 891945583)
-	val KOREAN01GMY = Ped("korean01gmy", 611648169)
-	val KOREAN02GMY = Ped("korean02gmy", -1880237687)
-	val KORLIEUT01GMY = Ped("korlieut01gmy", 2093736314)
-	val KTOWN01AFM = Ped("ktown01afm", 1388848350)
-	val KTOWN01AFO = Ped("ktown01afo", 1204772502)
-	val KTOWN01AMM = Ped("ktown01amm", -782401935)
-	val KTOWN01AMO = Ped("ktown01amo", 355916122)
-	val KTOWN01AMY = Ped("ktown01amy", 452351020)
-	val KTOWN02AFM = Ped("ktown02afm", 1090617681)
-	val KTOWN02AMY = Ped("ktown02amy", 696250687)
-	val LAMARDAVIS = Ped("lamardavis", 1706635382)
-	val LAMARDAVISCUTSCENE = Ped("lamardaviscutscene", 1162230285)
-	val LATHANDY01SMM = Ped("lathandy01smm", -1635724594)
-	val LATINO01AMY = Ped("latino01amy", 321657486)
-	val LAZLOW = Ped("lazlow", -538688539)
-	val LAZLOWCUTSCENE = Ped("lazlowcutscene", 949295643)
-	val LESTERCREST = Ped("lestercrest", 1302784073)
-	val LESTERCRESTCUTSCENE = Ped("lestercrestcutscene", -1248528957)
-	val LIFEINVAD01 = Ped("lifeinvad01", 1401530684)
-	val LIFEINVAD01CUTSCENE = Ped("lifeinvad01cutscene", 1918178165)
-	val LIFEINVAD01SMM = Ped("lifeinvad01smm", -570394627)
-	val LIFEINVAD02 = Ped("lifeinvad02", 666718676)
-	val LINECOOKSMM = Ped("linecooksmm", -610530921)
-	val LOST01GFY = Ped("lost01gfy", -44746786)
-	val LOST01GMY = Ped("lost01gmy", 1330042375)
-	val LOST02GMY = Ped("lost02gmy", 1032073858)
-	val LOST03GMY = Ped("lost03gmy", 850468060)
-	val LSMETRO01SMM = Ped("lsmetro01smm", 1985653476)
-	val MAGENTA = Ped("magenta", -52653814)
-	val MAGENTACUTSCENE = Ped("magentacutscene", 1477887514)
-	val MAID01SFM = Ped("maid01sfm", -527186490)
-	val MALIBU01AMM = Ped("malibu01amm", 803106487)
-	val MANI = Ped("mani", -927261102)
-	val MANUEL = Ped("manuel", -46035440)
-	val MANUELCUTSCENE = Ped("manuelcutscene", -72125238)
-	val MARIACHI01SMM = Ped("mariachi01smm", 2124742566)
-	val MARINE01SMM = Ped("marine01smm", -220552467)
-	val MARINE01SMY = Ped("marine01smy", 1702441027)
-	val MARINE02SMM = Ped("marine02smm", -265970301)
-	val MARINE02SMY = Ped("marine02smy", 1490458366)
-	val MARINE03SMY = Ped("marine03smy", 1925237458)
-	val MARKFOST = Ped("markfost", 479578891)
-	val MARNIE = Ped("marnie", 411185872)
-	val MARNIECUTSCENE = Ped("marniecutscene", 1464721716)
-	val MARSTON01 = Ped("marston01", 943915367)
-	val MARTINMADRAZOCUTSCENE = Ped("martinmadrazocutscene", 1129928304)
-	val MARYANN = Ped("maryann", -1552967674)
-	val MARYANNCUTSCENE = Ped("maryanncutscene", 161007533)
-	val MAUDE = Ped("maude", 1005070462)
-	val MAUDECUTSCENE = Ped("maudecutscene", -1127975477)
-	val MERRYWEATHERCUTSCENE = Ped("merryweathercutscene", 1631478380)
-	val METHHEAD01AMY = Ped("methhead01amy", 1768677545)
-	val MEXBOSS01GMM = Ped("mexboss01gmm", 1466037421)
-	val MEXBOSS02GMM = Ped("mexboss02gmm", 1226102803)
-	val MEXCNTRY01AMM = Ped("mexcntry01amm", -578715987)
-	val MEXGANG01GMY = Ped("mexgang01gmy", -1109568186)
-	val MEXGOON01GMY = Ped("mexgoon01gmy", 653210662)
-	val MEXGOON02GMY = Ped("mexgoon02gmy", 832784782)
-	val MEXGOON03GMY = Ped("mexgoon03gmy", -1773333796)
-	val MEXLABOR01AMM = Ped("mexlabor01amm", -1302522190)
-	val MEXTHUG01AMY = Ped("mexthug01amy", 810804565)
-	val MICHAEL = Ped("michael", 225514697)
-	val MICHELLE = Ped("michelle", -1080659212)
-	val MICHELLECUTSCENE = Ped("michellecutscene", 1890499016)
-	val MIGRANT01SFY = Ped("migrant01sfy", -715445259)
-	val MIGRANT01SMM = Ped("migrant01smm", -317922106)
-	val MILITARYBUM = Ped("militarybum", 1191548746)
-	val MILTON = Ped("milton", -886023758)
-	val MILTONCUTSCENE = Ped("miltoncutscene", -1217776881)
-	val MIMESMY = Ped("mimesmy", 1021093698)
-	val MIRANDA = Ped("miranda", 1095737979)
-	val MISTRESS = Ped("mistress", 1573528872)
-	val MISTY01 = Ped("misty01", -785842275)
-	val MOLLY = Ped("molly", -1358701087)
-	val MOLLYCUTSCENE = Ped("mollycutscene", 1167167044)
-	val MOTOX01AMY = Ped("motox01amy", 1694362237)
-	val MOTOX02AMY = Ped("motox02amy", 2007797722)
-	val MOUNTAINLION = Ped("mountainlion", 307287994)
-	val MOVALIEN01 = Ped("movalien01", 1684083350)
-	val MOVIEPREMFEMALECUTSCENE = Ped("moviepremfemalecutscene", 1270514905)
-	val MOVIEPREMMALECUTSCENE = Ped("moviepremmalecutscene", -1922568579)
-	val MOVIESTAR = Ped("moviestar", 894928436)
-	val MOVPREM01SFY = Ped("movprem01sfy", 587253782)
-	val MOVPREM01SMM = Ped("movprem01smm", -664900312)
-	val MOVSPACE01SMM = Ped("movspace01smm", -407694286)
-	val MPROS01 = Ped("mpros01", 1822283721)
-	val MRK = Ped("mrk", -304305299)
-	val MRKCUTSCENE = Ped("mrkcutscene", -1010001291)
-	val MRSPHILLIPS = Ped("mrsphillips", 946007720)
-	val MRSPHILLIPSCUTSCENE = Ped("mrsphillipscutscene", -872569905)
-	val MRSTHORNHILL = Ped("mrsthornhill", 503621995)
-	val MRSTHORNHILLCUTSCENE = Ped("mrsthornhillcutscene", 1334976110)
-	val MUSCLBEAC01AMY = Ped("musclbeac01amy", 1264920838)
-	val MUSCLBEAC02AMY = Ped("musclbeac02amy", -920443780)
-	val NATALIA = Ped("natalia", -568861381)
-	val NATALIACUTSCENE = Ped("nataliacutscene", 1325314544)
-	val NERVOUSRON = Ped("nervousron", -1124046095)
-	val NERVOUSRONCUTSCENE = Ped("nervousroncutscene", 2023152276)
-	val NIGEL = Ped("nigel", -927525251)
-	val NIGELCUTSCENE = Ped("nigelcutscene", -515400693)
-	val NIKO01 = Ped("niko01", -287649847)
-	val OGBOSS01AMM = Ped("ogboss01amm", 1746653202)
-	val OLDMAN1A = Ped("oldman1a", 1906124788)
-	val OLDMAN1ACUTSCENE = Ped("oldman1acutscene", 518814684)
-	val OLDMAN2 = Ped("oldman2", -283816889)
-	val OLDMAN2CUTSCENE = Ped("oldman2cutscene", -1728452752)
-	val OMEGA = Ped("omega", 1625728984)
-	val OMEGACUTSCENE = Ped("omegacutscene", -1955548155)
-	val ONEIL = Ped("oneil", 768005095)
-	val ORLEANS = Ped("orleans", 1641334641)
-	val ORLEANSCUTSCENE = Ped("orleanscutscene", -1389097126)
-	val ORTEGA = Ped("ortega", 648372919)
-	val ORTEGACUTSCENE = Ped("ortegacutscene", -1059388209)
-	val OSCARCUTSCENE = Ped("oscarcutscene", -199280229)
-	val PAIGE = Ped("paige", 357551935)
-	val PAIGECUTSCENE = Ped("paigecutscene", 1528799427)
-	val PAPARAZZI01AMM = Ped("paparazzi01amm", -322270187)
-	val PAPARAZZI = Ped("paparazzi", 1346941736)
-	val PAPER = Ped("paper", -1717894970)
-	val PAPERCUTSCENE = Ped("papercutscene", 1798879480)
-	val PARAMEDIC01SMM = Ped("paramedic01smm", -1286380898)
-	val PARTY01 = Ped("party01", 921110016)
-	val PARTYTARGET = Ped("partytarget", -2114499097)
-	val PATRICIA = Ped("patricia", -982642292)
-	val PATRICIACUTSCENE = Ped("patriciacutscene", -544533759)
-	val PESTCONT01SMY = Ped("pestcont01smy", 1209091352)
-	val PESTCONTDRIVER = Ped("pestcontdriver", 994527967)
-	val PESTCONTGUNMAN = Ped("pestcontgunman", 193469166)
-	val PIG = Ped("pig", -1323586730)
-	val PIGEON = Ped("pigeon", 111281960)
-	val PILOT01SMM = Ped("pilot01smm", -413447396)
-	val PILOT01SMY = Ped("pilot01smy", -1422914553)
-	val PILOT02SMM = Ped("pilot02smm", -163714847)
-	val POGO01 = Ped("pogo01", -598109171)
-	val POLOGOON01GMY = Ped("pologoon01gmy", 1329576454)
-	val POLOGOON02GMY = Ped("pologoon02gmy", -1561829034)
-	val POLYNESIAN01AMM = Ped("polynesian01amm", -1445349730)
-	val POLYNESIAN01AMY = Ped("polynesian01amy", -2088436577)
-	val POODLE = Ped("poodle", 1125994524)
-	val POPOV = Ped("popov", 645279998)
-	val POPOVCUTSCENE = Ped("popovcutscene", 1635617250)
-	val POPPYMICH = Ped("poppymich", 602513566)
-	val PORNDUDESCUTSCENE = Ped("porndudescutscene", 793443893)
-	val POSTAL01SMM = Ped("postal01smm", 1650036788)
-	val POSTAL02SMM = Ped("postal02smm", 1936142927)
-	val PRIEST = Ped("priest", 1681385341)
-	val PRIESTCUTSCENE = Ped("priestcutscene", 1299047806)
-	val PRINCESS = Ped("princess", -756833660)
-	val PRISGUARD01SMM = Ped("prisguard01smm", 1456041926)
-	val PRISMUSCL01SMY = Ped("prismuscl01smy", 1596003233)
-	val PRISONER01 = Ped("prisoner01", 2073775040)
-	val PRISONER01SMY = Ped("prisoner01smy", -1313105063)
-	val PROLOGUEDRIVER = Ped("prologuedriver", -2057423197)
-	val PROLOGUEDRIVERCUTSCENE = Ped("prologuedrivercutscene", -267695653)
-	val PROLOGUEHOSTAGE01 = Ped("prologuehostage01", -988619485)
-	val PROLOGUEHOSTAGE01AFM = Ped("prologuehostage01afm", 379310561)
-	val PROLOGUEHOSTAGE01AMM = Ped("prologuehostage01amm", -1760377969)
-	val PROLOGUEMOURNFEMALE01 = Ped("prologuemournfemale01", -1576494617)
-	val PROLOGUEMOURNMALE01 = Ped("prologuemournmale01", -829029621)
-	val PROLOGUESEC01 = Ped("prologuesec01", 1888624839)
-	val PROLOGUESEC01CUTSCENE = Ped("prologuesec01cutscene", 2141384740)
-	val PROLOGUESEC02 = Ped("prologuesec02", 666086773)
-	val PROLOGUESEC02CUTSCENE = Ped("prologuesec02cutscene", 512955554)
-	val PUG = Ped("pug", 1832265812)
-	val RABBIT = Ped("rabbit", -541762431)
-	val RAMPGANG = Ped("rampgang", -449965460)
-	val RAMPGANGCUTSCENE = Ped("rampgangcutscene", -1031795266)
-	val RAMPHIC = Ped("ramphic", 1165307954)
-	val RAMPHICCUTSCENE = Ped("ramphiccutscene", -2054384456)
-	val RAMPHIPSTER = Ped("ramphipster", -554721426)
-	val RAMPHIPSTERCUTSCENE = Ped("ramphipstercutscene", 569740212)
-	val RAMPMARINECUTSCENE = Ped("rampmarinecutscene", 1634506681)
-	val RAMPMEX = Ped("rampmex", -424905564)
-	val RAMPMEXCUTSCENE = Ped("rampmexcutscene", -162605104)
-	val RANGER01SFY = Ped("ranger01sfy", -1614285257)
-	val RANGER01SMY = Ped("ranger01smy", -277793362)
-	val RASHKOVSKY = Ped("rashkovsky", 940326374)
-	val RASHKOVSKYCUTSCENE = Ped("rashkovskycutscene", 411081129)
-	val RAT = Ped("rat", -1011537562)
-	val REPORTERCUTSCENE = Ped("reportercutscene", 776079908)
-	val RETRIEVER = Ped("retriever", 882848737)
-	val RHESUS = Ped("rhesus", -1026527405)
-	val RIVALPAPARAZZI = Ped("rivalpaparazzi", 1624626906)
-	val ROADCYC01AMY = Ped("roadcyc01amy", -178150202)
-	val ROBBER01SMY = Ped("robber01smy", -1067576423)
-	val ROCCOPELOSI = Ped("roccopelosi", -709209345)
-	val ROCCOPELOSICUTSCENE = Ped("roccopelosicutscene", -1436281204)
-	val ROTTWEILER = Ped("rottweiler", -1788665315)
-	val RSRANGER01AMO = Ped("rsranger01amo", 1011059922)
-	val RUNNER01AFY = Ped("runner01afy", -951490775)
-	val RUNNER01AMY = Ped("runner01amy", 623927022)
-	val RUNNER02AMY = Ped("runner02amy", -2076336881)
-	val RURMETH01AFY = Ped("rurmeth01afy", 1064866854)
-	val RURMETH01AMM = Ped("rurmeth01amm", 1001210244)
-	val RUSSIANDRUNK = Ped("russiandrunk", 1024089777)
-	val RUSSIANDRUNKCUTSCENE = Ped("russiandrunkcutscene", 1179785778)
-	val SALTON01AFM = Ped("salton01afm", -569505431)
-	val SALTON01AFO = Ped("salton01afo", -855671414)
-	val SALTON01AMM = Ped("salton01amm", 1328415626)
-	val SALTON01AMO = Ped("salton01amo", 539004493)
-	val SALTON01AMY = Ped("salton01amy", -681546704)
-	val SALTON02AMM = Ped("salton02amm", 1626646295)
-	val SALTON03AMM = Ped("salton03amm", -1299428795)
-	val SALTON04AMM = Ped("salton04amm", -1773858377)
-	val SALVABOSS01GMY = Ped("salvaboss01gmy", -1872961334)
-	val SALVAGOON01GMY = Ped("salvagoon01gmy", 663522487)
-	val SALVAGOON02GMY = Ped("salvagoon02gmy", 846439045)
-	val SALVAGOON03GMY = Ped("salvagoon03gmy", 62440720)
-	val SBIKEAMO = Ped("sbikeamo", 1794381917)
-	val SCDRESSY01AFY = Ped("scdressy01afy", -614546432)
-	val SCIENTIST01SMM = Ped("scientist01smm", 1092080539)
-	val SCREENWRITER = Ped("screenwriter", -1689993)
-	val SCREENWRITERCUTSCENE = Ped("screenwritercutscene", -1948177172)
-	val SCRUBS01SFY = Ped("scrubs01sfy", -1420211530)
-	val SEAGULL = Ped("seagull", -745300483)
-	val SECURITY01SMM = Ped("security01smm", -681004504)
-	val SHEPHERD = Ped("shepherd", 1126154828)
-	val SHERIFF01SFY = Ped("sheriff01sfy", 1096929346)
-	val SHERIFF01SMY = Ped("sheriff01smy", -1320879687)
-	val SHOPHIGHSFM = Ped("shophighsfm", -1371020112)
-	val SHOPKEEP01 = Ped("shopkeep01", 416176080)
-	val SHOPLOWSFY = Ped("shoplowsfy", -1452399100)
-	val SHOPMASKSMY = Ped("shopmasksmy", 1846684678)
-	val SHOPMIDSFY = Ped("shopmidsfy", 1055701597)
-	val SIEMONYETARIAN = Ped("siemonyetarian", 1283141381)
-	val SIEMONYETARIANCUTSCENE = Ped("siemonyetariancutscene", -1064078846)
-	val SKATER01AFY = Ped("skater01afy", 1767892582)
-	val SKATER01AMM = Ped("skater01amm", -640198516)
-	val SKATER01AMY = Ped("skater01amy", -1044093321)
-	val SKATER02AMY = Ped("skater02amy", -1342520604)
-	val SKIDROW01AFM = Ped("skidrow01afm", -1332260293)
-	val SKIDROW01AMM = Ped("skidrow01amm", 32417469)
-	val SNOWCOP01SMM = Ped("snowcop01smm", 451459928)
-	val SOCENLAT01AMM = Ped("socenlat01amm", 193817059)
-	val SOLOMON = Ped("solomon", -2034368986)
-	val SOLOMONCUTSCENE = Ped("solomoncutscene", -154017714)
-	val SOUCENT01AFM = Ped("soucent01afm", 1951946145)
-	val SOUCENT01AFO = Ped("soucent01afo", 1039800368)
-	val SOUCENT01AFY = Ped("soucent01afy", 744758650)
-	val SOUCENT01AMM = Ped("soucent01amm", 1750583735)
-	val SOUCENT01AMO = Ped("soucent01amo", 718836251)
-	val SOUCENT01AMY = Ped("soucent01amy", -417940021)
-	val SOUCENT02AFM = Ped("soucent02afm", -215821512)
-	val SOUCENT02AFO = Ped("soucent02afo", -1519524074)
-	val SOUCENT02AFY = Ped("soucent02afy", 1519319503)
-	val SOUCENT02AMM = Ped("soucent02amm", -1620232223)
-	val SOUCENT02AMO = Ped("soucent02amo", 1082572151)
-	val SOUCENT02AMY = Ped("soucent02amy", -1398552374)
-	val SOUCENT03AFY = Ped("soucent03afy", -2018356203)
-	val SOUCENT03AMM = Ped("soucent03amm", -1948675910)
-	val SOUCENT03AMO = Ped("soucent03amo", 238213328)
-	val SOUCENT03AMY = Ped("soucent03amy", -1007618204)
-	val SOUCENT04AMM = Ped("soucent04amm", -1023672578)
-	val SOUCENT04AMY = Ped("soucent04amy", -1976105999)
-	val SOUCENTMC01AFM = Ped("soucentmc01afm", -840346158)
-	val SPYACTOR = Ped("spyactor", -1408326184)
-	val SPYACTRESS = Ped("spyactress", 1535236204)
-	val STAGGRM01AMO = Ped("staggrm01amo", -1852518909)
-	val STBLA01AMY = Ped("stbla01amy", -812470807)
-	val STBLA02AMY = Ped("stbla02amy", -1731772337)
-	val STEVEHAIN = Ped("stevehain", 941695432)
-	val STEVEHAINSCUTSCENE = Ped("stevehainscutscene", -1528782338)
-	val STINGRAY = Ped("stingray", -1589092019)
-	val STLAT01AMY = Ped("stlat01amy", -2039163396)
-	val STLAT02AMM = Ped("stlat02amm", -1029146878)
-	val STRETCH = Ped("stretch", 915948376)
-	val STRETCHCUTSCENE = Ped("stretchcutscene", -1992464379)
-	val STRIPPER01CUTSCENE = Ped("stripper01cutscene", -1360365899)
-	val STRIPPER01SFY = Ped("stripper01sfy", 1381498905)
-	val STRIPPER02CUTSCENE = Ped("stripper02cutscene", -2126242959)
-	val STRIPPER02SFY = Ped("stripper02sfy", 1846523796)
-	val STRIPPERLITE = Ped("stripperlite", 695248020)
-	val STRIPPERLITESFY = Ped("stripperlitesfy", 1544875514)
-	val STRPERF01SMM = Ped("strperf01smm", 2035992488)
-	val STRPREACH01SMM = Ped("strpreach01smm", 469792763)
-	val STRPUNK01GMY = Ped("strpunk01gmy", -48477765)
-	val STRPUNK02GMY = Ped("strpunk02gmy", 228715206)
-	val STRVEND01SMM = Ped("strvend01smm", -829353047)
-	val STRVEND01SMY = Ped("strvend01smy", -1837161693)
-	val STWHI01AMY = Ped("stwhi01amy", 605602864)
-	val STWHI02AMY = Ped("stwhi02amy", 919005580)
-	val SUNBATHE01AMY = Ped("sunbathe01amy", -1222037748)
-	val SURFER01AMY = Ped("surfer01amy", -356333586)
-	val SWAT01SMY = Ped("swat01smy", -1920001264)
-	val SWEATSHOP01SFM = Ped("sweatshop01sfm", 824925120)
-	val SWEATSHOP01SFY = Ped("sweatshop01sfy", -2063419726)
-	val TALINA = Ped("talina", -409745176)
-	val TANISHA = Ped("tanisha", 226559113)
-	val TANISHACUTSCENE = Ped("tanishacutscene", 1123963760)
-	val TAOCHENG = Ped("taocheng", -597926235)
-	val TAOCHENGCUTSCENE = Ped("taochengcutscene", -2006710211)
-	val TAOSTRANSLATOR = Ped("taostranslator", 2089096292)
-	val TAOSTRANSLATORCUTSCENE = Ped("taostranslatorcutscene", 1397974313)
-	val TAPHILLBILLY = Ped("taphillbilly", -1709285806)
-	val TATTOO01AMO = Ped("tattoo01amo", -1800524916)
-	val TENNIS01AFY = Ped("tennis01afy", 1426880966)
-	val TENNIS01AMM = Ped("tennis01amm", 1416254276)
-	val TENNISCOACH = Ped("tenniscoach", -1573167273)
-	val TENNISCOACHCUTSCENE = Ped("tenniscoachcutscene", 1545995274)
-	val TERRY = Ped("terry", 1728056212)
-	val TERRYCUTSCENE = Ped("terrycutscene", 978452933)
-	val TIGERSHARK = Ped("tigershark", 113504370)
-	val TOMCUTSCENE = Ped("tomcutscene", 1776856003)
-	val TOMEPSILON = Ped("tomepsilon", -847807830)
-	val TOMEPSILONCUTSCENE = Ped("tomepsiloncutscene", -1945119518)
-	val TONYA = Ped("tonya", -892841148)
-	val TONYACUTSCENE = Ped("tonyacutscene", 1665391897)
-	val TOPLESS01AFY = Ped("topless01afy", -1661836925)
-	val TOURIST01AFM = Ped("tourist01afm", 1347814329)
-	val TOURIST01AFY = Ped("tourist01afy", 1446741360)
-	val TOURIST01AMM = Ped("tourist01amm", -929103484)
-	val TOURIST02AFY = Ped("tourist02afy", -1859912896)
-	val TRACYDISANTO = Ped("tracydisanto", -566941131)
-	val TRACYDISANTOCUTSCENE = Ped("tracydisantocutscene", 101298480)
-	val TRAFFICWARDEN = Ped("trafficwarden", 1461287021)
-	val TRAFFICWARDENCUTSCENE = Ped("trafficwardencutscene", -567724045)
-	val TRAMP01 = Ped("tramp01", 1787764635)
-	val TRAMP01AFM = Ped("tramp01afm", 1224306523)
-	val TRAMP01AMM = Ped("tramp01amm", 516505552)
-	val TRAMP01AMO = Ped("tramp01amo", 390939205)
-	val TRAMPBEAC01AFM = Ped("trampbeac01afm", -1935621530)
-	val TRAMPBEAC01AMM = Ped("trampbeac01amm", 1404403376)
-	val TRANVEST01AMM = Ped("tranvest01amm", -521758348)
-	val TRANVEST02AMM = Ped("tranvest02amm", -150026812)
-	val TREVOR = Ped("trevor", -1686040670)
-	val TRUCKER01SMM = Ped("trucker01smm", 1498487404)
-	val TYLERDIXON = Ped("tylerdixon", 1382414087)
-	val UNDERCOVERCOPCUTSCENE = Ped("undercovercopcutscene", -277325206)
-	val UPS01SMM = Ped("ups01smm", -1614577886)
-	val UPS02SMM = Ped("ups02smm", -792862442)
-	val USCG01SMY = Ped("uscg01smy", -905948951)
-	val VAGOS01GFY = Ped("vagos01gfy", 1520708641)
-	val VAGOSFUN01 = Ped("vagosfun01", -995747907)
-	val VAGOSSPEAK = Ped("vagosspeak", -100858228)
-	val VAGOSSPEAKCUTSCENE = Ped("vagosspeakcutscene", 1224690857)
-	val VALET01SMY = Ped("valet01smy", 999748158)
-	val VINDOUCHE01AMY = Ped("vindouche01amy", -1047300121)
-	val VINEWOOD01AFY = Ped("vinewood01afy", 435429221)
-	val VINEWOOD01AMY = Ped("vinewood01amy", 1264851357)
-	val VINEWOOD02AFY = Ped("vinewood02afy", -625565461)
-	val VINEWOOD02AMY = Ped("vinewood02amy", 1561705728)
-	val VINEWOOD03AFY = Ped("vinewood03afy", 933092024)
-	val VINEWOOD03AMY = Ped("vinewood03amy", 534725268)
-	val VINEWOOD04AFY = Ped("vinewood04afy", -85696186)
-	val VINEWOOD04AMY = Ped("vinewood04amy", 835315305)
-	val WADE = Ped("wade", -1835459726)
-	val WADECUTSCENE = Ped("wadecutscene", -765011498)
-	val WAITER01SMY = Ped("waiter01smy", -1387498932)
-	val WEICHENG = Ped("weicheng", -1427838341)
-	val WEICHENGCUTSCENE = Ped("weichengcutscene", 819699067)
-	val WESTY = Ped("westy", -1384627013)
-	val WILLYFIST = Ped("willyfist", -1871275377)
-	val WINCLEAN01SMY = Ped("winclean01smy", 1426951581)
-	val XMECH01SMY = Ped("xmech01smy", 1142162924)
-	val XMECH02SMY = Ped("xmech02smy", -1105135100)
-	val YOGA01AFY = Ped("yoga01afy", -1004861906)
-	val YOGA01AMY = Ped("yoga01amy", -1425378987)
-	val ZIMBOR = Ped("zimbor", 188012277)
-	val ZIMBORCUTSCENE = Ped("zimborcutscene", -357782800)
-	val ZOMBIE01 = Ped("zombie01", -1404353274)
+	ABIGAIL(1074457665),
+	ABIGAILCUTSCENE(-1988720319),
+	ABNER(-257153498),
+	ACULT01AMM(1413662315),
+	ACULT01AMO(1430544400),
+	ACULT01AMY(-1251702741),
+	ACULT02AMO(1268862154),
+	ACULT02AMY(-2132435154),
+	AFRIAMER01AMM(-781039234),
+	AGENT14(-67533719),
+	AGENT14CUTSCENE(1841036427),
+	AGENTCUTSCENE(-680474188),
+	AIRHOSTESS01SFY(1567728751),
+	AIRWORKERSMY(1644266841),
+	ALDINAPOLI(-252946718),
+	AMANDATOWNLEY(1830688247),
+	AMANDATOWNLEYCUTSCENE(-1779492637),
+	AMMUCITY01SMY(-1643617475),
+	AMMUCOUNTRYSMM(233415434),
+	ANDREAS(1206185632),
+	ANDREASCUTSCENE(-413773017),
+	ANITACUTSCENE(117698822),
+	ANTONB(-815646164),
+	ANTONCUTSCENE(-1513650250),
+	ARMBOSS01GMM(-236444766),
+	ARMGOON01GMM(-39239064),
+	ARMGOON02GMY(-984709238),
+	ARMLIEUT01GMM(-412008429),
+	ARMOURED01(-839953400),
+	ARMOURED01SMM(-1782092083),
+	ARMOURED02SMM(1669696074),
+	ARMYMECH01SMY(1657546978),
+	ASHLEY(2129936603),
+	ASHLEYCUTSCENE(650367097),
+	AUTOPSY01SMY(-1306051250),
+	AUTOSHOP01SMM(68070371),
+	AUTOSHOP02SMM(-261389155),
+	AVISCHWARTZMAN(939183526),
+	AVISCHWARTZMANCUTSCENE(-1734476390),
+	AZTECA01GMY(1752208920),
+	BABYD(-636391810),
+	BALLAEAST01GMY(-198252413),
+	BALLAORIG01GMY(588969535),
+	BALLAS01GFY(361513884),
+	BALLASOG(-1492432238),
+	BALLASOGCUTSCENE(-1410400252),
+	BALLASOUT01GMY(599294057),
+	BANKMAN01(-1022961931),
+	BANKMAN(-1868718465),
+	BANKMANCUTSCENE(-1755309778),
+	BARMAN01SMY(-442429178),
+	BARRY(797459875),
+	BARRYCUTSCENE(1767447799),
+	BARTENDER01SFY(2014052797),
+	BAYGOR(1380197501),
+	BAYWATCH01SFY(1250841910),
+	BAYWATCH01SMY(189425762),
+	BEACH01AFM(808859815),
+	BEACH01AFY(-945854168),
+	BEACH01AMM(1077785853),
+	BEACH01AMO(-2077764712),
+	BEACH01AMY(-771835772),
+	BEACH02AMM(2021631368),
+	BEACH02AMY(600300561),
+	BEACH03AMY(-408329255),
+	BEACHVESP01AMY(2114544056),
+	BEACHVESP02AMY(-900269486),
+	BENNY(-994634286),
+	BESTMEN(1464257942),
+	BEVERLY(-1113448868),
+	BEVERLYCUTSCENE(-1267809450),
+	BEVHILLS01AFM(-1106743555),
+	BEVHILLS01AFY(1146800212),
+	BEVHILLS01AMM(1423699487),
+	BEVHILLS01AMY(1982350912),
+	BEVHILLS02AFM(-1606864033),
+	BEVHILLS02AFY(1546450936),
+	BEVHILLS02AMM(1068876755),
+	BEVHILLS02AMY(1720428295),
+	BEVHILLS03AFY(549978415),
+	BEVHILLS04AFY(920595805),
+	BIKEHIRE01(1984382277),
+	BIKERCHIC(-96953009),
+	BLACKOPS01SMY(-1275859404),
+	BLACKOPS02SMY(2047212121),
+	BLACKOPS03SMY(1349953339),
+	BOAR(-832573324),
+	BOATSTAFF01F(848542878),
+	BOATSTAFF01M(-933295480),
+	BODYBUILD01AFM(1004114196),
+	BOUNCER01SMM(-1613485779),
+	BRAD(-1111799518),
+	BRADCADAVERCUTSCENE(1915268960),
+	BRADCUTSCENE(-270159898),
+	BREAKDANCE01AMY(933205398),
+	BRIDE(1633872967),
+	BRIDECUTSCENE(-2101379423),
+	BURGERDRUG(-1954728090),
+	BURGERDRUGCUTSCENE(-1931689897),
+	BUSBOY01SMY(-654717625),
+	BUSICAS01AMY(-1697435671),
+	BUSINESS01AFY(664399832),
+	BUSINESS01AMM(2120901815),
+	BUSINESS01AMY(-912318012),
+	BUSINESS02AFM(532905404),
+	BUSINESS02AFY(826475330),
+	BUSINESS02AMY(-1280051738),
+	BUSINESS03AFY(-1366884940),
+	BUSINESS03AMY(-1589423867),
+	BUSINESS04AFY(-1211756494),
+	BUSKER01SMO(-1382092357),
+	CAR3GUY1(-2063996617),
+	CAR3GUY1CUTSCENE(71501447),
+	CAR3GUY2(1975732938),
+	CAR3GUY2CUTSCENE(327394568),
+	CARBUYERCUTSCENE(-1932625649),
+	CASEY(-520477356),
+	CASEYCUTSCENE(-359228352),
+	CAT(1462895032),
+	CCREW01SMM(-907676309),
+	CHEF01SMY(261586155),
+	CHEF2(-2054645053),
+	CHEF2CUTSCENE(-1369710022),
+	CHEF(1240128502),
+	CHEFCUTSCENE(-1555576182),
+	CHEMSEC01SMM(788443093),
+	CHEMWORK01GMM(-166363761),
+	CHIBOSS01GMM(-1176698112),
+	CHICKENHAWK(-1430839454),
+	CHICOLD01GMM(275618457),
+	CHIGOON01GMM(2119136831),
+	CHIGOON02GMM(-9308122),
+	CHIMP(-1469565163),
+	CHINGOONCUTSCENE(-1463670378),
+	CHIP(610290475),
+	CHOP(351016938),
+	CIASEC01SMM(1650288984),
+	CLAUDE01(-1057787465),
+	CLAY(1825562762),
+	CLAYCUTSCENE(-607414220),
+	CLAYPAIN(-1660909656),
+	CLETUS(-429715051),
+	CLETUSCUTSCENE(-890640939),
+	CLOWN01SMY(71929310),
+	CNTRYBAR01SMM(436345731),
+	COMJANE(-1230338610),
+	RUCT01SMY(-673538407),
+	RUCT02SMY(-973145378),
+	COP01SFY(368603149),
+	COP01SMY(1581098148),
+	COPCUTSCENE(-1699520669),
+	CORMORANT(1457690978),
+	CORPSE01(773063444),
+	CORPSE02(228356856),
+	COW(-50684386),
+	COYOTE(1682622302),
+	CRISFORMAGE(678319271),
+	CRISFORMAGECUTSCENE(-1041006362),
+	CROW(402729631),
+	CUSTOMERCUTSCENE(-1538297973),
+	CYCLIST01(755956971),
+	CYCLIST01AMY(-37334073),
+	DALE(1182012905),
+	DALECUTSCENE(216536661),
+	DAVENORTON(365775923),
+	DAVENORTONCUTSCENE(-2054740852),
+	DEALER01SMY(-459818001),
+	DEBRACUTSCENE(-321892375),
+	DEER(-664053099),
+	DENISE(-2113195075),
+	DENISECUTSCENE(1870669624),
+	DENISEFRIENDCUTSCENE(-1249041111),
+	DEVIN(1952555184),
+	DEVINCUTSCENE(788622594),
+	DEVINSEC01SMY(-1688898956),
+	DHILL01AMY(-12678997),
+	DOAMAN(1646160893),
+	DOCKWORK01SMM(349680864),
+	DOCKWORK01SMY(-2039072303),
+	DOCTOR01SMM(-730659924),
+	DOLPHIN(-1950698411),
+	DOM(-1674727288),
+	DOMCUTSCENE(1198698306),
+	DOORMAN01SMY(579932932),
+	DOWNTOWN01AFM(1699403886),
+	DOWNTOWN01AMY(766375082),
+	DREYFUSS(-628553422),
+	DREYFUSSCUTSCENE(1012965715),
+	DRFRIEDLANDER(-872673803),
+	DRFRIEDLANDERCUTSCENE(-1549575121),
+	DROWNED(1943971979),
+	DWSERVICE01SMY(1976765073),
+	DWSERVICE02SMY(-175076858),
+	EASTSA01AFM(-1656894598),
+	EASTSA01AFY(-173013091),
+	EASTSA01AMM(-106498753),
+	EASTSA01AMY(-1538846349),
+	EASTSA02AFM(1674107025),
+	EASTSA02AFY(70821038),
+	EASTSA02AMM(131961260),
+	EASTSA02AMY(377976310),
+	EASTSA03AFY(1371553700),
+	EDTOH(712602007),
+	EPSILON01AFY(1755064960),
+	EPSILON01AMY(2010389054),
+	EPSILON02AMY(-1434255461),
+	EXARMY01(1161072059),
+	FABIEN(-795819184),
+	FABIENCUTSCENE(1191403201),
+	FACTORY01SFY(1777626099),
+	FACTORY01SMY(1097048408),
+	FAMCA01GMY(-398748745),
+	FAMDD01(866411749),
+	FAMDNF01GMY(-613248456),
+	FAMFOR01GMY(-2077218039),
+	FAMILIES01GFY(1309468115),
+	FARMER01AMM(-1806291497),
+	FATBLA01AFM(-88831029),
+	FATCULT01AFM(-1244692252),
+	FATLATIN01AMM(1641152947),
+	FATWHITE01AFM(951767867),
+	FBISUIT01(988062523),
+	FBISUIT01CUTSCENE(1482427218),
+	FEMBARBERSFM(373000027),
+	FIBARCHITECT(874722259),
+	FIBMUGGER01(-2051422616),
+	FIBOFFICE01SMM(-306416314),
+	FIBOFFICE02SMM(653289389),
+	FIBSEC01(1558115333),
+	FIBSEC01SMM(2072724299),
+	FILMDIRECTOR(728636342),
+	FILMNOIR(732742363),
+	FINGURU01(1189322339),
+	FIREMAN01SMY(-1229853272),
+	FISH(802685111),
+	FITNESS01AFY(1165780219),
+	FITNESS02AFY(331645324),
+	FLOYD(-1313761614),
+	FLOYDCUTSCENE(103106535),
+	FOSREPCUTSCENE(466359675),
+	FRANKLIN(-1692214353),
+	FREEMODEFEMALE01(-1667301416),
+	FREEMODEMALE01(1885233650),
+	G(-2078561997),
+	GAFFER01SMM(-1453933154),
+	GARBAGESMY(-294281201),
+	GARDENER01SMM(1240094341),
+	GAY01AMY(-775102410),
+	GAY02AMY(-1519253631),
+	GCUTSCENE(-1567723049),
+	GENFAT01AMM(115168927),
+	GENFAT02AMM(330231874),
+	GENHOT01AFY(793439294),
+	GENSTREET01AFO(1640504453),
+	GENSTREET01AMO(-1386944600),
+	GENSTREET01AMY(-1736970383),
+	GENSTREET02AMY(891398354),
+	GENTRANSPORTSMM(411102470),
+	GLENSTANK01(1169888870),
+	GOLFER01AFY(2111372120),
+	GOLFER01AMM(-1444213182),
+	GOLFER01AMY(-685776591),
+	GRIFF01(-1001079621),
+	GRIP01SMY(815693290),
+	GROOM(-20018299),
+	GROOMCUTSCENE(2058033618),
+	GROVESTRDLRCUTSCENE(-396800478),
+	GUADALOPECUTSCENE(261428209),
+	GUIDO01(-961242577),
+	GUNVEND01(-1289578670),
+	GURKCUTSCENE(-1022036185),
+	HACKER(-1715797768),
+	HAIRDRESS01SMM(1099825042),
+	HAMMERSHARK(1015224100),
+	HAO(1704428387),
+	HAOCUTSCENE(-325152996),
+	HASJEW01AMM(1809430156),
+	HASJEW01AMY(-512913663),
+	HEN(1794449327),
+	HIGHSEC01SMM(-245247470),
+	HIGHSEC02SMM(691061163),
+	HIKER01AFY(813893651),
+	HIKER01AMY(1358380044),
+	HILLBILLY01AMM(1822107721),
+	HILLBILLY02AMM(2064532783),
+	HIPPIE01(-264140789),
+	HIPPIE01AFY(343259175),
+	HIPPY01AMY(2097407511),
+	HIPSTER01AFY(-2109222095),
+	HIPSTER01AMY(587703123),
+	HIPSTER02AFY(-1745486195),
+	HIPSTER02AMY(349505262),
+	HIPSTER03AFY(-1514497514),
+	HIPSTER03AMY(1312913862),
+	HIPSTER04AFY(429425116),
+	HOOKER01SFY(42647445),
+	HOOKER02SFY(348382215),
+	HOOKER03SFY(51789996),
+	HOTPOSH01(-1768198658),
+	HUGHCUTSCENE(1863555924),
+	HUMPBACK(1193010354),
+	HUNTER(-837606178),
+	HUNTERCUTSCENE(1531218220),
+	HUSKY(1318032802),
+	HWAYCOP01SMY(1939545845),
+	IMPORAGE(880829941),
+	IMRANCUTSCENE(-482210853),
+	INDIAN01AFO(-1160266880),
+	INDIAN01AFY(153984193),
+	INDIAN01AMM(-573920724),
+	INDIAN01AMY(706935758),
+	JACKHOWITZERCUTSCENE(1153203121),
+	JANET(225287241),
+	JANETCUTSCENE(808778210),
+	JANITORCUTSCENE(-1040164288),
+	JANITORSMM(-1452549652),
+	JAYNORRIS(2050158196),
+	JESUS01(-835930287),
+	JETSKI01AMY(767028979),
+	JEWELASS01(-254493138),
+	JEWELASS(257763003),
+	JEWELASSCUTSCENE(1145088004),
+	JEWELSEC01(-1395868234),
+	JEWELTHIEF(-422822692),
+	JIMMYBOSTON(-308279251),
+	JIMMYBOSTONCUTSCENE(60192701),
+	JIMMYDISANTO(1459905209),
+	JIMMYDISANTOCUTSCENE(-1194552652),
+	JOEMINUTEMAN(-1105179493),
+	JOEMINUTEMANCUTSCENE(-258122199),
+	JOHNNYKLEBITZ(-2016771922),
+	JOHNNYKLEBITZCUTSCENE(-91572095),
+	JOSEF(-518348876),
+	JOSEFCUTSCENE(1167549130),
+	JOSH(2040438510),
+	JOSHCUTSCENE(1158606749),
+	JUGGALO01AFY(-619494093),
+	JUGGALO01AMY(-1849016788),
+	JUSTIN(2109968527),
+	KARENDANIELS(-346957479),
+	KARENDANIELSCUTSCENE(1269774364),
+	KERRYMCINTOSH(1530648845),
+	KILLERWHALE(-1920284487),
+	KORBOSS01GMM(891945583),
+	KOREAN01GMY(611648169),
+	KOREAN02GMY(-1880237687),
+	KORLIEUT01GMY(2093736314),
+	KTOWN01AFM(1388848350),
+	KTOWN01AFO(1204772502),
+	KTOWN01AMM(-782401935),
+	KTOWN01AMO(355916122),
+	KTOWN01AMY(452351020),
+	KTOWN02AFM(1090617681),
+	KTOWN02AMY(696250687),
+	LAMARDAVIS(1706635382),
+	LAMARDAVISCUTSCENE(1162230285),
+	LATHANDY01SMM(-1635724594),
+	LATINO01AMY(321657486),
+	LAZLOW(-538688539),
+	LAZLOWCUTSCENE(949295643),
+	LESTERCREST(1302784073),
+	LESTERCRESTCUTSCENE(-1248528957),
+	LIFEINVAD01(1401530684),
+	LIFEINVAD01CUTSCENE(1918178165),
+	LIFEINVAD01SMM(-570394627),
+	LIFEINVAD02(666718676),
+	LINECOOKSMM(-610530921),
+	LOST01GFY(-44746786),
+	LOST01GMY(1330042375),
+	LOST02GMY(1032073858),
+	LOST03GMY(850468060),
+	LSMETRO01SMM(1985653476),
+	MAGENTA(-52653814),
+	MAGENTACUTSCENE(1477887514),
+	MAID01SFM(-527186490),
+	MALIBU01AMM(803106487),
+	MANI(-927261102),
+	MANUEL(-46035440),
+	MANUELCUTSCENE(-72125238),
+	MARIACHI01SMM(2124742566),
+	MARINE01SMM(-220552467),
+	MARINE01SMY(1702441027),
+	MARINE02SMM(-265970301),
+	MARINE02SMY(1490458366),
+	MARINE03SMY(1925237458),
+	MARKFOST(479578891),
+	MARNIE(411185872),
+	MARNIECUTSCENE(1464721716),
+	MARSTON01(943915367),
+	MARTINMADRAZOCUTSCENE(1129928304),
+	MARYANN(-1552967674),
+	MARYANNCUTSCENE(161007533),
+	MAUDE(1005070462),
+	MAUDECUTSCENE(-1127975477),
+	MERRYWEATHERCUTSCENE(1631478380),
+	METHHEAD01AMY(1768677545),
+	MEXBOSS01GMM(1466037421),
+	MEXBOSS02GMM(1226102803),
+	MEXCNTRY01AMM(-578715987),
+	MEXGANG01GMY(-1109568186),
+	MEXGOON01GMY(653210662),
+	MEXGOON02GMY(832784782),
+	MEXGOON03GMY(-1773333796),
+	MEXLABOR01AMM(-1302522190),
+	MEXTHUG01AMY(810804565),
+	MICHAEL(225514697),
+	MICHELLE(-1080659212),
+	MICHELLECUTSCENE(1890499016),
+	MIGRANT01SFY(-715445259),
+	MIGRANT01SMM(-317922106),
+	MILITARYBUM(1191548746),
+	MILTON(-886023758),
+	MILTONCUTSCENE(-1217776881),
+	MIMESMY(1021093698),
+	MIRANDA(1095737979),
+	MISTRESS(1573528872),
+	MISTY01(-785842275),
+	MOLLY(-1358701087),
+	MOLLYCUTSCENE(1167167044),
+	MOTOX01AMY(1694362237),
+	MOTOX02AMY(2007797722),
+	MOUNTAINLION(307287994),
+	MOVALIEN01(1684083350),
+	MOVIEPREMFEMALECUTSCENE(1270514905),
+	MOVIEPREMMALECUTSCENE(-1922568579),
+	MOVIESTAR(894928436),
+	MOVPREM01SFY(587253782),
+	MOVPREM01SMM(-664900312),
+	MOVSPACE01SMM(-407694286),
+	MPROS01(1822283721),
+	MRK(-304305299),
+	MRKCUTSCENE(-1010001291),
+	MRSPHILLIPS(946007720),
+	MRSPHILLIPSCUTSCENE(-872569905),
+	MRSTHORNHILL(503621995),
+	MRSTHORNHILLCUTSCENE(1334976110),
+	MUSCLBEAC01AMY(1264920838),
+	MUSCLBEAC02AMY(-920443780),
+	NATALIA(-568861381),
+	NATALIACUTSCENE(1325314544),
+	NERVOUSRON(-1124046095),
+	NERVOUSRONCUTSCENE(2023152276),
+	NIGEL(-927525251),
+	NIGELCUTSCENE(-515400693),
+	NIKO01(-287649847),
+	OGBOSS01AMM(1746653202),
+	OLDMAN1A(1906124788),
+	OLDMAN1ACUTSCENE(518814684),
+	OLDMAN2(-283816889),
+	OLDMAN2CUTSCENE(-1728452752),
+	OMEGA(1625728984),
+	OMEGACUTSCENE(-1955548155),
+	ONEIL(768005095),
+	ORLEANS(1641334641),
+	ORLEANSCUTSCENE(-1389097126),
+	ORTEGA(648372919),
+	ORTEGACUTSCENE(-1059388209),
+	OSCARCUTSCENE(-199280229),
+	PAIGE(357551935),
+	PAIGECUTSCENE(1528799427),
+	PAPARAZZI01AMM(-322270187),
+	PAPARAZZI(1346941736),
+	PAPER(-1717894970),
+	PAPERCUTSCENE(1798879480),
+	PARAMEDIC01SMM(-1286380898),
+	PARTY01(921110016),
+	PARTYTARGET(-2114499097),
+	PATRICIA(-982642292),
+	PATRICIACUTSCENE(-544533759),
+	PESTCONT01SMY(1209091352),
+	PESTCONTDRIVER(994527967),
+	PESTCONTGUNMAN(193469166),
+	PIG(-1323586730),
+	PIGEON(111281960),
+	PILOT01SMM(-413447396),
+	PILOT01SMY(-1422914553),
+	PILOT02SMM(-163714847),
+	POGO01(-598109171),
+	POLOGOON01GMY(1329576454),
+	POLOGOON02GMY(-1561829034),
+	POLYNESIAN01AMM(-1445349730),
+	POLYNESIAN01AMY(-2088436577),
+	POODLE(1125994524),
+	POPOV(645279998),
+	POPOVCUTSCENE(1635617250),
+	POPPYMICH(602513566),
+	PORNDUDESCUTSCENE(793443893),
+	POSTAL01SMM(1650036788),
+	POSTAL02SMM(1936142927),
+	PRIEST(1681385341),
+	PRIESTCUTSCENE(1299047806),
+	PRINCESS(-756833660),
+	PRISGUARD01SMM(1456041926),
+	PRISMUSCL01SMY(1596003233),
+	PRISONER01(2073775040),
+	PRISONER01SMY(-1313105063),
+	PROLOGUEDRIVER(-2057423197),
+	PROLOGUEDRIVERCUTSCENE(-267695653),
+	PROLOGUEHOSTAGE01(-988619485),
+	PROLOGUEHOSTAGE01AFM(379310561),
+	PROLOGUEHOSTAGE01AMM(-1760377969),
+	PROLOGUEMOURNFEMALE01(-1576494617),
+	PROLOGUEMOURNMALE01(-829029621),
+	PROLOGUESEC01(1888624839),
+	PROLOGUESEC01CUTSCENE(2141384740),
+	PROLOGUESEC02(666086773),
+	PROLOGUESEC02CUTSCENE(512955554),
+	PUG(1832265812),
+	RABBIT(-541762431),
+	RAMPGANG(-449965460),
+	RAMPGANGCUTSCENE(-1031795266),
+	RAMPHIC(1165307954),
+	RAMPHICCUTSCENE(-2054384456),
+	RAMPHIPSTER(-554721426),
+	RAMPHIPSTERCUTSCENE(569740212),
+	RAMPMARINECUTSCENE(1634506681),
+	RAMPMEX(-424905564),
+	RAMPMEXCUTSCENE(-162605104),
+	RANGER01SFY(-1614285257),
+	RANGER01SMY(-277793362),
+	RASHKOVSKY(940326374),
+	RASHKOVSKYCUTSCENE(411081129),
+	RAT(-1011537562),
+	REPORTERCUTSCENE(776079908),
+	RETRIEVER(882848737),
+	RHESUS(-1026527405),
+	RIVALPAPARAZZI(1624626906),
+	ROADCYC01AMY(-178150202),
+	ROBBER01SMY(-1067576423),
+	ROCCOPELOSI(-709209345),
+	ROCCOPELOSICUTSCENE(-1436281204),
+	ROTTWEILER(-1788665315),
+	RSRANGER01AMO(1011059922),
+	RUNNER01AFY(-951490775),
+	RUNNER01AMY(623927022),
+	RUNNER02AMY(-2076336881),
+	RURMETH01AFY(1064866854),
+	RURMETH01AMM(1001210244),
+	RUSSIANDRUNK(1024089777),
+	RUSSIANDRUNKCUTSCENE(1179785778),
+	SALTON01AFM(-569505431),
+	SALTON01AFO(-855671414),
+	SALTON01AMM(1328415626),
+	SALTON01AMO(539004493),
+	SALTON01AMY(-681546704),
+	SALTON02AMM(1626646295),
+	SALTON03AMM(-1299428795),
+	SALTON04AMM(-1773858377),
+	SALVABOSS01GMY(-1872961334),
+	SALVAGOON01GMY(663522487),
+	SALVAGOON02GMY(846439045),
+	SALVAGOON03GMY(62440720),
+	SBIKEAMO(1794381917),
+	SCDRESSY01AFY(-614546432),
+	SCIENTIST01SMM(1092080539),
+	SCREENWRITER(-1689993),
+	SCREENWRITERCUTSCENE(-1948177172),
+	SCRUBS01SFY(-1420211530),
+	SEAGULL(-745300483),
+	SECURITY01SMM(-681004504),
+	SHEPHERD(1126154828),
+	SHERIFF01SFY(1096929346),
+	SHERIFF01SMY(-1320879687),
+	SHOPHIGHSFM(-1371020112),
+	SHOPKEEP01(416176080),
+	SHOPLOWSFY(-1452399100),
+	SHOPMASKSMY(1846684678),
+	SHOPMIDSFY(1055701597),
+	SIEMONYETARIAN(1283141381),
+	SIEMONYETARIANCUTSCENE(-1064078846),
+	SKATER01AFY(1767892582),
+	SKATER01AMM(-640198516),
+	SKATER01AMY(-1044093321),
+	SKATER02AMY(-1342520604),
+	SKIDROW01AFM(-1332260293),
+	SKIDROW01AMM(32417469),
+	SNOWCOP01SMM(451459928),
+	SOCENLAT01AMM(193817059),
+	SOLOMON(-2034368986),
+	SOLOMONCUTSCENE(-154017714),
+	SOUCENT01AFM(1951946145),
+	SOUCENT01AFO(1039800368),
+	SOUCENT01AFY(744758650),
+	SOUCENT01AMM(1750583735),
+	SOUCENT01AMO(718836251),
+	SOUCENT01AMY(-417940021),
+	SOUCENT02AFM(-215821512),
+	SOUCENT02AFO(-1519524074),
+	SOUCENT02AFY(1519319503),
+	SOUCENT02AMM(-1620232223),
+	SOUCENT02AMO(1082572151),
+	SOUCENT02AMY(-1398552374),
+	SOUCENT03AFY(-2018356203),
+	SOUCENT03AMM(-1948675910),
+	SOUCENT03AMO(238213328),
+	SOUCENT03AMY(-1007618204),
+	SOUCENT04AMM(-1023672578),
+	SOUCENT04AMY(-1976105999),
+	SOUCENTMC01AFM(-840346158),
+	SPYACTOR(-1408326184),
+	SPYACTRESS(1535236204),
+	STAGGRM01AMO(-1852518909),
+	STBLA01AMY(-812470807),
+	STBLA02AMY(-1731772337),
+	STEVEHAIN(941695432),
+	STEVEHAINSCUTSCENE(-1528782338),
+	STINGRAY(-1589092019),
+	STLAT01AMY(-2039163396),
+	STLAT02AMM(-1029146878),
+	STRETCH(915948376),
+	STRETCHCUTSCENE(-1992464379),
+	STRIPPER01CUTSCENE(-1360365899),
+	STRIPPER01SFY(1381498905),
+	STRIPPER02CUTSCENE(-2126242959),
+	STRIPPER02SFY(1846523796),
+	STRIPPERLITE(695248020),
+	STRIPPERLITESFY(1544875514),
+	STRPERF01SMM(2035992488),
+	STRPREACH01SMM(469792763),
+	STRPUNK01GMY(-48477765),
+	STRPUNK02GMY(228715206),
+	STRVEND01SMM(-829353047),
+	STRVEND01SMY(-1837161693),
+	STWHI01AMY(605602864),
+	STWHI02AMY(919005580),
+	SUNBATHE01AMY(-1222037748),
+	SURFER01AMY(-356333586),
+	SWAT01SMY(-1920001264),
+	SWEATSHOP01SFM(824925120),
+	SWEATSHOP01SFY(-2063419726),
+	TALINA(-409745176),
+	TANISHA(226559113),
+	TANISHACUTSCENE(1123963760),
+	TAOCHENG(-597926235),
+	TAOCHENGCUTSCENE(-2006710211),
+	TAOSTRANSLATOR(2089096292),
+	TAOSTRANSLATORCUTSCENE(1397974313),
+	TAPHILLBILLY(-1709285806),
+	TATTOO01AMO(-1800524916),
+	TENNIS01AFY(1426880966),
+	TENNIS01AMM(1416254276),
+	TENNISCOACH(-1573167273),
+	TENNISCOACHCUTSCENE(1545995274),
+	TERRY(1728056212),
+	TERRYCUTSCENE(978452933),
+	TIGERSHARK(113504370),
+	TOMCUTSCENE(1776856003),
+	TOMEPSILON(-847807830),
+	TOMEPSILONCUTSCENE(-1945119518),
+	TONYA(-892841148),
+	TONYACUTSCENE(1665391897),
+	TOPLESS01AFY(-1661836925),
+	TOURIST01AFM(1347814329),
+	TOURIST01AFY(1446741360),
+	TOURIST01AMM(-929103484),
+	TOURIST02AFY(-1859912896),
+	TRACYDISANTO(-566941131),
+	TRACYDISANTOCUTSCENE(101298480),
+	TRAFFICWARDEN(1461287021),
+	TRAFFICWARDENCUTSCENE(-567724045),
+	TRAMP01(1787764635),
+	TRAMP01AFM(1224306523),
+	TRAMP01AMM(516505552),
+	TRAMP01AMO(390939205),
+	TRAMPBEAC01AFM(-1935621530),
+	TRAMPBEAC01AMM(1404403376),
+	TRANVEST01AMM(-521758348),
+	TRANVEST02AMM(-150026812),
+	TREVOR(-1686040670),
+	TRUCKER01SMM(1498487404),
+	TYLERDIXON(1382414087),
+	UNDERCOVERCOPCUTSCENE(-277325206),
+	UPS01SMM(-1614577886),
+	UPS02SMM(-792862442),
+	USCG01SMY(-905948951),
+	VAGOS01GFY(1520708641),
+	VAGOSFUN01(-995747907),
+	VAGOSSPEAK(-100858228),
+	VAGOSSPEAKCUTSCENE(1224690857),
+	VALET01SMY(999748158),
+	VINDOUCHE01AMY(-1047300121),
+	VINEWOOD01AFY(435429221),
+	VINEWOOD01AMY(1264851357),
+	VINEWOOD02AFY(-625565461),
+	VINEWOOD02AMY(1561705728),
+	VINEWOOD03AFY(933092024),
+	VINEWOOD03AMY(534725268),
+	VINEWOOD04AFY(-85696186),
+	VINEWOOD04AMY(835315305),
+	WADE(-1835459726),
+	WADECUTSCENE(-765011498),
+	WAITER01SMY(-1387498932),
+	WEICHENG(-1427838341),
+	WEICHENGCUTSCENE(819699067),
+	WESTY(-1384627013),
+	WILLYFIST(-1871275377),
+	WINCLEAN01SMY(1426951581),
+	XMECH01SMY(1142162924),
+	XMECH02SMY(-1105135100),
+	YOGA01AFY(-1004861906),
+	YOGA01AMY(-1425378987),
+	ZIMBOR(188012277),
+	ZIMBORCUTSCENE(-357782800),
+	ZOMBIE01(-1404353274),
 }
