@@ -1,4 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+import tasks.ExtractDependenciesTask
+import tasks.UploadingToServerTask
 
 buildscript {
 	repositories {
@@ -19,7 +21,7 @@ version = "1.0-SNAPSHOT"
 
 repositories {
 	mavenCentral()
-	maven { setUrl("https://kotlin.bintray.com/kotlinx") }
+	maven(url = "https://kotlin.bintray.com/kotlinx")
 }
 
 dependencies {
@@ -33,9 +35,9 @@ subprojects {
 		mavenCentral()
 		jcenter()
 		// artifacts are published to this repository
-		maven { setUrl("https://kotlin.bintray.com/kotlinx") }
-		maven { setUrl("http://dl.bintray.com/kotlin/kotlinx.html/") }
-		maven { setUrl("https://kotlin.bintray.com/js-externals") }
+		maven(url = "https://kotlin.bintray.com/kotlinx")
+		maven(url = "http://dl.bintray.com/kotlin/kotlinx.html/")
+		maven(url = "https://kotlin.bintray.com/js-externals")
 
 	}
 
@@ -90,66 +92,27 @@ subprojects {
 	tasks {
 		val assemble = getAt("assemble")
 		val classes = getAt("classes")
-		val compileKotlin2Js = getAt("compileKotlin2Js") as Kotlin2JsCompile
+		val clean = getAt("clean")
+//		val compileKotlin2Js = getAt("compileKotlin2Js") as Kotlin2JsCompile
 
-		val cleanExternalDependencies = create("cleanExternalDependencies", Delete::class) {
-			delete("$buildDir/lib")
+		ExtractDependenciesTask.extract(buildDir, configurations.compile.get().files)
+
+		val extractDependencies by registering(ExtractDependenciesTask::class) {
+			dependsOn(clean)
+			buildDir.set(this@subprojects.buildDir)
+			files.set(configurations.compile.get().files)
 		}
 
-		val extractExternalDependencies = create("extractExternalDependencies") {
-			dependsOn(cleanExternalDependencies)
+		assemble.dependsOn(classes)
 
-			configurations.compile.get().files.forEach {
-				unZip(it.absolutePath, "$buildDir/lib") {
-					it.endsWith(".js") && !it.endsWith(".meta.js") && !it.endsWith(".map.js")
-				}
-			}
-		}
-
-		val assembleWeb = create("assembleWeb", Sync::class) {
-			dependsOn(classes)
-			dependsOn(extractExternalDependencies)
-		}
-
-		getAt("assemble").dependsOn(assembleWeb)
-
-		val cleanServerCopy = create("cleanServerCopy", Delete::class) {
-			delete(Config.serverDir + project.name + "\\lib")
-			delete(Config.serverDir + project.name + "\\resources")
-			isFollowSymlinks = true
-		}
-
-		val debugCopyToServer = create("debugCopyToServer", Copy::class) {
-			from(buildDir) {
-				include("$buildDir/lib/**.js")
-				include("${compileKotlin2Js.destinationDir}/**.js")
-				include("resources/**")
-			}
-			into(Config.serverDir + project.name)
-		}
-
-		val copyToServer = create("copyToServer", Copy::class) {
-
-			from(buildDir) {
-				include("$buildDir/lib/**.js")
-				include("${compileKotlin2Js.destinationDir}/**.js")
-				exclude("${compileKotlin2Js.destinationDir}/**.meta.js")
-				include("resources/**")
-			}
-
-			into(Config.serverDir + project.name)
-		}
-
-		val fullBuildAndCopy = create("fullBuildAndCopy") {
-			dependsOn(cleanServerCopy)
+		val copyToServer by registering(UploadingToServerTask::class) {
 			dependsOn(assemble)
+			moduleName.set(project.name)
+			buildDir.set(this@subprojects.buildDir)
+		}
+
+		val fullBuildAndCopy by registering(Copy::class) {
 			dependsOn(copyToServer)
-		}
-
-		val debugBuildAndDeploy = create("debugBuildAndDeploy") {
-			dependsOn(cleanServerCopy)
-			dependsOn(assemble)
-			dependsOn(debugCopyToServer)
 		}
 	}
 }

@@ -1,4 +1,6 @@
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 import java.util.zip.ZipFile
 
 fun unZip(from: String, toDir: String, filter: (String) -> Boolean = { it.endsWith(".js") }) {
@@ -20,4 +22,15 @@ fun unZip(from: String, toDir: String, filter: (String) -> Boolean = { it.endsWi
 			}
 		}
 	}
+}
+
+fun removeDir(path: String) {
+	if (!File(path).exists()) return
+
+	val pathToBeDeleted = Path.of(path)
+
+	Files.walk(pathToBeDeleted)
+		.sorted(Comparator.reverseOrder())
+		.map(Path::toFile)
+		.forEach(File::delete)
 }
