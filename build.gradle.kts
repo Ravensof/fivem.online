@@ -5,12 +5,13 @@ buildscript {
 	}
 
 	dependencies {
+		classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:" + Config.kotlinVersion)
 	}
 }
 
 plugins {
-	id("kotlin2js").version("1.3.21")
-	id("kotlinx-serialization").version("1.3.21")
+	id("kotlin2js").version(Config.kotlinVersion)
+	id("kotlinx-serialization").version(Config.kotlinVersion)
 }
 
 group = "online.fivem"
@@ -46,8 +47,8 @@ subprojects {
 		}
 
 		dependencies {
-			classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${properties["config.kotlin_version"]}")
-			classpath("org.jetbrains.kotlin:kotlin-serialization:${properties["config.kotlin_version"]}")
+			classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:" + Config.kotlinVersion)
+			classpath("org.jetbrains.kotlin:kotlin-serialization:" + Config.kotlinVersion)
 		}
 	}
 
@@ -66,10 +67,10 @@ subprojects {
 
 	dependencies {
 
-		compile("org.jetbrains.kotlin:kotlin-stdlib-js:${properties["config.kotlin_version"]}")
-//		testCompile "org.jetbrains.kotlin:kotlin-test-js:$kotlin_version"
-		compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:${properties["config.serialization_runtime"]}")
-		compile("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:${properties["config.coroutines_version"]}")
+		compile("org.jetbrains.kotlin:kotlin-stdlib-js:" + Config.kotlinVersion)
+//		testCompile "org.jetbrains.kotlin:kotlin-test-js:$kotlinVersion"
+		compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:" + Config.serializationRuntime)
+		compile("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:" + Config.coroutinesVersion)
 
 		when (project.name) {
 			"common" -> {
@@ -89,64 +90,64 @@ subprojects {
 	tasks {
 		val assemble = getAt("assemble")
 		val classes = getAt("classes")
-		val clean = getAt("assemble")
 		val compileKotlin2Js = getAt("compileKotlin2Js") as Kotlin2JsCompile
+
+		val cleanExternalDependencies = create("cleanExternalDependencies", Delete::class) {
+			delete("$buildDir/lib")
+		}
+
+		val extractExternalDependencies = create("extractExternalDependencies") {
+			dependsOn(cleanExternalDependencies)
+
+			configurations.compile.get().files.forEach {
+				unZip(it.absolutePath, "$buildDir/lib") {
+					it.endsWith(".js") && !it.endsWith(".meta.js") && !it.endsWith(".map.js")
+				}
+			}
+		}
 
 		val assembleWeb = create("assembleWeb", Sync::class) {
 			dependsOn(classes)
-
-			configurations.compile.forEach { file ->
-				from(zipTree(file.absolutePath), {
-					includeEmptyDirs = false
-					include { fileTreeElement ->
-						val path = fileTreeElement.path
-						(path.endsWith(".js") || path.endsWith(".js.map")) && (path.startsWith("META-INF/resources/") ||
-								!path.startsWith("META-INF/"))
-					}
-				})
-			}
-
-			from(compileKotlin2Js.destinationDir)
-			into("$buildDir/lib")
+			dependsOn(extractExternalDependencies)
 		}
 
 		getAt("assemble").dependsOn(assembleWeb)
 
 		val cleanServerCopy = create("cleanServerCopy", Delete::class) {
-			delete(properties["config.serverDir"].toString() + project.name + "\\lib")
-			delete(properties["config.serverDir"].toString() + project.name + "\\resources")
+			delete(Config.serverDir + project.name + "\\lib")
+			delete(Config.serverDir + project.name + "\\resources")
 			isFollowSymlinks = true
 		}
 
-		clean.dependsOn(cleanServerCopy)
-
 		val debugCopyToServer = create("debugCopyToServer", Copy::class) {
 			from(buildDir) {
-				include("lib/**")
+				include("$buildDir/lib/**.js")
+				include("${compileKotlin2Js.destinationDir}/**.js")
 				include("resources/**")
 			}
-			into(properties["config.serverDir"].toString() + project.name)
+			into(Config.serverDir + project.name)
 		}
 
 		val copyToServer = create("copyToServer", Copy::class) {
 
 			from(buildDir) {
-				include("lib/**.js")
-				exclude("lib/**.meta.js")
+				include("$buildDir/lib/**.js")
+				include("${compileKotlin2Js.destinationDir}/**.js")
+				exclude("${compileKotlin2Js.destinationDir}/**.meta.js")
 				include("resources/**")
 			}
 
-			into(properties["config.serverDir"].toString() + project.name)
+			into(Config.serverDir + project.name)
 		}
 
 		val fullBuildAndCopy = create("fullBuildAndCopy") {
-			dependsOn(clean)
+			dependsOn(cleanServerCopy)
 			dependsOn(assemble)
 			dependsOn(copyToServer)
 		}
 
 		val debugBuildAndDeploy = create("debugBuildAndDeploy") {
-			dependsOn(clean)
+			dependsOn(cleanServerCopy)
 			dependsOn(assemble)
 			dependsOn(debugCopyToServer)
 		}
