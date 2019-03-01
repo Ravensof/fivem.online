@@ -1,8 +1,7 @@
 package online.fivem.client.modules.role_play_system
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
+import online.fivem.client.common.GlobalCache.player
 import online.fivem.client.entities.Ped
 import online.fivem.client.events.PlayerVehicleSeatEvent
 import online.fivem.client.events.PlayersPedChangedEvent
@@ -11,11 +10,8 @@ import online.fivem.client.modules.basics.TickExecutorModule
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Event
 import online.fivem.common.common.Stack
-import kotlin.coroutines.CoroutineContext
 
-class RolePlaySystemModule : AbstractModule(), CoroutineScope {
-
-	override val coroutineContext: CoroutineContext = SupervisorJob()
+class RolePlaySystemModule : AbstractModule() {
 
 	private val tickExecutor by moduleLoader.onReady<TickExecutorModule>()
 
@@ -45,14 +41,13 @@ class RolePlaySystemModule : AbstractModule(), CoroutineScope {
 	private var seatShuffling = Stack.UNDEFINED_INDEX
 
 	private fun disableSeatShuffling(disable: Boolean) {
-		val playerPed = Client.getPlayerPedId()
-		val vehicle = Client.getVehiclePedIsIn(playerPed, false) ?: return
+		val vehicle = player.ped.getVehicleIsIn(false) ?: return
 
 		tickExecutor.remove(seatShuffling)
 		if (disable) {
 			seatShuffling = tickExecutor.add {
-				if (Client.getIsTaskActive(playerPed, 165)) {
-					Client.setPedIntoVehicle(playerPed, vehicle, 0)
+				if (Client.getIsTaskActive(player.ped.entity, 165)) {
+					Client.setPedIntoVehicle(player.ped.entity, vehicle.entity, 0)
 				}
 			}
 		}

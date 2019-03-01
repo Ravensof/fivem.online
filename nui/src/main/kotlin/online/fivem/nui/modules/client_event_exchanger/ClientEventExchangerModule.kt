@@ -1,7 +1,6 @@
 package online.fivem.nui.modules.client_event_exchanger
 
 import js.externals.jquery.jQuery
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
@@ -16,10 +15,8 @@ import online.fivem.common.other.NuiUnsafePacket
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.EventListener
 import kotlin.browser.window
-import kotlin.coroutines.CoroutineContext
 
-class ClientEventExchangerModule : AbstractModule(), EventListener, CoroutineScope {
-	override val coroutineContext: CoroutineContext = Job()
+class ClientEventExchangerModule : AbstractModule(), EventListener {
 
 	override fun onStart(): Job? {
 		window.addEventListener("message", this)

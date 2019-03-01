@@ -1,6 +1,5 @@
 package online.fivem.client.modules.vehicle
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -19,9 +18,8 @@ import online.fivem.common.Sounds
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
 import online.fivem.common.common.Event
-import kotlin.coroutines.CoroutineContext
 
-class BlackOut(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
+class BlackOut : AbstractModule() {
 
 	private val api by moduleLoader.onReady<API>()
 	private var timeLeft: Long = 0

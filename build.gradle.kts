@@ -106,12 +106,12 @@ subprojects {
 		assemble.dependsOn(classes)
 
 		val copyToServer by registering(UploadingToServerTask::class) {
-			dependsOn(assemble)
 			moduleName.set(project.name)
 			buildDir.set(this@subprojects.buildDir)
 		}
 
 		val fullBuildAndCopy by registering(Copy::class) {
+			dependsOn(assemble)
 			dependsOn(copyToServer)
 		}
 	}

@@ -4,6 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import online.fivem.common.common.Console
+import online.fivem.common.common.createJob
 import online.fivem.common.entities.PlayerSrc
 import online.fivem.server.entities.Player
 import kotlin.coroutines.CoroutineContext
@@ -11,7 +12,7 @@ import kotlin.reflect.KClass
 
 open class ClientEvent : CoroutineScope {
 
-	override val coroutineContext: CoroutineContext = Job()
+	override val coroutineContext: CoroutineContext = createJob()
 
 	open val printType = "net"
 

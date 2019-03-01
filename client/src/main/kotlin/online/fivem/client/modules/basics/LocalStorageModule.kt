@@ -1,17 +1,15 @@
 package online.fivem.client.modules.basics
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import online.fivem.client.modules.nui_event_exchanger.NuiEvent
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.events.nui.LocalStorageEvent
-import kotlin.coroutines.CoroutineContext
 
 private typealias Data = String?
 
-class LocalStorageModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
+class LocalStorageModule : AbstractModule() {
 
 	private val pendingChannels = mutableMapOf<Int, Channel<Data>>()
 

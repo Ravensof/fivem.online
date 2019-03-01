@@ -1,6 +1,5 @@
 package online.fivem.client.modules.vehicle
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import online.fivem.client.events.PlayerRadioStationChangedEvent
@@ -21,9 +20,8 @@ import online.fivem.common.extensions.orZero
 import online.fivem.common.gtav.NativeAudioScenes
 import online.fivem.common.gtav.ProfileSetting
 import online.fivem.common.gtav.RadioStation
-import kotlin.coroutines.CoroutineContext
 
-class InternetRadio(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
+class InternetRadio : AbstractModule() {
 
 	private var volume = getSettingsMusicLevel().toDouble() / 10 * MAX_VOLUME
 

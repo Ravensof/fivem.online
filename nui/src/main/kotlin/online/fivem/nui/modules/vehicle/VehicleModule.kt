@@ -1,12 +1,8 @@
 package online.fivem.nui.modules.vehicle
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
 import online.fivem.common.common.AbstractModule
-import kotlin.coroutines.CoroutineContext
 
-class VehicleModule : AbstractModule(), CoroutineScope {
-	override val coroutineContext: CoroutineContext = SupervisorJob()
+class VehicleModule : AbstractModule() {
 
 	override fun onInit() {
 		moduleLoader.apply {

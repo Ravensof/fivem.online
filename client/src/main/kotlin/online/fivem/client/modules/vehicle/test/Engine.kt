@@ -5,7 +5,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 import online.fivem.client.entities.Vehicle
-import online.fivem.common.extensions.minus
+import online.fivem.common.common.createJob
 import online.fivem.common.extensions.repeatJob
 import kotlin.coroutines.CoroutineContext
 
@@ -32,7 +32,7 @@ class Engine(
 
 ) : CoroutineScope {
 
-	override val coroutineContext: CoroutineContext = Job()
+	override val coroutineContext: CoroutineContext = createJob()
 	private var engine: Job? = null
 
 	val maxFuelConsumption = 10.0 // литров в час

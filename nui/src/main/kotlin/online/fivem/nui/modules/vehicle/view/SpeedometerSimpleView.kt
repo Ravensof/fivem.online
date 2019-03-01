@@ -8,6 +8,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import online.fivem.common.common.Html
 import online.fivem.common.common.Utils
+import online.fivem.common.common.createJob
 import online.fivem.nui.common.View
 import online.fivem.nui.extensions.getImage
 import online.fivem.nui.extensions.nuiResourcesLink
@@ -16,7 +17,7 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.js.Date
 
 class SpeedometerSimpleView : View(), CoroutineScope {
-	override val coroutineContext: CoroutineContext = Job()
+	override val coroutineContext: CoroutineContext = createJob()
 
 	var data: SpeedometerData? = null
 		set(value) {

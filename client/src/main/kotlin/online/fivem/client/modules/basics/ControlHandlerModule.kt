@@ -1,6 +1,5 @@
 package online.fivem.client.modules.basics
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import online.fivem.client.extensions.disableControlAction
 import online.fivem.client.extensions.isControlPressed
@@ -8,10 +7,9 @@ import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Stack
 import online.fivem.common.extensions.orZero
 import online.fivem.common.gtav.NativeControls
-import kotlin.coroutines.CoroutineContext
 import kotlin.js.Date
 
-class ControlHandlerModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
+class ControlHandlerModule : AbstractModule() {
 
 	private val handlers = mutableListOf<Listener>()
 

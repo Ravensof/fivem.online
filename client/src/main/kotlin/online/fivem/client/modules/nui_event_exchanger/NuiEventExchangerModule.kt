@@ -1,8 +1,6 @@
 package online.fivem.client.modules.nui_event_exchanger
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import online.fivem.client.gtav.Client
@@ -16,11 +14,8 @@ import online.fivem.common.events.net.ImReadyEvent
 import online.fivem.common.extensions.forEach
 import online.fivem.common.other.NuiPacket
 import online.fivem.common.other.NuiUnsafePacket
-import kotlin.coroutines.CoroutineContext
 
-class NuiEventExchangerModule : AbstractModule(), CoroutineScope {
-	override val coroutineContext: CoroutineContext = SupervisorJob()
-
+class NuiEventExchangerModule : AbstractModule() {
 
 	override fun onInit() {
 		Exports.onNui(GlobalConfig.NUI_EVENT_NAME) { rawPacket ->

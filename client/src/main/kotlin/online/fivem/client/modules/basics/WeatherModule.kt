@@ -1,6 +1,5 @@
 package online.fivem.client.modules.basics
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -14,9 +13,8 @@ import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
 import online.fivem.common.entities.Weather
 import online.fivem.common.gtav.NativeWeather
-import kotlin.coroutines.CoroutineContext
 
-class WeatherModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
+class WeatherModule : AbstractModule() {
 
 	val weatherQueue = Channel<Weather>(10)
 

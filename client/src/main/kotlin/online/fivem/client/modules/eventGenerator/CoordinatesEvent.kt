@@ -1,15 +1,15 @@
 package online.fivem.client.modules.eventGenerator
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import online.fivem.common.common.Event
+import online.fivem.common.common.createJob
 import online.fivem.common.entities.Coordinates
 import online.fivem.common.extensions.compareTo
 import online.fivem.common.extensions.distance
 import kotlin.coroutines.CoroutineContext
 
 object CoordinatesEvent : CoroutineScope {
-	override val coroutineContext: CoroutineContext = Job()
+	override val coroutineContext: CoroutineContext = createJob()
 
 	init {
 		Event.on<Coordinates>(this) { handle(it) }

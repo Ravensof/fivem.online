@@ -5,7 +5,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import online.fivem.common.common.AbstractModule
-import online.fivem.common.common.Html
 import online.fivem.common.events.nui.DebugNUITextEvent
 import online.fivem.nui.common.View
 import online.fivem.nui.modules.basics.test.DebugView
@@ -55,7 +54,7 @@ class DebugModule(
 		debugBlock.html("")
 		debugBlock.show()
 
-		debugBlock.append("${Html.escape(text)}<br/>")
+		debugBlock.append(text)
 
 		showJob.start()
 	}

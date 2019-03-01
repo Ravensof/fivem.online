@@ -9,6 +9,7 @@ import online.fivem.client.modules.nui_event_exchanger.NuiEvent
 import online.fivem.client.modules.server_event_exchanger.ServerEvent
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Event
+import online.fivem.common.common.createJob
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.events.net.ClientSideSynchronizeEvent
 import online.fivem.common.events.net.ServerSideSynchronizationEvent
@@ -18,7 +19,7 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.js.Date
 
 class ServersCommandsHandlerModule : AbstractModule(), CoroutineScope {
-	override val coroutineContext: CoroutineContext = Job()
+	override val coroutineContext: CoroutineContext = createJob()
 
 	private val dateTime by moduleLoader.onReady<DateTimeModule>()
 	private val weatherModule by moduleLoader.onReady<WeatherModule>()

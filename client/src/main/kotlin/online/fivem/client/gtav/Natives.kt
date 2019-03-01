@@ -17,7 +17,14 @@ object Natives {
 
 	// the callback will be called next game tick
 	fun mainThread(callback: () -> Unit) {
-		setImmediate(callback)
+		setImmediate {
+			try {
+				callback()
+			} catch (e: Throwable) {
+				println("main thread: ${e.message}")
+				throw e
+			}
+		}
 	}
 }
 

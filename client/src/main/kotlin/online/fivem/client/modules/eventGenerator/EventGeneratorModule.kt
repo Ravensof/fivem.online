@@ -1,8 +1,6 @@
 package online.fivem.client.modules.eventGenerator
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import online.fivem.client.common.GlobalCache.player
 import online.fivem.client.entities.Ped
 import online.fivem.client.entities.Vehicle
@@ -17,12 +15,10 @@ import online.fivem.common.extensions.orZero
 import online.fivem.common.extensions.repeatJob
 import online.fivem.common.gtav.ProfileSetting
 import online.fivem.common.gtav.RadioStation
-import kotlin.coroutines.CoroutineContext
 import kotlin.js.Date
 import kotlin.math.absoluteValue
 
-class EventGeneratorModule : AbstractModule(), CoroutineScope {
-	override val coroutineContext: CoroutineContext = createJob()
+class EventGeneratorModule : AbstractModule() {
 
 	private var isFadeOut: Boolean = true
 
@@ -61,12 +57,6 @@ class EventGeneratorModule : AbstractModule(), CoroutineScope {
 		}
 
 		return super.onStart()
-	}
-
-	override fun onStop(): Job? {
-		cancel()
-
-		return super.onStop()
 	}
 
 	private suspend fun checkPlayerTryingToGetAnyVehicle(playerPed: Ped) {

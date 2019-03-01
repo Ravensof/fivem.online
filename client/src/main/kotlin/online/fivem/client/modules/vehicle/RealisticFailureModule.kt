@@ -1,6 +1,9 @@
 package online.fivem.client.modules.vehicle
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import online.fivem.client.entities.Vehicle
 import online.fivem.client.events.PlayerLeftOrJoinVehicleEvent
 import online.fivem.client.extensions.disableControlAction
@@ -11,14 +14,11 @@ import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Event
 import online.fivem.common.common.Stack
 import online.fivem.common.gtav.NativeControls
-import kotlin.coroutines.CoroutineContext
 import kotlin.math.pow
 import kotlin.random.Random
 
 //todo переписать
-class RealisticFailureModule(
-	override val coroutineContext: CoroutineContext
-) : AbstractModule(), CoroutineScope {
+class RealisticFailureModule : AbstractModule() {
 
 	private val tickExecutorModule by moduleLoader.onReady<TickExecutorModule>()
 

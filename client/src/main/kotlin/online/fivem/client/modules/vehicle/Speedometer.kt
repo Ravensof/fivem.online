@@ -1,6 +1,5 @@
 package online.fivem.client.modules.vehicle
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import online.fivem.client.entities.Vehicle
 import online.fivem.client.events.PlayerLeftOrJoinVehicleEvent
@@ -11,9 +10,8 @@ import online.fivem.common.events.nui.SpeedometerDisableEvent
 import online.fivem.common.events.nui.SpeedometerEnableEvent
 import online.fivem.common.events.nui.SpeedometerUpdateEvent
 import online.fivem.common.extensions.repeatJob
-import kotlin.coroutines.CoroutineContext
 
-class Speedometer(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
+class Speedometer : AbstractModule() {
 	private var vehicleHasSpeedo = false
 	private var updateJob: Job? = null
 

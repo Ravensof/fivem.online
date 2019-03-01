@@ -1,8 +1,8 @@
 package online.fivem.server.modules.basics
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
 import online.fivem.common.common.AbstractModule
+import online.fivem.common.common.createJob
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.events.net.SpawnPlayerEvent
 import online.fivem.server.entities.Player
@@ -10,7 +10,7 @@ import online.fivem.server.modules.client_event_exchanger.ClientEvent
 import kotlin.coroutines.CoroutineContext
 
 class BasicsModule : AbstractModule(), CoroutineScope {
-	override val coroutineContext: CoroutineContext = SupervisorJob()
+	override val coroutineContext: CoroutineContext = createJob()
 
 	override fun onInit() {
 		moduleLoader.add(MySQLModule(coroutineContext))

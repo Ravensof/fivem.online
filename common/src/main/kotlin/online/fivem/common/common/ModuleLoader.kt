@@ -1,7 +1,6 @@
 package online.fivem.common.common
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import online.fivem.common.events.local.ModuleLoadedEvent
@@ -11,7 +10,7 @@ import kotlin.reflect.KProperty
 
 class ModuleLoader : CoroutineScope {
 
-	override val coroutineContext: CoroutineContext = Job()
+	override val coroutineContext: CoroutineContext = createJob()
 
 	private val queue = Channel<AbstractModule>(128)
 	private var finally: (() -> Unit)? = null
@@ -83,15 +82,11 @@ class ModuleLoader : CoroutineScope {
 	}
 
 	inline fun <reified T : AbstractModule> on(coroutineScope: CoroutineScope = this, noinline function: (T) -> Unit) {
-		on(T::class, function)
+		on(T::class, coroutineScope, function)
 	}
 
-	inline fun <reified T : AbstractModule> CoroutineScope.on(noinline function: (T) -> Unit) {
-		on(T::class, function)
-	}
-
-	fun <T : AbstractModule> CoroutineScope.on(kClass: KClass<T>, function: (T) -> Unit) {
-		launch {
+	fun <T : AbstractModule> on(kClass: KClass<T>, coroutineScope: CoroutineScope = this, function: (T) -> Unit) {
+		coroutineScope.launch {
 			events.openSubscription(kClass).apply {
 				function(receive())
 				cancel()

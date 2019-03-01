@@ -1,6 +1,7 @@
 package online.fivem.client.modules.basics
 
 import kotlinx.coroutines.*
+import online.fivem.client.common.GlobalCache.player
 import online.fivem.client.extensions.start
 import online.fivem.client.extensions.stop
 import online.fivem.client.gtav.Client
@@ -16,11 +17,8 @@ import online.fivem.common.extensions.set
 import online.fivem.common.extensions.unset
 import online.fivem.common.gtav.NativeAudioScenes
 import online.fivem.common.gtav.NativeControls
-import kotlin.coroutines.CoroutineContext
 
-class API(
-	override val coroutineContext: CoroutineContext
-) : AbstractModule(), CoroutineScope {
+class API : AbstractModule() {
 
 	private val tickExecutor by moduleLoader.onReady<TickExecutorModule>()
 	private val controlHandlerModule by moduleLoader.onReady<ControlHandlerModule>()
@@ -89,7 +87,7 @@ class API(
 
 
 	fun setRagdollEffect(): Handle = ragdollStack.set {
-		val playerPed = Client.getPlayerPedId()
+		val playerPed = player.ped.entity
 		ragdollExecutorId = tickExecutor.add { Client.setPedToRagdoll(playerPed) }
 	}
 

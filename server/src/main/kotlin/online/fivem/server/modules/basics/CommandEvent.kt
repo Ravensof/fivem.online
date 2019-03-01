@@ -1,13 +1,16 @@
 package online.fivem.server.modules.basics
 
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import online.fivem.common.common.createJob
 import online.fivem.server.entities.Player
 import online.fivem.server.gtav.Natives.registerCommand
+import kotlin.coroutines.CoroutineContext
 
 private typealias Handler = (Player?, Array<String>, String) -> Unit
 
-object CommandEvent {
+object CommandEvent : CoroutineScope {
+	override val coroutineContext: CoroutineContext = createJob()
 
 	private val handlers = mutableMapOf<String, Handler>()
 
@@ -24,7 +27,7 @@ object CommandEvent {
 	}
 
 	private fun handle(playerSrc: Int, command: String, args: Array<String>, raw: String) {
-		GlobalScope.launch {
+		launch {
 			CommandsModule.executionQueue.send(CommandsModule.RawCommand(playerSrc, command, args, raw))
 		}
 	}

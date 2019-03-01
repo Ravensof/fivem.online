@@ -1,13 +1,9 @@
 package online.fivem.client.modules.nui_event_exchanger
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import online.fivem.common.common.Event
-import kotlin.coroutines.CoroutineContext
 
-object NuiEvent : Event(), CoroutineScope {
-	override val coroutineContext: CoroutineContext = Job()
+object NuiEvent : Event() {
 
 	fun emitUnsafe(data: Any) = launch {
 		NuiEventExchangerModule.unsafeChannel.send(data)

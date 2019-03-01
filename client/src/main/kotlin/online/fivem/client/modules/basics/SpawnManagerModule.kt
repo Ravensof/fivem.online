@@ -1,6 +1,9 @@
 package online.fivem.client.modules.basics
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import online.fivem.client.common.GlobalCache.player
 import online.fivem.client.common.Player
 import online.fivem.client.events.PlayerSpawnedEvent
@@ -13,9 +16,8 @@ import online.fivem.common.common.Event
 import online.fivem.common.common.Stack
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.extensions.onNull
-import kotlin.coroutines.CoroutineContext
 
-class SpawnManagerModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
+class SpawnManagerModule : AbstractModule() {
 
 	private val api by moduleLoader.onReady<API>()
 

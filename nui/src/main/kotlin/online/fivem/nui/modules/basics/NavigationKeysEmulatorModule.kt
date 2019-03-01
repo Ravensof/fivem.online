@@ -2,7 +2,6 @@ package online.fivem.nui.modules.basics
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
 import online.fivem.common.events.nui.NuiEmulateKeyDownEvent
@@ -28,11 +27,9 @@ class NavigationKeysEmulatorModule(override val coroutineContext: CoroutineConte
 				emitEvent(KeyEvent("keyup", it.code))
 			}
 			on<NuiEmulateKeyJustPressedEvent> {
-				launch {
-					emitEvent(KeyEvent("keydown", it.code))
-					delay(it.durability)
-					emitEvent(KeyEvent("keyup", it.code))
-				}
+				emitEvent(KeyEvent("keydown", it.code))
+				delay(it.durability)
+				emitEvent(KeyEvent("keyup", it.code))
 			}
 		}
 
