@@ -3,8 +3,8 @@ package online.fivem.client.modules.basics
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import online.fivem.client.common.GlobalCache.player
 import online.fivem.client.events.PauseMenuStateChangedEvent
-import online.fivem.client.gtav.Client
 import online.fivem.client.modules.nui_event_exchanger.NuiEvent
 import online.fivem.client.modules.server_event_exchanger.ServerEvent
 import online.fivem.common.common.AbstractModule
@@ -76,13 +76,13 @@ class ServersCommandsHandlerModule : AbstractModule(), CoroutineScope {
 	}
 
 	private suspend fun synchronizeToServer() {
-		val playerPed = Client.getPlayerPedId()
+		val playerPed = player.ped
 
 		ServerEvent.emit(
 			ClientSideSynchronizeEvent(
 				coordinatesX = CoordinatesX(
-					Client.getEntityCoords(playerPed),
-					Client.getEntityHeading(playerPed)
+					playerPed.coordinates,
+					playerPed.heading
 				)
 			)
 		)

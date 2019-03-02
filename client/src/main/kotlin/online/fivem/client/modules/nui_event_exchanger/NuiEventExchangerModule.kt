@@ -67,7 +67,7 @@ class NuiEventExchangerModule : AbstractModule() {
 
 		val channel = Channel<Unit>()
 
-		NuiEvent.on<ImReadyEvent>(this) {
+		NuiEvent.on<ImReadyEvent> {
 			channel.close()
 		}
 

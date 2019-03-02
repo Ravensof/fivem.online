@@ -14,7 +14,7 @@ class LocalStorageModule : AbstractModule() {
 	private val pendingChannels = mutableMapOf<Int, Channel<Data>>()
 
 	override fun onInit() {
-		NuiEvent.on<LocalStorageEvent.Response>(this) {
+		NuiEvent.on<LocalStorageEvent.Response> {
 			pendingChannels[it.responseId]?.send(it.data)
 		}
 	}

@@ -6,6 +6,7 @@ import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.launch
 import online.fivem.common.extensions.forEach
 import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.reflect.KClass
 
 open class Event : CoroutineScope {
@@ -18,10 +19,10 @@ open class Event : CoroutineScope {
 	}
 
 	inline fun <reified T : Any> on(
-		coroutineScope: CoroutineScope = this,
+		context: CoroutineContext = EmptyCoroutineContext,
 		noinline action: suspend (T) -> Unit
 	) {
-		coroutineScope.launch {
+		launch(context) {
 			openSubscription(T::class).forEach(action)
 		}
 	}

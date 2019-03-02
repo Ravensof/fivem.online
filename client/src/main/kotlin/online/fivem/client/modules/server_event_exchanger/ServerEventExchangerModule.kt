@@ -38,7 +38,7 @@ class ServerEventExchangerModule : AbstractModule() {
 			}
 		}
 
-		ServerEvent.on<StopResourceEvent>(this) { moduleLoader.stop() }
+		ServerEvent.on<StopResourceEvent> { moduleLoader.stop() }
 	}
 
 	@ExperimentalCoroutinesApi

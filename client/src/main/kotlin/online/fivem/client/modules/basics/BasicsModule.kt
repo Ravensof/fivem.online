@@ -16,7 +16,7 @@ class BasicsModule : AbstractModule() {
 	private var handleShowNui = Stack.UNDEFINED_INDEX
 
 	override fun onInit() {
-		Event.on<PauseMenuStateChangedEvent>(this) { onPauseMenuStateChanged(it.previousState) }
+		Event.on<PauseMenuStateChangedEvent> { onPauseMenuStateChanged(it.previousState) }
 
 		moduleLoader.apply {
 			add(ErrorReporterModule())

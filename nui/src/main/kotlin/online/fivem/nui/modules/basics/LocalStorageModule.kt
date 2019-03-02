@@ -10,7 +10,7 @@ import kotlin.coroutines.CoroutineContext
 class LocalStorageModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
 
 	init {
-		ClientEvent.on<LocalStorageEvent.Request>(this) {
+		ClientEvent.on<LocalStorageEvent.Request> {
 				ClientEvent.emit(
 					LocalStorageEvent.Response(
 						responseId = it.requestId,
@@ -18,7 +18,7 @@ class LocalStorageModule(override val coroutineContext: CoroutineContext) : Abst
 					)
 				)
 			}
-		ClientEvent.on<LocalStorageEvent.Post>(this) { set(it.key, it.value) }
+		ClientEvent.on<LocalStorageEvent.Post> { set(it.key, it.value) }
 	}
 
 	fun get(key: String): String? {

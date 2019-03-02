@@ -5,14 +5,12 @@ import kotlinx.coroutines.launch
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
 import online.fivem.common.common.Event
-import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.entities.PlayerSrc
 import online.fivem.common.events.net.ImReadyEvent
 import online.fivem.common.gtav.NativeEvents
 import online.fivem.server.Strings
 import online.fivem.server.entities.Player
 import online.fivem.server.entities.mysqlEntities.BlackListTable
-import online.fivem.server.entities.mysqlEntities.CharacterEntity
 import online.fivem.server.entities.mysqlEntities.UserEntity
 import online.fivem.server.events.PlayerConnectedEvent
 import online.fivem.server.extensions.row
@@ -28,7 +26,6 @@ class SessionModule(override val coroutineContext: CoroutineContext) : AbstractM
 
 
 	private val players = mutableMapOf<PlayerSrc, Player>()
-	private val basicsModule by moduleLoader.delegate<BasicsModule>()
 	private val mySQL by moduleLoader.delegate<MySQLModule>()
 
 	override fun onInit() {
@@ -70,20 +67,10 @@ class SessionModule(override val coroutineContext: CoroutineContext) : AbstractM
 			)
 		) ?: return@launch Natives.dropPlayer(playerSrc, Strings.NO_SUCH_USER)
 
-		val character =
-			mySQL.connection.row<CharacterEntity>(
-				"""SELECT *
-						|FROM characters
-						|WHERE user_id=?
-						|""".trimMargin(),
-				arrayOf(user.id)
-			) ?: return@launch Natives.dropPlayer(playerSrc, Strings.NO_SUCH_CHARACTER)
-
 		val sessionId = mySQL.connection.send(
 			"""INSERT INTO sessions
 					|SET
 					|  user_id=?,
-					|  character_id=?,
 					|  steam=?,
 					|  discord=?,
 					|  license=?,
@@ -91,7 +78,6 @@ class SessionModule(override val coroutineContext: CoroutineContext) : AbstractM
 					|""".trimMargin(),
 			arrayOf(
 				user.id,
-				character.id,
 				identifiers.steam,
 				identifiers.discord,
 				identifiers.license,
@@ -103,20 +89,10 @@ class SessionModule(override val coroutineContext: CoroutineContext) : AbstractM
 			playerSrc = playerSrc,
 			name = identifiers.name.orEmpty(),
 			sessionId = sessionId,
-			characterId = character.id
+			userId = user.id
 		)
 
 		players[playerSrc] = player
-
-		basicsModule.spawn(
-			player,
-			CoordinatesX(
-				character.coord_x.toFloat(),
-				character.coord_y.toFloat(),
-				character.coord_z.toFloat(),
-				character.coord_rotation
-			), character.pedestrian
-		)
 
 		Event.emit(PlayerConnectedEvent(player))
 	}

@@ -30,8 +30,6 @@ private fun start() {
 
 		add(RolePlaySystemModule())
 
-		add(VoiceTransmissionModule())
-
 		add(ClientEventExchangerModule())//last
 
 		finally {

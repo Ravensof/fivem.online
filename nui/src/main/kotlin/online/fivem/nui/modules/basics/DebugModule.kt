@@ -31,7 +31,7 @@ class DebugModule(
 	}
 
 	override fun onInit() {
-		ClientEvent.on<DebugNUITextEvent>(this) { onConsoleLogWeb(it.id, it.text) }
+		ClientEvent.on<DebugNUITextEvent> { onConsoleLogWeb(it.id, it.text) }
 	}
 
 	private fun getDebugView(id: Int): DebugView {

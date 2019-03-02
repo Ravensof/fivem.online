@@ -21,7 +21,7 @@ import online.fivem.server.modules.client_event_exchanger.ClientEvent
 import kotlin.coroutines.CoroutineContext
 import kotlin.js.Date
 
-class SynchronizationModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
+class SynchronizationModule(override val coroutineContext: CoroutineContext) : AbstractModule() {
 
 	val date = VDate()
 	val syncData = ServerSideSynchronizationEvent(serverTime = 0.0)
@@ -46,9 +46,7 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 			}
 		}
 
-		Event.apply {
-			on<PlayerConnectedEvent> { syncDataFor(it.player.playerSrc) }
-		}
+		Event.on<PlayerConnectedEvent> { syncDataFor(it.player.playerSrc) }
 	}
 
 	@ExperimentalCoroutinesApi

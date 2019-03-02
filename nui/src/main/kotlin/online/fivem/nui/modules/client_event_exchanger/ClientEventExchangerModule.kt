@@ -23,7 +23,7 @@ class ClientEventExchangerModule : AbstractModule(), EventListener {
 
 		val channel = Channel<Unit>()
 
-		ClientEvent.on<ImReadyEvent>(this) {
+		ClientEvent.on<ImReadyEvent> {
 			channel.send(Unit)
 		}
 

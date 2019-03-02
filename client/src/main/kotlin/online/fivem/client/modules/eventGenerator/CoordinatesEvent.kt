@@ -12,7 +12,7 @@ object CoordinatesEvent : CoroutineScope {
 	override val coroutineContext: CoroutineContext = createJob()
 
 	init {
-		Event.on<Coordinates>(this) { handle(it) }
+		Event.on<Coordinates> { handle(it) }
 	}
 
 	private val onJoinHandlers = mutableMapOf<Point, () -> Unit>()

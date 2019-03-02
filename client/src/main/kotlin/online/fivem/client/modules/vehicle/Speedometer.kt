@@ -9,6 +9,7 @@ import online.fivem.common.common.Event
 import online.fivem.common.events.nui.SpeedometerDisableEvent
 import online.fivem.common.events.nui.SpeedometerEnableEvent
 import online.fivem.common.events.nui.SpeedometerUpdateEvent
+import online.fivem.common.extensions.cancelAndJoin
 import online.fivem.common.extensions.repeatJob
 
 class Speedometer : AbstractModule() {
@@ -63,7 +64,7 @@ class Speedometer : AbstractModule() {
 	}
 
 	private suspend fun onPlayerLeftVehicle() {
-		updateJob?.cancel()
+		updateJob?.cancelAndJoin()
 		vehicleHasSpeedo = false
 		NuiEvent.emit(SpeedometerDisableEvent())
 	}

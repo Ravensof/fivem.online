@@ -13,7 +13,7 @@ import kotlin.coroutines.CoroutineContext
 
 class PlaySoundModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
 	override fun onInit() {
-		ClientEvent.on<PlaySoundEvent>(this) { play(it.sound, it.volume) }
+		ClientEvent.on<PlaySoundEvent> { play(it.sound, it.volume) }
 	}
 
 	fun play(sound: String, volume: Double) {
