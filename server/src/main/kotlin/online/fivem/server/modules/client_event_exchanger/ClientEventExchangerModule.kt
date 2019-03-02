@@ -31,7 +31,7 @@ class ClientEventExchangerModule : AbstractModule(), CoroutineScope {
 
 	private val playersList = mutableMapOf<Int, Double>()
 
-	private val sessionModule by moduleLoader.onReady<SessionModule>()
+	private val sessionModule by moduleLoader.delegate<SessionModule>()
 
 	override fun onInit() {
 		Exports.on(NativeEvents.Server.PLAYER_DROPPED) { playerId: Int, _: String -> onPlayerDropped(playerId) }

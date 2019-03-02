@@ -20,7 +20,7 @@ import kotlin.random.Random
 //todo переписать
 class RealisticFailureModule : AbstractModule() {
 
-	private val tickExecutorModule by moduleLoader.onReady<TickExecutorModule>()
+	private val tickExecutorModule by moduleLoader.delegate<TickExecutorModule>()
 
 	private var lastVehicle: Vehicle? = null
 	private var vehicleClass = 0

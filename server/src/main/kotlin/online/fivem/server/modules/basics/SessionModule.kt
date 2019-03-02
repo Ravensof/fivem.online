@@ -28,8 +28,8 @@ class SessionModule(override val coroutineContext: CoroutineContext) : AbstractM
 
 
 	private val players = mutableMapOf<PlayerSrc, Player>()
-	private val basicsModule by moduleLoader.onReady<BasicsModule>()
-	private val mySQL by moduleLoader.onReady<MySQLModule>()
+	private val basicsModule by moduleLoader.delegate<BasicsModule>()
+	private val mySQL by moduleLoader.delegate<MySQLModule>()
 
 	override fun onInit() {
 		Exports.on(NativeEvents.Server.PLAYER_CONNECTING, ::onClientConnecting)

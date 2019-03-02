@@ -20,8 +20,8 @@ import online.fivem.common.gtav.NativeControls
 
 class API : AbstractModule() {
 
-	private val tickExecutor by moduleLoader.onReady<TickExecutorModule>()
-	private val controlHandlerModule by moduleLoader.onReady<ControlHandlerModule>()
+	private val tickExecutor by moduleLoader.delegate<TickExecutorModule>()
+	private val controlHandlerModule by moduleLoader.delegate<ControlHandlerModule>()
 
 	private val enableBlackOut = UnitStack()
 

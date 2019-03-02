@@ -9,8 +9,8 @@ import online.fivem.common.common.Stack
 class JoinTransitionModule : AbstractModule() {
 
 	private var switchingPlayerJob: Job? = null
-	private val tickExecutor by moduleLoader.onReady<TickExecutorModule>()
-	private val api by moduleLoader.onReady<API>()
+	private val tickExecutor by moduleLoader.delegate<TickExecutorModule>()
+	private val api by moduleLoader.delegate<API>()
 
 	private var muteHandle = Stack.UNDEFINED_INDEX
 

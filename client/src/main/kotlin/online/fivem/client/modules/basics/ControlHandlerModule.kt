@@ -13,7 +13,7 @@ class ControlHandlerModule : AbstractModule() {
 
 	private val handlers = mutableListOf<Listener>()
 
-	private val tickExecutor by moduleLoader.onReady<TickExecutorModule>()
+	private val tickExecutor by moduleLoader.delegate<TickExecutorModule>()
 	private var executorId = Stack.UNDEFINED_INDEX
 
 	private val pressedKeys = mutableMapOf<NativeControls.Keys, Double>()

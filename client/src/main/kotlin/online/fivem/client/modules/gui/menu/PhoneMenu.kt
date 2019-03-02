@@ -17,7 +17,7 @@ class PhoneMenu(
 	NavigationControlsHandler.Listener {
 
 
-	private val controlHandlerModule by moduleLoader.onReady<ControlHandlerModule>()
+	private val controlHandlerModule by moduleLoader.delegate<ControlHandlerModule>()
 	private var navigatorListener: NavigationControlsHandler? = null
 
 	override fun onInit() {

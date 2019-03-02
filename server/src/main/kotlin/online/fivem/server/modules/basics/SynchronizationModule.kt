@@ -30,9 +30,9 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 	private val synchronizationJob by lazy { synchronizationJob() }
 	private val syncDataChannel = Channel<Pair<Player, ClientSideSynchronizeEvent>>(GlobalConfig.MAX_PLAYERS)
 
-	private val sessionModule by moduleLoader.onReady<SessionModule>()
+	private val sessionModule by moduleLoader.delegate<SessionModule>()
 
-	private val mySQL by moduleLoader.onReady<MySQLModule>()
+	private val mySQL by moduleLoader.delegate<MySQLModule>()
 
 	override fun onInit() {
 		ClientEvent.on<ClientSideSynchronizeEvent> { player, synchronizeEvent ->

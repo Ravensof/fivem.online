@@ -19,7 +19,7 @@ import online.fivem.common.extensions.onNull
 
 class SpawnManagerModule : AbstractModule() {
 
-	private val api by moduleLoader.onReady<API>()
+	private val api by moduleLoader.delegate<API>()
 
 //	private fun vehicleSpawn(event: SpawnVehicleEvent) {
 //

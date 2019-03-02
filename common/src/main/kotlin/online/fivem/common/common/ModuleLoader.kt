@@ -81,12 +81,24 @@ class ModuleLoader : CoroutineScope {
 		}
 	}
 
-	inline fun <reified T : AbstractModule> on(coroutineScope: CoroutineScope = this, noinline function: (T) -> Unit) {
-		on(T::class, coroutineScope, function)
-	}
+	inline fun <reified T : AbstractModule> on(
+		coroutineScope: CoroutineScope = this,
+		noinline function: suspend (T) -> Unit
 
-	fun <T : AbstractModule> on(kClass: KClass<T>, coroutineScope: CoroutineScope = this, function: (T) -> Unit) {
+	) = on(T::class, coroutineScope, function)
+
+	fun <T : AbstractModule> on(
+		kClass: KClass<T>,
+		coroutineScope: CoroutineScope = this,
+		function: suspend (T) -> Unit
+	) {
 		coroutineScope.launch {
+			val module = modules.find { it::class == kClass }
+
+			module?.let {
+				return@launch function(it.unsafeCast<T>())
+			}
+
 			events.openSubscription(kClass).apply {
 				function(receive())
 				cancel()
@@ -94,7 +106,7 @@ class ModuleLoader : CoroutineScope {
 		}
 	}
 
-	inline fun <reified ModuleType : AbstractModule> onReady(): OnLocalModuleLoaded<ModuleType> {
+	inline fun <reified ModuleType : AbstractModule> delegate(): OnLocalModuleLoaded<ModuleType> {
 		return OnLocalModuleLoaded(ModuleType::class)
 	}
 

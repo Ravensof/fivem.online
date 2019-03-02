@@ -11,7 +11,7 @@ class MainControlListener : AbstractModule(), ControlHandlerModule.Listener {
 	private val shortPressHandlers = mutableMapOf<NativeControls.Keys, () -> Boolean>()
 	private val longPressHandlers = mutableMapOf<NativeControls.Keys, () -> Boolean>()
 
-	private val controlHandlerModule by moduleLoader.onReady<ControlHandlerModule>()
+	private val controlHandlerModule by moduleLoader.delegate<ControlHandlerModule>()
 
 	override fun onStart(): Job? {
 		controlHandlerModule.addListener(this)

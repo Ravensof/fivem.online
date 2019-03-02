@@ -18,7 +18,7 @@ class WeatherModule : AbstractModule() {
 
 	val weatherQueue = Channel<Weather>(10)
 
-	private val dateTimeModule by moduleLoader.onReady<DateTimeModule>()
+	private val dateTimeModule by moduleLoader.delegate<DateTimeModule>()
 
 	private var currentWeather: NativeWeather = NativeWeather.OVERCAST
 	private var currentTemperature = 0.0

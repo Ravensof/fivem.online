@@ -18,7 +18,7 @@ import kotlin.math.sin
 
 class NatureControlSystemModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
 
-	private val synchronizationModule by moduleLoader.onReady<SynchronizationModule>()
+	private val synchronizationModule by moduleLoader.delegate<SynchronizationModule>()
 
 	override fun onStart(): Job? {
 		repeatJob(CALCULATE_WEATHER_PERIOD_SECONDS * 1_000) {

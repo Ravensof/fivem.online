@@ -13,7 +13,7 @@ import online.fivem.common.common.Stack
 
 class RolePlaySystemModule : AbstractModule() {
 
-	private val tickExecutor by moduleLoader.onReady<TickExecutorModule>()
+	private val tickExecutor by moduleLoader.delegate<TickExecutorModule>()
 
 	override fun onInit() {
 		Event.apply {

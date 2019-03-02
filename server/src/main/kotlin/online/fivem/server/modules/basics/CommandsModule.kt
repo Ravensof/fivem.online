@@ -10,7 +10,7 @@ import kotlin.coroutines.CoroutineContext
 
 class CommandsModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
 
-	private val sessionModule by moduleLoader.onReady<SessionModule>()
+	private val sessionModule by moduleLoader.delegate<SessionModule>()
 
 	override fun onStart(): Job? {
 		launch {

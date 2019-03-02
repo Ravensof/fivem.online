@@ -11,7 +11,7 @@ import online.fivem.common.gtav.NativeTextEntries
 
 class BasicsModule : AbstractModule() {
 
-	private val API by moduleLoader.onReady<API>()
+	private val API by moduleLoader.delegate<API>()
 
 	private var handleShowNui = Stack.UNDEFINED_INDEX
 

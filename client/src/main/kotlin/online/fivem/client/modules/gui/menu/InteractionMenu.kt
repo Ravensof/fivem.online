@@ -7,7 +7,7 @@ import online.fivem.common.gtav.NativeControls
 
 class InteractionMenu : AbstractModule() {
 
-	private val controlHandlerModule by moduleLoader.onReady<ControlHandlerModule>()
+	private val controlHandlerModule by moduleLoader.delegate<ControlHandlerModule>()
 
 	override fun onInit() {
 		moduleLoader.on<MainControlListener> {

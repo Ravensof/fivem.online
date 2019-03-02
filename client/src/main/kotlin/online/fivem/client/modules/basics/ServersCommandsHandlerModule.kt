@@ -21,11 +21,11 @@ import kotlin.js.Date
 class ServersCommandsHandlerModule : AbstractModule(), CoroutineScope {
 	override val coroutineContext: CoroutineContext = createJob()
 
-	private val dateTime by moduleLoader.onReady<DateTimeModule>()
-	private val weatherModule by moduleLoader.onReady<WeatherModule>()
+	private val dateTime by moduleLoader.delegate<DateTimeModule>()
+	private val weatherModule by moduleLoader.delegate<WeatherModule>()
 
-	private val spawnManager by moduleLoader.onReady<SpawnManagerModule>()
-	private val joinTransition by moduleLoader.onReady<JoinTransitionModule>()
+	private val spawnManager by moduleLoader.delegate<SpawnManagerModule>()
+	private val joinTransition by moduleLoader.delegate<JoinTransitionModule>()
 
 	private var lastSync = 0.0
 

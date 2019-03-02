@@ -21,7 +21,7 @@ import online.fivem.common.common.Event
 
 class BlackOut : AbstractModule() {
 
-	private val api by moduleLoader.onReady<API>()
+	private val api by moduleLoader.delegate<API>()
 	private var timeLeft: Long = 0
 	private var isAllowed = false
 
