@@ -33,6 +33,10 @@ open class Event : CoroutineScope {
 		}.forEach {
 			it.value.send(data)
 		}
+
+		if (data is AbstractProcessEvent<*>) {
+			data.start()
+		}
 	}
 
 	private fun <T : Any> getChannel(kClass: KClass<T>): BroadcastChannel<T> {

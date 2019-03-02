@@ -7,5 +7,5 @@ import online.fivem.common.entities.CoordinatesX
 @Serializable
 class SpawnPlayerEvent(
 	@ContextualSerialization val coordinatesX: CoordinatesX,
-	val model: Int
+	val model: Int? = null
 )

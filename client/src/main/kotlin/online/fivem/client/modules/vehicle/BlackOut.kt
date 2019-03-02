@@ -5,7 +5,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.events.AccelerationThresholdAchievedEvent
-import online.fivem.client.events.PlayerSpawnedEvent
+import online.fivem.client.events.PlayerSpawnProcess
 import online.fivem.client.events.PlayersPedHealthChangedEvent
 import online.fivem.client.extensions.play
 import online.fivem.client.extensions.prefetch
@@ -27,7 +27,11 @@ class BlackOut : AbstractClientModule() {
 
 	override fun onInit() {
 		Event.apply {
-			on<PlayerSpawnedEvent> { isAllowed = true }
+			on<PlayerSpawnProcess> {
+				isAllowed = false
+				it.join()
+				isAllowed = true
+			}
 			on<PlayersPedHealthChangedEvent.Zero> {
 				if (!isAllowed) return@on
 				Console.debug("blackout from death (${it.diff})")

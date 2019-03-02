@@ -9,6 +9,7 @@ import online.fivem.common.common.Console
 import online.fivem.common.common.KSerializer
 import online.fivem.common.common.Serializer
 import online.fivem.common.events.net.ImReadyEvent
+import online.fivem.common.extensions.forEach
 import online.fivem.common.other.NuiPacket
 import online.fivem.common.other.NuiUnsafePacket
 import online.fivem.nui.common.AbstractNuiModule
@@ -24,7 +25,7 @@ class ClientEventExchangerModule : AbstractNuiModule(), EventListener {
 		val channel = Channel<Unit>()
 
 		ClientEvent.on<ImReadyEvent> {
-			channel.send(Unit)
+			channel.close()
 		}
 
 		launch {
@@ -45,9 +46,7 @@ class ClientEventExchangerModule : AbstractNuiModule(), EventListener {
 
 		return launch {
 			ClientEvent.emit(ImReadyEvent())
-
-			channel.receive()
-			channel.close()
+			channel.forEach { }
 		}
 	}
 

@@ -54,7 +54,7 @@ class ServersCommandsHandlerModule : AbstractClientModule() {
 		}
 	}
 
-	private fun onPlayerSpawn(coordinatesX: CoordinatesX, model: Int) = launch {
+	private fun onPlayerSpawn(coordinatesX: CoordinatesX, model: Int?) = launch {
 		joinTransition.startTransitionJob().join()
 		spawnManager.spawnPlayerJob(coordinatesX, model).join()
 		joinTransition.endTransitionJob()

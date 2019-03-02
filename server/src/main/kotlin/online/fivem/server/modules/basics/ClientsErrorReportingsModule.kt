@@ -23,7 +23,7 @@ class ClientsErrorReportingsModule : AbstractServerModule() {
 	}
 
 	private fun onErrorReport(player: Player, event: ErrorReportEvent) {
-		Console.debug(event.message)
+		Console.debug("crash report from user ${player.userId}:\r\n" + event.message)
 
 		mysql.sendAsync(
 			"""

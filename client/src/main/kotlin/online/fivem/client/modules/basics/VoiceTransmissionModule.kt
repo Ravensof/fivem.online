@@ -12,7 +12,6 @@ import online.fivem.client.gtav.Client
 import online.fivem.client.gtav.Client.getEntityCoords
 import online.fivem.client.gtav.Client.getPlayerPed
 import online.fivem.client.gtav.Client.hasEntityClearLosToEntity
-import online.fivem.client.modules.eventGenerator.EventGeneratorModule.Companion.playerCoordinates
 import online.fivem.common.common.Event
 import online.fivem.common.extensions.repeatJob
 import online.fivem.common.gtav.NativeControls
@@ -42,9 +41,10 @@ class VoiceTransmissionModule : AbstractClientModule() {
 
 			if (Client.networkIsPlayerTalking(player.id) || NativeControls.Keys.PUSH_TO_TALK.isControlPressed()) return@repeatJob
 
-			val myCoordinates = playerCoordinates ?: return@repeatJob
+			val myCoordinates = player.ped.coordinates
 
 			Client.getPlayersOnline().forEach { anotherPlayer ->
+				if (anotherPlayer == player.id) return@forEach
 
 				val anotherPlayerPed = getPlayerPed(anotherPlayer) ?: return@forEach
 				val anotherPlayerCoordinates = getEntityCoords(Client.getPlayerPedId())
