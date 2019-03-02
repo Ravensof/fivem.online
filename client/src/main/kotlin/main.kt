@@ -37,8 +37,6 @@ fun start() {
 
 		add(ServerEventExchangerModule())//last
 
-		add(Test())
-
 		finally {
 
 			Console.log("all modules loaded")

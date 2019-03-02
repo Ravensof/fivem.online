@@ -17,8 +17,6 @@ internal fun main() {
 
 		add(VoiceTransmissionModule())
 
-		add(Test())
-
 		add(ClientEventExchangerModule())//last
 
 		finally {

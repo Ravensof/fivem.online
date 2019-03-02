@@ -33,8 +33,6 @@ private fun start() {
 
 		add(VoiceTransmissionModule())
 
-		add(Test())
-
 		add(ClientEventExchangerModule())//last
 
 		finally {
