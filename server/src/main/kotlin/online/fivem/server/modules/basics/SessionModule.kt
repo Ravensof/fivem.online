@@ -1,14 +1,13 @@
 package online.fivem.server.modules.basics
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
 import online.fivem.common.common.Event
 import online.fivem.common.entities.PlayerSrc
 import online.fivem.common.events.net.ImReadyEvent
 import online.fivem.common.gtav.NativeEvents
 import online.fivem.server.Strings
+import online.fivem.server.common.AbstractServerModule
 import online.fivem.server.entities.Player
 import online.fivem.server.entities.mysqlEntities.BlackListTable
 import online.fivem.server.entities.mysqlEntities.UserEntity
@@ -22,7 +21,7 @@ import online.fivem.server.gtav.Natives
 import online.fivem.server.modules.client_event_exchanger.ClientEvent
 import kotlin.coroutines.CoroutineContext
 
-class SessionModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
+class SessionModule(override val coroutineContext: CoroutineContext) : AbstractServerModule() {
 
 
 	private val players = mutableMapOf<PlayerSrc, Player>()

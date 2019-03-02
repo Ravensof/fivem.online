@@ -19,6 +19,7 @@ fun initSerializableClasses() {
 		ServerSideSynchronizationEvent::class to ServerSideSynchronizationEvent.serializer(),
 
 		StopResourceEvent::class to StopResourceEvent.serializer(),
+		ErrorReportEvent::class to ErrorReportEvent.serializer(),
 
 		//nui
 		BlackOutEvent::class to BlackOutEvent.serializer(),

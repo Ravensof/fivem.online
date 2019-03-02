@@ -1,11 +1,11 @@
 package online.fivem.client.modules.gui.menu
 
+import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.modules.basics.ControlHandlerModule
 import online.fivem.client.modules.gui.MainControlListener
-import online.fivem.common.common.AbstractModule
 import online.fivem.common.gtav.NativeControls
 
-class InteractionMenu : AbstractModule() {
+class InteractionMenu : AbstractClientModule() {
 
 	private val controlHandlerModule by moduleLoader.delegate<ControlHandlerModule>()
 

@@ -8,9 +8,8 @@ import kotlin.coroutines.CoroutineContext
 typealias EntityId = Int
 typealias Handle = Int
 
-private val coroutineExceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
-	println("coroutineExceptionHandler: ${throwable.message} ${throwable.cause}")
-	throw throwable
+private val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
+	ExceptionsStorage.add(throwable)
 }
 
 fun createJob(parent: Job? = null): CoroutineContext {

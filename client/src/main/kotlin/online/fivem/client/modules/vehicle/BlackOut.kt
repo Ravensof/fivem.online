@@ -3,6 +3,7 @@ package online.fivem.client.modules.vehicle
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.events.AccelerationThresholdAchievedEvent
 import online.fivem.client.events.PlayerSpawnedEvent
 import online.fivem.client.events.PlayersPedHealthChangedEvent
@@ -15,11 +16,10 @@ import online.fivem.common.GlobalConfig.BlackOut.BLACKOUT_TIME_FROM_COMMAS
 import online.fivem.common.GlobalConfig.BlackOut.EXTRA_BLACKOUT_TIME
 import online.fivem.common.GlobalConfig.BlackOut.WAKING_UP_TIME
 import online.fivem.common.Sounds
-import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
 import online.fivem.common.common.Event
 
-class BlackOut : AbstractModule() {
+class BlackOut : AbstractClientModule() {
 
 	private val api by moduleLoader.delegate<API>()
 	private var timeLeft: Long = 0

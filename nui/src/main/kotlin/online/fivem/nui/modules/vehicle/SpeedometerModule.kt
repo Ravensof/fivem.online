@@ -1,17 +1,16 @@
 package online.fivem.nui.modules.vehicle
 
 import js.externals.jquery.jQuery
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Html
 import online.fivem.common.common.Utils
 import online.fivem.common.events.nui.SpeedometerDisableEvent
 import online.fivem.common.events.nui.SpeedometerEnableEvent
 import online.fivem.common.events.nui.SpeedometerUpdateEvent
+import online.fivem.nui.common.AbstractNuiModule
 import online.fivem.nui.extensions.nuiResourcesLink
 import online.fivem.nui.extensions.toHTMLImageElement
 import online.fivem.nui.modules.client_event_exchanger.ClientEvent
@@ -22,7 +21,7 @@ import kotlin.browser.document
 import kotlin.coroutines.CoroutineContext
 import kotlin.js.Date
 
-class SpeedometerModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
+class SpeedometerModule(override val coroutineContext: CoroutineContext) : AbstractNuiModule() {
 
 	private val speedometerArrow: HTMLImageElement by lazy {
 		jQuery("<img src=\"$RESOURCES_DIR/arrow-speedometer.svg\"/>").toHTMLImageElement()

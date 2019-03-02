@@ -1,8 +1,8 @@
 package online.fivem.nui.modules.vehicle
 
-import online.fivem.common.common.AbstractModule
+import online.fivem.nui.common.AbstractNuiModule
 
-class VehicleModule : AbstractModule() {
+class VehicleModule : AbstractNuiModule() {
 
 	override fun onInit() {
 		moduleLoader.apply {

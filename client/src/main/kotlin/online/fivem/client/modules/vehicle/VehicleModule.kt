@@ -1,8 +1,8 @@
 package online.fivem.client.modules.vehicle
 
-import online.fivem.common.common.AbstractModule
+import online.fivem.client.common.AbstractClientModule
 
-class VehicleModule : AbstractModule() {
+class VehicleModule : AbstractClientModule() {
 
 	override fun onInit() {
 		moduleLoader.apply {

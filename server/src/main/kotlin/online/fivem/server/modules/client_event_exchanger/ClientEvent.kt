@@ -3,7 +3,6 @@ package online.fivem.server.modules.client_event_exchanger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import online.fivem.common.common.Console
 import online.fivem.common.common.createJob
 import online.fivem.common.entities.PlayerSrc
 import online.fivem.server.entities.Player
@@ -13,8 +12,6 @@ import kotlin.reflect.KClass
 open class ClientEvent : CoroutineScope {
 
 	override val coroutineContext: CoroutineContext = createJob()
-
-	open val printType = "net"
 
 	val handlers = mutableListOf<Pair<KClass<*>, (PlayerSrc, Any) -> Unit>>()
 	val playerHandlers = mutableListOf<Pair<KClass<*>, (Player, Any) -> Unit>>()
@@ -40,23 +37,10 @@ open class ClientEvent : CoroutineScope {
 
 	inline fun <reified T : Any> on(noinline function: (Player, T) -> Unit) {
 		playerHandlers.add(T::class to function.unsafeCast<((Player, Any) -> Unit)>())
-
-		Console.info("$printType event ${T::class} registered")
 	}
 
 	inline fun <reified T : Any> onGuest(noinline function: (PlayerSrc, T) -> Unit) {
 		handlers.add(T::class to function.unsafeCast<((PlayerSrc, Any) -> Unit)>())
-
-		Console.info("$printType event ${T::class} registered")
-	}
-
-	inline fun <reified T : Any> unSubscribe(noinline function: (PlayerSrc, T) -> Unit) {
-		handlers.forEach {
-			if (it.second == function) {
-				handlers.remove(it)
-				Console.info("$printType event ${T::class} unsubscribed")
-			}
-		}
 	}
 
 	fun handle(playerSrc: PlayerSrc, data: Any) {

@@ -1,12 +1,12 @@
 package online.fivem.client.modules.basics
 
 import kotlinx.coroutines.Job
+import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.gtav.Natives.setTick
-import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Handle
 import online.fivem.common.common.Stack
 
-class TickExecutorModule : AbstractModule() {
+class TickExecutorModule : AbstractClientModule() {
 
 	private val tickFunctions = Stack<() -> Unit>()
 

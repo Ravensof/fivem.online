@@ -1,22 +1,21 @@
 package online.fivem.server.modules.basics
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Utils
 import online.fivem.common.common.VDate
 import online.fivem.common.entities.Weather
 import online.fivem.common.extensions.orZero
 import online.fivem.common.extensions.repeatJob
 import online.fivem.common.gtav.NativeWeather
+import online.fivem.server.common.AbstractServerModule
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sin
 
-class NatureControlSystemModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
+class NatureControlSystemModule(override val coroutineContext: CoroutineContext) : AbstractServerModule() {
 
 	private val synchronizationModule by moduleLoader.delegate<SynchronizationModule>()
 

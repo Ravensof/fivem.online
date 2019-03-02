@@ -1,25 +1,21 @@
 package online.fivem.client.modules.basics
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.common.GlobalCache.player
 import online.fivem.client.events.PauseMenuStateChangedEvent
 import online.fivem.client.modules.nui_event_exchanger.NuiEvent
 import online.fivem.client.modules.server_event_exchanger.ServerEvent
-import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Event
-import online.fivem.common.common.createJob
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.events.net.ClientSideSynchronizeEvent
 import online.fivem.common.events.net.ServerSideSynchronizationEvent
 import online.fivem.common.events.net.SpawnPlayerEvent
 import online.fivem.common.events.net.StopResourceEvent
-import kotlin.coroutines.CoroutineContext
 import kotlin.js.Date
 
-class ServersCommandsHandlerModule : AbstractModule(), CoroutineScope {
-	override val coroutineContext: CoroutineContext = createJob()
+class ServersCommandsHandlerModule : AbstractClientModule() {
 
 	private val dateTime by moduleLoader.delegate<DateTimeModule>()
 	private val weatherModule by moduleLoader.delegate<WeatherModule>()

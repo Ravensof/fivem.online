@@ -1,13 +1,13 @@
 package online.fivem.client.modules.eventGenerator
 
 import kotlinx.coroutines.Job
+import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.common.GlobalCache.player
 import online.fivem.client.entities.Ped
 import online.fivem.client.entities.Vehicle
 import online.fivem.client.events.*
 import online.fivem.client.extensions.getSeatOfPedInVehicle
 import online.fivem.client.gtav.Client
-import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Event
 import online.fivem.common.entities.Coordinates
 import online.fivem.common.entities.CoordinatesX
@@ -18,7 +18,7 @@ import online.fivem.common.gtav.RadioStation
 import kotlin.js.Date
 import kotlin.math.absoluteValue
 
-class EventGeneratorModule : AbstractModule() {
+class EventGeneratorModule : AbstractClientModule() {
 
 	private var isFadeOut: Boolean = true
 

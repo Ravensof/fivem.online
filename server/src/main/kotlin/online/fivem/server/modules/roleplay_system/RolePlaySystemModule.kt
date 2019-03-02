@@ -1,11 +1,11 @@
 package online.fivem.server.modules.roleplay_system
 
 import external.nodejs.mysql.Connection
-import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Event
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.events.net.SpawnPlayerEvent
 import online.fivem.server.Strings
+import online.fivem.server.common.AbstractServerModule
 import online.fivem.server.entities.Player
 import online.fivem.server.entities.mysqlEntities.CharacterEntity
 import online.fivem.server.events.PlayerConnectedEvent
@@ -13,7 +13,7 @@ import online.fivem.server.extensions.row
 import online.fivem.server.modules.basics.MySQLModule
 import online.fivem.server.modules.client_event_exchanger.ClientEvent
 
-class RolePlaySystemModule : AbstractModule() {
+class RolePlaySystemModule : AbstractServerModule() {
 
 	private lateinit var mySQL: Connection
 

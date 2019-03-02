@@ -1,11 +1,11 @@
 package online.fivem.client.modules.gui
 
 import kotlinx.coroutines.Job
+import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.modules.basics.ControlHandlerModule
-import online.fivem.common.common.AbstractModule
 import online.fivem.common.gtav.NativeControls
 
-class MainControlListener : AbstractModule(), ControlHandlerModule.Listener {
+class MainControlListener : AbstractClientModule(), ControlHandlerModule.Listener {
 	override val registeredKeys = mutableListOf<NativeControls.Keys>()
 
 	private val shortPressHandlers = mutableMapOf<NativeControls.Keys, () -> Boolean>()

@@ -2,16 +2,15 @@ package online.fivem.nui.modules.basics
 
 import external.howler.Howl
 import external.howler.HowlOptions
-import kotlinx.coroutines.CoroutineScope
 import online.fivem.common.Sounds
-import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Html
 import online.fivem.common.events.nui.PlaySoundEvent
+import online.fivem.nui.common.AbstractNuiModule
 import online.fivem.nui.extensions.nuiResourcesLink
 import online.fivem.nui.modules.client_event_exchanger.ClientEvent
 import kotlin.coroutines.CoroutineContext
 
-class PlaySoundModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
+class PlaySoundModule(override val coroutineContext: CoroutineContext) : AbstractNuiModule() {
 	override fun onInit() {
 		ClientEvent.on<PlaySoundEvent> { play(it.sound, it.volume) }
 	}

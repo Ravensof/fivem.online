@@ -1,17 +1,17 @@
 package online.fivem.client.modules.role_play_system
 
 import kotlinx.coroutines.Job
+import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.common.GlobalCache.player
 import online.fivem.client.entities.Ped
 import online.fivem.client.events.PlayerVehicleSeatEvent
 import online.fivem.client.events.PlayersPedChangedEvent
 import online.fivem.client.gtav.Client
 import online.fivem.client.modules.basics.TickExecutorModule
-import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Event
 import online.fivem.common.common.Stack
 
-class RolePlaySystemModule : AbstractModule() {
+class RolePlaySystemModule : AbstractClientModule() {
 
 	private val tickExecutor by moduleLoader.delegate<TickExecutorModule>()
 

@@ -5,10 +5,10 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.gtav.Client
 import online.fivem.client.gtav.Natives
 import online.fivem.common.GlobalConfig
-import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
 import online.fivem.common.common.KSerializer
 import online.fivem.common.common.Serializer
@@ -19,7 +19,7 @@ import online.fivem.common.extensions.forEach
 import online.fivem.common.other.ClientsNetPacket
 import online.fivem.common.other.ServersNetPacket
 
-class ServerEventExchangerModule : AbstractModule() {
+class ServerEventExchangerModule : AbstractClientModule() {
 
 	var key: Double? = null
 

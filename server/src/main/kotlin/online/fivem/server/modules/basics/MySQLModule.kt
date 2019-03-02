@@ -2,13 +2,12 @@ package online.fivem.server.modules.basics
 
 import external.nodejs.mysql.Connection
 import external.nodejs.require
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import online.fivem.common.common.AbstractModule
 import online.fivem.server.ServerConfig.MYSQL_PARAMS
+import online.fivem.server.common.AbstractServerModule
 import kotlin.coroutines.CoroutineContext
 
-class MySQLModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
+class MySQLModule(override val coroutineContext: CoroutineContext) : AbstractServerModule() {
 
 	lateinit var connection: Connection
 		private set

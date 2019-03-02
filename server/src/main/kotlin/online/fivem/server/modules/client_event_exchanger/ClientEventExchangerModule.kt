@@ -3,7 +3,9 @@ package online.fivem.server.modules.client_event_exchanger
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import online.fivem.common.GlobalConfig
-import online.fivem.common.common.*
+import online.fivem.common.common.Console
+import online.fivem.common.common.KSerializer
+import online.fivem.common.common.Serializer
 import online.fivem.common.entities.PlayerSrc
 import online.fivem.common.events.net.EstablishConnectionEvent
 import online.fivem.common.events.net.ImReadyEvent
@@ -14,17 +16,15 @@ import online.fivem.common.other.ClientsNetPacket
 import online.fivem.common.other.ServersNetPacket
 import online.fivem.server.ServerConfig
 import online.fivem.server.Strings
+import online.fivem.server.common.AbstractServerModule
 import online.fivem.server.gtav.Exports
 import online.fivem.server.gtav.Natives
 import online.fivem.server.modules.basics.SessionModule
-import kotlin.coroutines.CoroutineContext
 import kotlin.random.Random
 
 private typealias Data = Any
 
-class ClientEventExchangerModule : AbstractModule(), CoroutineScope {
-
-	override val coroutineContext: CoroutineContext = createJob()
+class ClientEventExchangerModule : AbstractServerModule() {
 
 	private val playersSendChannels = createChannels<Data>()
 	private val playersReceiveChannels = createChannels<Packet>()

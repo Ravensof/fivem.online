@@ -1,14 +1,13 @@
 package online.fivem.server.modules.basics
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
-import online.fivem.common.common.AbstractModule
+import online.fivem.server.common.AbstractServerModule
 import online.fivem.server.entities.Player
 import kotlin.coroutines.CoroutineContext
 
-class CommandsModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
+class CommandsModule(override val coroutineContext: CoroutineContext) : AbstractServerModule() {
 
 	private val sessionModule by moduleLoader.delegate<SessionModule>()
 

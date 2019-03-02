@@ -1,29 +1,22 @@
 package online.fivem.server.modules.basics
 
-import kotlinx.coroutines.CoroutineScope
-import online.fivem.common.common.AbstractModule
-import online.fivem.common.common.createJob
-import online.fivem.common.entities.CoordinatesX
-import online.fivem.common.events.net.SpawnPlayerEvent
-import online.fivem.server.entities.Player
-import online.fivem.server.modules.client_event_exchanger.ClientEvent
-import kotlin.coroutines.CoroutineContext
+import online.fivem.server.common.AbstractServerModule
 
-class BasicsModule : AbstractModule(), CoroutineScope {
-	override val coroutineContext: CoroutineContext = createJob()
+class BasicsModule : AbstractServerModule() {
 
 	override fun onInit() {
-		moduleLoader.add(MySQLModule(coroutineContext))
-		moduleLoader.add(CommandsModule(coroutineContext))
-		moduleLoader.add(HttpServerModule(coroutineContext))
-		moduleLoader.add(SessionModule(coroutineContext))
+		arrayOf(
+			MySQLModule(coroutineContext),
+			CommandsModule(coroutineContext),
+			HttpServerModule(coroutineContext),
+			SessionModule(coroutineContext),
+			SynchronizationModule(coroutineContext),
+			NatureControlSystemModule(coroutineContext),
+			VoiceTransmissionModule(),
+			ClientsErrorReportingsModule()
 
-		moduleLoader.add(SynchronizationModule(coroutineContext))
-
-		moduleLoader.add(NatureControlSystemModule(coroutineContext))
-	}
-
-	fun spawn(player: Player, coordinatesX: CoordinatesX, pedHash: Int) {
-		ClientEvent.emit(SpawnPlayerEvent(coordinatesX, pedHash), player)
+		).forEach {
+			moduleLoader.add(it)
+		}
 	}
 }

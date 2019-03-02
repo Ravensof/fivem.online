@@ -5,17 +5,17 @@ import external.howler.HowlOptions
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Html
 import online.fivem.common.entities.InternetRadioStation
 import online.fivem.common.events.InternetRadioChangedEvent
 import online.fivem.common.events.InternetRadioStopEvent
 import online.fivem.common.events.InternetRadioVolumeChangeEvent
 import online.fivem.common.extensions.orOne
+import online.fivem.nui.common.AbstractNuiModule
 import online.fivem.nui.extensions.nuiResourcesLink
 import online.fivem.nui.modules.client_event_exchanger.ClientEvent
 
-class InternetRadio : AbstractModule() {
+class InternetRadio : AbstractNuiModule() {
 
 	private var howler: Howl? = null
 	private val noisePlayer = Howl(

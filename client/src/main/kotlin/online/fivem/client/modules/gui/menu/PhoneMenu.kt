@@ -1,19 +1,13 @@
 package online.fivem.client.modules.gui.menu
 
-import kotlinx.coroutines.CoroutineScope
+import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.modules.basics.ControlHandlerModule
 import online.fivem.client.modules.gui.MainControlListener
 import online.fivem.client.modules.gui.NavigationControlsHandler
-import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
 import online.fivem.common.gtav.NativeControls
-import kotlin.coroutines.CoroutineContext
 
-class PhoneMenu(
-	override val coroutineContext: CoroutineContext
-
-) : AbstractModule(),
-	CoroutineScope,
+class PhoneMenu : AbstractClientModule(),
 	NavigationControlsHandler.Listener {
 
 

@@ -1,12 +1,12 @@
 package online.fivem.client.modules.basics
 
 import kotlinx.coroutines.*
+import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.common.GlobalCache.player
 import online.fivem.client.extensions.start
 import online.fivem.client.extensions.stop
 import online.fivem.client.gtav.Client
 import online.fivem.client.modules.nui_event_exchanger.NuiEvent
-import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Handle
 import online.fivem.common.common.Stack
 import online.fivem.common.events.nui.BlackOutEvent
@@ -18,7 +18,7 @@ import online.fivem.common.extensions.unset
 import online.fivem.common.gtav.NativeAudioScenes
 import online.fivem.common.gtav.NativeControls
 
-class API : AbstractModule() {
+class API : AbstractClientModule() {
 
 	private val tickExecutor by moduleLoader.delegate<TickExecutorModule>()
 	private val controlHandlerModule by moduleLoader.delegate<ControlHandlerModule>()

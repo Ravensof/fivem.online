@@ -1,10 +1,10 @@
 package online.fivem.client.modules.basics
 
+import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.entities.Date
-import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.VDate
 
-class DateTimeModule : AbstractModule() {
+class DateTimeModule : AbstractClientModule() {
 
 	val date = VDate()
 

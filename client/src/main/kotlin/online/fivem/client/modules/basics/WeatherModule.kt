@@ -4,17 +4,17 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.extensions.setOverTime
 import online.fivem.client.extensions.setWeatherTypeNow
 import online.fivem.client.extensions.setWeatherTypeNowPersist
 import online.fivem.client.extensions.setWeatherTypePersist
 import online.fivem.client.gtav.Client
-import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
 import online.fivem.common.entities.Weather
 import online.fivem.common.gtav.NativeWeather
 
-class WeatherModule : AbstractModule() {
+class WeatherModule : AbstractClientModule() {
 
 	val weatherQueue = Channel<Weather>(10)
 

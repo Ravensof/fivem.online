@@ -1,15 +1,15 @@
 package online.fivem.client.modules.basics
 
 import kotlinx.coroutines.Job
+import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.events.PauseMenuStateChangedEvent
 import online.fivem.client.extensions.addText
 import online.fivem.common.GlobalConfig
-import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Event
 import online.fivem.common.common.Stack
 import online.fivem.common.gtav.NativeTextEntries
 
-class BasicsModule : AbstractModule() {
+class BasicsModule : AbstractClientModule() {
 
 	private val API by moduleLoader.delegate<API>()
 

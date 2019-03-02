@@ -1,13 +1,12 @@
 package online.fivem.nui.modules.basics
 
-import kotlinx.coroutines.CoroutineScope
-import online.fivem.common.common.AbstractModule
 import online.fivem.common.events.nui.LocalStorageEvent
+import online.fivem.nui.common.AbstractNuiModule
 import online.fivem.nui.modules.client_event_exchanger.ClientEvent
 import kotlin.browser.localStorage
 import kotlin.coroutines.CoroutineContext
 
-class LocalStorageModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
+class LocalStorageModule(override val coroutineContext: CoroutineContext) : AbstractNuiModule() {
 
 	init {
 		ClientEvent.on<LocalStorageEvent.Request> {

@@ -1,5 +1,7 @@
 package online.fivem.client.gtav
 
+import online.fivem.client.modules.basics.ErrorReporterModule
+
 object Natives {
 	fun setTick(callback: () -> Unit) = online.fivem.client.gtav.setTick(callback)
 
@@ -21,8 +23,7 @@ object Natives {
 			try {
 				callback()
 			} catch (e: Throwable) {
-				println("main thread: ${e.message}")
-				throw e
+				ErrorReporterModule.handleError(e)
 			}
 		}
 	}

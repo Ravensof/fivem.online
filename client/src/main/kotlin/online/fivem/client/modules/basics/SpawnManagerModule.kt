@@ -4,20 +4,20 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
+import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.common.GlobalCache.player
 import online.fivem.client.common.Player
 import online.fivem.client.events.PlayerSpawnedEvent
 import online.fivem.client.extensions.networkResurrectLocalPlayer
 import online.fivem.client.extensions.requestCollisionAtCoordinates
 import online.fivem.client.gtav.Client
-import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
 import online.fivem.common.common.Event
 import online.fivem.common.common.Stack
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.extensions.onNull
 
-class SpawnManagerModule : AbstractModule() {
+class SpawnManagerModule : AbstractClientModule() {
 
 	private val api by moduleLoader.delegate<API>()
 

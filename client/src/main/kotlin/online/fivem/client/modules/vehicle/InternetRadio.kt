@@ -2,6 +2,7 @@ package online.fivem.client.modules.vehicle
 
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.events.PlayerRadioStationChangedEvent
 import online.fivem.client.events.ProfileSettingUpdatedEvent
 import online.fivem.client.extensions.start
@@ -9,7 +10,6 @@ import online.fivem.client.extensions.stop
 import online.fivem.client.gtav.Client
 import online.fivem.client.modules.nui_event_exchanger.NuiEvent
 import online.fivem.common.GlobalConfig
-import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Event
 import online.fivem.common.entities.InternetRadioStation
 import online.fivem.common.events.InternetRadioChangedEvent
@@ -21,7 +21,7 @@ import online.fivem.common.gtav.NativeAudioScenes
 import online.fivem.common.gtav.ProfileSetting
 import online.fivem.common.gtav.RadioStation
 
-class InternetRadio : AbstractModule() {
+class InternetRadio : AbstractClientModule() {
 
 	private var volume = getSettingsMusicLevel().toDouble() / 10 * MAX_VOLUME
 

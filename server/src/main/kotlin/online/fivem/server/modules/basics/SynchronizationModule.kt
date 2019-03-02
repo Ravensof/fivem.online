@@ -3,7 +3,6 @@ package online.fivem.server.modules.basics
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import online.fivem.common.GlobalConfig
-import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
 import online.fivem.common.common.Event
 import online.fivem.common.common.VDate
@@ -13,6 +12,7 @@ import online.fivem.common.events.net.ServerSideSynchronizationEvent
 import online.fivem.common.extensions.isNotEmpty
 import online.fivem.common.extensions.orZero
 import online.fivem.server.ServerConfig
+import online.fivem.server.common.AbstractServerModule
 import online.fivem.server.entities.Player
 import online.fivem.server.events.PlayerConnectedEvent
 import online.fivem.server.extensions.send
@@ -21,7 +21,7 @@ import online.fivem.server.modules.client_event_exchanger.ClientEvent
 import kotlin.coroutines.CoroutineContext
 import kotlin.js.Date
 
-class SynchronizationModule(override val coroutineContext: CoroutineContext) : AbstractModule() {
+class SynchronizationModule(override val coroutineContext: CoroutineContext) : AbstractServerModule() {
 
 	val date = VDate()
 	val syncData = ServerSideSynchronizationEvent(serverTime = 0.0)

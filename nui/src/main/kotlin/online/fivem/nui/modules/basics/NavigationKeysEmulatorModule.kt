@@ -1,19 +1,18 @@
 package online.fivem.nui.modules.basics
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
-import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
 import online.fivem.common.events.nui.NuiEmulateKeyDownEvent
 import online.fivem.common.events.nui.NuiEmulateKeyJustPressedEvent
 import online.fivem.common.events.nui.NuiEmulateKeyUpEvent
+import online.fivem.nui.common.AbstractNuiModule
 import online.fivem.nui.modules.client_event_exchanger.ClientEvent
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.KeyboardEvent
 import kotlin.browser.window
 import kotlin.coroutines.CoroutineContext
 
-class NavigationKeysEmulatorModule(override val coroutineContext: CoroutineContext) : AbstractModule(), CoroutineScope {
+class NavigationKeysEmulatorModule(override val coroutineContext: CoroutineContext) : AbstractNuiModule() {
 	override fun onInit() {
 		ClientEvent.apply {
 			on<NuiEmulateKeyDownEvent> {

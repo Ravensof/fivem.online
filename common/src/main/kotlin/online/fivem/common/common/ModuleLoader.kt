@@ -8,9 +8,7 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
-class ModuleLoader : CoroutineScope {
-
-	override val coroutineContext: CoroutineContext = createJob()
+class ModuleLoader(override val coroutineContext: CoroutineContext = createJob()) : CoroutineScope {
 
 	private val queue = Channel<AbstractModule>(128)
 	private var finally: (() -> Unit)? = null

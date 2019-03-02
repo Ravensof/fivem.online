@@ -5,18 +5,18 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import online.fivem.common.GlobalConfig
-import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
 import online.fivem.common.common.KSerializer
 import online.fivem.common.common.Serializer
 import online.fivem.common.events.net.ImReadyEvent
 import online.fivem.common.other.NuiPacket
 import online.fivem.common.other.NuiUnsafePacket
+import online.fivem.nui.common.AbstractNuiModule
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.EventListener
 import kotlin.browser.window
 
-class ClientEventExchangerModule : AbstractModule(), EventListener {
+class ClientEventExchangerModule : AbstractNuiModule(), EventListener {
 
 	override fun onStart(): Job? {
 		window.addEventListener("message", this)

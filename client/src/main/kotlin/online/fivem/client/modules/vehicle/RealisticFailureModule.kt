@@ -4,13 +4,13 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.entities.Vehicle
 import online.fivem.client.events.PlayerLeftOrJoinVehicleEvent
 import online.fivem.client.extensions.disableControlAction
 import online.fivem.client.extensions.getDisabledControlNormal
 import online.fivem.client.gtav.Client
 import online.fivem.client.modules.basics.TickExecutorModule
-import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Event
 import online.fivem.common.common.Stack
 import online.fivem.common.gtav.NativeControls
@@ -18,7 +18,7 @@ import kotlin.math.pow
 import kotlin.random.Random
 
 //todo переписать
-class RealisticFailureModule : AbstractModule() {
+class RealisticFailureModule : AbstractClientModule() {
 
 	private val tickExecutorModule by moduleLoader.delegate<TickExecutorModule>()
 

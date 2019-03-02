@@ -3,10 +3,10 @@ package online.fivem.client.modules.nui_event_exchanger
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
+import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.gtav.Client
 import online.fivem.client.gtav.Exports
 import online.fivem.common.GlobalConfig
-import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Console
 import online.fivem.common.common.KSerializer
 import online.fivem.common.common.Serializer
@@ -15,7 +15,7 @@ import online.fivem.common.extensions.forEach
 import online.fivem.common.other.NuiPacket
 import online.fivem.common.other.NuiUnsafePacket
 
-class NuiEventExchangerModule : AbstractModule() {
+class NuiEventExchangerModule : AbstractClientModule() {
 
 	override fun onInit() {
 		Exports.onNui(GlobalConfig.NUI_EVENT_NAME) { rawPacket ->

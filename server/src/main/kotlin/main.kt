@@ -7,7 +7,6 @@ import online.fivem.server.gtav.Natives
 import online.fivem.server.modules.basics.BasicsModule
 import online.fivem.server.modules.client_event_exchanger.ClientEventExchangerModule
 import online.fivem.server.modules.roleplay_system.RolePlaySystemModule
-import online.fivem.server.modules.voice_transmission.VoiceTransmissionModule
 
 internal fun main() {
 

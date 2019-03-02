@@ -1,6 +1,7 @@
 package online.fivem.common.common
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import online.fivem.common.GlobalConfig
@@ -9,7 +10,7 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.js.Console
 
 object Console : Console, CoroutineScope {
-	override val coroutineContext: CoroutineContext = createJob()
+	override val coroutineContext: CoroutineContext = Job()
 	private val channel = Channel<String>(32)
 
 	init {

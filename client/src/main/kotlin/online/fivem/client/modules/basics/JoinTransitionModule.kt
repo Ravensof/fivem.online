@@ -2,11 +2,11 @@ package online.fivem.client.modules.basics
 
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.gtav.Client
-import online.fivem.common.common.AbstractModule
 import online.fivem.common.common.Stack
 
-class JoinTransitionModule : AbstractModule() {
+class JoinTransitionModule : AbstractClientModule() {
 
 	private var switchingPlayerJob: Job? = null
 	private val tickExecutor by moduleLoader.delegate<TickExecutorModule>()
