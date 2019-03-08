@@ -1,8 +1,15 @@
 package online.fivem.common.common
 
+import kotlinx.coroutines.CoroutineExceptionHandler
 import online.fivem.common.extensions.onNull
+import kotlin.coroutines.CoroutineContext
 
 object ExceptionsStorage {
+
+	val coroutineExceptionHandler =
+		CoroutineExceptionHandler { _: CoroutineContext, throwable: Throwable ->
+			add(throwable)
+		}
 
 	var listener: Listener? = null
 		set(value) {
