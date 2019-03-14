@@ -38,6 +38,7 @@ subprojects {
 		maven(url = "https://kotlin.bintray.com/kotlinx")
 		maven(url = "http://dl.bintray.com/kotlin/kotlinx.html/")
 		maven(url = "https://kotlin.bintray.com/js-externals")
+		maven(url = "https://dl.bintray.com/kotlin/kotlin-eap")
 
 	}
 
