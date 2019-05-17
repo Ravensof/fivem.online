@@ -1,6 +1,7 @@
 package online.fivem.client.common
 
 import online.fivem.client.gtav.Client
+import online.fivem.common.common.KSerializer
 
 object KvpStorage {
 
@@ -12,11 +13,19 @@ object KvpStorage {
 
 	fun set(key: String, value: Int) = Client.setResourceKvpInt(key, value)
 
+	fun set(key: String, value: Any) = set(key, KSerializer.serialize(value))
+
 	fun getFloat(key: String): Float = Client.getResourceKvpFloat(key)
 
 	fun getInt(key: String): Int = Client.getResourceKvpInt(key)
 
 	fun getString(key: String): String? = Client.getResourceKvpString(key)
+
+	inline fun <reified R : Any> getSerializable(key: String): R? {
+		return getString(key)?.let {
+			KSerializer.deserialize(it)
+		}
+	}
 
 	fun getKeys(prefix: String): List<String> {
 		val handle = Client.startFindKvp(prefix)

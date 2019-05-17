@@ -40,16 +40,9 @@ open class Event : CoroutineScope {
 	}
 
 	private fun <T : Any> getChannel(kClass: KClass<T>): BroadcastChannel<T> {
-
-		channels[kClass]?.let {
-			return it.unsafeCast<BroadcastChannel<T>>()
-		}
-
-		val channel = BroadcastChannel<Any>(1)
-
-		channels[kClass] = channel
-
-		return channel.unsafeCast<BroadcastChannel<T>>()
+		return channels
+			.getOrPut(kClass) { BroadcastChannel(1) }
+			.unsafeCast<BroadcastChannel<T>>()
 	}
 
 	companion object : Event()
