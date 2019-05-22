@@ -59,10 +59,7 @@ class ServerEventExchangerModule : AbstractClientModule() {
 				Natives.emitNet(
 					eventName = GlobalConfig.NET_EVENT_NAME,
 					data = ClientsNetPacket(
-						hash = KSerializer.getSerializerHash(data::class)
-							?: throw KSerializer.UnregisteredClassException(data::class),
-						serialized = KSerializer.serialize(data),
-
+						KSerializer.serializeToPacket(data),
 						playersCount = Client.getNumberOfPlayers(),
 						key = key
 					)

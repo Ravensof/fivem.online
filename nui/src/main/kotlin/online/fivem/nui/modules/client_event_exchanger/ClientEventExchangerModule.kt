@@ -34,11 +34,7 @@ class ClientEventExchangerModule : AbstractNuiModule(), EventListener {
 					"http://${GlobalConfig.MODULE_NAME}/${GlobalConfig.NUI_EVENT_NAME}",
 
 					JSON.stringify(
-						NuiPacket(
-							hash = KSerializer.getSerializerHash(data::class)
-								?: throw KSerializer.UnregisteredClassException(data::class),
-							serialized = KSerializer.serialize(data)
-						)
+						NuiPacket(KSerializer.serializeToPacket(data))
 					)
 				)
 			}

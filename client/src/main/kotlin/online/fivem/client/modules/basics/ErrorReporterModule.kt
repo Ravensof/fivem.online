@@ -10,6 +10,7 @@ import online.fivem.common.common.Console
 import online.fivem.common.common.ExceptionsStorage
 import online.fivem.common.events.net.ErrorReportEvent
 import online.fivem.common.extensions.forEach
+import online.fivem.common.extensions.stackTrace
 
 class ErrorReporterModule : AbstractClientModule(), ExceptionsStorage.Listener {
 
@@ -35,7 +36,7 @@ class ErrorReporterModule : AbstractClientModule(), ExceptionsStorage.Listener {
 		private val channel = Channel<String>(32)
 
 		fun handleError(throwable: Throwable) {
-			val message = throwable.asDynamic().stack as String
+			val message = throwable.stackTrace()
 
 			GlobalScope.launch {
 				channel.send(message)

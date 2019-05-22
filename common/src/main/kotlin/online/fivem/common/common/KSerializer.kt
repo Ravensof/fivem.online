@@ -3,9 +3,10 @@ package online.fivem.common.common
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 import online.fivem.common.initSerializableClasses
+import online.fivem.common.other.SerializerInterface
 import kotlin.reflect.KClass
 
-object KSerializer {
+object KSerializer : SerializerInterface {
 	private val serializers: MutableMap<KClass<*>, KSerializer<*>> = mutableMapOf()
 	private val classHashes: MutableMap<Int, KClass<*>> = mutableMapOf()
 	private val reversedClassHashes: MutableMap<KClass<*>, Int> = mutableMapOf()
@@ -14,6 +15,24 @@ object KSerializer {
 
 	init {
 		initSerializableClasses()
+	}
+
+	override fun getSerializerHash(kClass: KClass<*>): Int {
+		return reversedClassHashes[kClass] ?: throw UnregisteredClassException(kClass)
+	}
+
+	override fun <T : Any> serialize(obj: T): String {
+		val serializer = getSerializer(obj::class) ?: throw UnregisteredClassException(obj::class)
+
+		return Json.indented.stringify(serializer, obj)
+	}
+
+	override fun deserialize(serializerId: Int, string: String): Any? {
+		val serializer =
+			getSerializer(serializerId)
+				?: throw UnregisteredClassException("cannot find deserializer for hash = $serializerId")
+
+		return Json.parse(serializer, string)
 	}
 
 	internal fun add(kClass: KClass<*>, serializer: KSerializer<*>) {
@@ -39,29 +58,12 @@ object KSerializer {
 		return null
 	}
 
-	fun getSerializerHash(kClass: KClass<*>): Int? {
-		return reversedClassHashes[kClass]
-	}
-
 	fun <T : Any> getSerializer(kClass: KClass<out T>): KSerializer<T>? {
 		return serializers[kClass]?.unsafeCast<KSerializer<T>>()
 	}
 
-	fun <T : Any> serialize(obj: T): String {
-		val serializer = getSerializer(obj::class) ?: throw UnregisteredClassException(obj::class)
-
-		return Json.indented.stringify(serializer, obj)
-	}
-
 	inline fun <reified T : Any> deserialize(string: String): T {
 		val serializer = getSerializer(T::class) ?: throw UnregisteredClassException(T::class)
-
-		return Json.parse(serializer, string)
-	}
-
-	fun deserialize(hash: Int, string: String): Any? {
-		val serializer =
-			getSerializer(hash) ?: throw UnregisteredClassException("cannot find deserializer for hash = $hash")
 
 		return Json.parse(serializer, string)
 	}

@@ -6,4 +6,16 @@ class ClientsNetPacket(
 
 	val playersCount: Int,
 	val key: Double?
-) : KotlinXSerializationPacket(hash, serialized)
+) : KotlinXSerializationPacket(hash, serialized) {
+
+	constructor(
+		kotlinXSerializationPacket: KotlinXSerializationPacket,
+		playersCount: Int,
+		key: Double?
+	) : this(
+		hash = kotlinXSerializationPacket.hash,
+		serialized = kotlinXSerializationPacket.serialized,
+		playersCount = playersCount,
+		key = key
+	)
+}

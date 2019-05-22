@@ -169,11 +169,7 @@ class ClientEventExchangerModule : AbstractServerModule() {
 	}
 
 	private fun emit(playerSrc: Int, data: Any) {
-		val packet = ServersNetPacket(
-			hash = KSerializer.getSerializerHash(data::class)
-				?: throw KSerializer.UnregisteredClassException(data::class),
-			serialized = KSerializer.serialize(data)
-		)
+		val packet = ServersNetPacket(KSerializer.serializeToPacket(data))
 
 		Natives.emitNet(
 			eventName = GlobalConfig.NET_EVENT_NAME,

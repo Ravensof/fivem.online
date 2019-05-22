@@ -39,11 +39,7 @@ class NuiEventExchangerModule : AbstractClientModule() {
 			try {
 				for (data in channel) {
 					Client.sendNuiMessage(
-						NuiPacket(
-							hash = KSerializer.getSerializerHash(data::class)
-								?: throw KSerializer.UnregisteredClassException(data::class),
-							serialized = KSerializer.serialize(data)
-						)
+						NuiPacket(KSerializer.serializeToPacket(data))
 					)
 				}
 			} catch (exception: Throwable) {
