@@ -6,16 +6,29 @@ import online.fivem.common.events.InternetRadioStopEvent
 import online.fivem.common.events.InternetRadioVolumeChangeEvent
 import online.fivem.common.events.net.*
 import online.fivem.common.events.nui.*
+import online.fivem.common.other.SerializerInterface
 
-fun initSerializableClasses() {
-	KSerializer.add(
+val Serializer: SerializerInterface = online.fivem.common.common.Serializer()
+
+fun main() {
+	initKSerializer()
+
+}
+
+fun initKSerializer() {
+
+	if (Serializer !is KSerializer) return
+
+	Serializer.add(
 		//client-server
 		EstablishConnectionEvent::class to EstablishConnectionEvent.serializer(),
 		ImReadyEvent::class to ImReadyEvent.serializer(),
+		SyncEvent::class to SyncEvent.serializer(),
+
 		SpawnPlayerEvent::class to SpawnPlayerEvent.serializer(),
 		SpawnVehicleEvent::class to SpawnVehicleEvent.serializer(),
 
-		ClientSideSynchronizeEvent::class to ClientSideSynchronizeEvent.serializer(),
+//		RolePlaySystemSaveEvent::class to RolePlaySystemSaveEvent.serializer(),
 		ServerSideSynchronizationEvent::class to ServerSideSynchronizationEvent.serializer(),
 
 		StopResourceEvent::class to StopResourceEvent.serializer(),

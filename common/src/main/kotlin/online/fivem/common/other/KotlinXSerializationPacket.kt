@@ -1,7 +1,8 @@
 package online.fivem.common.other
 
 import kotlinx.serialization.Serializable
-import online.fivem.common.common.KSerializer
+import online.fivem.common.Serializer
+import online.fivem.common.extensions.deserialize
 
 @Serializable
 open class KotlinXSerializationPacket(
@@ -9,6 +10,6 @@ open class KotlinXSerializationPacket(
 	val serialized: String
 ) {
 	fun deserialize(): Any? {
-		return KSerializer.deserialize(hash, serialized)
+		return Serializer.deserialize(this)
 	}
 }

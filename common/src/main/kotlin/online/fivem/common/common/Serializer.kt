@@ -3,7 +3,7 @@ package online.fivem.common.common
 import online.fivem.common.other.SerializerInterface
 import kotlin.reflect.KClass
 
-object Serializer : SerializerInterface {
+internal class Serializer : SerializerInterface {
 
 	override fun getSerializerHash(kClass: KClass<*>): Int = -1
 
@@ -11,8 +11,8 @@ object Serializer : SerializerInterface {
 		return JSON.stringify(prepare(obj))
 	}
 
-	override fun deserialize(serializerId: Int, string: String): Any? {
-		return Serializer.deserialize(string)
+	override fun deserialize(string: String, serializerId: Int): Any {
+		return deserialize(string)
 	}
 
 	inline fun <reified R> deserialize(jsonString: String): R {
@@ -23,7 +23,7 @@ object Serializer : SerializerInterface {
 		val unpacked = uncheckedUnpack(obj)
 
 		if (unpacked !is R) {
-			throw DeserializationException("can't deserialize object ${unpacked::class.simpleName} as ${R::class.simpleName}")
+			throw SerializerInterface.DeserializationException("can't deserialize object ${unpacked::class.simpleName} as ${R::class.simpleName}")
 		}
 
 		return unpacked
@@ -66,30 +66,36 @@ function unserialize1(object) {
 
 		return js(
 			"""
+function checkConstructor(string) {
+	try {
+		if (typeof eval(string) !== "undefined") return true
+	} catch (e) {
+
+	}
+	return false
+}
+
 function Serialize1(object) {
 
 	if (object == null || typeof object != "object") return object
 
 	var constructorName = ""
 
-	try {
-		if (typeof eval(object.constructor.name) !== 'undefined') {
-			constructorName = object.constructor.name
-		} else if (typeof eval("Kotlin." + object.__proto__.constructor.${'$'}metadata${'$'}.simpleName) !== 'undefined') {
-			constructorName = "Kotlin." + object.__proto__.constructor.${'$'}metadata${'$'}.simpleName
+	if (checkConstructor(object.constructor.name)) {
+		constructorName = object.constructor.name
 
-		} /*else if (typeof eval("Kotlin.kotlin." + object.__proto__.constructor.${'$'}metadata${'$'}.simpleName) !== 'undefined') {
-			constructorName = "Kotlin.kotlin." + object.__proto__.constructor.${'$'}metadata${'$'}.simpleName
+	} else if (checkConstructor("Kotlin." + object.__proto__.constructor.${'$'}metadata${'$'}.simpleName)) {
+		constructorName = "Kotlin." + object.__proto__.constructor.${'$'}metadata${'$'}.simpleName
 
-		}*/
-	} catch (e) {
-		console.log(object)
-		throw "Can't serialize type " + object.constructor.name
+	} else if (checkConstructor("Kotlin.kotlin." + object.__proto__.constructor.${'$'}metadata${'$'}.simpleName)) {
+		constructorName = "Kotlin.kotlin." + object.__proto__.constructor.${'$'}metadata${'$'}.simpleName
+	} else if (checkConstructor("Kotlin.kotlin.collections." + object.__proto__.constructor.${'$'}metadata${'$'}.simpleName)) {
+		constructorName = "Kotlin.kotlin.collections." + object.__proto__.constructor.${'$'}metadata${'$'}.simpleName
 	}
 
 	if (constructorName === "") {
 		console.log(object)
-		throw "Object constructor not found " + object.constructor.name
+		throw "Can't serialize type " + object.constructor.name
 	}
 
 	var newObject = {
@@ -114,17 +120,4 @@ function Serialize1(object) {
 			"""
 		) as T
 	}
-
-	class DeserializationException(message: String) : Throwable(message)
 }
-
-class TestObject(
-	val obj: String = "test string",
-	val list: Array<String> = arrayOf("123", "456"),
-	val objects: Array<SubObject> = arrayOf(SubObject(), SubObject())
-)
-
-class SubObject(
-	val string: String = "another test string",
-	val int: Int = 123
-)

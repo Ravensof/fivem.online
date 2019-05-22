@@ -3,15 +3,15 @@ package online.fivem.nui.modules.client_event_exchanger
 import js.externals.jquery.jQuery
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import online.fivem.common.GlobalConfig
+import online.fivem.common.Serializer
 import online.fivem.common.common.Console
-import online.fivem.common.common.KSerializer
-import online.fivem.common.common.Serializer
 import online.fivem.common.events.net.ImReadyEvent
-import online.fivem.common.extensions.forEach
+import online.fivem.common.extensions.deserialize
+import online.fivem.common.extensions.serializeToPacket
 import online.fivem.common.other.NuiPacket
-import online.fivem.common.other.NuiUnsafePacket
 import online.fivem.nui.common.AbstractNuiModule
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.EventListener
@@ -34,15 +34,17 @@ class ClientEventExchangerModule : AbstractNuiModule(), EventListener {
 					"http://${GlobalConfig.MODULE_NAME}/${GlobalConfig.NUI_EVENT_NAME}",
 
 					JSON.stringify(
-						NuiPacket(KSerializer.serializeToPacket(data))
+						NuiPacket(Serializer.serializeToPacket(data))
 					)
 				)
 			}
 		}
 
 		return launch {
-			ClientEvent.emit(ImReadyEvent())
-			channel.forEach { }
+			while (!channel.isClosedForReceive) {
+				ClientEvent.emit(ImReadyEvent())
+				delay(1_000)
+			}
 		}
 	}
 
@@ -59,11 +61,8 @@ class ClientEventExchangerModule : AbstractNuiModule(), EventListener {
 
 		try {
 
-			if (rawPacket.hash == undefined) return handleUnsafePacket(rawPacket)
-
 			val kotlinXSerializationPacket = rawPacket.unsafeCast<NuiPacket>()
-			val data = KSerializer.deserialize(kotlinXSerializationPacket.hash, kotlinXSerializationPacket.serialized)
-				?: throw Exception("KSerializer.deserialize returns null")
+			val data = Serializer.deserialize(kotlinXSerializationPacket)
 
 			launch {
 				ClientEvent.handle(data)
@@ -73,13 +72,6 @@ class ClientEventExchangerModule : AbstractNuiModule(), EventListener {
 				"ClientEventExchangerModule: ${exception.message}\r\n " +
 						"packet: ${JSON.stringify(rawPacket)}"
 			)
-		}
-	}
-
-	private fun handleUnsafePacket(unsafeData: Any) {
-		val data = Serializer.unpack<Any>(unsafeData.unsafeCast<NuiUnsafePacket>().data)
-		launch {
-			ClientEvent.handle(data)
 		}
 	}
 

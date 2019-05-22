@@ -3,18 +3,19 @@ package online.fivem.server.modules.client_event_exchanger
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import online.fivem.common.GlobalConfig
+import online.fivem.common.Serializer
 import online.fivem.common.common.Console
-import online.fivem.common.common.KSerializer
-import online.fivem.common.common.Serializer
 import online.fivem.common.entities.PlayerSrc
 import online.fivem.common.events.net.EstablishConnectionEvent
 import online.fivem.common.events.net.ImReadyEvent
 import online.fivem.common.events.net.StopResourceEvent
+import online.fivem.common.extensions.deserialize
 import online.fivem.common.extensions.onNull
+import online.fivem.common.extensions.serializeToPacket
 import online.fivem.common.gtav.NativeEvents
 import online.fivem.common.other.ClientsNetPacket
+import online.fivem.common.other.SerializerInterface
 import online.fivem.common.other.ServersNetPacket
-import online.fivem.server.ServerConfig
 import online.fivem.server.Strings
 import online.fivem.server.common.AbstractServerModule
 import online.fivem.server.gtav.Exports
@@ -72,19 +73,11 @@ class ClientEventExchangerModule : AbstractServerModule() {
 
 					val channel = playersSendChannels[playerSrc]
 
-					if (channel.isFull) {
-						Console.warn("ClientEventExchanger: emit channel for player $playerSrc is full")
-					}
-
 					channel.send(packet.data)
 
 				}.onNull {
 					playersList.forEach {
 						val channel = playersSendChannels[it.key]
-
-						if (channel.isFull) {
-							Console.warn("ClientEventExchanger: emit channel for player ${it.key} is full")
-						}
 
 						channel.send(packet.data)
 					}
@@ -109,9 +102,9 @@ class ClientEventExchangerModule : AbstractServerModule() {
 	private fun onEstablishingConnection(playerSrc: PlayerSrc, netPacket: Any) {
 		try {
 //				val netPacket =
-			Serializer.unpack<ImReadyEvent>(netPacket)
+			Serializer.deserialize<ImReadyEvent>(netPacket.toString())
 			onClientReady(playerSrc)
-		} catch (e: Serializer.DeserializationException) {
+		} catch (e: SerializerInterface.DeserializationException) {
 			Natives.dropPlayer(
 				playerSrc,
 				Strings.CLIENT_WRONG_PACKET_FORMAT
@@ -123,8 +116,7 @@ class ClientEventExchangerModule : AbstractServerModule() {
 		try {
 			val packet = rawPacket.unsafeCast<ClientsNetPacket>()
 
-			val data = KSerializer.deserialize(packet.hash, packet.serialized)
-				?: throw Exception(Strings.CLIENT_WRONG_PACKET_FORMAT)
+			val data = Serializer.deserialize(packet)
 
 			if (playersList[playerSrc.value] != packet.key) throw Exception(Strings.CLIENT_WRONG_PACKET_FORMAT)
 
@@ -169,7 +161,7 @@ class ClientEventExchangerModule : AbstractServerModule() {
 	}
 
 	private fun emit(playerSrc: Int, data: Any) {
-		val packet = ServersNetPacket(KSerializer.serializeToPacket(data))
+		val packet = ServersNetPacket(Serializer.serializeToPacket(data))
 
 		Natives.emitNet(
 			eventName = GlobalConfig.NET_EVENT_NAME,

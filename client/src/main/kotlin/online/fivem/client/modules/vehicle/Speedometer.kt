@@ -42,7 +42,7 @@ class Speedometer : AbstractClientModule() {
 			}
 
 			if (vehicleHasSpeedo) {
-				NuiEvent.emitUnsafe(
+				NuiEvent.emit(
 					SpeedometerUpdateEvent(
 						currentGear = vehicle.currentGear,
 						currentRpm = vehicle.currentRpm,

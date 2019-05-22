@@ -1,5 +1,6 @@
 package online.fivem.client.modules.nui_event_exchanger
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
@@ -7,25 +8,27 @@ import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.gtav.Client
 import online.fivem.client.gtav.Exports
 import online.fivem.common.GlobalConfig
+import online.fivem.common.Serializer
 import online.fivem.common.common.Console
-import online.fivem.common.common.KSerializer
-import online.fivem.common.common.Serializer
+import online.fivem.common.common.createSupervisorJob
 import online.fivem.common.events.net.ImReadyEvent
+import online.fivem.common.extensions.deserialize
 import online.fivem.common.extensions.forEach
+import online.fivem.common.extensions.serializeToPacket
 import online.fivem.common.other.NuiPacket
-import online.fivem.common.other.NuiUnsafePacket
+import kotlin.coroutines.CoroutineContext
 
 class NuiEventExchangerModule : AbstractClientModule() {
 
 	override fun onInit() {
 		Exports.onNui(GlobalConfig.NUI_EVENT_NAME) { rawPacket ->
 			try {
+
 				val packet = rawPacket.unsafeCast<NuiPacket>()
-				val data = KSerializer.deserialize(packet.hash, packet.serialized)
-					?: throw Exception("KSerializer.deserialize returns null")
+				val data = Serializer.deserialize(packet)
 
 				launch {
-					NuiEvent.handle(Serializer.unpack(data))
+					NuiEvent.handle(data)
 				}
 			} catch (exception: Throwable) {
 				Console.error("NuiEventExchangerModule: ${exception.message}")
@@ -39,21 +42,7 @@ class NuiEventExchangerModule : AbstractClientModule() {
 			try {
 				for (data in channel) {
 					Client.sendNuiMessage(
-						NuiPacket(KSerializer.serializeToPacket(data))
-					)
-				}
-			} catch (exception: Throwable) {
-				Console.error("NuiEventExchangerModule: ${exception.message}")
-			}
-		}
-
-		launch {
-			try {
-				for (data in unsafeChannel) {
-					Client.sendNuiMessage(
-						NuiUnsafePacket(
-							data = Serializer.prepare(data)
-						)
+						NuiPacket(Serializer.serializeToPacket(data))
 					)
 				}
 			} catch (exception: Throwable) {
@@ -75,6 +64,5 @@ class NuiEventExchangerModule : AbstractClientModule() {
 
 	companion object {
 		val channel = Channel<Any>()
-		val unsafeChannel = Channel<Any>()
 	}
 }

@@ -6,7 +6,7 @@ import kotlin.coroutines.CoroutineContext
 
 abstract class AbstractModule : CoroutineScope {
 
-	override val coroutineContext: CoroutineContext = createJob()
+	override val coroutineContext: CoroutineContext = createSupervisorJob()
 
 	lateinit var moduleLoader: ModuleLoader
 

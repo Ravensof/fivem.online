@@ -4,6 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import online.fivem.common.events.local.ModuleLoadedEvent
+import online.fivem.common.extensions.stackTrace
 import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
@@ -11,7 +12,7 @@ import kotlin.reflect.KProperty
 class ModuleLoader(override val coroutineContext: CoroutineContext = createJob()) : CoroutineScope {
 
 	private val queue = Channel<AbstractModule>(128)
-	private var finally: (() -> Unit)? = null
+	private var finally = {}
 
 	private val modules = mutableListOf<AbstractModule>()
 
@@ -23,9 +24,6 @@ class ModuleLoader(override val coroutineContext: CoroutineContext = createJob()
 			module.onInit()
 
 			launch {
-				if (queue.isFull) {
-					Console.warn("ModuleLoader`s queue is full")
-				}
 				queue.send(module)
 			}
 		} catch (exception: Throwable) {
@@ -55,9 +53,7 @@ class ModuleLoader(override val coroutineContext: CoroutineContext = createJob()
 				events.emit(module)
 			} catch (exception: Throwable) {
 				Console.error(
-					"failed to start module ${module::class.simpleName}: \n" +
-							"${exception.message}\n" +
-							" ${exception.cause}"
+					"failed to start module ${module::class.simpleName}: \n" + exception.stackTrace()
 				)
 			}
 		}

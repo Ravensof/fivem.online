@@ -5,10 +5,6 @@ import online.fivem.common.common.Event
 
 object NuiEvent : Event() {
 
-	fun emitUnsafe(data: Any) = launch {
-		NuiEventExchangerModule.unsafeChannel.send(data)
-	}
-
 	override suspend fun emit(data: Any) {
 		NuiEventExchangerModule.channel.send(data)
 	}

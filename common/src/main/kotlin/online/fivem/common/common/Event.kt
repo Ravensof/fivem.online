@@ -6,11 +6,10 @@ import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.launch
 import online.fivem.common.extensions.forEach
 import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.reflect.KClass
 
 open class Event : CoroutineScope {
-	override val coroutineContext: CoroutineContext = createJob()
+	override val coroutineContext: CoroutineContext = createSupervisorJob()
 
 	private val channels = mutableMapOf<KClass<out Any>, BroadcastChannel<Any>>()
 
@@ -19,7 +18,7 @@ open class Event : CoroutineScope {
 	}
 
 	inline fun <reified T : Any> on(
-		context: CoroutineContext = EmptyCoroutineContext,
+		context: CoroutineContext = coroutineContext,
 		noinline action: suspend (T) -> Unit
 	) {
 		launch(context) {

@@ -9,13 +9,14 @@ import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.gtav.Client
 import online.fivem.client.gtav.Natives
 import online.fivem.common.GlobalConfig
+import online.fivem.common.Serializer
 import online.fivem.common.common.Console
-import online.fivem.common.common.KSerializer
-import online.fivem.common.common.Serializer
 import online.fivem.common.events.net.EstablishConnectionEvent
 import online.fivem.common.events.net.ImReadyEvent
 import online.fivem.common.events.net.StopResourceEvent
+import online.fivem.common.extensions.deserialize
 import online.fivem.common.extensions.forEach
+import online.fivem.common.extensions.serializeToPacket
 import online.fivem.common.other.ClientsNetPacket
 import online.fivem.common.other.ServersNetPacket
 
@@ -27,8 +28,7 @@ class ServerEventExchangerModule : AbstractClientModule() {
 		Natives.onNet(GlobalConfig.NET_EVENT_NAME) { rawPacket: Any ->
 			try {
 				val packet = rawPacket.unsafeCast<ServersNetPacket>()
-				val obj = KSerializer.deserialize(packet.hash, packet.serialized)
-					?: throw Exception("wrong net packet format")
+				val obj = Serializer.deserialize(packet)
 
 				launch {
 					ServerEvent.handle(obj)
@@ -59,7 +59,7 @@ class ServerEventExchangerModule : AbstractClientModule() {
 				Natives.emitNet(
 					eventName = GlobalConfig.NET_EVENT_NAME,
 					data = ClientsNetPacket(
-						KSerializer.serializeToPacket(data),
+						Serializer.serializeToPacket(data),
 						playersCount = Client.getNumberOfPlayers(),
 						key = key
 					)
@@ -82,7 +82,7 @@ class ServerEventExchangerModule : AbstractClientModule() {
 	}
 
 	private fun startHandshaking() {
-		Natives.emitNet(GlobalConfig.NET_EVENT_ESTABLISHING_NAME, Serializer.prepare(ImReadyEvent()))
+		Natives.emitNet(GlobalConfig.NET_EVENT_ESTABLISHING_NAME, Serializer.serialize(ImReadyEvent()))
 	}
 
 	companion object {

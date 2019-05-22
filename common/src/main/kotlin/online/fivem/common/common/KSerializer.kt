@@ -2,20 +2,15 @@ package online.fivem.common.common
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
-import online.fivem.common.initSerializableClasses
 import online.fivem.common.other.SerializerInterface
 import kotlin.reflect.KClass
 
-object KSerializer : SerializerInterface {
+internal class KSerializer : SerializerInterface {
 	private val serializers: MutableMap<KClass<*>, KSerializer<*>> = mutableMapOf()
 	private val classHashes: MutableMap<Int, KClass<*>> = mutableMapOf()
 	private val reversedClassHashes: MutableMap<KClass<*>, Int> = mutableMapOf()
 
 	private var key = 0
-
-	init {
-		initSerializableClasses()
-	}
 
 	override fun getSerializerHash(kClass: KClass<*>): Int {
 		return reversedClassHashes[kClass] ?: throw UnregisteredClassException(kClass)
@@ -27,12 +22,12 @@ object KSerializer : SerializerInterface {
 		return Json.indented.stringify(serializer, obj)
 	}
 
-	override fun deserialize(serializerId: Int, string: String): Any? {
+	override fun deserialize(string: String, serializerId: Int): Any {
 		val serializer =
 			getSerializer(serializerId)
 				?: throw UnregisteredClassException("cannot find deserializer for hash = $serializerId")
 
-		return Json.parse(serializer, string)
+		return Json.parse(serializer, string) ?: throw IllegalStateException("cannot deserialize $string")
 	}
 
 	internal fun add(kClass: KClass<*>, serializer: KSerializer<*>) {
@@ -58,14 +53,8 @@ object KSerializer : SerializerInterface {
 		return null
 	}
 
-	fun <T : Any> getSerializer(kClass: KClass<out T>): KSerializer<T>? {
+	private fun <T : Any> getSerializer(kClass: KClass<out T>): KSerializer<T>? {
 		return serializers[kClass]?.unsafeCast<KSerializer<T>>()
-	}
-
-	inline fun <reified T : Any> deserialize(string: String): T {
-		val serializer = getSerializer(T::class) ?: throw UnregisteredClassException(T::class)
-
-		return Json.parse(serializer, string)
 	}
 
 	class UnregisteredClassException : Exception {

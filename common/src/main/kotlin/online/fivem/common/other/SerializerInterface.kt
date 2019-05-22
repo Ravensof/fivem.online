@@ -6,19 +6,9 @@ interface SerializerInterface {
 
 	fun <T : Any> serialize(obj: T): String
 
-	fun deserialize(serializerId: Int, string: String): Any?
+	fun deserialize(string: String, serializerId: Int = -1): Any
 
 	fun getSerializerHash(kClass: KClass<*>): Int
 
-	fun deserialize(kotlinXSerializationPacket: KotlinXSerializationPacket): Any? {
-		return deserialize(kotlinXSerializationPacket.hash, kotlinXSerializationPacket.serialized)
-	}
-
-	fun <T : Any> serializeToPacket(obj: T): KotlinXSerializationPacket {
-		return KotlinXSerializationPacket(
-			hash = getSerializerHash(obj::class),
-			serialized = serialize(obj)
-		)
-	}
-
+	class DeserializationException(message: String) : Throwable(message)
 }
