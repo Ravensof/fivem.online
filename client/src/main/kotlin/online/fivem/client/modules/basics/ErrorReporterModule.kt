@@ -15,17 +15,17 @@ import online.fivem.common.extensions.stackTrace
 class ErrorReporterModule : AbstractClientModule(), ExceptionsStorage.Listener {
 
 	override fun onInit() {
-		moduleLoader.on<ServerEventExchangerModule> {
+		launch {
+			moduleLoader.getModule(ServerEventExchangerModule::class)
+
+			ExceptionsStorage.listener = this@ErrorReporterModule
+
 			launch {
 				channel.forEach {
 					ServerEvent.emit(ErrorReportEvent(it))
 				}
 			}
-
-			ExceptionsStorage.listener = this
 		}
-
-		super.onInit()
 	}
 
 	override fun onThrowable(throwable: Throwable) {

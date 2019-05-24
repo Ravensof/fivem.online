@@ -2,6 +2,7 @@ package online.fivem.client.common
 
 import online.fivem.client.gtav.Client
 import online.fivem.common.Serializer
+import online.fivem.common.other.Serializable
 
 object KvpStorage {
 
@@ -13,7 +14,7 @@ object KvpStorage {
 
 	fun set(key: String, value: Int) = Client.setResourceKvpInt(key, value)
 
-	fun set(key: String, value: Any) = set(key, Serializer.serialize(value))
+	fun set(key: String, value: Serializable) = set(key, Serializer.serialize(value))
 
 	fun getFloat(key: String): Float = Client.getResourceKvpFloat(key)
 

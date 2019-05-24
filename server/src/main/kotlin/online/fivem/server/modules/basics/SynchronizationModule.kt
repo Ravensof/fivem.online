@@ -1,22 +1,28 @@
 package online.fivem.server.modules.basics
 
-import kotlinx.coroutines.*
+import external.nodejs.mysql.Pool
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import online.fivem.common.GlobalConfig
-import online.fivem.common.common.Console
 import online.fivem.common.common.Event
 import online.fivem.common.common.VDate
 import online.fivem.common.entities.PlayerSrc
-import online.fivem.common.events.net.ClientSideSynchronizeEvent
 import online.fivem.common.events.net.ServerSideSynchronizationEvent
+import online.fivem.common.events.net.SyncEvent
+import online.fivem.common.events.net.sync.RolePlaySystemSaveEvent
 import online.fivem.common.extensions.isNotEmpty
 import online.fivem.common.extensions.orZero
 import online.fivem.server.ServerConfig
 import online.fivem.server.common.AbstractServerModule
 import online.fivem.server.entities.Player
 import online.fivem.server.events.PlayerConnectedEvent
+import online.fivem.server.extensions.getConnection
 import online.fivem.server.extensions.send
 import online.fivem.server.gtav.Natives
+import online.fivem.server.modules.basics.mysql.MySQLModule
 import online.fivem.server.modules.client_event_exchanger.ClientEvent
 import kotlin.coroutines.CoroutineContext
 import kotlin.js.Date
@@ -28,18 +34,14 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 
 	private val requestJob by lazy { requestJob() }
 	private val synchronizationJob by lazy { synchronizationJob() }
-	private val syncDataChannel = Channel<Pair<Player, ClientSideSynchronizeEvent>>(GlobalConfig.MAX_PLAYERS)
+	private val syncDataChannel = Channel<Pair<Player, SyncEvent>>(GlobalConfig.MAX_PLAYERS)
 
 	private val sessionModule by moduleLoader.delegate<SessionModule>()
 
-	private val mySQL by moduleLoader.delegate<MySQLModule>()
+	private lateinit var mySQL: Pool
 
 	override fun onInit() {
-		ClientEvent.on<ClientSideSynchronizeEvent> { player, synchronizeEvent ->
-
-			if (syncDataChannel.isFull) {
-				Console.warn("synchronization DataChannel is full")
-			}
+		ClientEvent.on<SyncEvent> { player, synchronizeEvent ->
 
 			launch {
 				syncDataChannel.send(player to synchronizeEvent)
@@ -49,12 +51,11 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 		Event.on<PlayerConnectedEvent> { syncDataFor(it.player.playerSrc) }
 	}
 
-	@ExperimentalCoroutinesApi
-	override fun onStart(): Job? {
+	override fun onStart() = launch {
+		mySQL = moduleLoader.getModule(MySQLModule::class).pool
+
 		synchronizationJob.start()
 		requestJob.start()
-
-		return super.onStart()
 	}
 
 	override fun onStop(): Job? {
@@ -84,7 +85,7 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 //		}
 	}
 
-	private fun syncDataFor(playerSrc: PlayerSrc) {
+	private suspend fun syncDataFor(playerSrc: PlayerSrc) {
 		syncData.serverTime = Date.now() + Natives.getPlayerPing(playerSrc).orZero()
 		ClientEvent.emit(syncData, playerSrc)
 	}
@@ -107,14 +108,23 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 
 	private fun synchronizationJob() = launch {
 		for (obj in syncDataChannel) {
-			saveData(obj.first, obj.second)
+
+			val player = obj.first
+			val dataList = obj.second.data.mapNotNull { it.deserialize() }
+
+			moduleLoader.getModules().forEach { module ->
+				if (module !is AbstractServerModule) return@forEach
+
+				module.onPlayerSave(player, dataList)
+			}
 		}
 	}
 
-	private suspend fun saveData(player: Player, data: ClientSideSynchronizeEvent) {
+	override suspend fun onPlayerSave(player: Player, dataList: List<Any>) {
+		val event = dataList.find { it is RolePlaySystemSaveEvent } as RolePlaySystemSaveEvent? ?: return
 
-		data.coordinatesX?.let {
-			mySQL.connection.send(
+		event.coordinatesX.let {
+			mySQL.getConnection().send(
 				"""UPDATE characters
 							|SET
 							|   coord_x=?,

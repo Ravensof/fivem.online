@@ -1,8 +1,7 @@
 package online.fivem.common.events.net
 
-import kotlinx.serialization.Serializable
+import online.fivem.common.other.Serializable
 
-@Serializable
 class ErrorReportEvent(
 	val message: String
-)
+) : Serializable()

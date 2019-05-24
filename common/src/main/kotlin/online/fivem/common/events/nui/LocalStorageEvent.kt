@@ -1,23 +1,21 @@
 package online.fivem.common.events.nui
 
-import kotlinx.serialization.Serializable
+import online.fivem.common.other.Serializable
 
-sealed class LocalStorageEvent {
-	@Serializable
+sealed class LocalStorageEvent : Serializable() {
+
 	class Post(
 		val key: String,
 		val value: String
-	)
+	) : LocalStorageEvent()
 
-	@Serializable
 	class Request(
 		val requestId: Int,
 		val key: String
-	)
+	) : LocalStorageEvent()
 
-	@Serializable
 	class Response(
 		val responseId: Int,
 		val data: String?
-	)
+	) : LocalStorageEvent()
 }

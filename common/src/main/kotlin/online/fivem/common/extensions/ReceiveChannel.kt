@@ -7,3 +7,11 @@ suspend fun <T> ReceiveChannel<T>.forEach(function: suspend (T) -> Unit) {
 		function(data)
 	}
 }
+
+suspend fun <T> ReceiveChannel<T>.receiveAndCancel(): T {
+	val result = receive()
+
+	cancel()
+
+	return result
+}

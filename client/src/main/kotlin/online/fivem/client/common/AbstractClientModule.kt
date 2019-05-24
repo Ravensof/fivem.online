@@ -1,5 +1,45 @@
 package online.fivem.client.common
 
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.launch
+import online.fivem.client.modules.nui_event_exchanger.NuiEvent
+import online.fivem.client.modules.server_event_exchanger.ServerEvent
 import online.fivem.common.common.AbstractModule
+import online.fivem.common.extensions.forEach
+import online.fivem.common.other.Serializable
 
-abstract class AbstractClientModule : AbstractModule()
+abstract class AbstractClientModule : AbstractModule() {
+
+	open suspend fun onSave(): Serializable? = null
+
+	protected fun NuiEvent.emitAsync(data: Serializable) = launch {
+		emit(data)
+	}
+
+	protected inline fun <reified T : Any> NuiEvent.on(noinline action: suspend (T) -> Unit): ReceiveChannel<T> {
+
+		val channel = openSubscription(T::class)
+
+		this@AbstractClientModule.launch {
+			channel.forEach {
+				action(it)
+			}
+		}
+
+		return channel
+	}
+
+	protected inline fun <reified T : Any> ServerEvent.on(noinline action: suspend (T) -> Unit): ReceiveChannel<T> {
+
+		val channel = openSubscription(T::class)
+
+		this@AbstractClientModule.launch {
+			channel.forEach {
+				action(it)
+			}
+		}
+
+		return channel
+	}
+
+}

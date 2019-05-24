@@ -1,6 +1,5 @@
 package online.fivem.client.modules.nui_event_exchanger
 
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
@@ -10,13 +9,12 @@ import online.fivem.client.gtav.Exports
 import online.fivem.common.GlobalConfig
 import online.fivem.common.Serializer
 import online.fivem.common.common.Console
-import online.fivem.common.common.createSupervisorJob
 import online.fivem.common.events.net.ImReadyEvent
 import online.fivem.common.extensions.deserialize
 import online.fivem.common.extensions.forEach
 import online.fivem.common.extensions.serializeToPacket
 import online.fivem.common.other.NuiPacket
-import kotlin.coroutines.CoroutineContext
+import online.fivem.common.other.Serializable
 
 class NuiEventExchangerModule : AbstractClientModule() {
 
@@ -63,6 +61,6 @@ class NuiEventExchangerModule : AbstractClientModule() {
 	}
 
 	companion object {
-		val channel = Channel<Any>()
+		val channel = Channel<Serializable>()
 	}
 }

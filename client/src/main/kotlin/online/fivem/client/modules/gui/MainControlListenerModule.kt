@@ -5,7 +5,7 @@ import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.modules.basics.ControlHandlerModule
 import online.fivem.common.gtav.NativeControls
 
-class MainControlListener : AbstractClientModule(), ControlHandlerModule.Listener {
+class MainControlListenerModule : AbstractClientModule(), ControlHandlerModule.Listener {
 	override val registeredKeys = mutableListOf<NativeControls.Keys>()
 
 	private val shortPressHandlers = mutableMapOf<NativeControls.Keys, () -> Boolean>()

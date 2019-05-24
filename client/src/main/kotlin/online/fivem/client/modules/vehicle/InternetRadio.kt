@@ -12,9 +12,9 @@ import online.fivem.client.modules.nui_event_exchanger.NuiEvent
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.Event
 import online.fivem.common.entities.InternetRadioStation
-import online.fivem.common.events.InternetRadioChangedEvent
-import online.fivem.common.events.InternetRadioStopEvent
-import online.fivem.common.events.InternetRadioVolumeChangeEvent
+import online.fivem.common.events.nui.InternetRadioChangedEvent
+import online.fivem.common.events.nui.InternetRadioStopEvent
+import online.fivem.common.events.nui.InternetRadioVolumeChangeEvent
 import online.fivem.common.extensions.onNull
 import online.fivem.common.extensions.orZero
 import online.fivem.common.gtav.NativeAudioScenes

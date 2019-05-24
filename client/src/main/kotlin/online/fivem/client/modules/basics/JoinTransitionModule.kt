@@ -10,23 +10,20 @@ class JoinTransitionModule : AbstractClientModule() {
 
 	private var switchingPlayerJob: Job? = null
 	private val tickExecutor by moduleLoader.delegate<TickExecutorModule>()
-	private val api by moduleLoader.delegate<API>()
+
+	private lateinit var api: API
 
 	private var muteHandle = Stack.UNDEFINED_INDEX
 
-	override fun onInit() {
-		moduleLoader.on<API>(this) {
-			Client.setManualShutdownLoadingScreenNui(true)
-			startTransitionJob()
+	override fun onStart() = launch {
+		api = moduleLoader.getModule(API::class)
 
-			launch {
-				switchingPlayerJob?.join()
+		Client.setManualShutdownLoadingScreenNui(true)
+		startTransitionJob().join()
 
-				Client.doScreenFadeIn(1)
-				Client.shutdownLoadingScreen()
-				Client.shutdownLoadingScreenNui()
-			}
-		}
+		Client.doScreenFadeIn(1)
+		Client.shutdownLoadingScreen()
+		Client.shutdownLoadingScreenNui()
 	}
 
 	override fun onStop(): Job? = launch {

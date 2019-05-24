@@ -1,5 +1,6 @@
 package online.fivem.common.common
 
+import online.fivem.common.other.Serializable
 import online.fivem.common.other.SerializerInterface
 import kotlin.reflect.KClass
 
@@ -7,7 +8,7 @@ internal class Serializer : SerializerInterface {
 
 	override fun getSerializerHash(kClass: KClass<*>): Int = -1
 
-	override fun <T : Any> serialize(obj: T): String {
+	override fun <T : Serializable> serialize(obj: T): String {
 		return JSON.stringify(prepare(obj))
 	}
 

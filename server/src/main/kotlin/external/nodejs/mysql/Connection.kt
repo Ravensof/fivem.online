@@ -87,9 +87,10 @@ external interface Connection {
 	interface Error {
 		val code: String
 		val errno: Int
-		val sqlMessage: String
+		val fatal: Boolean?
+		val sqlMessage: String?
 		val sqlState: String
 		val index: Int
-		val sql: String
+		val sql: String?
 	}
 }

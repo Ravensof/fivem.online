@@ -1,6 +1,5 @@
 package online.fivem.common.events.net
 
-import kotlinx.serialization.Serializable
+import online.fivem.common.other.Serializable
 
-@Serializable
-class ImReadyEvent
+class ImReadyEvent : Serializable()

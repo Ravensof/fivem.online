@@ -1,8 +1,5 @@
 package online.fivem.common.entities
 
-import kotlinx.serialization.Serializable
-
-@Serializable
 class CoordinatesX(
 	override val x: Float,
 	override val y: Float,

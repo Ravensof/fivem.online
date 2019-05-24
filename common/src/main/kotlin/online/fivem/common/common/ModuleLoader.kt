@@ -1,9 +1,9 @@
 package online.fivem.common.common
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import online.fivem.common.events.local.ModuleLoadedEvent
+import online.fivem.common.extensions.receiveAndCancel
 import online.fivem.common.extensions.stackTrace
 import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.KClass
@@ -11,21 +11,24 @@ import kotlin.reflect.KProperty
 
 class ModuleLoader(override val coroutineContext: CoroutineContext = createJob()) : CoroutineScope {
 
-	private val queue = Channel<AbstractModule>(128)
+	private val queue = mutableListOf<AbstractModule>()
 	private var finally = {}
 
 	private val modules = mutableListOf<AbstractModule>()
 
-	private val events = Event()
+	private val loadedModulesRepository = Repository<AbstractModule>()
+
+	private var isStarted = false
 
 	fun add(module: AbstractModule) {
 		try {
+			if (isStarted) throw IllegalStateException("you have to use ModuleLoader::add() only in AbstractModule::onInit()")
+
 			module.moduleLoader = this@ModuleLoader
 			module.onInit()
 
-			launch {
-				queue.send(module)
-			}
+			queue.add(module)
+
 		} catch (exception: Throwable) {
 			Console.error("failed to load module ${module::class.simpleName}: \r\n${exception.message}\r\n ${exception.cause}")
 		}
@@ -36,28 +39,34 @@ class ModuleLoader(override val coroutineContext: CoroutineContext = createJob()
 	}
 
 	fun start() = launch {
+		isStarted = true
 
-		var module: AbstractModule
+		val startJob = launch {
+			queue.forEach { module ->
+				try {
+					Console.log("start module ${module::class.simpleName}")
+					module.onStart()?.join()
+					modules.add(module)
 
-		while (!queue.isEmpty) {
-			module = queue.receive()
+					val event = ModuleLoadedEvent(module)
 
-			try {
-				Console.log("start module ${module::class.simpleName}")
-				module.onStart()?.join()
-				modules.add(module)
+					Event.emit(event)
 
-				val event = ModuleLoadedEvent(module)
+					loadedModulesRepository
+						.getChannel(module::class)
+						.send(module)
 
-				Event.emit(event)
-				events.emit(module)
-			} catch (exception: Throwable) {
-				Console.error(
-					"failed to start module ${module::class.simpleName}: \n" + exception.stackTrace()
-				)
+				} catch (exception: Throwable) {
+					Console.error(
+						"failed to start module ${module::class.simpleName}: \n" + exception.stackTrace()
+					)
+				}
 			}
 		}
-		finally?.invoke()
+
+		startJob.join()
+
+		finally.invoke()
 	}
 
 	fun stop() = launch {
@@ -73,32 +82,15 @@ class ModuleLoader(override val coroutineContext: CoroutineContext = createJob()
 				)
 			}
 		}
+		modules.clear()
+		isStarted = false
 	}
 
-	inline fun <reified T : AbstractModule> on(
-		coroutineScope: CoroutineScope = this,
-		noinline function: suspend (T) -> Unit
+	suspend fun getModules() =
+		loadedModulesRepository.getChannels().map { it.value.openSubscription().receiveAndCancel() }
 
-	) = on(T::class, coroutineScope, function)
-
-	fun <T : AbstractModule> on(
-		kClass: KClass<T>,
-		coroutineScope: CoroutineScope = this,
-		function: suspend (T) -> Unit
-	) {
-		coroutineScope.launch {
-			val module = modules.find { it::class == kClass }
-
-			module?.let {
-				return@launch function(it.unsafeCast<T>())
-			}
-
-			events.openSubscription(kClass).apply {
-				function(receive())
-				cancel()
-			}
-		}
-	}
+	suspend fun <T : AbstractModule> getModule(kClass: KClass<T>) =
+		loadedModulesRepository.getChannel(kClass).openSubscription().receiveAndCancel()
 
 	inline fun <reified ModuleType : AbstractModule> delegate(): OnLocalModuleLoaded<ModuleType> {
 		return OnLocalModuleLoaded(ModuleType::class)

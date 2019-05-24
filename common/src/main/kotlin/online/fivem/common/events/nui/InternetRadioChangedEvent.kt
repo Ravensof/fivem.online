@@ -1,10 +1,8 @@
-package online.fivem.common.events
+package online.fivem.common.events.nui
 
-import kotlinx.serialization.ContextualSerialization
-import kotlinx.serialization.Serializable
 import online.fivem.common.entities.InternetRadioStation
+import online.fivem.common.other.Serializable
 
-@Serializable
 class InternetRadioChangedEvent(
-	@ContextualSerialization val internetRadioStation: InternetRadioStation
-)
+	val internetRadioStation: InternetRadioStation
+) : Serializable()

@@ -1,8 +1,7 @@
 package online.fivem.common.events.nui
 
-import kotlinx.serialization.Serializable
+import online.fivem.common.other.Serializable
 
-@Serializable
 class BlackOutEvent(
 	val duration: Int
-)
+) : Serializable()

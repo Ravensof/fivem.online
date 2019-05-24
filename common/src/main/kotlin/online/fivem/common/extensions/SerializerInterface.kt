@@ -1,6 +1,7 @@
 package online.fivem.common.extensions
 
 import online.fivem.common.other.KotlinXSerializationPacket
+import online.fivem.common.other.Serializable
 import online.fivem.common.other.SerializerInterface
 
 inline fun <reified R> SerializerInterface.deserialize(
@@ -22,7 +23,7 @@ fun SerializerInterface.deserialize(kotlinXSerializationPacket: KotlinXSerializa
 	string = kotlinXSerializationPacket.serialized
 )
 
-fun <T : Any> SerializerInterface.serializeToPacket(obj: T) = KotlinXSerializationPacket(
+fun <T : Serializable> SerializerInterface.serializeToPacket(obj: T) = KotlinXSerializationPacket(
 	hash = getSerializerHash(obj::class),
 	serialized = serialize(obj)
 )

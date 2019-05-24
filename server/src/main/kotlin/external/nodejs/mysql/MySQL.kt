@@ -6,7 +6,7 @@ external interface MySQL {
 
 	fun createConnection(params: String): Connection
 
-//	fun createPool(...): Pool
+	fun createPool(params: Params): Pool
 
 	fun raw(string: String): String
 

@@ -10,7 +10,12 @@ import online.fivem.nui.modules.client_event_exchanger.ClientEvent
 class BasicsModule : AbstractNuiModule() {
 
 	override fun onInit() {
-		ClientEvent.on<PrefetchFileEvent> { Html.prefetch(it.files.map { Html.nuiResourcesLink(it) }) }
+
+		ClientEvent.on<PrefetchFileEvent> {
+			Html.prefetch(it.files.map {
+				Html.nuiResourcesLink(it)
+			})
+		}
 
 		moduleLoader.add(GUIModule(coroutineContext))
 		moduleLoader.add(PlaySoundModule(coroutineContext))

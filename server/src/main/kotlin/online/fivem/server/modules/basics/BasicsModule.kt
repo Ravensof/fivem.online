@@ -1,6 +1,7 @@
 package online.fivem.server.modules.basics
 
 import online.fivem.server.common.AbstractServerModule
+import online.fivem.server.modules.basics.mysql.MySQLModule
 
 class BasicsModule : AbstractServerModule() {
 

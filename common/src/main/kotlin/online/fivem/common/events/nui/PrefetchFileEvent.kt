@@ -1,16 +1,8 @@
 package online.fivem.common.events.nui
 
-import kotlinx.serialization.Serializable
+import online.fivem.common.other.Serializable
 
-@Serializable
-class PrefetchFileEvent {
-	val files: List<String>
+class PrefetchFileEvent(val files: List<String>) : Serializable() {
 
-	constructor(files: List<String>) {
-		this.files = files
-	}
-
-	constructor(file: String) {
-		files = listOf(file)
-	}
+	constructor(file: String) : this(listOf(file))
 }

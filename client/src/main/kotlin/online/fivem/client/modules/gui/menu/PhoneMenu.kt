@@ -1,8 +1,9 @@
 package online.fivem.client.modules.gui.menu
 
+import kotlinx.coroutines.launch
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.modules.basics.ControlHandlerModule
-import online.fivem.client.modules.gui.MainControlListener
+import online.fivem.client.modules.gui.MainControlListenerModule
 import online.fivem.client.modules.gui.NavigationControlsHandler
 import online.fivem.common.common.Console
 import online.fivem.common.gtav.NativeControls
@@ -10,19 +11,14 @@ import online.fivem.common.gtav.NativeControls
 class PhoneMenu : AbstractClientModule(),
 	NavigationControlsHandler.Listener {
 
-
 	private val controlHandlerModule by moduleLoader.delegate<ControlHandlerModule>()
 	private var navigatorListener: NavigationControlsHandler? = null
 
-	override fun onInit() {
-		moduleLoader.on<MainControlListener>(this) {
-			it.onShortPressListener(
-				NativeControls.Keys.PHONE,
-				::onPhoneOpenButton
-			)
-		}
-
-		super.onInit()
+	override fun onStart() = launch {
+		moduleLoader.getModule(MainControlListenerModule::class).onShortPressListener(
+			NativeControls.Keys.PHONE,
+			::onPhoneOpenButton
+		)
 	}
 
 	override fun onKeyUp() {

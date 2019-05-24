@@ -2,6 +2,7 @@ package online.fivem.common.common
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
+import online.fivem.common.other.Serializable
 import online.fivem.common.other.SerializerInterface
 import kotlin.reflect.KClass
 
@@ -16,7 +17,7 @@ internal class KSerializer : SerializerInterface {
 		return reversedClassHashes[kClass] ?: throw UnregisteredClassException(kClass)
 	}
 
-	override fun <T : Any> serialize(obj: T): String {
+	override fun <T : Serializable> serialize(obj: T): String {
 		val serializer = getSerializer(obj::class) ?: throw UnregisteredClassException(obj::class)
 
 		return Json.indented.stringify(serializer, obj)

@@ -1,6 +1,6 @@
-package online.fivem.common.events
+package online.fivem.common.events.nui
 
-import kotlinx.serialization.Serializable
+import online.fivem.common.other.Serializable
 
-@Serializable
-class InternetRadioStopEvent
+
+class InternetRadioStopEvent : Serializable()

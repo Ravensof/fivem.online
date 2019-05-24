@@ -14,6 +14,7 @@ import online.fivem.common.extensions.onNull
 import online.fivem.common.extensions.serializeToPacket
 import online.fivem.common.gtav.NativeEvents
 import online.fivem.common.other.ClientsNetPacket
+import online.fivem.common.other.Serializable
 import online.fivem.common.other.SerializerInterface
 import online.fivem.common.other.ServersNetPacket
 import online.fivem.server.Strings
@@ -27,8 +28,8 @@ private typealias Data = Any
 
 class ClientEventExchangerModule : AbstractServerModule() {
 
-	private val playersSendChannels = createChannels<Data>()
-	private val playersReceiveChannels = createChannels<Packet>()
+	private val playersSendChannels = createChannels<Serializable>()
+	private val playersReceiveChannels = createChannels<IncomingPacket>()
 
 	private val playersList = mutableMapOf<Int, Double>()
 
@@ -56,12 +57,12 @@ class ClientEventExchangerModule : AbstractServerModule() {
 		playersReceiveChannels.forEach { channel ->
 			launch {
 				for (packet in channel) {
-					val playerSrc = packet.playerSrc ?: throw Exception("null pointer exception")
+					val playerSrc = packet.playerSrc
 
 					sessionModule.getPlayer(playerSrc.value)?.let {
 						ClientEvent.handle(it, packet.data)
 					}.onNull {
-						ClientEvent.handle(playerSrc, packet.data)
+						ClientEvent.handleGuest(playerSrc, packet.data)
 					}
 				}
 			}
@@ -88,15 +89,12 @@ class ClientEventExchangerModule : AbstractServerModule() {
 		return super.onStart()
 	}
 
-	override fun onStop(): Job? {
+	override fun onStop() = launch {
 		ClientEvent.emit(StopResourceEvent())
 
-		return launch {
+		delay(10_000)
 
-			delay(10_000)
-
-			coroutineContext.cancel()
-		}
+		coroutineContext.cancel()
 	}
 
 	private fun onEstablishingConnection(playerSrc: PlayerSrc, netPacket: Any) {
@@ -126,14 +124,20 @@ class ClientEventExchangerModule : AbstractServerModule() {
 //			)
 
 			val channel = playersReceiveChannels[playerSrc.value]
-			if (channel.isFull) {
-				Console.warn("ClientEventExchanger: receive channel for player ${playerSrc.value} is full")
-
-				if (ServerConfig.KICK_FOR_PACKET_OVERFLOW) throw Exception(Strings.CLIENT_PACKETS_OVERFLOW)
-			}
 
 			launch {
-				channel.send(Packet(playerSrc, data))
+				withTimeoutOrNull(5_000) {
+					channel.send(IncomingPacket(playerSrc, data))
+					true
+				}.onNull {
+					Console.warn(
+						"ClientEventExchanger: processing packet for player ${playerSrc.value} is timed out (${data::class.simpleName} ${JSON.stringify(
+							data
+						)})"
+					)
+
+//					if (ServerConfig.KICK_FOR_PACKET_OVERFLOW) throw Exception(Strings.CLIENT_PACKETS_OVERFLOW)
+				}
 			}
 		} catch (exception: Throwable) {
 			return Natives.dropPlayer(
@@ -160,7 +164,7 @@ class ClientEventExchangerModule : AbstractServerModule() {
 		emit(playerSrc.value, EstablishConnectionEvent(key))
 	}
 
-	private fun emit(playerSrc: Int, data: Any) {
+	private fun emit(playerSrc: Int, data: Serializable) {
 		val packet = ServersNetPacket(Serializer.serializeToPacket(data))
 
 		Natives.emitNet(
@@ -180,14 +184,19 @@ class ClientEventExchangerModule : AbstractServerModule() {
 		return list
 	}
 
-	class Packet(
-		val playerSrc: PlayerSrc? = null,
+	class IncomingPacket(
+		val playerSrc: PlayerSrc,
 		val data: Data
+	)
+
+	class SendingPacket(
+		val playerSrc: PlayerSrc? = null,
+		val data: Serializable
 	)
 
 	companion object {
 		private const val PLAYERS_CHANNEL_SIZE = 128 * GlobalConfig.MAX_PLAYERS
 
-		val channel = Channel<Packet>(PLAYERS_CHANNEL_SIZE)
+		val channel = Channel<SendingPacket>(PLAYERS_CHANNEL_SIZE)
 	}
 }

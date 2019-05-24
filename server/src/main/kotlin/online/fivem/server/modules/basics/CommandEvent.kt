@@ -7,7 +7,7 @@ import online.fivem.server.entities.Player
 import online.fivem.server.gtav.Natives.registerCommand
 import kotlin.coroutines.CoroutineContext
 
-private typealias Handler = (Player?, Array<String>, String) -> Unit
+private typealias Handler = suspend (Player?, Array<String>, String) -> Unit
 
 object CommandEvent : CoroutineScope {
 	override val coroutineContext: CoroutineContext = createJob()
@@ -18,17 +18,13 @@ object CommandEvent : CoroutineScope {
 		handlers[command] = callback
 
 		registerCommand(command, false) { playerSrc, args, raw ->
-			handle(playerSrc, command, args, raw)
+			launch {
+				CommandsModule.executionQueue.send(CommandsModule.RawCommand(playerSrc, command, args, raw))
+			}
 		}
 	}
 
-	fun handle(command: CommandsModule.Command) {
+	suspend fun handle(command: CommandsModule.Command) {
 		handlers[command.command]?.invoke(command.player, command.args, command.raw)
-	}
-
-	private fun handle(playerSrc: Int, command: String, args: Array<String>, raw: String) {
-		launch {
-			CommandsModule.executionQueue.send(CommandsModule.RawCommand(playerSrc, command, args, raw))
-		}
 	}
 }

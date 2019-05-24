@@ -18,6 +18,7 @@ import online.fivem.common.extensions.deserialize
 import online.fivem.common.extensions.forEach
 import online.fivem.common.extensions.serializeToPacket
 import online.fivem.common.other.ClientsNetPacket
+import online.fivem.common.other.Serializable
 import online.fivem.common.other.ServersNetPacket
 
 class ServerEventExchangerModule : AbstractClientModule() {
@@ -86,6 +87,6 @@ class ServerEventExchangerModule : AbstractClientModule() {
 	}
 
 	companion object {
-		val channel = Channel<Any>()
+		val channel = Channel<Serializable>()
 	}
 }

@@ -3,16 +3,18 @@ package online.fivem.client.modules.basics
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import online.fivem.client.common.AbstractClientModule
-import online.fivem.client.common.GlobalCache.player
 import online.fivem.client.events.PauseMenuStateChangedEvent
 import online.fivem.client.modules.nui_event_exchanger.NuiEvent
 import online.fivem.client.modules.server_event_exchanger.ServerEvent
+import online.fivem.common.Serializer
 import online.fivem.common.common.Event
 import online.fivem.common.entities.CoordinatesX
-import online.fivem.common.events.net.ClientSideSynchronizeEvent
 import online.fivem.common.events.net.ServerSideSynchronizationEvent
 import online.fivem.common.events.net.SpawnPlayerEvent
 import online.fivem.common.events.net.StopResourceEvent
+import online.fivem.common.events.net.SyncEvent
+import online.fivem.common.extensions.serializeToPacket
+import online.fivem.common.other.KotlinXSerializationPacket
 import kotlin.js.Date
 
 class ServersCommandsHandlerModule : AbstractClientModule() {
@@ -72,16 +74,20 @@ class ServersCommandsHandlerModule : AbstractClientModule() {
 	}
 
 	private suspend fun synchronizeToServer() {
-		val playerPed = player.ped
 
-		ServerEvent.emit(
-			ClientSideSynchronizeEvent(
-				coordinatesX = CoordinatesX(
-					playerPed.coordinates,
-					playerPed.heading
+		val syncData = mutableListOf<KotlinXSerializationPacket>()
+
+		moduleLoader.getModules().forEach { module ->
+			if (module !is AbstractClientModule) return@forEach
+
+			module.onSave()?.let { data ->
+				syncData.add(
+					Serializer.serializeToPacket(data)
 				)
-			)
-		)
+			}
+		}
+
+		ServerEvent.emit(SyncEvent(syncData))
 
 		lastSync = Date.now()
 	}

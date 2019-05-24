@@ -1,8 +1,7 @@
 package online.fivem.common.events.nui
 
-import kotlinx.serialization.Serializable
+import online.fivem.common.other.Serializable
 
-@Serializable
 class SpeedometerUpdateEvent(
 	val currentGear: Int,
 	val currentRpm: Double,
@@ -18,4 +17,4 @@ class SpeedometerUpdateEvent(
 	val isEngineRunning: Boolean,
 	val engineOn: Boolean,
 	val engineHealth: Double
-)
+) : Serializable()

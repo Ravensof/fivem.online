@@ -1,6 +1,7 @@
 package online.fivem.server.modules.roleplay_system
 
-import external.nodejs.mysql.Connection
+import external.nodejs.mysql.Pool
+import kotlinx.coroutines.launch
 import online.fivem.common.common.Event
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.events.net.SpawnPlayerEvent
@@ -9,27 +10,31 @@ import online.fivem.server.common.AbstractServerModule
 import online.fivem.server.entities.Player
 import online.fivem.server.entities.mysqlEntities.CharacterEntity
 import online.fivem.server.events.PlayerConnectedEvent
+import online.fivem.server.extensions.getConnection
 import online.fivem.server.extensions.row
-import online.fivem.server.modules.basics.MySQLModule
+import online.fivem.server.modules.basics.mysql.MySQLModule
 import online.fivem.server.modules.client_event_exchanger.ClientEvent
 
 class RolePlaySystemModule : AbstractServerModule() {
 
-	private lateinit var mySQL: Connection
+	private lateinit var mySQL: Pool
 
 	override fun onInit() {
 		Event.on<PlayerConnectedEvent> { onPlayerConnected(it.player) }
-		moduleLoader.on<MySQLModule> { mySQL = it.connection }
 	}
 
-	fun spawn(player: Player, coordinatesX: CoordinatesX, pedHash: Int) {
+	override fun onStart() = launch {
+		mySQL = moduleLoader.getModule(MySQLModule::class).pool
+	}
+
+	private suspend fun spawn(player: Player, coordinatesX: CoordinatesX, pedHash: Int) {
 		ClientEvent.emit(SpawnPlayerEvent(coordinatesX, pedHash), player)
 	}
 
 	private suspend fun onPlayerConnected(player: Player) {
 
 		val character =
-			mySQL.row<CharacterEntity>(
+			mySQL.getConnection().row<CharacterEntity>(
 				"""SELECT *
 						|FROM characters
 						|WHERE user_id=?

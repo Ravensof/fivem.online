@@ -1,31 +1,34 @@
 package online.fivem.server.modules.basics
 
-import external.nodejs.mysql.Connection
+import external.nodejs.mysql.Pool
+import kotlinx.coroutines.launch
 import online.fivem.common.common.Console
 import online.fivem.common.events.net.ErrorReportEvent
 import online.fivem.server.common.AbstractServerModule
 import online.fivem.server.entities.Player
-import online.fivem.server.extensions.sendAsync
+import online.fivem.server.extensions.getConnection
+import online.fivem.server.extensions.send
+import online.fivem.server.modules.basics.mysql.MySQLModule
 import online.fivem.server.modules.client_event_exchanger.ClientEvent
 
 class ClientsErrorReportingsModule : AbstractServerModule() {
 
-	private lateinit var mysql: Connection
+	private lateinit var mySQL: Pool
 
 	init {
-		ClientEvent.on(::onErrorReport)
+		ClientEvent.on<ErrorReportEvent> { player, event ->
+			onErrorReport(player, event)
+		}
 	}
 
-	override fun onInit() {
-		moduleLoader.on<MySQLModule> { mysql = it.connection }
-
-		super.onInit()
+	override fun onStart() = launch {
+		mySQL = moduleLoader.getModule(MySQLModule::class).pool
 	}
 
-	private fun onErrorReport(player: Player, event: ErrorReportEvent) {
+	private suspend fun onErrorReport(player: Player, event: ErrorReportEvent) {
 		Console.debug("crash report from user ${player.userId}:\r\n" + event.message)
 
-		mysql.sendAsync(
+		mySQL.getConnection().send(
 			"""
 			|INSERT INTO crash_reports
 			|SET

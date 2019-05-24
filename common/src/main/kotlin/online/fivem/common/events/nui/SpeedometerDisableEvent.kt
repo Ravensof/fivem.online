@@ -1,6 +1,5 @@
 package online.fivem.common.events.nui
 
-import kotlinx.serialization.Serializable
+import online.fivem.common.other.Serializable
 
-@Serializable
-class SpeedometerDisableEvent
+class SpeedometerDisableEvent : Serializable()

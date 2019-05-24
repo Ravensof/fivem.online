@@ -1,14 +1,10 @@
 package online.fivem.common.events.net
 
-import kotlinx.serialization.ContextualSerialization
-import kotlinx.serialization.Serializable
 import online.fivem.common.entities.Weather
+import online.fivem.common.other.Serializable
 
-@Serializable
 data class ServerSideSynchronizationEvent(
 	var serverTime: Double,
 
-	@ContextualSerialization
 	var weather: Weather? = null
-
-)
+) : Serializable()

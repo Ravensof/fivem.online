@@ -1,19 +1,38 @@
 package online.fivem.client.modules.nui_event_exchanger
 
-import kotlinx.coroutines.launch
-import online.fivem.common.common.Event
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.ReceiveChannel
+import online.fivem.common.common.AbstractProcessEvent
+import online.fivem.common.other.Serializable
+import kotlin.reflect.KClass
 
-object NuiEvent : Event() {
+object NuiEvent {
 
-	override suspend fun emit(data: Any) {
+	private val channels = mutableMapOf<KClass<out Any>, BroadcastChannel<Any>>()
+
+	suspend fun emit(data: Serializable) {
 		NuiEventExchangerModule.channel.send(data)
 	}
 
-	fun emitAsync(data: Any) = launch {
-		emit(data)
+	suspend fun handle(data: Any) {
+		channels.filter {
+			it.key.isInstance(data)
+		}.forEach {
+			it.value.send(data)
+		}
+
+		if (data is AbstractProcessEvent<*>) {
+			data.start()
+		}
 	}
 
-	suspend fun handle(data: Any) {
-		super.emit(data)
+	fun <T : Any> openSubscription(kClass: KClass<T>): ReceiveChannel<T> {
+		return getChannel(kClass).openSubscription()
+	}
+
+	private fun <T : Any> getChannel(kClass: KClass<T>): BroadcastChannel<T> {
+		return channels
+			.getOrPut(kClass) { BroadcastChannel(1) }
+			.unsafeCast<BroadcastChannel<T>>()
 	}
 }

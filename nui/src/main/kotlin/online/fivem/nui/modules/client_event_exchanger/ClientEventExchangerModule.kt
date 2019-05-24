@@ -12,6 +12,7 @@ import online.fivem.common.events.net.ImReadyEvent
 import online.fivem.common.extensions.deserialize
 import online.fivem.common.extensions.serializeToPacket
 import online.fivem.common.other.NuiPacket
+import online.fivem.common.other.Serializable
 import online.fivem.nui.common.AbstractNuiModule
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.EventListener
@@ -76,6 +77,6 @@ class ClientEventExchangerModule : AbstractNuiModule(), EventListener {
 	}
 
 	companion object {
-		val channel = Channel<Any>()
+		val channel = Channel<Serializable>()
 	}
 }

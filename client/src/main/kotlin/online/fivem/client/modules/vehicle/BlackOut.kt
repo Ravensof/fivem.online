@@ -56,7 +56,9 @@ class BlackOut : AbstractClientModule() {
 			}
 		}
 
-		Sounds.SHOCK_EFFECT.prefetch()
+		launch {
+			Sounds.SHOCK_EFFECT.prefetch()
+		}
 	}
 
 	override fun onStop(): Job? {

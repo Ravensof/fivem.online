@@ -4,7 +4,7 @@ import kotlin.reflect.KClass
 
 interface SerializerInterface {
 
-	fun <T : Any> serialize(obj: T): String
+	fun <T : Serializable> serialize(obj: T): String
 
 	fun deserialize(string: String, serializerId: Int = -1): Any
 
