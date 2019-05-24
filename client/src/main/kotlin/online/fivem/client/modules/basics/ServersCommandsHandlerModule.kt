@@ -19,25 +19,32 @@ import kotlin.js.Date
 
 class ServersCommandsHandlerModule : AbstractClientModule() {
 
-	private val dateTime by moduleLoader.delegate<DateTimeModule>()
-	private val weatherModule by moduleLoader.delegate<WeatherModule>()
+	private lateinit var dateTime: DateTimeModule
+	private lateinit var weatherModule: WeatherModule
 
-	private val spawnManager by moduleLoader.delegate<SpawnManagerModule>()
-	private val joinTransition by moduleLoader.delegate<JoinTransitionModule>()
+	private lateinit var spawnManager: SpawnManagerModule
+	private lateinit var joinTransition: JoinTransitionModule
 
 	private var lastSync = 0.0
 
 	override fun onInit() {
-		ServerEvent.apply {
-			on<ServerSideSynchronizationEvent> { onServerRequest(it) }
-			on<SpawnPlayerEvent> { onPlayerSpawn(it.coordinatesX, it.model) }
-		}
-
 		Event.apply {
 			on<PauseMenuStateChangedEvent.Enabled> {
 				if (Date.now() - lastSync >= SYNC_TIME_THRESHOLD_MILLISECONDS) synchronizeToServer()
 			}
 //			on<SpawnVehicleEvent> { onVehicleSpawn(it) }
+		}
+	}
+
+	override fun onStart() = launch {
+		dateTime = moduleLoader.getModule(DateTimeModule::class)
+		weatherModule = moduleLoader.getModule(WeatherModule::class)
+		spawnManager = moduleLoader.getModule(SpawnManagerModule::class)
+		joinTransition = moduleLoader.getModule(JoinTransitionModule::class)
+
+		ServerEvent.apply {
+			on<ServerSideSynchronizationEvent> { onServerRequest(it) }
+			on<SpawnPlayerEvent> { onPlayerSpawn(it.coordinatesX, it.model) }
 		}
 	}
 

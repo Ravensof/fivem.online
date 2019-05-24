@@ -1,7 +1,6 @@
 package online.fivem.server.modules.basics
 
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import online.fivem.common.common.Utils
 import online.fivem.common.common.VDate
 import online.fivem.common.entities.Weather
@@ -12,20 +11,19 @@ import online.fivem.server.common.AbstractServerModule
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.PI
 import kotlin.math.cos
-import kotlin.math.pow
 import kotlin.math.sin
 
 class NatureControlSystemModule(override val coroutineContext: CoroutineContext) : AbstractServerModule() {
 
-	private val synchronizationModule by moduleLoader.delegate<SynchronizationModule>()
+	override fun onStart() = launch {
+		val synchronizationModule = moduleLoader.getModule(SynchronizationModule::class)
 
-	override fun onStart(): Job? {
-		repeatJob(CALCULATE_WEATHER_PERIOD_SECONDS * 1_000) {
+		this@NatureControlSystemModule.repeatJob(CALCULATE_WEATHER_PERIOD_SECONDS * 1_000) {
 
 			val currentTime = synchronizationModule.date.time
 			val currentTemperature = currentTemperature(currentTime)
 
-			val derivative = derivative(currentTime) * 10.0.pow(8)
+//			val derivative = derivative(currentTime) * 10.0.pow(8)
 
 			val cal = calculations(currentTime)
 			val diff = cal.second - cal.first
@@ -92,18 +90,11 @@ class NatureControlSystemModule(override val coroutineContext: CoroutineContext)
 				temperature = currentTemperature
 			)
 		}
-
-		return super.onStart()
 	}
 
-	override fun onStop(): Job? {
-		cancel()
-		return super.onStop()
-	}
-
-	private fun derivative(currentTime: Double): Double {
-		return (currentTemperature(currentTime) - currentTemperature(currentTime - 1_000)) / 1_000
-	}
+//	private fun derivative(currentTime: Double): Double {
+//		return (currentTemperature(currentTime) - currentTemperature(currentTime - 1_000)) / 1_000
+//	}
 
 //	private fun currentWetness(currentTime: Double): Double {
 //		return 0.0

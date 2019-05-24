@@ -19,10 +19,10 @@ import online.fivem.server.ServerConfig
 import online.fivem.server.common.AbstractServerModule
 import online.fivem.server.entities.Player
 import online.fivem.server.events.PlayerConnectedEvent
-import online.fivem.server.extensions.getConnection
-import online.fivem.server.extensions.send
 import online.fivem.server.gtav.Natives
 import online.fivem.server.modules.basics.mysql.MySQLModule
+import online.fivem.server.modules.basics.mysql.extensions.getConnection
+import online.fivem.server.modules.basics.mysql.extensions.send
 import online.fivem.server.modules.client_event_exchanger.ClientEvent
 import kotlin.coroutines.CoroutineContext
 import kotlin.js.Date

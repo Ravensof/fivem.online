@@ -6,9 +6,9 @@ import online.fivem.common.common.Console
 import online.fivem.common.events.net.ErrorReportEvent
 import online.fivem.server.common.AbstractServerModule
 import online.fivem.server.entities.Player
-import online.fivem.server.extensions.getConnection
-import online.fivem.server.extensions.send
 import online.fivem.server.modules.basics.mysql.MySQLModule
+import online.fivem.server.modules.basics.mysql.extensions.getConnection
+import online.fivem.server.modules.basics.mysql.extensions.send
 import online.fivem.server.modules.client_event_exchanger.ClientEvent
 
 class ClientsErrorReportingsModule : AbstractServerModule() {

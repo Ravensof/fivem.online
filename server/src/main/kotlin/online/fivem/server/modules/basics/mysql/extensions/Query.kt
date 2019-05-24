@@ -1,4 +1,4 @@
-package online.fivem.server.extensions
+package online.fivem.server.modules.basics.mysql.extensions
 
 import external.nodejs.mysql.Connection
 import external.nodejs.require

@@ -1,7 +1,9 @@
 package online.fivem.common.common
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 import online.fivem.common.events.local.ModuleLoadedEvent
 import online.fivem.common.extensions.receiveAndCancel
 import online.fivem.common.extensions.stackTrace
@@ -43,23 +45,27 @@ class ModuleLoader(override val coroutineContext: CoroutineContext = createJob()
 
 		val startJob = launch {
 			queue.forEach { module ->
-				try {
-					Console.log("start module ${module::class.simpleName}")
-					module.onStart()?.join()
-					modules.add(module)
+				launch {
+					try {
+						Console.log("start module ${module::class.simpleName}")
+						withTimeout(MODULE_LOADING_TIMEOUT) { module.onStart()?.join() }
+						Console.log("loaded module ${module::class.simpleName}")
 
-					val event = ModuleLoadedEvent(module)
+						modules.add(module)
 
-					Event.emit(event)
+						val event = ModuleLoadedEvent(module)
 
-					loadedModulesRepository
-						.getChannel(module::class)
-						.send(module)
+						Event.emit(event)
 
-				} catch (exception: Throwable) {
-					Console.error(
-						"failed to start module ${module::class.simpleName}: \n" + exception.stackTrace()
-					)
+						loadedModulesRepository
+							.getChannel(module::class)
+							.send(module)
+
+					} catch (exception: Throwable) {
+						Console.error(
+							"failed to start module ${module::class.simpleName}: \n" + exception.stackTrace()
+						)
+					}
 				}
 			}
 		}
@@ -74,6 +80,7 @@ class ModuleLoader(override val coroutineContext: CoroutineContext = createJob()
 			try {
 				Console.log("stop module ${it::class.simpleName}")
 				it.onStop()?.join()
+				it.cancel()
 			} catch (exception: Throwable) {
 				Console.error(
 					"failed to stop module ${it::class.simpleName}: \n" +
@@ -111,5 +118,9 @@ class ModuleLoader(override val coroutineContext: CoroutineContext = createJob()
 
 			return module
 		}
+	}
+
+	private companion object {
+		const val MODULE_LOADING_TIMEOUT: Long = 60_000
 	}
 }
