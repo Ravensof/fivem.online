@@ -1,6 +1,7 @@
 package online.fivem.client.modules.vehicle
 
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.entities.Vehicle
 import online.fivem.client.events.PlayerLeftOrJoinVehicleEvent
@@ -9,7 +10,6 @@ import online.fivem.common.common.Event
 import online.fivem.common.events.nui.SpeedometerDisableEvent
 import online.fivem.common.events.nui.SpeedometerEnableEvent
 import online.fivem.common.events.nui.SpeedometerUpdateEvent
-import online.fivem.common.extensions.cancelAndJoin
 import online.fivem.common.extensions.repeatJob
 
 class Speedometer : AbstractClientModule() {

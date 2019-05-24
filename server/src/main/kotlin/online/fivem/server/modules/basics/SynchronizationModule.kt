@@ -1,7 +1,7 @@
 package online.fivem.server.modules.basics
 
 import external.nodejs.mysql.Pool
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -58,11 +58,10 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 		requestJob.start()
 	}
 
-	override fun onStop(): Job? {
-		requestJob.cancel()
-		synchronizationJob.cancel()
+	override fun onStop() = launch {
+		requestJob.cancelAndJoin()
+		synchronizationJob.cancelAndJoin()
 
-		return null
 //		Console.info("saving player data")
 //
 //		return launch {

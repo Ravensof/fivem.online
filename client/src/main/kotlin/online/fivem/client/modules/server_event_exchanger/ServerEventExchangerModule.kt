@@ -1,7 +1,7 @@
 package online.fivem.client.modules.server_event_exchanger
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -15,7 +15,7 @@ import online.fivem.common.events.net.EstablishConnectionEvent
 import online.fivem.common.events.net.ImReadyEvent
 import online.fivem.common.events.net.StopResourceEvent
 import online.fivem.common.extensions.deserialize
-import online.fivem.common.extensions.forEach
+import online.fivem.common.extensions.receiveAndCancel
 import online.fivem.common.extensions.serializeToPacket
 import online.fivem.common.other.ClientsNetPacket
 import online.fivem.common.other.Serializable
@@ -43,43 +43,42 @@ class ServerEventExchangerModule : AbstractClientModule() {
 	}
 
 	@ExperimentalCoroutinesApi
-	override fun onStart(): Job? {
+	override fun onStart() = launch {
 
-		val pauseChannel = Channel<Boolean>()
-
-		launch {
-			ServerEvent.openSubscription(EstablishConnectionEvent::class).forEach {
-				key = it.key
-				ServerEvent.emit(ImReadyEvent())
-				pauseChannel.close()
-			}
-		}
-
-		launch {
-			for (data in channel) {
-				Natives.emitNet(
-					eventName = GlobalConfig.NET_EVENT_NAME,
-					data = ClientsNetPacket(
-						Serializer.serializeToPacket(data),
-						playersCount = Client.getNumberOfPlayers(),
-						key = key
-					)
-				)
-			}
-		}
+		val key = async { ServerEvent.openSubscription(EstablishConnectionEvent::class).receiveAndCancel().key }
 
 		launch {
 			Console.log("connecting to server..")
-			while (!pauseChannel.isClosedForSend) {
+
+			while (!key.isCompleted) {
 				startHandshaking()
 				delay(10_000)
 			}
 		}
 
-		return launch {
-			pauseChannel.forEach { }
-			Console.log("connected to server")
+		this@ServerEventExchangerModule.key = key.await()
+		emit(ImReadyEvent())
+
+		Console.log("connected to server")
+
+		startEventSender()
+	}
+
+	private fun startEventSender() = launch {
+		for (data in channel) {
+			emit(data)
 		}
+	}
+
+	private fun emit(data: Serializable) {
+		Natives.emitNet(
+			eventName = GlobalConfig.NET_EVENT_NAME,
+			data = ClientsNetPacket(
+				Serializer.serializeToPacket(data),
+				playersCount = Client.getNumberOfPlayers(),
+				key = key
+			)
+		)
 	}
 
 	private fun startHandshaking() {

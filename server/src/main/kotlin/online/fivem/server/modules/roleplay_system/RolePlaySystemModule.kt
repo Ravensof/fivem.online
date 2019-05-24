@@ -10,9 +10,9 @@ import online.fivem.server.common.AbstractServerModule
 import online.fivem.server.entities.Player
 import online.fivem.server.entities.mysqlEntities.CharacterEntity
 import online.fivem.server.events.PlayerConnectedEvent
-import online.fivem.server.extensions.getConnection
-import online.fivem.server.extensions.row
 import online.fivem.server.modules.basics.mysql.MySQLModule
+import online.fivem.server.modules.basics.mysql.extensions.getConnection
+import online.fivem.server.modules.basics.mysql.extensions.row
 import online.fivem.server.modules.client_event_exchanger.ClientEvent
 
 class RolePlaySystemModule : AbstractServerModule() {

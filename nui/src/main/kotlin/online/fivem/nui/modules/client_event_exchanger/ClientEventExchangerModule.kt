@@ -10,6 +10,7 @@ import online.fivem.common.Serializer
 import online.fivem.common.common.Console
 import online.fivem.common.events.net.ImReadyEvent
 import online.fivem.common.extensions.deserialize
+import online.fivem.common.extensions.receiveAndCancel
 import online.fivem.common.extensions.serializeToPacket
 import online.fivem.common.other.NuiPacket
 import online.fivem.common.other.Serializable
@@ -20,33 +21,37 @@ import kotlin.browser.window
 
 class ClientEventExchangerModule : AbstractNuiModule(), EventListener {
 
-	override fun onStart(): Job? {
-		window.addEventListener("message", this)
+	override fun onStart() = launch {
+		window.addEventListener("message", this@ClientEventExchangerModule)
 
-		val channel = Channel<Unit>()
+		Console.log("connecting to client")
 
-		ClientEvent.on<ImReadyEvent> {
-			channel.close()
+		val waitForClient = launch { ClientEvent.openSubscription(ImReadyEvent::class).receiveAndCancel() }
+
+		while (!waitForClient.isCompleted) {
+			emit(ImReadyEvent())
+			delay(1_000)
 		}
 
-		launch {
-			for (data in ClientEventExchangerModule.channel) {
-				jQuery.post(
-					"http://${GlobalConfig.MODULE_NAME}/${GlobalConfig.NUI_EVENT_NAME}",
+		Console.log("connected to client")
 
-					JSON.stringify(
-						NuiPacket(Serializer.serializeToPacket(data))
-					)
-				)
-			}
-		}
+		startEventSender()
+	}
 
-		return launch {
-			while (!channel.isClosedForReceive) {
-				ClientEvent.emit(ImReadyEvent())
-				delay(1_000)
-			}
+	private fun startEventSender() = launch {
+		for (data in channel) {
+			emit(data)
 		}
+	}
+
+	private fun emit(data: Serializable) {
+		jQuery.post(
+			"http://${GlobalConfig.MODULE_NAME}/${GlobalConfig.NUI_EVENT_NAME}",
+
+			JSON.stringify(
+				NuiPacket(Serializer.serializeToPacket(data))
+			)
+		)
 	}
 
 	override fun onStop(): Job? {

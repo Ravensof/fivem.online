@@ -1,6 +1,5 @@
 package online.fivem.client.modules.nui_event_exchanger
 
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import online.fivem.client.common.AbstractClientModule
@@ -11,7 +10,7 @@ import online.fivem.common.Serializer
 import online.fivem.common.common.Console
 import online.fivem.common.events.net.ImReadyEvent
 import online.fivem.common.extensions.deserialize
-import online.fivem.common.extensions.forEach
+import online.fivem.common.extensions.receiveAndCancel
 import online.fivem.common.extensions.serializeToPacket
 import online.fivem.common.other.NuiPacket
 import online.fivem.common.other.Serializable
@@ -21,7 +20,6 @@ class NuiEventExchangerModule : AbstractClientModule() {
 	override fun onInit() {
 		Exports.onNui(GlobalConfig.NUI_EVENT_NAME) { rawPacket ->
 			try {
-
 				val packet = rawPacket.unsafeCast<NuiPacket>()
 				val data = Serializer.deserialize(packet)
 
@@ -34,30 +32,29 @@ class NuiEventExchangerModule : AbstractClientModule() {
 		}
 	}
 
-	override fun onStart(): Job? {
+	override fun onStart() = launch {
 
-		launch {
-			try {
-				for (data in channel) {
-					Client.sendNuiMessage(
-						NuiPacket(Serializer.serializeToPacket(data))
-					)
-				}
-			} catch (exception: Throwable) {
-				Console.error("NuiEventExchangerModule: ${exception.message}")
-			}
+		Console.log("waiting for nui")
+
+		NuiEvent.openSubscription(ImReadyEvent::class).receiveAndCancel()
+
+		emit(ImReadyEvent())
+
+		Console.log("nui connected")
+
+		startEventSender()
+	}
+
+	private fun startEventSender() = launch {
+		for (data in channel) {
+			emit(data)
 		}
+	}
 
-		val channel = Channel<Unit>()
-
-		NuiEvent.on<ImReadyEvent> {
-			channel.close()
-		}
-
-		return launch {
-			channel.forEach {}
-			NuiEvent.emit(ImReadyEvent())
-		}
+	private fun emit(data: Serializable) {
+		Client.sendNuiMessage(
+			NuiPacket(Serializer.serializeToPacket(data))
+		)
 	}
 
 	companion object {
