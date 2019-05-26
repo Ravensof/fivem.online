@@ -10,7 +10,7 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
-class ModuleLoader(override val coroutineContext: CoroutineContext = createJob()) : CoroutineScope {
+class ModuleLoader(override val coroutineContext: CoroutineContext = createSupervisorJob()) : CoroutineScope {
 
 	private val startQueue = mutableListOf<AbstractModule>()
 

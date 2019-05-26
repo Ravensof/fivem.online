@@ -31,7 +31,7 @@ class RolePlaySystemModule : AbstractServerModule() {
 		ClientEvent.emit(SpawnPlayerEvent(coordinatesX, pedHash), player)
 	}
 
-	private suspend fun onPlayerConnected(player: Player) {
+	private fun onPlayerConnected(player: Player) = launch {
 
 		val character =
 			mySQL.getConnection().row<CharacterEntity>(
@@ -40,7 +40,7 @@ class RolePlaySystemModule : AbstractServerModule() {
 						|WHERE user_id=?
 						|""".trimMargin(),
 				arrayOf(player.userId)
-			) ?: return player.drop(Strings.NO_SUCH_CHARACTER)
+			) ?: return@launch player.drop(Strings.NO_SUCH_CHARACTER)
 
 		player.characterId = character.id
 

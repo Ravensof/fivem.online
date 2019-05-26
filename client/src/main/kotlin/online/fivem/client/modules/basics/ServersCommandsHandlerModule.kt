@@ -80,7 +80,7 @@ class ServersCommandsHandlerModule : AbstractClientModule() {
 		synchronizeToServer()
 	}
 
-	private suspend fun synchronizeToServer() {
+	private fun synchronizeToServer() = launch {
 
 		val syncData = mutableListOf<KotlinXSerializationPacket>()
 

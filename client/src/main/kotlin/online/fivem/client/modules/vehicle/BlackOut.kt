@@ -28,9 +28,11 @@ class BlackOut : AbstractClientModule() {
 	override fun onInit() {
 		Event.apply {
 			on<PlayerSpawnProcess> {
-				isAllowed = false
-				it.join()
-				isAllowed = true
+				launch {
+					isAllowed = false
+					it.join()
+					isAllowed = true
+				}
 			}
 			on<PlayersPedHealthChangedEvent.Zero> {
 				if (!isAllowed) return@on
@@ -89,7 +91,7 @@ class BlackOut : AbstractClientModule() {
 			timeLeft -= time
 		}
 
-		Sounds.SHOCK_EFFECT.play()
+		launch { Sounds.SHOCK_EFFECT.play() }
 		delay(2_000)
 		api.unMuteSound(muteHandle)
 		api.unLockControl(lockHandle)

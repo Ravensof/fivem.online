@@ -81,7 +81,7 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 //		}
 	}
 
-	private suspend fun syncDataFor(playerSrc: PlayerSrc) {
+	private fun syncDataFor(playerSrc: PlayerSrc) = launch {
 		syncData.serverTime = Date.now() + Natives.getPlayerPing(playerSrc).orZero()
 		ClientEvent.emit(syncData, playerSrc)
 	}

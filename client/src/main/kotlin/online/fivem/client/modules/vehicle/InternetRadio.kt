@@ -1,6 +1,5 @@
 package online.fivem.client.modules.vehicle
 
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.events.PlayerRadioStationChangedEvent
@@ -34,21 +33,20 @@ class InternetRadio : AbstractClientModule() {
 			}
 		}
 
-		Event.apply {
-			on<PlayerRadioStationChangedEvent> { onPlayerVehicleRadioStationChanged(it.radioStation) }
-			on<ProfileSettingUpdatedEvent.AudioMusicLevelInMP> {
-				onSettingsMusicLevelChanged(it.value)
-			}
+		Event.on<PlayerRadioStationChangedEvent> {
+			onPlayerVehicleRadioStationChanged(it.radioStation)
+		}
+
+		Event.on<ProfileSettingUpdatedEvent.AudioMusicLevelInMP> {
+			onSettingsMusicLevelChanged(it.value)
 		}
 	}
 
-	override fun onStart(): Job? {
-		return launch {
-			NuiEvent.emit(InternetRadioVolumeChangeEvent(this@InternetRadio.volume))
-		}
+	override fun onStart() = launch {
+		NuiEvent.emit(InternetRadioVolumeChangeEvent(this@InternetRadio.volume))
 	}
 
-	override fun onStop(): Job? = launch {
+	override fun onStop() = launch {
 		stopRadio()
 	}
 
@@ -68,7 +66,7 @@ class InternetRadio : AbstractClientModule() {
 		return radioStation?.let { radioStationList[it.name] }
 	}
 
-	private suspend fun onPlayerVehicleRadioStationChanged(radioStation: RadioStation?) {
+	private fun onPlayerVehicleRadioStationChanged(radioStation: RadioStation?) = launch {
 
 		val internetRadioStation = getInternetRadioStation(radioStation)
 
@@ -79,8 +77,8 @@ class InternetRadio : AbstractClientModule() {
 		}
 	}
 
-	private suspend fun onSettingsMusicLevelChanged(volume: Int) {
-		this.volume = volume.toDouble() / 10 * MAX_VOLUME
+	private fun onSettingsMusicLevelChanged(volume: Int) = launch {
+		this@InternetRadio.volume = volume.toDouble() / 10 * MAX_VOLUME
 
 		NuiEvent.emit(InternetRadioVolumeChangeEvent(this@InternetRadio.volume))
 	}

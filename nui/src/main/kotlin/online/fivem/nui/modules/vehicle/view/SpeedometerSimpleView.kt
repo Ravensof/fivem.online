@@ -8,7 +8,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import online.fivem.common.common.Html
 import online.fivem.common.common.Utils
-import online.fivem.common.common.createJob
+import online.fivem.common.common.createSupervisorJob
 import online.fivem.nui.common.View
 import online.fivem.nui.extensions.getImage
 import online.fivem.nui.extensions.nuiResourcesLink
@@ -17,7 +17,7 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.js.Date
 
 class SpeedometerSimpleView : View(), CoroutineScope {
-	override val coroutineContext: CoroutineContext = createJob()
+	override val coroutineContext: CoroutineContext = createSupervisorJob()
 
 	var data: SpeedometerData? = null
 		set(value) {
@@ -108,7 +108,7 @@ class SpeedometerSimpleView : View(), CoroutineScope {
 					lastRpm += stepRPM
 					lastSpeed += stepSpeed
 
-					if (i != INTERPOLATION_STEPS && !speedometerInterpolatorChannel.isFull) {
+					if (i != INTERPOLATION_STEPS) {
 						delay(del - (Date.now() - drawingTime).toLong())
 					}
 				}

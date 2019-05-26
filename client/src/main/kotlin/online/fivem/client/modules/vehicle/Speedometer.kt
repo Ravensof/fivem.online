@@ -2,6 +2,7 @@ package online.fivem.client.modules.vehicle
 
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.launch
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.entities.Vehicle
 import online.fivem.client.events.PlayerLeftOrJoinVehicleEvent
@@ -63,7 +64,7 @@ class Speedometer : AbstractClientModule() {
 		}
 	}
 
-	private suspend fun onPlayerLeftVehicle() {
+	private fun onPlayerLeftVehicle() = launch {
 		updateJob?.cancelAndJoin()
 		vehicleHasSpeedo = false
 		NuiEvent.emit(SpeedometerDisableEvent())

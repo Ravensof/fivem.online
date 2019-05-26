@@ -144,7 +144,7 @@ object GlobalConfig {
 	//dont touch
 	const val RESOURCES_HTTP_HOME = "http://$SERVER_IP:$HTTP_PORT/"
 
-	const val CONSOLE_PREFIX = "$MODULE_NAME/"
+	const val CONSOLE_PREFIX = ""
 
 	const val NUI_EVENT_NAME = "nui"
 	const val NET_EVENT_NAME = "net"

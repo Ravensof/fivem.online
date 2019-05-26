@@ -2,7 +2,7 @@ package online.fivem.server.modules.basics
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import online.fivem.common.common.createJob
+import online.fivem.common.common.createSupervisorJob
 import online.fivem.server.entities.Player
 import online.fivem.server.gtav.Natives.registerCommand
 import kotlin.coroutines.CoroutineContext
@@ -10,7 +10,7 @@ import kotlin.coroutines.CoroutineContext
 private typealias Handler = suspend (Player?, Array<String>, String) -> Unit
 
 object CommandEvent : CoroutineScope {
-	override val coroutineContext: CoroutineContext = createJob()
+	override val coroutineContext: CoroutineContext = createSupervisorJob()
 
 	private val handlers = mutableMapOf<String, Handler>()
 

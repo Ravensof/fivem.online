@@ -8,6 +8,7 @@ import online.fivem.common.GlobalConfig
 import online.fivem.common.GlobalConfig.CONSOLE_PREFIX
 import kotlin.coroutines.CoroutineContext
 import kotlin.js.Console
+import kotlin.js.Date
 
 object Console : Console, CoroutineScope {
 	override val coroutineContext: CoroutineContext = Job()
@@ -27,7 +28,7 @@ object Console : Console, CoroutineScope {
 
 	override fun error(vararg o: Any?) {
 		if (GlobalConfig.SHOW_CONSOLE_ERROR) {
-			var str = "$CONSOLE_PREFIX[ERROR]: "
+			var str = "${getTimeStamp()}$CONSOLE_PREFIX[ERROR]: "
 			o.forEach {
 				str += it
 			}
@@ -37,7 +38,7 @@ object Console : Console, CoroutineScope {
 
 	override fun info(vararg o: Any?) {
 		if (GlobalConfig.SHOW_CONSOLE_INFO) {
-			var str = "$CONSOLE_PREFIX[INFO]: "
+			var str = "${getTimeStamp()}$CONSOLE_PREFIX[INFO]: "
 			o.forEach {
 				str += it
 			}
@@ -47,7 +48,7 @@ object Console : Console, CoroutineScope {
 
 	override fun log(vararg o: Any?) {
 		if (GlobalConfig.SHOW_CONSOLE_LOG) {
-			var str = "$CONSOLE_PREFIX[LOG]: "
+			var str = "${getTimeStamp()}$CONSOLE_PREFIX[LOG]: "
 			o.forEach {
 				str += it
 			}
@@ -57,7 +58,7 @@ object Console : Console, CoroutineScope {
 
 	override fun warn(vararg o: Any?) {
 		if (GlobalConfig.SHOW_CONSOLE_WARN) {
-			var str = "$CONSOLE_PREFIX[WARN]: "
+			var str = "${getTimeStamp()}$CONSOLE_PREFIX[WARN]: "
 			o.forEach {
 				str += it
 			}
@@ -67,12 +68,22 @@ object Console : Console, CoroutineScope {
 
 	fun debug(vararg o: Any?) {
 		if (GlobalConfig.SHOW_CONSOLE_DEBUG) {
-			var str = "$CONSOLE_PREFIX[DEBUG]: "
+			var str = "${getTimeStamp()}$CONSOLE_PREFIX[DEBUG]: "
 			o.forEach {
 				str += it
 			}
 			launch { channel.send(str) }
 		}
+	}
+
+	private fun getTimeStamp(): String {
+		val date = Date()
+
+		return "[" +
+//				"${date.getUTCFullYear()}." +
+				"${date.getUTCMonth()}." +
+				"${date.getUTCDate()}/" +
+				"${date.getUTCHours()}:${date.getUTCMinutes()}:${date.getUTCSeconds()}.${date.getUTCMilliseconds()}]"
 	}
 
 	@Deprecated("check value")
