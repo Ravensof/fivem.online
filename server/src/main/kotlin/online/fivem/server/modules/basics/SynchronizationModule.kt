@@ -42,10 +42,7 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 
 	override fun onInit() {
 		ClientEvent.on<SyncEvent> { player, synchronizeEvent ->
-
-			launch {
-				syncDataChannel.send(player to synchronizeEvent)
-			}
+			syncDataChannel.send(player to synchronizeEvent)
 		}
 
 		Event.on<PlayerConnectedEvent> { syncDataFor(it.player.playerSrc) }

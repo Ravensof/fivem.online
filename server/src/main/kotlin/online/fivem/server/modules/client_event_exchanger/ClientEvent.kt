@@ -1,5 +1,7 @@
 package online.fivem.server.modules.client_event_exchanger
 
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.ReceiveChannel
 import online.fivem.common.entities.PlayerSrc
 import online.fivem.common.other.Serializable
 import online.fivem.server.entities.Player
@@ -7,13 +9,21 @@ import kotlin.reflect.KClass
 
 object ClientEvent {
 
-	val guestHandlers = mutableListOf<Pair<KClass<*>, suspend (PlayerSrc, Any) -> Unit>>()
-	val playerHandlers = mutableListOf<Pair<KClass<*>, suspend (Player, Any) -> Unit>>()
+	private const val CHANNEL_CAPACITY = 1
 
-	suspend fun emit(
-		data: Serializable,
-		player: Player
-	) = emit(data, player.playerSrc)
+	private val guestChannels =
+		mutableMapOf<KClass<*>, BroadcastChannel<GuestParams<*>>>()
+	private val playerChannels =
+		mutableMapOf<KClass<*>, BroadcastChannel<PlayerParams<*>>>()
+
+
+	fun <T : Any> openSubscription(kClass: KClass<T>): ReceiveChannel<PlayerParams<T>> {
+		return getPlayerChannel(kClass).openSubscription()
+	}
+
+	fun <T : Any> openGuestSubscription(kClass: KClass<T>): ReceiveChannel<GuestParams<T>> {
+		return getGuestChannel(kClass).openSubscription()
+	}
 
 	suspend fun emit(
 		data: Serializable,
@@ -27,27 +37,62 @@ object ClientEvent {
 		)
 	}
 
-	inline fun <reified T : Any> on(noinline function: suspend (Player, T) -> Unit) {
-		playerHandlers.add(T::class to function.unsafeCast<(suspend (Player, Any) -> Unit)>())
-	}
+	suspend fun emit(
+		data: Serializable,
+		player: Player
+	) = emit(data, player.playerSrc)
 
-	inline fun <reified T : Any> onGuest(noinline function: suspend (PlayerSrc, T) -> Unit) {
-		guestHandlers.add(T::class to function.unsafeCast<(suspend (PlayerSrc, Any) -> Unit)>())
-	}
-
-	suspend fun handleGuest(playerSrc: PlayerSrc, data: Any) {
-		guestHandlers.forEach {
-			if (it.first.isInstance(data)) {
-				it.second(playerSrc, data)
+	suspend fun <T : Any> handleGuest(playerSrc: PlayerSrc, data: T) {
+		guestChannels.filter { it.key.isInstance(data) }
+			.forEach {
+				it.value.send(
+					GuestParams(
+						playerSrc = playerSrc,
+						data = data
+					)
+				)
 			}
-		}
 	}
 
 	suspend fun handle(player: Player, data: Any) {
-		playerHandlers.forEach {
-			if (it.first.isInstance(data)) {
-				it.second(player, data)
+		playerChannels.filter { it.key.isInstance(data) }
+			.forEach {
+				it.value.send(
+					PlayerParams(
+						player = player,
+						data = data
+					)
+				)
 			}
-		}
 	}
+
+	private fun <T : Any> getPlayerChannel(
+		kClass: KClass<T>,
+		channelCapacity: Int = CHANNEL_CAPACITY
+	): BroadcastChannel<PlayerParams<T>> {
+
+		return playerChannels.getOrPut(kClass) {
+			BroadcastChannel(channelCapacity)
+		}.unsafeCast<BroadcastChannel<PlayerParams<T>>>()
+	}
+
+	private fun <T : Any> getGuestChannel(
+		kClass: KClass<T>,
+		channelCapacity: Int = CHANNEL_CAPACITY
+	): BroadcastChannel<GuestParams<T>> {
+
+		return guestChannels.getOrPut(kClass) {
+			BroadcastChannel(channelCapacity)
+		}.unsafeCast<BroadcastChannel<GuestParams<T>>>()
+	}
+
+	class PlayerParams<T : Any> constructor(
+		val data: T,
+		val player: Player
+	)
+
+	class GuestParams<T : Any> constructor(
+		val data: T,
+		val playerSrc: PlayerSrc
+	)
 }

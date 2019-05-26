@@ -54,7 +54,6 @@ class SpeedometerModule(override val coroutineContext: CoroutineContext) : Abstr
 	override fun onInit() {
 		ClientEvent.apply {
 			on<SpeedometerUpdateEvent> {
-				if (speedometerInterpolatorChannel.isFull) return@on
 
 				launch {
 					speedometerInterpolatorChannel.send(
@@ -131,7 +130,7 @@ class SpeedometerModule(override val coroutineContext: CoroutineContext) : Abstr
 					lastRpm += stepRPM
 					lastSpeed += stepSpeed
 
-					if (i != INTERPOLATION_STEPS && !speedometerInterpolatorChannel.isFull) {
+					if (i != INTERPOLATION_STEPS && speedometerInterpolatorChannel.isEmpty) {
 						delay(del - (Date.now() - drawingTime).toLong())
 					}
 				}

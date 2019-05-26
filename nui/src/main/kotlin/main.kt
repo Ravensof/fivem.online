@@ -1,3 +1,4 @@
+import kotlinx.coroutines.launch
 import online.fivem.common.common.Console
 import online.fivem.common.common.ModuleLoader
 import online.fivem.nui.modules.basics.BasicsModule
@@ -9,17 +10,24 @@ internal fun main() {
 	Console.log("nui side loading..")
 
 	ModuleLoader().apply {
+		launch {
+			add(BasicsModule())
 
-		add(BasicsModule())
+			add(VehicleModule())
 
-		add(VehicleModule())
+			add(VoiceTransmissionModule())
 
-		add(VoiceTransmissionModule())
+			val clientEventExchangerModule = ClientEventExchangerModule().also {
+				add(it, manualStart = true)
+			}
 
-		add(ClientEventExchangerModule())//last
+			add(Test())
 
-		finally {
+			startAll()
+
+			start(clientEventExchangerModule)
+
 			Console.log("all modules loaded")
 		}
-	}.start()
+	}
 }

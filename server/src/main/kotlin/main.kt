@@ -1,3 +1,4 @@
+import kotlinx.coroutines.launch
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.Console
 import online.fivem.common.common.ModuleLoader
@@ -24,15 +25,22 @@ private fun start() {
 	Console.log("server side loading..")
 
 	ModuleLoader().apply {
+		launch {
+			add(BasicsModule())
 
-		add(BasicsModule())
+			add(RolePlaySystemModule())
 
-		add(RolePlaySystemModule())
+			add(Test())
 
-		add(ClientEventExchangerModule())//last
+			val clientEventExchangerModule = ClientEventExchangerModule().also {
+				add(it, manualStart = true)//last
+			}
 
-		finally {
+			startAll()
+
+			start(clientEventExchangerModule)
+
 			Console.log("server side loaded")
 		}
-	}.start()
+	}
 }

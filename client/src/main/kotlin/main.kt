@@ -1,3 +1,4 @@
+import kotlinx.coroutines.launch
 import online.fivem.client.gtav.Natives
 import online.fivem.client.modules.basics.BasicsModule
 import online.fivem.client.modules.eventGenerator.EventGeneratorModule
@@ -23,22 +24,29 @@ fun start() {
 	Console.log("client side loading..")
 
 	ModuleLoader().apply {
+		launch {
 
-		add(NuiEventExchangerModule())//first
+			add(NuiEventExchangerModule())
 
-		add(BasicsModule())
+			add(BasicsModule())
 
-		add(VehicleModule())
+			add(VehicleModule())
 
-		add(RolePlaySystemModule())
+			add(RolePlaySystemModule())
 
-		add(EventGeneratorModule())//pre last
+			add(EventGeneratorModule())//pre last
 
-		add(ServerEventExchangerModule())//last
+			val serverExchangerModule = ServerEventExchangerModule().also {
+				add(it, manualStart = true)//last
+			}
 
-		finally {
+			add(Test())
+
+			startAll()
+
+			start(serverExchangerModule)
 
 			Console.log("all modules loaded")
 		}
-	}.start()
+	}
 }

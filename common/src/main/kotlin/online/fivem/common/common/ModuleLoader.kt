@@ -13,8 +13,7 @@ import kotlin.reflect.KProperty
 
 class ModuleLoader(override val coroutineContext: CoroutineContext = createJob()) : CoroutineScope {
 
-	private val queue = mutableListOf<AbstractModule>()
-	private var finally = {}
+	private val startQueue = mutableListOf<AbstractModule>()
 
 	private val modules = mutableListOf<AbstractModule>()
 
@@ -22,57 +21,57 @@ class ModuleLoader(override val coroutineContext: CoroutineContext = createJob()
 
 	private var isStarted = false
 
-	fun add(module: AbstractModule) {
+	fun add(module: AbstractModule, manualStart: Boolean = false) {
 		try {
-			if (isStarted) throw IllegalStateException("you have to use ModuleLoader::add() only in AbstractModule::onInit()")
+			if (isStarted) throw IllegalStateException("you have to call ModuleLoader::add() before ModuleLoader::startAll()")
 
 			module.moduleLoader = this@ModuleLoader
 			module.onInit()
 
-			queue.add(module)
-
+			if (!manualStart) {
+				startQueue.add(module)
+			}
 		} catch (exception: Throwable) {
 			Console.error("failed to load module ${module::class.simpleName}: \r\n${exception.message}\r\n ${exception.cause}")
 		}
 	}
 
-	fun finally(function: () -> Unit) {
-		finally = function
-	}
-
-	fun start() = launch {
+	suspend fun startAll() {
 		isStarted = true
 
 		val startJob = launch {
-			queue.forEach { module ->
+			startQueue.forEach { module ->
 				launch {
-					try {
-						Console.log("start module ${module::class.simpleName}")
-						withTimeout(MODULE_LOADING_TIMEOUT) { module.onStart()?.join() }
-						Console.log("loaded module ${module::class.simpleName}")
-
-						modules.add(module)
-
-						val event = ModuleLoadedEvent(module)
-
-						Event.emit(event)
-
-						loadedModulesRepository
-							.getChannel(module::class)
-							.send(module)
-
-					} catch (exception: Throwable) {
-						Console.error(
-							"failed to start module ${module::class.simpleName}: \n" + exception.stackTrace()
-						)
-					}
+					start(module)
 				}
 			}
+			startQueue.clear()
 		}
 
 		startJob.join()
+	}
 
-		finally.invoke()
+	suspend fun start(module: AbstractModule) {
+		try {
+			Console.log("start module ${module::class.simpleName}")
+			withTimeout(MODULE_LOADING_TIMEOUT) { module.onStart()?.join() }
+			Console.log("loaded module ${module::class.simpleName}")
+
+			modules.add(module)
+
+			val event = ModuleLoadedEvent(module)
+
+			Event.emit(event)
+
+			loadedModulesRepository
+				.getChannel(module::class)
+				.send(module)
+
+		} catch (exception: Throwable) {
+			Console.error(
+				"failed to start module ${module::class.simpleName}: \n" + exception.stackTrace()
+			)
+		}
 	}
 
 	fun stop() = launch {
