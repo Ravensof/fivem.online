@@ -4,7 +4,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
-import online.fivem.common.events.local.ModuleLoadedEvent
 import online.fivem.common.extensions.receiveAndCancel
 import online.fivem.common.extensions.stackTrace
 import kotlin.coroutines.CoroutineContext
@@ -58,10 +57,6 @@ class ModuleLoader(override val coroutineContext: CoroutineContext = createJob()
 			Console.log("loaded module ${module::class.simpleName}")
 
 			modules.add(module)
-
-			val event = ModuleLoadedEvent(module)
-
-			Event.emit(event)
 
 			loadedModulesRepository
 				.getChannel(module::class)

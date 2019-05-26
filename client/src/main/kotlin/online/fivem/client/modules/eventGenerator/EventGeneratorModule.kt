@@ -7,6 +7,7 @@ import online.fivem.client.entities.Ped
 import online.fivem.client.entities.Vehicle
 import online.fivem.client.events.*
 import online.fivem.client.extensions.getSeatOfPedInVehicle
+import online.fivem.client.extensions.isVehicleRadioEnabled
 import online.fivem.client.gtav.Client
 import online.fivem.common.common.Event
 import online.fivem.common.entities.Coordinates
@@ -249,7 +250,7 @@ class EventGeneratorModule : AbstractClientModule() {
 
 	private suspend fun checkRadio() {
 		val currentRadio =
-			if (playersVehicle?.isEngineRunning() == true) Client.getRadioStation() else null
+			if (playersVehicle?.isEngineRunning() == true && Client.isVehicleRadioEnabled()) Client.getRadioStation() else null
 
 		if (currentRadio != playerRadioStationName) {
 			Event.emit(PlayerRadioStationChangedEvent(currentRadio))

@@ -1,18 +1,22 @@
 package online.fivem.client.modules.eventGenerator
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import online.fivem.common.common.Event
-import online.fivem.common.common.createJob
+import online.fivem.common.common.createSupervisorJob
 import online.fivem.common.entities.Coordinates
 import online.fivem.common.extensions.compareTo
 import online.fivem.common.extensions.distance
+import online.fivem.common.extensions.forEach
 import kotlin.coroutines.CoroutineContext
 
 object CoordinatesEvent : CoroutineScope {
-	override val coroutineContext: CoroutineContext = createJob()
+	override val coroutineContext: CoroutineContext = createSupervisorJob()
 
 	init {
-		Event.on<Coordinates> { handle(it) }
+		launch {
+			Event.openSubscription(Coordinates::class).forEach { handle(it) }
+		}
 	}
 
 	private val onJoinHandlers = mutableMapOf<Point, () -> Unit>()

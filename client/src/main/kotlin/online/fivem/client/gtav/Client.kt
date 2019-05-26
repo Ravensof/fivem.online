@@ -2389,6 +2389,15 @@ object Client {
 		return GetPlayerRadioStationName()?.let { RadioStation.valueOf(it) }
 	}
 
+	fun getPlayerRadioStationIndex(): Int? {
+		return GetPlayerRadioStationIndex().takeIf { it != 255 }
+	}
+
+
+	fun getAudibleMusicTrackTextId(): Int {
+		return GetAudibleMusicTrackTextId()
+	}
+
 	/**
 	 * Sets whether or not `SHUTDOWN_LOADING_SCREEN` automatically shuts down the NUI frame for the loading screen. If this is enabled,
 	 * you will have to manually invoke `SHUTDOWN_LOADING_SCREEN_NUI` whenever you want to hide the NUI loading screen.
@@ -6853,7 +6862,7 @@ private external fun FreezeEntityPosition(entity: EntityId, toggle: Boolean)
 //private external fun GetAspectRatio(b: boolean): number;
 //private external fun GetScreenAspectRatio(b: boolean): number;
 
-//private external fun GetAudibleMusicTrackTextId(): number;
+private external fun GetAudibleMusicTrackTextId(): Int
 
 //private external fun GetBenchmarkTime(): number;
 //private external fun N_0xe599a503b3837e1b(): number;
@@ -29808,7 +29817,7 @@ private external fun GetPlayerInvincible(player: Int): Number
 /**
  * Returns 255 (radio off index) if the function fails.
  */
-//private external fun GetPlayerRadioStationIndex(): number;
+private external fun GetPlayerRadioStationIndex(): Int
 
 private external fun GetPlayerRadioStationName(): String?
 
@@ -29922,7 +29931,7 @@ private external fun IsPlayerControlOn(player: Int): Number
  * Returns TRUE if the game is in online mode and FALSE if in offline mode.
  * This is an alias for NETWORK_IS_SIGNED_ONLINE.
  */
-//private external fun IsPlayerOnline(): number;//todo test? может поможет определить одиночную сессию
+//private external fun IsPlayerOnline(): number;
 
 /**
  * Checks whether the specified player has a Ped, the Ped is not dead, is not injured and is not arrested.

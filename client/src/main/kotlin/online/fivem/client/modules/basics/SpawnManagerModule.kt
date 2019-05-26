@@ -12,7 +12,6 @@ import online.fivem.common.common.Console
 import online.fivem.common.common.Event
 import online.fivem.common.common.Stack
 import online.fivem.common.entities.CoordinatesX
-import online.fivem.common.extensions.emitAsync
 import online.fivem.common.extensions.onNull
 
 class SpawnManagerModule : AbstractClientModule() {

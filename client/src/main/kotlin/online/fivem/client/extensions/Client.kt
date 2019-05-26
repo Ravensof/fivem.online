@@ -158,3 +158,5 @@ fun Client.wasPhotoTaken(): Boolean {
 fun Client.savePhoto(unk: Int) {
 	Natives.invokeNative<Nothing>("0x3dec726c25a11bac")
 }
+
+fun Client.isVehicleRadioEnabled() = getAudibleMusicTrackTextId() != 1
