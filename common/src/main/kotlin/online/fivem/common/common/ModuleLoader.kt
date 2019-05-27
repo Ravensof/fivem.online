@@ -31,7 +31,12 @@ class ModuleLoader(override val coroutineContext: CoroutineContext = createSuper
 				startQueue.add(module)
 			}
 		} catch (exception: Throwable) {
-			Console.error("failed to load module ${module::class.simpleName}: \r\n${exception.message}\r\n ${exception.cause}")
+			ExceptionsStorage.add(
+				Exception(
+					"failed to load module ${module::class.simpleName}: \r\n${exception.message}\r\n ${exception.cause}",
+					exception
+				)
+			)
 		}
 	}
 
@@ -63,8 +68,10 @@ class ModuleLoader(override val coroutineContext: CoroutineContext = createSuper
 				.send(module)
 
 		} catch (exception: Throwable) {
-			Console.error(
-				"failed to start module ${module::class.simpleName}: \n" + exception.stackTrace()
+			ExceptionsStorage.add(
+				Exception(
+					"failed to start module ${module::class.simpleName}: \n" + exception.stackTrace(), exception
+				)
 			)
 		}
 	}

@@ -28,9 +28,9 @@ body, html {
 	right: 0;
 }
 
-/*.has-background-dark {*/
-/*	background-color: rgba(0, 0, 0, 0.80) !important*/
-/*}*/
+.has-background-dark {
+	background-color: rgba(0, 0, 0, 0.80) !important
+}
 
 #debug {
 	white-space: pre-line;

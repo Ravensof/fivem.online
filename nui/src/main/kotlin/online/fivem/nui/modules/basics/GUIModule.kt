@@ -15,7 +15,8 @@ import kotlin.coroutines.CoroutineContext
 
 class GUIModule(override val coroutineContext: CoroutineContext) : AbstractNuiModule() {
 
-	private var mainView: MainView? = null
+	lateinit var mainView: MainView
+		private set
 
 	private val iframeLoading = async {
 		val channel = Channel<Unit>()
@@ -44,9 +45,9 @@ class GUIModule(override val coroutineContext: CoroutineContext) : AbstractNuiMo
 
 	private fun onShowGui(show: Boolean) {
 		if (show) {
-			mainView?.view?.fadeIn()
+			mainView.view.fadeIn()
 		} else {
-			mainView?.view?.fadeOut()
+			mainView.view.fadeOut()
 		}
 	}
 

@@ -21,7 +21,7 @@ class BlackScreenModule(override val coroutineContext: CoroutineContext) :
 			""".trimIndent()
 		)
 		blackBlock.hide()
-		jQuery("body").append(blackBlock)
+		jQuery("body").prepend(blackBlock)
 
 		ClientEvent.apply {
 			on<BlackOutEvent> {

@@ -1,6 +1,5 @@
 package online.fivem.client.modules.basics
 
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.events.PauseMenuStateChangedEvent
@@ -56,11 +55,9 @@ class ServersCommandsHandlerModule : AbstractClientModule() {
 //		}
 //	}
 
-	override fun onStop(): Job? {
-		return launch {
-			synchronizeToServer()
-			NuiEvent.emit(StopResourceEvent())
-		}
+	override fun onStop() = launch {
+		synchronizeToServer()
+		NuiEvent.emit(StopResourceEvent())
 	}
 
 	private fun onPlayerSpawn(coordinatesX: CoordinatesX, model: Int?) = launch {

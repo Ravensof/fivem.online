@@ -1,5 +1,6 @@
 package online.fivem.nui.modules.vehicle
 
+import js.externals.jquery.JQuery
 import js.externals.jquery.jQuery
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -13,9 +14,11 @@ import online.fivem.common.events.nui.SpeedometerUpdateEvent
 import online.fivem.nui.common.AbstractNuiModule
 import online.fivem.nui.extensions.nuiResourcesLink
 import online.fivem.nui.extensions.toHTMLImageElement
+import online.fivem.nui.modules.basics.GUIModule
 import online.fivem.nui.modules.client_event_exchanger.ClientEvent
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
+import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLImageElement
 import kotlin.browser.document
 import kotlin.coroutines.CoroutineContext
@@ -31,13 +34,7 @@ class SpeedometerModule(override val coroutineContext: CoroutineContext) : Abstr
 		jQuery("<img src=\"$RESOURCES_DIR/arrow-tachometer.svg\"/>").toHTMLImageElement()
 	}
 
-	private val speedometerBlock by lazy {
-		jQuery(
-			"""<div class="speedometer" style="display: none">
-			<link rel="stylesheet" href="$RESOURCES_DIR/style.css">
-			</div>""".trimIndent()
-		)
-	}
+	private var speedometerBlock: JQuery<HTMLElement>? = null
 
 	private val speedometerInterpolatorChannel = Channel<SpeedometerData>(1)
 
@@ -54,7 +51,6 @@ class SpeedometerModule(override val coroutineContext: CoroutineContext) : Abstr
 	override suspend fun onInit() {
 		ClientEvent.apply {
 			on<SpeedometerUpdateEvent> {
-
 				launch {
 					speedometerInterpolatorChannel.send(
 						SpeedometerData(
@@ -66,20 +62,21 @@ class SpeedometerModule(override val coroutineContext: CoroutineContext) : Abstr
 			}
 			on<SpeedometerEnableEvent> {
 				runSpeedometer()
-				speedometerBlock.fadeIn()
+				speedometerBlock?.fadeIn()
 			}
 			on<SpeedometerDisableEvent> {
-				speedometerBlock.fadeOut()
+				speedometerBlock?.fadeOut()
 				drawInterpolatorJob?.cancel()
 			}
 		}
 	}
 
-	override fun onStart(): Job? {
-		speedometerBlock.append(canvas)
-		jQuery("#content").append(speedometerBlock)
+	override fun onStart() = launch {
+		val gui = moduleLoader.getModule(GUIModule::class)
 
-		return super.onStart()
+		speedometerBlock = gui.mainView.view.find("#speedometer")
+		speedometerBlock?.hide()
+		speedometerBlock?.append(canvas)
 	}
 
 	override fun onStop(): Job? {
