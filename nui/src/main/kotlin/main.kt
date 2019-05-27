@@ -7,7 +7,7 @@ import online.fivem.nui.modules.test.Test
 import online.fivem.nui.modules.vehicle.VehicleModule
 import online.fivem.nui.modules.voice_transmission.VoiceTransmissionModule
 
-internal fun main() {
+private fun main() {
 	Console.log("nui side loading..")
 
 	ModuleLoader().apply {

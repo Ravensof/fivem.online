@@ -21,7 +21,7 @@ class HttpServerModule(override val coroutineContext: CoroutineContext) : Abstra
 	private val app = express.getInstance()
 	private var server: Server? = null
 
-	override fun onInit() {
+	override suspend fun onInit() {
 		app.use("/common", express.static(ROOT_DIR + "common"))
 		app.use("/nui", express.static(ROOT_DIR + "nui"))
 	}

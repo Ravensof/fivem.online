@@ -35,7 +35,7 @@ class ClientEventExchangerModule : AbstractServerModule() {
 
 	private val sessionModule by moduleLoader.delegate<SessionModule>()
 
-	override fun onInit() {
+	override suspend fun onInit() {
 		Exports.on(NativeEvents.Server.PLAYER_DROPPED) { playerId: Int, _: String -> onPlayerDropped(playerId) }
 
 		Natives.onNet(GlobalConfig.NET_EVENT_NAME, ::onNetEvent)

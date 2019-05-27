@@ -26,7 +26,7 @@ class InternetRadio : AbstractClientModule() {
 
 	private val radioStationList = GlobalConfig.internetRadioStations
 
-	override fun onInit() {
+	override suspend fun onInit() {
 		radioStationList.forEach {
 			it.value.name?.let { name ->
 				Client.addTextEntry(it.key, name)

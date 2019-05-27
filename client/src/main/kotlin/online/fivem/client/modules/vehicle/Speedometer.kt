@@ -17,7 +17,7 @@ class Speedometer : AbstractClientModule() {
 	private var vehicleHasSpeedo = false
 	private var updateJob: Job? = null
 
-	override fun onInit() {
+	override suspend fun onInit() {
 		Event.apply {
 			on<PlayerLeftOrJoinVehicleEvent.Join.Driver> { onPlayerJoinVehicle(it.vehicle) }
 			on<PlayerLeftOrJoinVehicleEvent.Left> { onPlayerLeftVehicle() }

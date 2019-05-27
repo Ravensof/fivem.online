@@ -25,7 +25,7 @@ class BlackOut : AbstractClientModule() {
 	private var timeLeft: Long = 0
 	private var isAllowed = false
 
-	override fun onInit() {
+	override suspend fun onInit() {
 		Event.apply {
 			on<PlayerSpawnProcess> {
 				launch {

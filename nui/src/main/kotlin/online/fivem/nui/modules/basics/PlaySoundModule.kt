@@ -13,7 +13,7 @@ import online.fivem.nui.modules.client_event_exchanger.ClientEvent
 import kotlin.coroutines.CoroutineContext
 
 class PlaySoundModule(override val coroutineContext: CoroutineContext) : AbstractNuiModule() {
-	override fun onInit() {
+	override suspend fun onInit() {
 		ClientEvent.on<PlaySoundEvent> {
 			play(it.sound, it.volume) {
 				launch {

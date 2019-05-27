@@ -10,7 +10,7 @@ import online.fivem.server.modules.client_event_exchanger.ClientEventExchangerMo
 import online.fivem.server.modules.roleplay_system.RolePlaySystemModule
 import online.fivem.server.modules.test.Test
 
-internal fun main() {
+private fun main() {
 
 	if (CURRENT_RESOURCE_NAME != GlobalConfig.MODULE_NAME)
 		throw Exception("GlobalConfig.MODULE_NAME should be set in $CURRENT_RESOURCE_NAME")

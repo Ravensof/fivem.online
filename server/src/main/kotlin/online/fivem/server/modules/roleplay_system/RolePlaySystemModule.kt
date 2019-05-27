@@ -19,7 +19,7 @@ class RolePlaySystemModule : AbstractServerModule() {
 
 	private lateinit var mySQL: Pool
 
-	override fun onInit() {
+	override suspend fun onInit() {
 		Event.on<PlayerConnectedEvent> { onPlayerConnected(it.player) }
 	}
 

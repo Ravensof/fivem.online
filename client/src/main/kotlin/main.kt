@@ -12,7 +12,7 @@ import online.fivem.common.common.Console
 import online.fivem.common.common.ModuleLoader
 import online.fivem.common.gtav.NativeEvents
 
-internal fun main() {
+private fun main() {
 
 	Natives.on(NativeEvents.Client.RESOURCE_START) { resource: String ->
 		if (resource == GlobalConfig.MODULE_NAME) {
@@ -21,7 +21,7 @@ internal fun main() {
 	}
 }
 
-fun start() {
+private fun start() {
 	Console.log("client side loading..")
 
 	ModuleLoader().apply {

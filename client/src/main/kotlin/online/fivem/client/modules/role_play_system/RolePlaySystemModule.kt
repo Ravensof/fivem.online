@@ -17,7 +17,7 @@ class RolePlaySystemModule : AbstractClientModule() {
 
 	private val tickExecutor by moduleLoader.delegate<TickExecutorModule>()
 
-	override fun onInit() {
+	override suspend fun onInit() {
 		Event.apply {
 			on<PlayerVehicleSeatEvent.Join.Passenger> {
 				if (it.seatIndex == 0) {

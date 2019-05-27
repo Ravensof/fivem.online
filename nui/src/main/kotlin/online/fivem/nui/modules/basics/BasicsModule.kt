@@ -9,7 +9,7 @@ import online.fivem.nui.modules.client_event_exchanger.ClientEvent
 
 class BasicsModule : AbstractNuiModule() {
 
-	override fun onInit() {
+	override suspend fun onInit() {
 
 		ClientEvent.on<PrefetchFileEvent> {
 			Html.prefetch(it.files.map {

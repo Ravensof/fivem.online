@@ -1,6 +1,5 @@
 package online.fivem.nui.modules.basics
 
-import js.externals.jquery.jQuery
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import online.fivem.common.events.nui.DebugNUITextEvent
@@ -16,8 +15,7 @@ class DebugModule(
 	private val containerView: View
 ) : AbstractNuiModule() {
 
-	private val container = jQuery("#content")
-	private val debugBlock by lazy { container.find("#debug") }
+	private val debugBlock by lazy { containerView.view.find("#debug") }
 	private var timeLeft: Double = 0.0
 
 	private val showJob by lazy {
@@ -29,7 +27,9 @@ class DebugModule(
 		}
 	}
 
-	override fun onInit() {
+	override suspend fun onInit() {
+		debugBlock.hide()
+
 		ClientEvent.on<DebugNUITextEvent> { onConsoleLogWeb(it.id, it.text) }
 	}
 

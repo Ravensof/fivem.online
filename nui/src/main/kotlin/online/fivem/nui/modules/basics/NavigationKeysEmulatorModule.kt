@@ -13,7 +13,7 @@ import kotlin.browser.window
 import kotlin.coroutines.CoroutineContext
 
 class NavigationKeysEmulatorModule(override val coroutineContext: CoroutineContext) : AbstractNuiModule() {
-	override fun onInit() {
+	override suspend fun onInit() {
 		ClientEvent.apply {
 			on<NuiEmulateKeyDownEvent> {
 				//			val event=jQuery.Event("keydown", it.code)

@@ -10,7 +10,7 @@ import kotlin.coroutines.CoroutineContext
 class BlackScreenModule(override val coroutineContext: CoroutineContext) :
 	AbstractNuiModule() {
 
-	override fun onInit() {
+	override suspend fun onInit() {
 		val blackBlock = jQuery(
 			"""
 				<div style="

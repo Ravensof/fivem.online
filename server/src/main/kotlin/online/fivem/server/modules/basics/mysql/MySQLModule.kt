@@ -12,7 +12,7 @@ class MySQLModule(override val coroutineContext: CoroutineContext) : AbstractSer
 
 	private val mysql = require("mysql").unsafeCast<external.nodejs.mysql.MySQL>()
 
-	override fun onInit() {
+	override suspend fun onInit() {
 		testConnection()
 	}
 

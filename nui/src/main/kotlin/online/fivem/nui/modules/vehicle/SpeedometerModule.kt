@@ -51,7 +51,7 @@ class SpeedometerModule(override val coroutineContext: CoroutineContext) : Abstr
 		context2D.canvas.height = 212
 	}
 
-	override fun onInit() {
+	override suspend fun onInit() {
 		ClientEvent.apply {
 			on<SpeedometerUpdateEvent> {
 

@@ -40,7 +40,7 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 
 	private lateinit var mySQL: Pool
 
-	override fun onInit() {
+	override suspend fun onInit() {
 		ClientEvent.on<SyncEvent> { player, synchronizeEvent ->
 			syncDataChannel.send(player to synchronizeEvent)
 		}

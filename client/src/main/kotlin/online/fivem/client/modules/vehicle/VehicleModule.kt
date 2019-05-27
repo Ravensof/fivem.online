@@ -4,7 +4,7 @@ import online.fivem.client.common.AbstractClientModule
 
 class VehicleModule : AbstractClientModule() {
 
-	override fun onInit() {
+	override suspend fun onInit() {
 		moduleLoader.apply {
 			add(InternetRadio())
 			add(Speedometer())

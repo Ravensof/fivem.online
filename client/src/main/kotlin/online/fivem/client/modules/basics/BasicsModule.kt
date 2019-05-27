@@ -15,7 +15,7 @@ class BasicsModule : AbstractClientModule() {
 
 	private var handleShowNui = Stack.UNDEFINED_INDEX
 
-	override fun onInit() {
+	override suspend fun onInit() {
 		Event.on<PauseMenuStateChangedEvent> { onPauseMenuStateChanged(it.previousState) }
 
 		moduleLoader.apply {

@@ -5,7 +5,7 @@ import online.fivem.server.modules.basics.mysql.MySQLModule
 
 class BasicsModule : AbstractServerModule() {
 
-	override fun onInit() {
+	override suspend fun onInit() {
 		arrayOf(
 			MySQLModule(coroutineContext),
 			CommandsModule(coroutineContext),

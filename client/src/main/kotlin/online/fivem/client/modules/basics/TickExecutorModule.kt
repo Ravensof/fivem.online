@@ -10,7 +10,7 @@ class TickExecutorModule : AbstractClientModule() {
 
 	private val tickFunctions = Stack<() -> Unit>()
 
-	override fun onInit() {
+	override suspend fun onInit() {
 		setTick {
 			try {
 				tickFunctions.forEach { it() }

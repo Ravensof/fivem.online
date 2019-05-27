@@ -14,7 +14,7 @@ import online.fivem.common.extensions.stackTrace
 
 class ErrorReporterModule : AbstractClientModule(), ExceptionsStorage.Listener {
 
-	override fun onInit() {
+	override suspend fun onInit() {
 		launch {
 			moduleLoader.getModule(ServerEventExchangerModule::class)
 

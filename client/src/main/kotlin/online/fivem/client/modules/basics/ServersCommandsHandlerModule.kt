@@ -27,7 +27,7 @@ class ServersCommandsHandlerModule : AbstractClientModule() {
 
 	private var lastSync = 0.0
 
-	override fun onInit() {
+	override suspend fun onInit() {
 		Event.apply {
 			on<PauseMenuStateChangedEvent.Enabled> {
 				if (Date.now() - lastSync >= SYNC_TIME_THRESHOLD_MILLISECONDS) synchronizeToServer()

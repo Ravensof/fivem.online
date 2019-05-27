@@ -16,7 +16,7 @@ abstract class AbstractModule : CoroutineScope {
 
 	lateinit var moduleLoader: ModuleLoader
 
-	open fun onInit() {}
+	open suspend fun onInit() {}
 
 	open fun onStart(): Job? = null
 

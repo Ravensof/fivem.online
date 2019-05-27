@@ -25,7 +25,7 @@ class ServerEventExchangerModule : AbstractClientModule() {
 
 	var key: Double? = null
 
-	override fun onInit() {
+	override suspend fun onInit() {
 		Natives.onNet(GlobalConfig.NET_EVENT_NAME) { rawPacket: Any ->
 			try {
 				val packet = rawPacket.unsafeCast<ServersNetPacket>()

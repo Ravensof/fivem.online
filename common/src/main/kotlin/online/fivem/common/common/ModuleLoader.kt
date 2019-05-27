@@ -20,7 +20,7 @@ class ModuleLoader(override val coroutineContext: CoroutineContext = createSuper
 
 	private var isStarted = false
 
-	fun add(module: AbstractModule, manualStart: Boolean = false) {
+	suspend fun add(module: AbstractModule, manualStart: Boolean = false) {
 		try {
 			if (isStarted) throw IllegalStateException("you have to call ModuleLoader::add() before ModuleLoader::startAll()")
 

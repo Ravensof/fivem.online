@@ -17,7 +17,7 @@ import online.fivem.common.other.Serializable
 
 class NuiEventExchangerModule : AbstractClientModule() {
 
-	override fun onInit() {
+	override suspend fun onInit() {
 		Exports.onNui(GlobalConfig.NUI_EVENT_NAME) { rawPacket ->
 			try {
 				val packet = rawPacket.unsafeCast<NuiPacket>()

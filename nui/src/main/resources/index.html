@@ -1,41 +1,34 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="overflow: hidden">
 <head>
 	<meta charset="UTF-8">
-	<title>NUI</title>
-	<style>
-		html, body {
-			margin: 0;
-			padding: 0;
-			height: 100%;
-			width: 100%;
-		}
+	<meta content="width=device-width, initial-scale=1" name="viewport">
 
-		.debug {
-			max-width: 300px;
-			min-width: 100px;
-			padding: 15px;
-			font-family: Arial, Helvetica, sans-serif;
-			font-size: 14px;
-			color: #ffffff;
-			background: rgba(0, 0, 0, 0.80);
-			position: absolute;
+	<style>
+		body, html {
+			width: 100%;
+			height: 100%;
+			margin: 0;
 		}
 	</style>
+
+	<title>NUI</title>
 </head>
 <body>
 
-<div class="content" id="content">
-	<style>
-		div.content {
-			height: 100%;
-			width: 100%;
-			position: absolute;
-		}
-	</style>
+<iframe id="content" style="width: 100%; height: 100%; border-width: 0;">
+	page is not available
+</iframe>
 
-	<div class="debug" id="debug" style="display: none"></div>
-</div>
+<script>
+	var iframeLoadedListener = function () {
+		console.log("listener isn't set")
+	}
+
+	function iframeLoaded() {
+		iframeLoadedListener()
+	}
+</script>
 
 <script src="js/jquery-3.3.1.min.js"></script>
 
@@ -52,8 +45,8 @@
 
 <script src="../../../nui/lib/kotlinx-html-js.js"></script>
 
-<script src="../../../nui/resources/main/js/howler_2.0.15.core.min.js"></script>
-<script src="../../../nui/resources/main/js/jquery.scrollTo.min.js"></script>
+<script src="js/howler_2.0.15.core.min.js"></script>
+<script src="js/jquery.scrollTo.min.js"></script>
 
 <script src="../../../nui/lib/nui.js"></script>
 

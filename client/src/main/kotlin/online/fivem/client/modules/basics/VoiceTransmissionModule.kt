@@ -20,7 +20,7 @@ class VoiceTransmissionModule : AbstractClientModule() {
 
 	var playerPed: Ped? = null
 
-	override fun onInit() {
+	override suspend fun onInit() {
 		Event.apply {
 			on<PlayersPedChangedEvent> { playerPed = it.ped }
 		}

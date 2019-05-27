@@ -31,7 +31,7 @@ class SessionModule(override val coroutineContext: CoroutineContext) : AbstractS
 
 	private lateinit var mySQL: Pool
 
-	override fun onInit() {
+	override suspend fun onInit() {
 		Exports.on(NativeEvents.Server.PLAYER_CONNECTING, ::onClientConnecting)
 		Exports.on(NativeEvents.Server.PLAYER_DROPPED, ::onPlayerDropped)
 

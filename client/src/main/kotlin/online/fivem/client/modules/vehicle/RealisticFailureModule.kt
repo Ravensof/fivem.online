@@ -59,7 +59,7 @@ class RealisticFailureModule : AbstractClientModule() {
 	private var mainJob: Job? = null
 	private var tickHandle = Stack.UNDEFINED_INDEX
 
-	override fun onInit() {
+	override suspend fun onInit() {
 		Event.apply {
 			on<PlayerLeftOrJoinVehicleEvent.Join.Driver> { onJoinVehicle(it.vehicle) }
 			on<PlayerLeftOrJoinVehicleEvent.Changed> { onChangeVehicle(it.vehicle, it.previousVehicle) }
