@@ -13,7 +13,6 @@ import online.fivem.common.Serializer
 import online.fivem.common.common.Console
 import online.fivem.common.events.net.EstablishConnectionEvent
 import online.fivem.common.events.net.ImReadyEvent
-import online.fivem.common.events.net.StopResourceEvent
 import online.fivem.common.extensions.deserialize
 import online.fivem.common.extensions.receiveAndCancel
 import online.fivem.common.extensions.serializeToPacket
@@ -25,7 +24,7 @@ class ServerEventExchangerModule : AbstractClientModule() {
 
 	var key: Double? = null
 
-	override suspend fun onInit() {
+	init {
 		Natives.onNet(GlobalConfig.NET_EVENT_NAME) { rawPacket: Any ->
 			try {
 				val packet = rawPacket.unsafeCast<ServersNetPacket>()
@@ -38,8 +37,6 @@ class ServerEventExchangerModule : AbstractClientModule() {
 				Console.error("${e.message} ${JSON.stringify(rawPacket)}")
 			}
 		}
-
-		ServerEvent.on<StopResourceEvent> { moduleLoader.stop() }
 	}
 
 	@ExperimentalCoroutinesApi

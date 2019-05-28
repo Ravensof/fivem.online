@@ -1,9 +1,11 @@
 package online.fivem.server.modules.basics
 
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import online.fivem.common.common.Utils
 import online.fivem.common.common.VDate
 import online.fivem.common.entities.Weather
+import online.fivem.common.events.net.ServerSideSynchronizationEvent
 import online.fivem.common.extensions.orZero
 import online.fivem.common.extensions.repeatJob
 import online.fivem.common.gtav.NativeWeather
@@ -15,57 +17,69 @@ import kotlin.math.sin
 
 class NatureControlSystemModule(override val coroutineContext: CoroutineContext) : AbstractServerModule() {
 
+	private var previousWeather: Weather? = null
+	private var currentWeather: Weather? = null
+	private val date = VDate()
+
 	override fun onStart() = launch {
-		val synchronizationModule = moduleLoader.getModule(SynchronizationModule::class)
+		startWeatherGenerator()
+	}
 
-		this@NatureControlSystemModule.repeatJob(CALCULATE_WEATHER_PERIOD_SECONDS * 1_000) {
+	override fun onSync(exportObject: ServerSideSynchronizationEvent): Job? {
 
-			val currentTime = synchronizationModule.date.time
-			val currentTemperature = currentTemperature(currentTime)
+		exportObject.weather = currentWeather
+
+		return super.onSync(exportObject)
+	}
+
+	private fun startWeatherGenerator() = repeatJob(CALCULATE_WEATHER_PERIOD_SECONDS * 1_000) {
+
+		val currentTime = date.time
+		val currentTemperature = currentTemperature(currentTime)
 
 //			val derivative = derivative(currentTime) * 10.0.pow(8)
 
-			val cal = calculations(currentTime)
-			val diff = cal.second - cal.first
-			val weather: NativeWeather
+		val cal = calculations(currentTime)
+		val diff = cal.second - cal.first
+		val weather: NativeWeather
 
-			if (currentTemperature < 0) {
-				weather = NativeWeather.XMAS
-			} else {
+		if (currentTemperature < 0) {
+			weather = NativeWeather.XMAS
+		} else {
 
-				weather = when {
+			weather = when {
 
-					diff < -6.0 && currentTemperature < 5 -> {
-						NativeWeather.BLIZZARD //сильный ветер, осадки в виде снега
-					}
+				diff < -6.0 && currentTemperature < 5 -> {
+					NativeWeather.BLIZZARD //сильный ветер, осадки в виде снега
+				}
 
-					diff < -3.0 && currentTemperature < 5 -> {
-						NativeWeather.SNOWLIGHT
-					}
+				diff < -3.0 && currentTemperature < 5 -> {
+					NativeWeather.SNOWLIGHT
+				}
 
-					diff < 0.5 -> {
-						NativeWeather.EXTRASUNNY
-					}
+				diff < 0.5 -> {
+					NativeWeather.EXTRASUNNY
+				}
 
-					diff < 1.0 -> {
-						NativeWeather.CLEAR
-					}
+				diff < 1.0 -> {
+					NativeWeather.CLEAR
+				}
 
-					diff < 1.5 -> {
-						NativeWeather.CLOUDS
-					}
+				diff < 1.5 -> {
+					NativeWeather.CLOUDS
+				}
 
-					diff < 2.0 -> {
-						NativeWeather.OVERCAST//небо затянуто облаками
-					}
+				diff < 2.0 -> {
+					NativeWeather.OVERCAST//небо затянуто облаками
+				}
 
-					diff < 2.5 -> {
-						NativeWeather.FOGGY//облачно
-					}
+				diff < 2.5 -> {
+					NativeWeather.FOGGY//облачно
+				}
 
-					diff < 4.0 -> {
-						NativeWeather.RAIN
-					}
+				diff < 4.0 -> {
+					NativeWeather.RAIN
+				}
 
 //					diff < 0 -> {
 //						NativeWeather.CLEARING// моросящий дождь, слабооблачно
@@ -75,21 +89,21 @@ class NatureControlSystemModule(override val coroutineContext: CoroutineContext)
 //						NativeWeather.SMOG
 //					}
 
-					else -> {
-						NativeWeather.THUNDER
-					}
+				else -> {
+					NativeWeather.THUNDER
 				}
 			}
+		}
 
 //			Console.debug("weather calculated: ${weather.name} ${currentTemperature}tC (f'(x)=$derivative -> $diff)")
 
-			synchronizationModule.syncData.weather = Weather(
-				weather = weather,
-				appearanceTime = if (synchronizationModule.syncData.weather?.weather == weather) synchronizationModule.syncData.weather?.appearanceTime.orZero() else
-					currentTime + synchronizationModule.date.timeSpeed * TIME_IN_MILLISECONDS_FOR_APPLYING_WEATHER,
-				temperature = currentTemperature
-			)
-		}
+		previousWeather = this@NatureControlSystemModule.currentWeather
+		this@NatureControlSystemModule.currentWeather = Weather(
+			weatherName = weather.name,
+			appearanceTime = if (previousWeather?.weatherName == weather.name) previousWeather?.appearanceTime.orZero() else
+				currentTime + date.timeSpeed * TIME_IN_MILLISECONDS_FOR_APPLYING_WEATHER,
+			temperature = currentTemperature
+		)
 	}
 
 //	private fun derivative(currentTime: Double): Double {

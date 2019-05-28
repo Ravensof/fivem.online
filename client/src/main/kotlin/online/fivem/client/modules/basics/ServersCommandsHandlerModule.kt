@@ -3,30 +3,22 @@ package online.fivem.client.modules.basics
 import kotlinx.coroutines.launch
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.events.PauseMenuStateChangedEvent
-import online.fivem.client.modules.nui_event_exchanger.NuiEvent
 import online.fivem.client.modules.server_event_exchanger.ServerEvent
-import online.fivem.common.Serializer
 import online.fivem.common.common.Event
 import online.fivem.common.entities.CoordinatesX
-import online.fivem.common.events.net.ServerSideSynchronizationEvent
-import online.fivem.common.events.net.SpawnPlayerEvent
-import online.fivem.common.events.net.StopResourceEvent
-import online.fivem.common.events.net.SyncEvent
-import online.fivem.common.extensions.serializeToPacket
-import online.fivem.common.other.KotlinXSerializationPacket
+import online.fivem.common.events.net.*
 import kotlin.js.Date
 
 class ServersCommandsHandlerModule : AbstractClientModule() {
-
-	private lateinit var dateTime: DateTimeModule
-	private lateinit var weatherModule: WeatherModule
 
 	private lateinit var spawnManager: SpawnManagerModule
 	private lateinit var joinTransition: JoinTransitionModule
 
 	private var lastSync = 0.0
 
-	override suspend fun onInit() {
+	private val syncData = ClientSideSynchronizationEvent()
+
+	init {
 		Event.apply {
 			on<PauseMenuStateChangedEvent.Enabled> {
 				if (Date.now() - lastSync >= SYNC_TIME_THRESHOLD_MILLISECONDS) synchronizeToServer()
@@ -36,12 +28,11 @@ class ServersCommandsHandlerModule : AbstractClientModule() {
 	}
 
 	override fun onStart() = launch {
-		dateTime = moduleLoader.getModule(DateTimeModule::class)
-		weatherModule = moduleLoader.getModule(WeatherModule::class)
 		spawnManager = moduleLoader.getModule(SpawnManagerModule::class)
 		joinTransition = moduleLoader.getModule(JoinTransitionModule::class)
 
 		ServerEvent.apply {
+			on<StopResourceEvent> { onStopEvent(it.eventId) }
 			on<ServerSideSynchronizationEvent> { onServerRequest(it) }
 			on<SpawnPlayerEvent> { onPlayerSpawn(it.coordinatesX, it.model) }
 		}
@@ -55,9 +46,10 @@ class ServersCommandsHandlerModule : AbstractClientModule() {
 //		}
 //	}
 
-	override fun onStop() = launch {
-		synchronizeToServer()
-		NuiEvent.emit(StopResourceEvent())
+	private fun onStopEvent(eventId: Int) = launch {
+		synchronizeToServer().join()
+		ServerEvent.emit(AcceptEvent(eventId))
+		moduleLoader.stop()
 	}
 
 	private fun onPlayerSpawn(coordinatesX: CoordinatesX, model: Int?) = launch {
@@ -68,31 +60,28 @@ class ServersCommandsHandlerModule : AbstractClientModule() {
 
 	private suspend fun onServerRequest(event: ServerSideSynchronizationEvent) {
 
-		dateTime.date.serverRealTime = event.serverTime
+		launch {
+			moduleLoader.getLoadedModules().forEach {
+				if (it !is AbstractClientModule) return@forEach
 
-		event.weather?.let {
-			weatherModule.weatherQueue.send(it)
-		}
+				launch {
+					it.onSync(event)?.join()
+				}
+			}
+		}.join()
 
 		synchronizeToServer()
 	}
 
 	private fun synchronizeToServer() = launch {
 
-		val syncData = mutableListOf<KotlinXSerializationPacket>()
-
-		moduleLoader.getModules().forEach { module ->
+		moduleLoader.getLoadedModules().forEach { module ->
 			if (module !is AbstractClientModule) return@forEach
 
-			module.onSave()?.let { data ->
-				syncData.add(
-					Serializer.serializeToPacket(data)
-				)
-			}
+			module.onSync(syncData)?.join()
 		}
 
-		ServerEvent.emit(SyncEvent(syncData))
-
+		ServerEvent.emit(syncData)
 		lastSync = Date.now()
 	}
 

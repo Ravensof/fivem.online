@@ -1,16 +1,21 @@
 package online.fivem.client.common
 
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.launch
 import online.fivem.client.modules.nui_event_exchanger.NuiEvent
 import online.fivem.client.modules.server_event_exchanger.ServerEvent
 import online.fivem.common.common.AbstractModule
+import online.fivem.common.events.net.ClientSideSynchronizationEvent
+import online.fivem.common.events.net.ServerSideSynchronizationEvent
 import online.fivem.common.extensions.forEach
 import online.fivem.common.other.Serializable
 
 abstract class AbstractClientModule : AbstractModule() {
 
-	open suspend fun onSave(): Serializable? = null
+	open fun onSync(data: ServerSideSynchronizationEvent): Job? = null
+
+	open fun onSync(exportObject: ClientSideSynchronizationEvent): Job? = null
 
 	protected fun NuiEvent.emitAsync(data: Serializable) = launch {
 		emit(data)

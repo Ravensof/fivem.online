@@ -1,16 +1,21 @@
 package online.fivem.server.common
 
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.launch
 import online.fivem.common.common.AbstractModule
 import online.fivem.common.entities.PlayerSrc
+import online.fivem.common.events.net.ClientSideSynchronizationEvent
+import online.fivem.common.events.net.ServerSideSynchronizationEvent
 import online.fivem.common.extensions.forEach
 import online.fivem.server.entities.Player
 import online.fivem.server.modules.client_event_exchanger.ClientEvent
 
 abstract class AbstractServerModule : AbstractModule() {
 
-	open suspend fun onPlayerSave(player: Player, dataList: List<Any>) {}
+	open fun onSync(player: Player, data: ClientSideSynchronizationEvent): Job? = null
+
+	open fun onSync(exportObject: ServerSideSynchronizationEvent): Job? = null
 
 	protected inline fun <reified T : Any> ClientEvent.on(noinline action: suspend (Player, T) -> Unit): ReceiveChannel<ClientEvent.PlayerParams<T>> {
 

@@ -127,7 +127,7 @@ class SpeedometerModule(override val coroutineContext: CoroutineContext) : Abstr
 					lastRpm += stepRPM
 					lastSpeed += stepSpeed
 
-					if (i != INTERPOLATION_STEPS && speedometerInterpolatorChannel.isEmpty) {
+					if (i != INTERPOLATION_STEPS) {
 						delay(del - (Date.now() - drawingTime).toLong())
 					}
 				}

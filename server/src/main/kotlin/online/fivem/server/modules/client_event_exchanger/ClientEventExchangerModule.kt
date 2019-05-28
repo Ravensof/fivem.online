@@ -6,10 +6,12 @@ import online.fivem.common.GlobalConfig
 import online.fivem.common.Serializer
 import online.fivem.common.common.Console
 import online.fivem.common.entities.PlayerSrc
+import online.fivem.common.events.net.AcceptEvent
 import online.fivem.common.events.net.EstablishConnectionEvent
 import online.fivem.common.events.net.ImReadyEvent
 import online.fivem.common.events.net.StopResourceEvent
 import online.fivem.common.extensions.deserialize
+import online.fivem.common.extensions.forEach
 import online.fivem.common.extensions.onNull
 import online.fivem.common.extensions.serializeToPacket
 import online.fivem.common.gtav.NativeEvents
@@ -22,6 +24,7 @@ import online.fivem.server.common.AbstractServerModule
 import online.fivem.server.gtav.Exports
 import online.fivem.server.gtav.Natives
 import online.fivem.server.modules.basics.SessionModule
+import kotlin.collections.set
 import kotlin.random.Random
 
 private typealias Data = Any
@@ -31,11 +34,11 @@ class ClientEventExchangerModule : AbstractServerModule() {
 	private val playersSendChannels = createChannels<Serializable>()
 	private val playersReceiveChannels = createChannels<IncomingPacket>()
 
-	private val playersList = mutableMapOf<Int, Double>()
+	private val clients = mutableMapOf<Int, Double>()
 
 	private val sessionModule by moduleLoader.delegate<SessionModule>()
 
-	override suspend fun onInit() {
+	init {
 		Exports.on(NativeEvents.Server.PLAYER_DROPPED) { playerId: Int, _: String -> onPlayerDropped(playerId) }
 
 		Natives.onNet(GlobalConfig.NET_EVENT_NAME, ::onNetEvent)
@@ -77,7 +80,7 @@ class ClientEventExchangerModule : AbstractServerModule() {
 					channel.send(packet.data)
 
 				}.onNull {
-					playersList.forEach {
+					clients.forEach {
 						val channel = playersSendChannels[it.key]
 
 						channel.send(packet.data)
@@ -90,11 +93,31 @@ class ClientEventExchangerModule : AbstractServerModule() {
 	}
 
 	override fun onStop() = launch {
-		ClientEvent.emit(StopResourceEvent())
 
-		delay(10_000)
+		val eventId = Random.nextInt()
 
-		coroutineContext.cancel()
+		launch {
+			clients.forEach {
+				launch {
+					val channel = ClientEvent.openSubscription(AcceptEvent::class)
+					emit(it.key, StopResourceEvent(eventId))
+
+					try {
+						withTimeout(PLAYER_SAVE_TIMEOUT) {
+							channel.forEach {
+								if (it.data.eventId == eventId) {
+									channel.cancel()
+								}
+							}
+						}
+					} catch (e: TimeoutCancellationException) {
+						Console.warn("player save for id=${it.key} is timed out")
+					} finally {
+						channel.cancel()
+					}
+				}
+			}
+		}.join()
 	}
 
 	private fun onEstablishingConnection(playerSrc: PlayerSrc, netPacket: Any) {
@@ -116,7 +139,7 @@ class ClientEventExchangerModule : AbstractServerModule() {
 
 			val data = Serializer.deserialize(packet)
 
-			if (playersList[playerSrc.value] != packet.key) throw Exception(Strings.CLIENT_WRONG_PACKET_FORMAT)
+			if (clients[playerSrc.value] != packet.key) throw Exception(Strings.CLIENT_WRONG_PACKET_FORMAT)
 
 //			if (netPacket.playersCount == 1 && Natives.getPlayers().count() > 1) return@onNet Natives.dropPlayer(
 //				playerSrc,
@@ -148,18 +171,18 @@ class ClientEventExchangerModule : AbstractServerModule() {
 	}
 
 	private fun onPlayerDropped(playerId: Int) {
-		playersList.remove(playerId)
+		clients.remove(playerId)
 	}
 
 	private fun onClientReady(playerSrc: PlayerSrc) {
-		if (playersList.containsKey(playerSrc.value)) return Natives.dropPlayer(
+		if (clients.containsKey(playerSrc.value)) return Natives.dropPlayer(
 			playerSrc,
 			Strings.CLIENT_ALREADY_CONNECTED
 		)
 
 		val key = Random.nextDouble()
 
-		playersList[playerSrc.value] = key
+		clients[playerSrc.value] = key
 
 		emit(playerSrc.value, EstablishConnectionEvent(key))
 	}
@@ -195,6 +218,7 @@ class ClientEventExchangerModule : AbstractServerModule() {
 	)
 
 	companion object {
+		private const val PLAYER_SAVE_TIMEOUT: Long = 15_000
 		private const val PLAYERS_CHANNEL_SIZE = 128 * GlobalConfig.MAX_PLAYERS
 
 		val channel = Channel<SendingPacket>(PLAYERS_CHANNEL_SIZE)

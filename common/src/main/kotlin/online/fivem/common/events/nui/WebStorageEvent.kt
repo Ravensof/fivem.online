@@ -2,20 +2,21 @@ package online.fivem.common.events.nui
 
 import online.fivem.common.other.Serializable
 
-sealed class LocalStorageEvent : Serializable() {
+sealed class WebStorageEvent : Serializable() {
 
 	class Post(
 		val key: String,
-		val value: String
-	) : LocalStorageEvent()
+		val value: String,
+		val eventId: Int
+	) : WebStorageEvent()
 
 	class Request(
 		val requestId: Int,
 		val key: String
-	) : LocalStorageEvent()
+	) : WebStorageEvent()
 
 	class Response(
 		val responseId: Int,
 		val data: String?
-	) : LocalStorageEvent()
+	) : WebStorageEvent()
 }

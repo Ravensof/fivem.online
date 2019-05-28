@@ -4,6 +4,7 @@ import external.nodejs.mysql.Pool
 import kotlinx.coroutines.launch
 import online.fivem.common.common.Event
 import online.fivem.common.entities.CoordinatesX
+import online.fivem.common.events.net.ClientSideSynchronizationEvent
 import online.fivem.common.events.net.SpawnPlayerEvent
 import online.fivem.server.Strings
 import online.fivem.server.common.AbstractServerModule
@@ -13,18 +14,42 @@ import online.fivem.server.events.PlayerConnectedEvent
 import online.fivem.server.modules.basics.mysql.MySQLModule
 import online.fivem.server.modules.basics.mysql.extensions.getConnection
 import online.fivem.server.modules.basics.mysql.extensions.row
+import online.fivem.server.modules.basics.mysql.extensions.send
 import online.fivem.server.modules.client_event_exchanger.ClientEvent
 
 class RolePlaySystemModule : AbstractServerModule() {
 
 	private lateinit var mySQL: Pool
 
-	override suspend fun onInit() {
+	override fun onStart() = launch {
+		mySQL = moduleLoader.getModule(MySQLModule::class).pool
+
 		Event.on<PlayerConnectedEvent> { onPlayerConnected(it.player) }
 	}
 
-	override fun onStart() = launch {
-		mySQL = moduleLoader.getModule(MySQLModule::class).pool
+	override fun onSync(player: Player, data: ClientSideSynchronizationEvent) = launch {
+		val event = data.rolePlaySystem ?: return@launch
+
+		event.coordinatesX.let {
+			mySQL.getConnection().send(
+				"""UPDATE characters
+							|SET
+							|   coord_x=?,
+							|   coord_y=?,
+							|   coord_z=?,
+							|   coord_rotation=?
+							|WHERE id=?
+							|LIMIT 1
+						""".trimMargin(),
+				arrayOf(
+					it.x,
+					it.y,
+					it.z,
+					it.rotation,
+					player.characterId
+				)
+			)
+		}
 	}
 
 	private suspend fun spawn(player: Player, coordinatesX: CoordinatesX, pedHash: Int) {

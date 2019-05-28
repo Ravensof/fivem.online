@@ -7,7 +7,7 @@ import online.fivem.client.entities.Ped
 import online.fivem.client.entities.Vehicle
 import online.fivem.client.events.*
 import online.fivem.client.extensions.getSeatOfPedInVehicle
-import online.fivem.client.extensions.isVehicleRadioEnabled
+import online.fivem.client.extensions.isAnyRadioTrackPlaying
 import online.fivem.client.gtav.Client
 import online.fivem.common.common.Event
 import online.fivem.common.entities.Coordinates
@@ -250,7 +250,7 @@ class EventGeneratorModule : AbstractClientModule() {
 
 	private suspend fun checkRadio() {
 		val currentRadio =
-			if (playersVehicle?.isEngineRunning() == true && Client.isVehicleRadioEnabled()) Client.getRadioStation() else null
+			if (playersVehicle?.isEngineRunning() == true && Client.isAnyRadioTrackPlaying()) Client.getRadioStation() else null
 
 		if (currentRadio != playerRadioStationName) {
 			Event.emit(PlayerRadioStationChangedEvent(currentRadio))
@@ -308,19 +308,18 @@ class EventGeneratorModule : AbstractClientModule() {
 
 		private var vehiclePetrolTankHealth: Double? = null
 
-		var playerCoordinates: Coordinates? = null
+		private var playerCoordinates: Coordinates? = null
 
 		private var playerSeatIndex: Int? = null
 
-		var pauseMenuState: Int = 0
-			private set
-		var audioMusicLevelInMP: Int? = null
-			private set
-		var playerRadioStationName: RadioStation? = null
-			private set
-		var playerSpeed = 0.0
-			private set
-		var playerAcceleration = 0.0
-			private set
+		private var pauseMenuState: Int = 0
+
+		private var audioMusicLevelInMP: Int? = null
+
+		private var playerRadioStationName: RadioStation? = null
+
+		private var playerSpeed = 0.0
+
+		private var playerAcceleration = 0.0
 	}
 }

@@ -5,8 +5,8 @@ import external.howler.HowlOptions
 import kotlinx.coroutines.launch
 import online.fivem.common.Sounds
 import online.fivem.common.common.Html
+import online.fivem.common.events.net.AcceptEvent
 import online.fivem.common.events.nui.PlaySoundEvent
-import online.fivem.common.events.nui.PlaySoundFinishedEvent
 import online.fivem.nui.common.AbstractNuiModule
 import online.fivem.nui.extensions.nuiResourcesLink
 import online.fivem.nui.modules.client_event_exchanger.ClientEvent
@@ -17,7 +17,7 @@ class PlaySoundModule(override val coroutineContext: CoroutineContext) : Abstrac
 		ClientEvent.on<PlaySoundEvent> {
 			play(it.sound, it.volume) {
 				launch {
-					ClientEvent.emit(PlaySoundFinishedEvent(it.id))
+					ClientEvent.emit(AcceptEvent(it.id))
 				}
 			}
 		}

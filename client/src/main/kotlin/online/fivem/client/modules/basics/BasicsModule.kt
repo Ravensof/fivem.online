@@ -20,7 +20,6 @@ class BasicsModule : AbstractClientModule() {
 
 		moduleLoader.apply {
 			add(ErrorReporterModule())
-			add(LocalStorageModule())
 			add(TickExecutorModule())
 			add(ControlHandlerModule())
 			add(API())

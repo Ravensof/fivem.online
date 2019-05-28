@@ -43,16 +43,14 @@ class ModuleLoader(override val coroutineContext: CoroutineContext = createSuper
 	suspend fun startAll() {
 		isStarted = true
 
-		val startJob = launch {
+		launch {
 			startQueue.forEach { module ->
 				launch {
 					start(module)
 				}
 			}
 			startQueue.clear()
-		}
-
-		startJob.join()
+		}.join()
 	}
 
 	suspend fun start(module: AbstractModule) {
@@ -94,8 +92,7 @@ class ModuleLoader(override val coroutineContext: CoroutineContext = createSuper
 		isStarted = false
 	}
 
-	suspend fun getModules() =
-		loadedModulesRepository.getChannels().map { it.value.openSubscription().receiveAndCancel() }
+	fun getLoadedModules(): List<AbstractModule> = modules
 
 	suspend fun <T : AbstractModule> getModule(kClass: KClass<T>) =
 		loadedModulesRepository.getChannel(kClass).openSubscription().receiveAndCancel()

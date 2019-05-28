@@ -12,11 +12,12 @@ import online.fivem.client.extensions.setWeatherTypePersist
 import online.fivem.client.gtav.Client
 import online.fivem.common.common.Console
 import online.fivem.common.entities.Weather
+import online.fivem.common.events.net.ServerSideSynchronizationEvent
 import online.fivem.common.gtav.NativeWeather
 
 class WeatherModule : AbstractClientModule() {
 
-	val weatherQueue = Channel<Weather>(10)
+	private val weatherQueue = Channel<Weather>(10)
 
 	private val dateTimeModule by moduleLoader.delegate<DateTimeModule>()
 
@@ -30,17 +31,25 @@ class WeatherModule : AbstractClientModule() {
 			for (weather in weatherQueue) {
 				currentTemperature = weather.temperature
 
-				if (weather.weather == currentWeather) continue
+				if (weather.weatherName == currentWeather.name) continue
+
+				val newWeather = NativeWeather.valueOf(weather.weatherName)
 
 				val changingTime = (weather.appearanceTime - dateTimeModule.date.time) / dateTimeModule.date.timeSpeed
 
-				Console.debug("request changing weather from ${currentWeather.name} to ${weather.weather.name} in $changingTime ms")
+				Console.debug("request changing weather from ${currentWeather.name} to ${weather.weatherName} in $changingTime ms")
 
-				setWeather(weather.weather, if (changingTime > 1) changingTime.toFloat() else 1f).join()
+				setWeather(newWeather, changingTime.toFloat()).join()
 			}
 		}
 
 		return super.onStart()
+	}
+
+	override fun onSync(data: ServerSideSynchronizationEvent) = launch {
+		data.weather?.let {
+			weatherQueue.send(it)
+		}
 	}
 
 	private fun setWeather(
@@ -48,10 +57,11 @@ class WeatherModule : AbstractClientModule() {
 		changingMilliseconds: Float = WEATHER_CHANGING_MILLISECONDS.toFloat()
 	) =
 		launch {
+			val changingTime = if (changingMilliseconds > 1) changingMilliseconds else 1f
 
 			currentWeather = weather
-			weather.setOverTime(changingMilliseconds / 1_000)
-			delay((changingMilliseconds).toLong())
+			weather.setOverTime(changingTime / 1_000)
+			delay(changingTime.toLong())
 
 			Client.clearOverrideWeather()
 			Client.clearWeatherTypePersist()

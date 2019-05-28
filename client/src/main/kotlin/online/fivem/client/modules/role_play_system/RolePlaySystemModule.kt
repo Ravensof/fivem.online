@@ -11,6 +11,7 @@ import online.fivem.client.modules.basics.TickExecutorModule
 import online.fivem.common.common.Event
 import online.fivem.common.common.Stack
 import online.fivem.common.entities.CoordinatesX
+import online.fivem.common.events.net.ClientSideSynchronizationEvent
 import online.fivem.common.events.net.sync.RolePlaySystemSaveEvent
 
 class RolePlaySystemModule : AbstractClientModule() {
@@ -36,16 +37,18 @@ class RolePlaySystemModule : AbstractClientModule() {
 		return super.onStart()
 	}
 
-	override suspend fun onSave(): RolePlaySystemSaveEvent {
+	override fun onSync(exportObject: ClientSideSynchronizationEvent): Job? {
 
 		val playerPed = player.ped
 
-		return RolePlaySystemSaveEvent(
+		exportObject.rolePlaySystem = RolePlaySystemSaveEvent(
 			CoordinatesX(
 				playerPed.coordinates,
 				playerPed.heading
 			)
 		)
+
+		return super.onSync(exportObject)
 	}
 
 	private fun onPedChanged(ped: Ped) {

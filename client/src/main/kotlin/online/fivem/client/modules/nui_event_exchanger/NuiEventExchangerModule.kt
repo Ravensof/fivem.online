@@ -9,6 +9,7 @@ import online.fivem.common.GlobalConfig
 import online.fivem.common.Serializer
 import online.fivem.common.common.Console
 import online.fivem.common.events.net.ImReadyEvent
+import online.fivem.common.events.net.StopResourceEvent
 import online.fivem.common.extensions.deserialize
 import online.fivem.common.extensions.receiveAndCancel
 import online.fivem.common.extensions.serializeToPacket
@@ -43,6 +44,10 @@ class NuiEventExchangerModule : AbstractClientModule() {
 		Console.log("nui connected")
 
 		startEventSender()
+	}
+
+	override fun onStop() = launch {
+		NuiEvent.emit(StopResourceEvent())
 	}
 
 	private fun startEventSender() = launch {
