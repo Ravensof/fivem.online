@@ -8,16 +8,13 @@ body, html {
 	height: 100%;
 }
 
-.is-no-margins {
-	margin: 0 !important;
-}
-
-.is-no-paddings {
-	padding: 0 !important;
-}
-
+.is-no-margins,
 .is-no-spaces {
 	margin: 0 !important;
+}
+
+.is-no-paddings,
+.is-no-spaces {
 	padding: 0 !important;
 }
 
@@ -26,6 +23,21 @@ body, html {
 	left: 0;
 	bottom: 0;
 	right: 0;
+}
+
+.is-fixed-top {
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+}
+
+.is-full-height {
+	height: 100vh;
+}
+
+.is-relative {
+	position: relative;
 }
 
 .has-background-dark {
@@ -39,4 +51,8 @@ body, html {
 	font-size: 14px;
 	color: #ffffff;
 	background: rgba(0, 0, 0, 0.80);
+}
+
+.debug-border {
+	border: solid 1px red;
 }

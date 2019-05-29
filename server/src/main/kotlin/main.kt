@@ -8,7 +8,6 @@ import online.fivem.server.gtav.Natives
 import online.fivem.server.modules.basics.BasicsModule
 import online.fivem.server.modules.client_event_exchanger.ClientEventExchangerModule
 import online.fivem.server.modules.roleplay_system.RolePlaySystemModule
-import online.fivem.server.modules.test.Test
 
 private fun main() {
 
@@ -30,8 +29,6 @@ private fun start() {
 			add(BasicsModule())
 
 			add(RolePlaySystemModule())
-
-			add(Test())
 
 			val clientEventExchangerModule = ClientEventExchangerModule().also {
 				add(it, manualStart = true)//last
