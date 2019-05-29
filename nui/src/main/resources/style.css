@@ -8,21 +8,14 @@ body, html {
 	height: 100%;
 }
 
-.is-no-margins,
-.is-no-spaces {
-	margin: 0 !important;
-}
-
-.is-no-paddings,
-.is-no-spaces {
-	padding: 0 !important;
-}
-
 .is-fixed-bottom {
-	position: absolute;
-	left: 0;
+	position: fixed;
 	bottom: 0;
+	left: 0;
 	right: 0;
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-end;
 }
 
 .is-fixed-top {
@@ -55,4 +48,12 @@ body, html {
 
 .debug-border {
 	border: solid 1px red;
+}
+
+.debug-border-black {
+	border: solid 1px black;
+}
+
+.debug-border-grey {
+	border: solid 1px grey;
 }
