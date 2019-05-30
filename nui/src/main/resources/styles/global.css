@@ -1,0 +1,23 @@
+@font-face {
+	font-family: 'PriceDown';
+	src: url("../fonts/pricedown_bl.ttf");
+}
+
+.is-font-price-down {
+	font-family: PriceDown, serif !important;
+	color: #ffffff;
+	-webkit-text-stroke-width: 2px;
+	-webkit-text-stroke-color: black;
+}
+
+.debug-border {
+	border: solid 1px red;
+}
+
+.debug-border-black {
+	border: solid 1px black;
+}
+
+.debug-border-grey {
+	border: solid 1px grey;
+}
