@@ -5,7 +5,7 @@
 	<meta content="width=device-width, initial-scale=1" name="viewport">
 
 	<!--	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">-->
-	<link href="bulma.min.css" rel="stylesheet">
+	<link href="styles/bulma.min.css" rel="stylesheet">
 	<!--	more themes https://jenil.github.io/bulmaswatch/ -->
 	<link href="https://jenil.github.io/bulmaswatch/lux/bulmaswatch.min.css" rel="stylesheet">
 	<!--	<link rel="stylesheet" href="https://jenil.github.io/bulmaswatch/nuclear/bulmaswatch.min.css">-->
@@ -95,13 +95,15 @@
 
 	</div>
 
-	<div class="column is-narrow debug-border" style="margin-bottom: -70px;">
-		<img src="phone/sony.png" width="300">
+	<div class="column is-narrow debug-border" id="phone_container">
+		<iframe id="phone" src="modules/mobile/index.html"></iframe>
+		<img src="modules/phone/sony.png">
+		<div class="phone_glass"></div>
 	</div>
 
 	<!--right bottom column-->
 	<div class="column is-narrow debug-border">
-		<link href="speedometer/v1/style.css" rel="stylesheet">
+		<link href="modules/speedometer/v1/style.css" rel="stylesheet">
 		<div id="speedometer"></div>
 	</div>
 </div>

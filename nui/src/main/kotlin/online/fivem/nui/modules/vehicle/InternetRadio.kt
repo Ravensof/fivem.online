@@ -95,7 +95,7 @@ class InternetRadio : AbstractNuiModule() {
 	}
 
 	companion object {
-		private val NOISE_RESOURCE = Html.nuiResourcesLink("radio/noise.mp3")
+		private val NOISE_RESOURCE = Html.nuiResourcesLink("modules/radio/noise.mp3")
 		private const val MAX_RECONNECTING_ATTEMPTS = 500
 	}
 }
