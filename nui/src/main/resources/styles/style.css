@@ -47,8 +47,8 @@ body, html {
 	right: 0;
 	bottom: 0;
 	left: 0;
-	width: 266px;
-	height: 472px;
+	width: 267px;
+	height: 473px;
 
 	/*glass effects*/
 	filter: blur(calc(45px / 100));

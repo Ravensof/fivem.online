@@ -9,6 +9,8 @@ external interface Response {
 	fun end(data: String)
 	fun end(data: String, encoding: String)
 
+	fun set(field: String, value: String)
+
 	/**
 	 * Returns the HTTP response header specified by field. The match is case-insensitive.
 	 *

@@ -34,6 +34,8 @@ class SpeedometerModule(override val coroutineContext: CoroutineContext) : Abstr
 		jQuery("<img src=\"$RESOURCES_DIR/arrow-tachometer.svg\"/>").toHTMLImageElement()
 	}
 
+	private var speedometerContainer: JQuery<HTMLElement>? = null
+
 	private var speedometerBlock: JQuery<HTMLElement>? = null
 
 	private val speedometerInterpolatorChannel = Channel<SpeedometerData>(1)
@@ -62,10 +64,10 @@ class SpeedometerModule(override val coroutineContext: CoroutineContext) : Abstr
 			}
 			on<SpeedometerEnableEvent> {
 				runSpeedometer()
-				speedometerBlock?.fadeIn()
+				speedometerContainer?.fadeIn()
 			}
 			on<SpeedometerDisableEvent> {
-				speedometerBlock?.fadeOut()
+				speedometerContainer?.fadeOut()
 				drawInterpolatorJob?.cancel()
 			}
 		}
@@ -74,8 +76,9 @@ class SpeedometerModule(override val coroutineContext: CoroutineContext) : Abstr
 	override fun onStart() = launch {
 		val gui = moduleLoader.getModule(GUIModule::class)
 
-		speedometerBlock = gui.mainView.view.find("#speedometer")
-		speedometerBlock?.hide()
+		speedometerContainer = gui.mainView.view.find("#speedometer_container")
+		speedometerBlock = speedometerContainer?.find("#speedometer")
+		speedometerContainer?.hide()
 		speedometerBlock?.append(canvas)
 	}
 
