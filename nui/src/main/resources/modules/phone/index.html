@@ -13,17 +13,29 @@
 <!--<ons-page>-->
 
 <div class="topbar">
-	<div style="width: 100%;">top bar</div>
+	<div style="width: 100%;">Yota</div>
 
 	<div>
-		<img height="100%" src="../phone/battery_charging.png">
+
+	</div>
+
+	<div>
+		<img src="pics/ico_signal_bar.png">
+	</div>
+
+	<div>
+		<img src="pics/ico_battery_charging.png">
 	</div>
 
 	<div>65%</div>
 </div>
 
-<div class="toolbar">
-	<div class="toolbar__center">Navigation Bar</div>
+<div data-src="screens/main.html">
+	<svg class="progress-circular progress-circular--material progress-circular--indeterminate is-absolute-center">
+		<circle class="progress-circular__background progress-circular--material__background"/>
+		<circle class="progress-circular__primary progress-circular--material__primary progress-circular--indeterminate__primary"/>
+		<circle class="progress-circular__secondary progress-circular--material__secondary progress-circular--indeterminate__secondary"/>
+	</svg>
 </div>
 
 <div class="tabbar">
@@ -49,5 +61,7 @@
 	</label>
 </div>
 <!--</ons-page>-->
+
+<script src="../../js/includeHTML.js"></script>
 </body>
 </html>

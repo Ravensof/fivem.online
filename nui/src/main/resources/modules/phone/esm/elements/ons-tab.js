@@ -403,7 +403,7 @@ var TabElement = function (_BaseElement) {
 			return util.findParent(this, 'ons-tabbar');
 		}
 	}, {
-		key: 'index',
+		key: 'modules.phone.index',
 		get: function get() {
 			return Array.prototype.indexOf.call(this.parentElement.children, this);
 		}

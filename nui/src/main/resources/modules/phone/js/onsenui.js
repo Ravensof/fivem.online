@@ -31368,7 +31368,7 @@ limitations under the License.
 				return util$1.findParent(this, 'ons-tabbar');
 			}
 		}, {
-			key: 'index',
+			key: 'modules.phone.index',
 			get: function get$$1() {
 				return Array.prototype.indexOf.call(this.parentElement.children, this);
 			}

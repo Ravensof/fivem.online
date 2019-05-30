@@ -2,7 +2,7 @@ import _typeof from 'babel-runtime/helpers/typeof';
 import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
 import _createClass from 'babel-runtime/helpers/createClass';
 import util from '../util';
-import internal from '../internal';
+import internal from './index';
 /*
 Copyright 2013-2015 ASIAL CORPORATION
 

@@ -1,6 +1,6 @@
 /* onsenui v2.10.8 - 2019-04-01 */
 
-import ons from './ons/index.js';
+import ons from './ons';
 import './ons/platform';
 import './ons/microevent.js';
 

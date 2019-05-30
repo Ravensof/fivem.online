@@ -1,7 +1,7 @@
 import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
 import _createClass from 'babel-runtime/helpers/createClass';
-import util from '../../ons/util';
-import GestureDetector from '../../ons/gesture-detector';
+import util from '../util';
+import GestureDetector from '../gesture-detector';
 /*
 Copyright 2013-2015 ASIAL CORPORATION
 

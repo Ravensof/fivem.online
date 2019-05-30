@@ -26,7 +26,7 @@ body, html {
 }
 
 .is-full-height {
-	height: 100vh;
+	height: 100%;
 }
 
 .is-relative {

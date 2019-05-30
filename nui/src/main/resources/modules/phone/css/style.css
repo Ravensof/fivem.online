@@ -1,0 +1,46 @@
+html {
+	overflow: auto;
+}
+
+body, html {
+	display: block;
+	background-color: black;
+	background-image: url("../pics/wallpaper.jpg");
+	background-size: cover;
+	width: 100%;
+	height: 100%;
+}
+
+.tabbar, .topbar {
+	background-color: rgba(0, 0, 0, 0.50) !important;
+}
+
+.topbar {
+	display: flex;
+	width: available;
+	color: #fff;
+	padding: 5px;
+}
+
+.topbar div {
+	height: 18px;
+	margin-left: 2px;
+	margin-right: 2px;
+}
+
+.topbar div img {
+	height: 100%;
+}
+
+.is-full-height {
+	height: 100%;
+}
+
+.is-absolute-center {
+	position: absolute !important;
+	bottom: 0;
+	top: 0;
+	left: 0;
+	right: 0;
+	margin: auto;
+}

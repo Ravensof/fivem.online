@@ -1,5 +1,5 @@
 import _Object$keys from 'babel-runtime/core-js/object/keys';
-import util from '../ons/util';
+import util from './util';
 /*
 Copyright 2013-2015 ASIAL CORPORATION
 
