@@ -31,6 +31,10 @@ body, html {
 	background: rgba(0, 0, 0, 0.80);
 }
 
+#minimap_container {
+	height: 200px;
+}
+
 #phone_container {
 	width: 323px;
 	height: calc(631px + 0.17);
