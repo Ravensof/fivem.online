@@ -39,7 +39,7 @@ body, html {
 
 }
 
-#phone, .phone_glass {
+#phone_screen, .phone_glass {
 	margin-top: 75px;
 	margin-left: 26px;
 	position: absolute;
@@ -50,11 +50,17 @@ body, html {
 	width: 267px;
 	height: 473px;
 
-	/*glass effects*/
-	filter: blur(calc(45px / 100));
+	/*screen effects*/
+	filter: blur(calc(45px / 100)) brightness(90%) contrast(90%);
 }
 
 .phone_glass {
+	margin-top: 18px;
+	margin-left: 18px;
+	width: 284px;
+	height: 550px;
+	border-radius: 10px;
+
 	background: linear-gradient(100deg, rgba(255, 255, 255, 0.51), rgba(0, 0, 0, 0.06));
 	pointer-events: none;
 }
