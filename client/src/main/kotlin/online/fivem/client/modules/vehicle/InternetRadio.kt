@@ -14,7 +14,6 @@ import online.fivem.common.entities.InternetRadioStation
 import online.fivem.common.events.nui.InternetRadioChangedEvent
 import online.fivem.common.events.nui.InternetRadioStopEvent
 import online.fivem.common.events.nui.InternetRadioVolumeChangeEvent
-import online.fivem.common.extensions.onNull
 import online.fivem.common.extensions.orZero
 import online.fivem.common.gtav.NativeAudioScenes
 import online.fivem.common.gtav.ProfileSetting
@@ -71,10 +70,10 @@ class InternetRadio : AbstractClientModule() {
 		val internetRadioStation = getInternetRadioStation(radioStation)
 
 		internetRadioStation?.let {
-			playRadio(it)
-		}.onNull {
-			stopRadio()
+			return@launch playRadio(it)
 		}
+
+		stopRadio()
 	}
 
 	private fun onSettingsMusicLevelChanged(volume: Int) = launch {

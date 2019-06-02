@@ -39,20 +39,20 @@ body, html {
 	width: 323px;
 	height: calc(631px + 0.17);
 	position: relative;
-	margin-bottom: -70px;
+	/*margin-bottom: -70px;*/
 
 }
 
 #phone_screen {
-	margin-top: 75px;
-	margin-left: 26px;
+	margin-top: 24%;
+	margin-left: 8.5%;
 	position: absolute;
 	top: 0;
 	right: 0;
 	bottom: 0;
 	left: 0;
-	width: 267px;
-	height: 473px;
+	width: 82.4%;
+	height: 74.6%;
 
 	/*screen effects*/
 	filter: blur(calc(45px / 100)) brightness(110%) contrast(90%);
@@ -65,10 +65,10 @@ body, html {
 	bottom: 0;
 	left: 0;
 
-	margin-top: 18px;
-	margin-left: 18px;
-	width: 284px;
-	height: 550px;
+	margin-top: 5.7%;
+	margin-left: 5.5%;
+	width: 88.5%;
+	height: 93.3%;
 
 	border-radius: 10px;
 
