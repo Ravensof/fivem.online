@@ -68,3 +68,35 @@ body, html {
 .is-light {
 	color: white !important;
 }
+
+#signal_bar_container {
+	position: relative;
+}
+
+#signal_bar_overlay {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+
+	width: 0;
+	height: 0;
+	border-right: 0 solid transparent;
+	border-left: 16px solid transparent;
+	border-bottom: 16px solid white;
+}
+
+#battery_container {
+	position: relative;
+}
+
+#battery_overlay {
+	position: absolute;
+
+	left: 3px;
+	top: 4px;
+
+	width: 20px;
+	height: 10px;
+	background: white;
+	border-radius: 1px;
+}
