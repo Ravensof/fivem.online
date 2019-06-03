@@ -5,7 +5,8 @@ import kotlinx.coroutines.launch
 import online.fivem.nui.common.AbstractNuiModule
 import org.w3c.dom.HTMLElement
 
-class MobilePhoneBrowser(
+//todo переделать в просто Browser и передавать viewContainer
+class MobilePhoneBrowserModule(
 	private val mobilePhoneModule: MobilePhoneModule
 ) : AbstractNuiModule() {
 

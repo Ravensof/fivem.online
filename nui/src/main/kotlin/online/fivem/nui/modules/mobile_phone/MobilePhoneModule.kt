@@ -51,7 +51,7 @@ class MobilePhoneModule(
 	}
 
 	override suspend fun onInit() {
-		moduleLoader.add(MobilePhoneBrowser(this))
+		moduleLoader.add(MobilePhoneBrowserModule(this))
 	}
 
 	override fun onStart() = launch {
