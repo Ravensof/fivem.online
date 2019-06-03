@@ -16,6 +16,7 @@ import org.w3c.dom.HTMLImageElement
 import kotlin.coroutines.CoroutineContext
 import kotlin.js.Date
 
+@Deprecated("удалить или доработать")
 class SpeedometerSimpleView : View(), CoroutineScope {
 	override val coroutineContext: CoroutineContext = createSupervisorJob()
 

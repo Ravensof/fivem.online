@@ -13,7 +13,7 @@ import online.fivem.common.events.nui.SpeedometerEnableEvent
 import online.fivem.common.events.nui.SpeedometerUpdateEvent
 import online.fivem.common.extensions.repeatJob
 
-class Speedometer : AbstractClientModule() {
+class SpeedometerModule : AbstractClientModule() {
 	private var vehicleHasSpeedo = false
 	private var updateJob: Job? = null
 

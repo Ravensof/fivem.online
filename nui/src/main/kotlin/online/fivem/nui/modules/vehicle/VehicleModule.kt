@@ -1,13 +1,16 @@
 package online.fivem.nui.modules.vehicle
 
 import online.fivem.nui.common.AbstractNuiModule
+import online.fivem.nui.modules.basics.GUIModule
 
-class VehicleModule : AbstractNuiModule() {
+class VehicleModule(
+	private val guiModule: GUIModule
+) : AbstractNuiModule() {
 
 	override suspend fun onInit() {
 		moduleLoader.apply {
-			add(InternetRadio())
-			add(SpeedometerModule(coroutineContext))
+			add(InternetRadioModule())
+			add(SpeedometerModule(guiModule))
 		}
 	}
 }

@@ -6,9 +6,9 @@ class VehicleModule : AbstractClientModule() {
 
 	override suspend fun onInit() {
 		moduleLoader.apply {
-			add(InternetRadio())
-			add(Speedometer())
-			add(BlackOut())
+			add(InternetRadioModule())
+			add(SpeedometerModule())
+			add(BlackOutModule())
 			add(RealisticFailureModule())
 		}
 	}

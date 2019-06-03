@@ -11,9 +11,8 @@ import online.fivem.nui.extensions.nuiResourcesLink
 import online.fivem.nui.modules.basics.test.BlackScreenModule
 import online.fivem.nui.modules.basics.test.MainView
 import online.fivem.nui.modules.client_event_exchanger.ClientEvent
-import kotlin.coroutines.CoroutineContext
 
-class GUIModule(override val coroutineContext: CoroutineContext) : AbstractNuiModule() {
+class GUIModule : AbstractNuiModule() {
 
 	lateinit var mainView: MainView
 		private set

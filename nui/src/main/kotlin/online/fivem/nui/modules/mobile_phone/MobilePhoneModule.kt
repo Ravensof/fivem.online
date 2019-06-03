@@ -1,4 +1,4 @@
-package online.fivem.nui.modules.test
+package online.fivem.nui.modules.mobile_phone
 
 import js.externals.jquery.JQuery
 import kotlinx.coroutines.delay
@@ -8,7 +8,9 @@ import online.fivem.nui.common.AbstractNuiModule
 import online.fivem.nui.modules.basics.GUIModule
 import org.w3c.dom.HTMLElement
 
-class MobilePhoneModule : AbstractNuiModule() {
+class MobilePhoneModule(
+	private val guiModule: GUIModule
+) : AbstractNuiModule() {
 
 	var signal = 1f
 		set(value) {
@@ -38,6 +40,8 @@ class MobilePhoneModule : AbstractNuiModule() {
 	private lateinit var phoneContainerView: JQuery<HTMLElement>
 	private lateinit var phoneView: JQuery<HTMLElement>
 
+	lateinit var browserFrame: JQuery<HTMLElement>
+
 	private val signalBarMaxWidth by lazy {
 		signalBarOverlayView.css("border-left").replace(Regex("([0-9 ]+).*"), "$1").toInt()
 	}
@@ -46,8 +50,16 @@ class MobilePhoneModule : AbstractNuiModule() {
 		batteryOverlayView.css("width").replace(Regex("([0-9]+)px"), "$1").toInt()
 	}
 
+	override suspend fun onInit() {
+		moduleLoader.add(MobilePhoneBrowser(this))
+	}
+
 	override fun onStart() = launch {
-		val mainView = moduleLoader.getModule(GUIModule::class).mainView
+		guiModule.waitForStart()
+
+		val mainView = guiModule.mainView
+
+		browserFrame = mainView.view.find("#browser_frame")
 
 		phoneContainerView = mainView.view.find("#phone_container")
 		phoneView = phoneContainerView.find("#phone_screen").contents()
@@ -64,13 +76,4 @@ class MobilePhoneModule : AbstractNuiModule() {
 			battery = 0.8f
 		}
 	}
-
-//
-//	private fun Number.toCalc(str: String): String {
-//		val int = toInt()
-//		val d = this - int
-//
-//		return "calc($int$str + $d)"
-//	}
-
 }

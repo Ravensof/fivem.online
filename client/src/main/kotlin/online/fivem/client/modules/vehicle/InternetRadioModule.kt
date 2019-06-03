@@ -19,7 +19,7 @@ import online.fivem.common.gtav.NativeAudioScenes
 import online.fivem.common.gtav.ProfileSetting
 import online.fivem.common.gtav.RadioStation
 
-class InternetRadio : AbstractClientModule() {
+class InternetRadioModule : AbstractClientModule() {
 
 	private var volume = getSettingsMusicLevel().toDouble() / 10 * MAX_VOLUME
 
@@ -42,7 +42,7 @@ class InternetRadio : AbstractClientModule() {
 	}
 
 	override fun onStart() = launch {
-		NuiEvent.emit(InternetRadioVolumeChangeEvent(this@InternetRadio.volume))
+		NuiEvent.emit(InternetRadioVolumeChangeEvent(this@InternetRadioModule.volume))
 	}
 
 	override fun onStop() = launch {
@@ -77,9 +77,9 @@ class InternetRadio : AbstractClientModule() {
 	}
 
 	private fun onSettingsMusicLevelChanged(volume: Int) = launch {
-		this@InternetRadio.volume = volume.toDouble() / 10 * MAX_VOLUME
+		this@InternetRadioModule.volume = volume.toDouble() / 10 * MAX_VOLUME
 
-		NuiEvent.emit(InternetRadioVolumeChangeEvent(this@InternetRadio.volume))
+		NuiEvent.emit(InternetRadioVolumeChangeEvent(this@InternetRadioModule.volume))
 	}
 
 	private fun getSettingsMusicLevel(): Int {

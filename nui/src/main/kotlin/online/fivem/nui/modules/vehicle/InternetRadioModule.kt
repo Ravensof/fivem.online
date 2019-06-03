@@ -15,7 +15,7 @@ import online.fivem.nui.common.AbstractNuiModule
 import online.fivem.nui.extensions.nuiResourcesLink
 import online.fivem.nui.modules.client_event_exchanger.ClientEvent
 
-class InternetRadio : AbstractNuiModule() {
+class InternetRadioModule : AbstractNuiModule() {
 
 	private var howler: Howl? = null
 	private val noisePlayer = Howl(

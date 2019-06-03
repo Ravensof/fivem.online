@@ -53,12 +53,19 @@ body, html {
 	left: 0;
 	width: 82.4%;
 	height: 74.6%;
+}
 
-	/*screen effects*/
+/*screen effects*/
+.phone-screen {
 	filter: blur(calc(45px / 100)) brightness(110%) contrast(90%);
 }
 
-.phone_glass {
+.phone-glass {
+	background: linear-gradient(100deg, rgba(255, 255, 255, 0.31), rgba(0, 0, 0, 0.06));
+	pointer-events: none;
+}
+
+#phone_container .phone-glass {
 	position: absolute;
 	top: 0;
 	right: 0;
@@ -71,7 +78,50 @@ body, html {
 	height: 93.3%;
 
 	border-radius: 10px;
+}
 
-	background: linear-gradient(100deg, rgba(255, 255, 255, 0.31), rgba(0, 0, 0, 0.06));
-	pointer-events: none;
+#browser_frame {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#browser_frame .phone-glass {
+	position: absolute;
+
+	width: 96.6vw;
+	height: 46.5vw;
+
+	margin-top: 0.2vw;
+	margin-left: 0.04vw;
+
+	border-radius: 1.6vw;
+}
+
+#browser_window {
+	position: absolute;
+
+	height: 43.4vw;
+	width: 77.2vw;
+
+	margin: 0.2vw 0.2vw 0.2vw -0.2vw;
+
+	background-color: white;
+}
+
+#browser_frame img {
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+
+	height: 99vw;
+
+	transform: rotate(270deg);
 }

@@ -21,10 +21,11 @@ import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLImageElement
 import kotlin.browser.document
-import kotlin.coroutines.CoroutineContext
 import kotlin.js.Date
 
-class SpeedometerModule(override val coroutineContext: CoroutineContext) : AbstractNuiModule() {
+class SpeedometerModule(
+	private val guiModule: GUIModule
+) : AbstractNuiModule() {
 
 	private val speedometerArrow: HTMLImageElement by lazy {
 		jQuery("<img src=\"$RESOURCES_DIR/arrow-speedometer.svg\"/>").toHTMLImageElement()
@@ -74,9 +75,9 @@ class SpeedometerModule(override val coroutineContext: CoroutineContext) : Abstr
 	}
 
 	override fun onStart() = launch {
-		val gui = moduleLoader.getModule(GUIModule::class)
+		guiModule.waitForStart()
 
-		speedometerContainer = gui.mainView.view.find("#speedometer_container")
+		speedometerContainer = guiModule.mainView.view.find("#speedometer_container")
 		speedometerBlock = speedometerContainer?.find("#speedometer")
 		speedometerContainer?.hide()
 		speedometerBlock?.append(canvas)

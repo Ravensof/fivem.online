@@ -17,7 +17,6 @@ class BasicsModule : AbstractNuiModule() {
 			})
 		}
 
-		moduleLoader.add(GUIModule(coroutineContext))
 		moduleLoader.add(PlaySoundModule(coroutineContext))
 		moduleLoader.add(LocalStorageModule(coroutineContext))
 	}

@@ -19,7 +19,7 @@ import online.fivem.common.Sounds
 import online.fivem.common.common.Console
 import online.fivem.common.common.Event
 
-class BlackOut : AbstractClientModule() {
+class BlackOutModule : AbstractClientModule() {
 
 	private val api by moduleLoader.delegate<API>()
 	private var timeLeft: Long = 0

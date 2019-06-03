@@ -27,6 +27,10 @@ abstract class AbstractModule : CoroutineScope {
 		return null
 	}
 
+	suspend fun waitForStart() {
+		moduleLoader.getModule(this::class)
+	}
+
 	protected inline fun <reified T : Any> Event.on(noinline action: suspend (T) -> Unit): ReceiveChannel<T> {
 		val channel = openSubscription(T::class)
 
