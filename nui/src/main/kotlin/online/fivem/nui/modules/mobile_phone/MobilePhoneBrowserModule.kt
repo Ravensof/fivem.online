@@ -17,7 +17,7 @@ class MobilePhoneBrowserModule(
 		mobilePhoneModule.waitForStart()
 
 		frame = mobilePhoneModule.browserFrame
-		window = frame.find("#browser_window").contents()
+		window = frame.find("#browser_screen").contents()
 
 		frame.hide()
 	}

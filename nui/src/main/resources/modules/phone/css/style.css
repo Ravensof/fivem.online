@@ -56,13 +56,13 @@ body, html {
 	align-items: center;
 	justify-content: center;
 	flex-flow: column;
-	height: 30vw;
-	width: 30vw;
+	height: 17vh;
+	width: 17vh;
 	border: solid 1px red;
 }
 
 .content div img {
-	height: 20vw;
+	height: 11vh;
 }
 
 .is-light {

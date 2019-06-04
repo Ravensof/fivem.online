@@ -36,28 +36,27 @@ body, html {
 }
 
 #phone_container {
-	width: 323px;
-	height: calc(631px + 0.17);
+	width: 35vh;
 	position: relative;
 	margin-bottom: -70px;
-
 }
 
 #phone_screen {
-	margin-top: 24%;
-	margin-left: 8.5%;
 	position: absolute;
 	top: 0;
 	right: 0;
 	bottom: 0;
 	left: 0;
-	width: 82.4%;
-	height: 74.6%;
+
+	margin-top: 23.3%;
+	margin-left: 8.0%;
+	width: 83.4%;
+	height: 75.4%;
 }
 
 /*screen effects*/
 .phone-screen {
-	filter: blur(calc(45px / 100)) brightness(110%) contrast(90%);
+	filter: blur(0.06vh) brightness(110%) contrast(90%);
 }
 
 .phone-glass {
@@ -75,7 +74,7 @@ body, html {
 	margin-top: 5.7%;
 	margin-left: 5.5%;
 	width: 88.5%;
-	height: 93.3%;
+	height: 93.7%;
 
 	border-radius: 10px;
 }
@@ -104,7 +103,7 @@ body, html {
 	border-radius: 1.6vw;
 }
 
-#browser_window {
+#browser_screen {
 	position: absolute;
 
 	height: 43.4vw;
