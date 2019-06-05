@@ -124,3 +124,66 @@ body, html {
 
 	transform: rotate(270deg);
 }
+
+#overlay {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+
+	pointer-events: none;
+}
+
+.menu-container {
+	/*margin-top: 4px;*/
+	padding-top: 4px;
+}
+
+.menu-container > div {
+	background: linear-gradient(90deg, rgba(0, 0, 0, 0.80), rgba(0, 0, 0, 0.70));
+}
+
+.is-menu-header, .is-menu-showcase, .is-menu-item, .is-menu-description {
+	color: white !important;
+}
+
+.is-menu-header {
+	font-family: Impact, serif;
+	font-size: larger;
+	padding: 4px 0;
+	text-align: center;
+	background: linear-gradient(100deg, rgb(11, 60, 123), rgb(46, 105, 186)) !important;
+}
+
+.is-menu-showcase {
+	text-transform: uppercase;
+
+}
+
+.is-menu-item {
+
+}
+
+.is-menu-item + .is-selected {
+	color: black !important;
+	background: linear-gradient(90deg, rgb(255, 255, 255), rgba(187, 187, 187, 0.36));
+}
+
+.is-menu-description {
+	margin-top: 4px;
+
+}
+
+.checkbox {
+	box-shadow: 0 0 0 0.125em rgba(0, 0, 0, 0.75) inset;
+	display: inline-block;
+	position: relative;
+	width: 1.5em;
+	height: 1.5em;
+	vertical-align: middle;
+}
+
+.checkbox:checked {
+	background-color: transparent;
+}

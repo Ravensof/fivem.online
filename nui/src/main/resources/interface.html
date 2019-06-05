@@ -7,7 +7,7 @@
 	<!--	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">-->
 	<link href="styles/bulma.min.css" rel="stylesheet">
 	<!--	more themes https://jenil.github.io/bulmaswatch/ -->
-	<link href="https://jenil.github.io/bulmaswatch/lux/bulmaswatch.min.css" rel="stylesheet">
+	<link href="https://jenil.github.io/bulmaswatch/lux/cyborg.min.css" rel="stylesheet">
 	<!--	<link rel="stylesheet" href="https://jenil.github.io/bulmaswatch/nuclear/bulmaswatch.min.css">-->
 	<link href="styles/global.css" rel="stylesheet">
 	<link href="styles/style.css" rel="stylesheet">
@@ -20,8 +20,67 @@
 
 <div class="columns is-marginless">
 	<!--left top column-->
-	<div class="column is-2 is-paddingless">
-		<div class="content is-marginless" id="debug">debug block</div>
+	<div class="column is-2">
+
+		<div class="columns">
+			<div class="column" id="debug">debug block</div>
+		</div>
+
+		<div class="menu-container">
+
+			<div class="columns is-menu-header">
+				<div class="column">
+					Native UI
+				</div>
+			</div>
+
+			<div class="columns is-menu-showcase">
+				<div class="column">
+					nativeui showcase
+				</div>
+			</div>
+
+			<div class="columns is-menu-item">
+				<div class="column">
+					Add ketchup?
+				</div>
+				<div class="column is-narrow">
+					<input class="checkbox" type="checkbox">
+				</div>
+			</div>
+
+			<div class="columns is-menu-item is-selected">
+				<div class="column">
+					Food
+				</div>
+				<div class="column is-narrow">
+					Pizza
+				</div>
+
+			</div>
+
+			<div class="columns is-menu-item">
+				<div class="column">
+					Quantity
+				</div>
+				<div class="column is-narrow">
+					---
+				</div>
+			</div>
+
+			<div class="columns is-menu-item">
+				<div class="column">
+					Another Menu
+				</div>
+			</div>
+
+			<div class="columns is-menu-description">
+				<div class="column">
+					Cook the dish with the appropriate ingredients and ketchup.
+				</div>
+			</div>
+		</div>
+
 	</div>
 
 	<!--central top layout-->
@@ -41,7 +100,7 @@
 	<!--left bottom column-->
 	<div class="column is-2">
 
-		<div class="box">
+		<div class="box is-hidden">
 			<article class="media">
 				<div class="media-left">
 					<figure class="image is-64x64"><img alt="Image"
