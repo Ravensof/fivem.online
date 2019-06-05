@@ -10,6 +10,15 @@
 	-webkit-text-stroke-color: black;
 }
 
+.is-ellipsized-text {
+	display: inline-block !important;
+
+	text-overflow: ellipsis;
+
+	white-space: nowrap;
+	overflow: hidden;
+}
+
 .debug-border {
 	border: solid 1px red;
 }
