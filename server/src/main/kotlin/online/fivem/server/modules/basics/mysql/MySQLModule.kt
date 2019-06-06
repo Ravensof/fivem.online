@@ -4,9 +4,8 @@ import external.nodejs.mysql.Pool
 import external.nodejs.require
 import online.fivem.server.ServerConfig.MYSQL_PARAMS
 import online.fivem.server.common.AbstractServerModule
-import kotlin.coroutines.CoroutineContext
 
-class MySQLModule(override val coroutineContext: CoroutineContext) : AbstractServerModule() {
+class MySQLModule : AbstractServerModule() {
 
 	val pool: Pool by lazy { mysql.createPool(MYSQL_PARAMS) }
 

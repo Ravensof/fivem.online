@@ -5,21 +5,21 @@ import online.fivem.server.modules.basics.mysql.MySQLModule
 
 class BasicsModule : AbstractServerModule() {
 
-	val sessionModule = SessionModule(coroutineContext)
-	private val mySQLModule = MySQLModule(coroutineContext)
+	private val mySQLModule = MySQLModule()
+	val sessionModule = SessionModule(mySQLModule)
 
 	override suspend fun onInit() {
 
 		arrayOf(
 			mySQLModule,
 			CommandsModule(sessionModule),
-			HttpServerModule(coroutineContext),
+			HttpServerModule(),
 			sessionModule,
 			SynchronizationModule(
 				mySQLModule = mySQLModule,
 				sessionModule = sessionModule
 			),
-			NatureControlSystemModule(coroutineContext),
+			NatureControlSystemModule(),
 			VoiceTransmissionModule(),
 			ClientsErrorReportingsModule()
 

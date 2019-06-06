@@ -22,9 +22,10 @@ import online.fivem.server.modules.basics.mysql.extensions.row
 import online.fivem.server.modules.basics.mysql.extensions.send
 import online.fivem.server.modules.client_event_exchanger.ClientEvent
 import kotlin.collections.set
-import kotlin.coroutines.CoroutineContext
 
-class SessionModule(override val coroutineContext: CoroutineContext) : AbstractServerModule() {
+class SessionModule(
+	private val mySQLModule: MySQLModule
+) : AbstractServerModule() {
 
 
 	private val players = mutableMapOf<PlayerSrc, Player>()
@@ -40,7 +41,8 @@ class SessionModule(override val coroutineContext: CoroutineContext) : AbstractS
 	}
 
 	override fun onStart() = launch {
-		mySQL = moduleLoader.getModule(MySQLModule::class).pool
+		mySQLModule.waitForStart()
+		mySQL = mySQLModule.pool
 	}
 
 	fun getConnectedPlayers(): List<PlayerSrc> {

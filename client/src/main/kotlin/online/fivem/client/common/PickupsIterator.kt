@@ -4,7 +4,7 @@ import online.fivem.client.gtav.Client
 import online.fivem.common.common.EntityId
 import online.fivem.common.common.Handle
 
-class PickupsIterator : Iterator<EntityId> {
+class PickupsIterator : IObjectIterator<EntityId> {
 
 	private var currentEntity: EntityId
 	private val handle: Handle
@@ -26,7 +26,7 @@ class PickupsIterator : Iterator<EntityId> {
 		return entity
 	}
 
-	fun close() {
+	override fun close() {
 		Client.endFindPickup(handle)
 	}
 }

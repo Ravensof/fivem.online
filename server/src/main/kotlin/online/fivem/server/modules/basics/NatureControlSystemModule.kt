@@ -10,12 +10,11 @@ import online.fivem.common.extensions.orZero
 import online.fivem.common.extensions.repeatJob
 import online.fivem.common.gtav.NativeWeather
 import online.fivem.server.common.AbstractServerModule
-import kotlin.coroutines.CoroutineContext
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
-class NatureControlSystemModule(override val coroutineContext: CoroutineContext) : AbstractServerModule() {
+class NatureControlSystemModule : AbstractServerModule() {
 
 	private var previousWeather: Weather? = null
 	private var currentWeather: Weather? = null

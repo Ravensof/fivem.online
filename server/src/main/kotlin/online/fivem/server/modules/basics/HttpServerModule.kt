@@ -13,9 +13,8 @@ import online.fivem.common.common.Console
 import online.fivem.common.extensions.forEach
 import online.fivem.server.ServerConfig.CURRENT_RESOURCE_PATH
 import online.fivem.server.common.AbstractServerModule
-import kotlin.coroutines.CoroutineContext
 
-class HttpServerModule(override val coroutineContext: CoroutineContext) : AbstractServerModule() {
+class HttpServerModule : AbstractServerModule() {
 
 	private val express = require("express").unsafeCast<Express>()
 	private val app = express.getInstance()
@@ -26,22 +25,24 @@ class HttpServerModule(override val coroutineContext: CoroutineContext) : Abstra
 		app.use("/nui", express.static(ROOT_DIR + "nui"))
 	}
 
-	override fun onStart(): Job? {
+	override fun onStart() = launch {
+		val pauseChannel = Channel<Throwable>()
 
-		return launch {
-			val pauseChannel = Channel<Unit>()
+		server = app.listen(HTTP_PORT) { error ->
+			pauseChannel.close()
 
-			server = app.listen(HTTP_PORT) { error ->
-				pauseChannel.close()
-
-				error?.let {
-					throw Exception(it)
+			error?.let {
+				launch {
+					pauseChannel.send(Exception(it))
 				}
-
-				Console.info("http server is listening at port $HTTP_PORT")
+				return@listen
 			}
 
-			pauseChannel.forEach { }
+			Console.info("http server is listening at port $HTTP_PORT")
+		}
+
+		pauseChannel.forEach {
+			throw it
 		}
 	}
 

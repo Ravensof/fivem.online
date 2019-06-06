@@ -8,6 +8,8 @@ object GlobalConfig {
 	const val MODULE_NAME = "fivem-online"
 	const val SERVER_IP = "server1.fivem.online"
 
+	const val SERVER_TIMEZONE = 7
+
 	const val SERVER_PORT = 30120
 	const val HTTP_PORT = SERVER_PORT + 1
 	const val WEBRTC_PORT = HTTP_PORT + 1
@@ -15,6 +17,8 @@ object GlobalConfig {
 	const val SERVER_NAME_IN_MENU = "FIVEM.ONLINE"
 	const val MAX_PLAYERS = 32
 	const val APP_VERSION = 190107
+
+	const val GAME_TIME_SPEED = 30.0
 
 	val internetRadioStations: Map<String, InternetRadioStation> = mapOf(
 		RadioStation.RADIO_01_CLASS_ROCK.name to InternetRadioStation(

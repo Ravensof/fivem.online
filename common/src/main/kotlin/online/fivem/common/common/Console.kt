@@ -6,6 +6,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import online.fivem.common.GlobalConfig
 import online.fivem.common.GlobalConfig.CONSOLE_PREFIX
+import online.fivem.common.GlobalConfig.SERVER_TIMEZONE
 import kotlin.coroutines.CoroutineContext
 import kotlin.js.Console
 import kotlin.js.Date
@@ -77,11 +78,11 @@ object Console : Console, CoroutineScope {
 	}
 
 	private fun getTimeStamp(): String {
-		val date = Date()
+		val date = Date(Date.now() + VDate.HOUR * SERVER_TIMEZONE)
 
 		return "[" +
 //				"${date.getUTCFullYear()}." +
-				"${date.getUTCMonth()}." +
+				"${date.getUTCMonth() + 1}." +
 				"${date.getUTCDate()}/" +
 				"${date.getUTCHours()}:${date.getUTCMinutes()}:${date.getUTCSeconds()}.${date.getUTCMilliseconds()}]"
 	}

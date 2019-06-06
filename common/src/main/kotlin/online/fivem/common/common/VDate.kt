@@ -1,13 +1,14 @@
 package online.fivem.common.common
 
+import online.fivem.common.GlobalConfig
 import kotlin.js.Date
 
 class VDate(currentVirtualTime: Double? = null) {
 
 	private var swipeTime: Double = 0.0
 
-	var timeSpeed = 30.0
-	var timeZone = 7
+	var timeSpeed: Double = GlobalConfig.GAME_TIME_SPEED
+	var timeZone: Int = GlobalConfig.SERVER_TIMEZONE
 
 	var serverRealTime: Double = Date.now()
 

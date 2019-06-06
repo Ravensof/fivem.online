@@ -2,6 +2,7 @@ package online.fivem.client.modules.eventGenerator
 
 import kotlinx.coroutines.Job
 import online.fivem.client.common.AbstractClientModule
+import online.fivem.client.common.CoordinatesEvent
 import online.fivem.client.common.GlobalCache.player
 import online.fivem.client.entities.Ped
 import online.fivem.client.entities.Vehicle
