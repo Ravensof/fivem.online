@@ -18,12 +18,17 @@ import online.fivem.common.extensions.unset
 import online.fivem.common.gtav.NativeAudioScenes
 import online.fivem.common.gtav.NativeControls
 
-class API : AbstractClientModule() {
-
-	private val tickExecutor by moduleLoader.delegate<TickExecutorModule>()
-	private val controlHandlerModule by moduleLoader.delegate<ControlHandlerModule>()
+class APIModule(
+	private val tickExecutorModule: TickExecutorModule,
+	private val controlHandlerModule: ControlHandlerModule
+) : AbstractClientModule() {
 
 	private val enableBlackOut = UnitStack()
+
+	override fun onStart() = launch {
+		tickExecutorModule.waitForStart()
+		controlHandlerModule.waitForStart()
+	}
 
 	fun setBlackOut() = enableBlackOut.set {
 		@Suppress("DEPRECATION")
@@ -47,11 +52,11 @@ class API : AbstractClientModule() {
 
 	private val nuiBlackOutScreenStack = UnitStack()
 
-	fun setBlackScreen(duration: Int = 0) = setJob(nuiBlackOutScreenStack) {
+	fun setBlackScreen(transitionTime: Int = 0) = setJob(nuiBlackOutScreenStack) {
 		var supportId = -1
 
-		if (duration == 0) {
-			supportId = tickExecutor.add {
+		if (transitionTime == 0) {
+			supportId = tickExecutorModule.add {
 				Client.drawRect(
 					0.0, 0.0,
 					1000.0, 2000.0,//todo подставлять разрешение экрана
@@ -60,14 +65,14 @@ class API : AbstractClientModule() {
 			}
 		}
 
-		NuiEvent.emit(BlackOutEvent(duration))
-		delay(duration.toLong())
-		tickExecutor.remove(supportId)
+		NuiEvent.emit(BlackOutEvent(transitionTime))
+		delay(transitionTime.toLong())
+		tickExecutorModule.remove(supportId)
 	}
 
-	fun unSetBlackScreen(handle: Handle, duration: Int) = unsetJob(nuiBlackOutScreenStack, handle) {
-		NuiEvent.emit(CancelBlackOutEvent(duration))
-		delay(duration.toLong())
+	fun unSetBlackScreen(handle: Handle, transitionDuration: Int) = unsetJob(nuiBlackOutScreenStack, handle) {
+		NuiEvent.emit(CancelBlackOutEvent(transitionDuration))
+		delay(transitionDuration.toLong())
 	}
 
 	fun doScreenFadeOutAsync(duration: Int) = setJob(fadeScreenStack) {
@@ -77,9 +82,9 @@ class API : AbstractClientModule() {
 
 	private val fadeScreenStack = UnitStack()
 
-	fun doScreenFadeInJob(handle: Handle, duration: Int) = unsetJob(fadeScreenStack, handle) {
+	fun doScreenFadeInJob(handle: Handle, transitionDuration: Int) = unsetJob(fadeScreenStack, handle) {
 		@Suppress("DEPRECATION")
-		Client.doScreenFadeIn(duration)
+		Client.doScreenFadeIn(transitionDuration)
 	}
 
 	private val ragdollStack = UnitStack()
@@ -88,11 +93,11 @@ class API : AbstractClientModule() {
 
 	fun setRagdollEffect(): Handle = ragdollStack.set {
 		val playerPed = player.ped.entity
-		ragdollExecutorId = tickExecutor.add { Client.setPedToRagdoll(playerPed) }
+		ragdollExecutorId = tickExecutorModule.add { Client.setPedToRagdoll(playerPed) }
 	}
 
 	fun removeRagdollEffect(handle: Handle) = ragdollStack.unset(handle) {
-		tickExecutor.remove(ragdollExecutorId)
+		tickExecutorModule.remove(ragdollExecutorId)
 	}
 
 	private val playerControlStack = UnitStack()

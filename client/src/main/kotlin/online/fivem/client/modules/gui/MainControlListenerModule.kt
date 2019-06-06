@@ -1,22 +1,24 @@
 package online.fivem.client.modules.gui
 
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.modules.basics.ControlHandlerModule
 import online.fivem.common.gtav.NativeControls
 
-class MainControlListenerModule : AbstractClientModule(), ControlHandlerModule.Listener {
+class MainControlListenerModule(
+	private val controlHandlerModule: ControlHandlerModule
+) : AbstractClientModule(), ControlHandlerModule.Listener {
 	override val registeredKeys = mutableListOf<NativeControls.Keys>()
 
 	private val shortPressHandlers = mutableMapOf<NativeControls.Keys, () -> Boolean>()
 	private val longPressHandlers = mutableMapOf<NativeControls.Keys, () -> Boolean>()
 
-	private val controlHandlerModule by moduleLoader.delegate<ControlHandlerModule>()
 
-	override fun onStart(): Job? {
-		controlHandlerModule.addListener(this)
+	override fun onStart() = launch {
+		controlHandlerModule.waitForStart()
 
-		return super.onStart()
+		controlHandlerModule.addListener(this@MainControlListenerModule)
 	}
 
 	override fun onStop(): Job? {

@@ -1,6 +1,5 @@
 package online.fivem.client.modules.basics
 
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -15,19 +14,21 @@ import online.fivem.common.entities.Weather
 import online.fivem.common.events.net.ServerSideSynchronizationEvent
 import online.fivem.common.gtav.NativeWeather
 
-class WeatherModule : AbstractClientModule() {
+class WeatherModule(
+	private val dateTimeModule: DateTimeModule
+) : AbstractClientModule() {
 
 	private val weatherQueue = Channel<Weather>(10)
-
-	private val dateTimeModule by moduleLoader.delegate<DateTimeModule>()
 
 	private var currentWeather: NativeWeather = NativeWeather.OVERCAST
 	private var currentTemperature = 0.0
 
-	override fun onStart(): Job? {
+	override fun onStart() = launch {
+		dateTimeModule.waitForStart()
+
 		setWeather(currentWeather, 1f)
 
-		launch {
+		this@WeatherModule.launch {
 			for (weather in weatherQueue) {
 				currentTemperature = weather.temperature
 
@@ -42,8 +43,6 @@ class WeatherModule : AbstractClientModule() {
 				setWeather(newWeather, changingTime.toFloat()).join()
 			}
 		}
-
-		return super.onStart()
 	}
 
 	override fun onSync(data: ServerSideSynchronizationEvent) = launch {

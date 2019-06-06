@@ -6,9 +6,9 @@ import online.fivem.client.modules.basics.ControlHandlerModule
 import online.fivem.client.modules.gui.MainControlListenerModule
 import online.fivem.common.gtav.NativeControls
 
-class InteractionMenu : AbstractClientModule() {
-
-	private val controlHandlerModule by moduleLoader.delegate<ControlHandlerModule>()
+class InteractionMenu(
+	private val controlHandlerModule: ControlHandlerModule
+) : AbstractClientModule() {
 
 	override fun onStart() = launch {
 		moduleLoader.getModule(MainControlListenerModule::class).onShortPressListener(

@@ -29,14 +29,15 @@ import kotlin.random.Random
 
 private typealias Data = Any
 
-class ClientEventExchangerModule : AbstractServerModule() {
+class ClientEventExchangerModule(
+	private val sessionModule: SessionModule
+) : AbstractServerModule() {
 
 	private val playersSendChannels = createChannels<Serializable>()
 	private val playersReceiveChannels = createChannels<IncomingPacket>()
 
 	private val clients = mutableMapOf<Int, Double>()
 
-	private val sessionModule by moduleLoader.delegate<SessionModule>()
 
 	init {
 		Exports.on(NativeEvents.Server.PLAYER_DROPPED) { playerId: Int, _: String -> onPlayerDropped(playerId) }
@@ -48,9 +49,11 @@ class ClientEventExchangerModule : AbstractServerModule() {
 	}
 
 	@ExperimentalCoroutinesApi
-	override fun onStart(): Job? {
+	override fun onStart() = launch {
+		sessionModule.waitForStart()
+
 		playersSendChannels.forEachIndexed { playerSrc, channel ->
-			launch {
+			this@ClientEventExchangerModule.launch {
 				for (data in channel) {
 					emit(playerSrc, data)
 				}
@@ -58,7 +61,7 @@ class ClientEventExchangerModule : AbstractServerModule() {
 		}
 
 		playersReceiveChannels.forEach { channel ->
-			launch {
+			this@ClientEventExchangerModule.launch {
 				for (packet in channel) {
 					val playerSrc = packet.playerSrc
 
@@ -71,7 +74,7 @@ class ClientEventExchangerModule : AbstractServerModule() {
 			}
 		}
 
-		launch {
+		this@ClientEventExchangerModule.launch {
 			for (packet in channel) {
 				packet.playerSrc?.value?.let { playerSrc ->
 
@@ -88,8 +91,6 @@ class ClientEventExchangerModule : AbstractServerModule() {
 				}
 			}
 		}
-
-		return super.onStart()
 	}
 
 	override fun onStop() = launch {

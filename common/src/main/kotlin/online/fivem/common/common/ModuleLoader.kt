@@ -8,7 +8,6 @@ import online.fivem.common.extensions.receiveAndCancel
 import online.fivem.common.extensions.stackTrace
 import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.KClass
-import kotlin.reflect.KProperty
 
 class ModuleLoader(override val coroutineContext: CoroutineContext = createSupervisorJob()) : CoroutineScope {
 
@@ -96,27 +95,6 @@ class ModuleLoader(override val coroutineContext: CoroutineContext = createSuper
 
 	suspend fun <T : AbstractModule> getModule(kClass: KClass<T>) =
 		loadedModulesRepository.getChannel(kClass).openSubscription().receiveAndCancel()
-
-	inline fun <reified ModuleType : AbstractModule> delegate(): OnLocalModuleLoaded<ModuleType> {
-		return OnLocalModuleLoaded(ModuleType::class)
-	}
-
-	class OnLocalModuleLoaded<T : AbstractModule>(private val kClass: KClass<T>) {
-		private var value: T? = null
-
-		operator fun getValue(thisRef: AbstractModule, property: KProperty<*>): T {
-			value?.let {
-				return it
-			}
-
-			val module = thisRef.moduleLoader.modules.find { it::class == kClass }?.unsafeCast<T>()
-				?: throw Exception("module ${kClass.simpleName} used in ${thisRef::class.simpleName}/${property.name} have not been loaded")
-
-			value = module
-
-			return module
-		}
-	}
 
 	private companion object {
 		const val MODULE_LOADING_TIMEOUT: Long = 60_000

@@ -5,14 +5,15 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import online.fivem.server.common.AbstractServerModule
 import online.fivem.server.entities.Player
-import kotlin.coroutines.CoroutineContext
 
-class CommandsModule(override val coroutineContext: CoroutineContext) : AbstractServerModule() {
+class CommandsModule(
+	private val sessionModule: SessionModule
+) : AbstractServerModule() {
 
-	private val sessionModule by moduleLoader.delegate<SessionModule>()
+	override fun onStart() = launch {
+		sessionModule.waitForStart()
 
-	override fun onStart(): Job? {
-		launch {
+		this@CommandsModule.launch {
 			for (command in executionQueue) {
 				val player =
 					if (command.playerSrc == 0) null else sessionModule.getPlayer(command.playerSrc) ?: continue
@@ -27,8 +28,6 @@ class CommandsModule(override val coroutineContext: CoroutineContext) : Abstract
 				)
 			}
 		}
-
-		return super.onStart()
 	}
 
 	override fun onStop(): Job? {

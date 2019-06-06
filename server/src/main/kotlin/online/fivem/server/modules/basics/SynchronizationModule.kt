@@ -18,16 +18,16 @@ import online.fivem.server.events.PlayerConnectedEvent
 import online.fivem.server.gtav.Natives
 import online.fivem.server.modules.basics.mysql.MySQLModule
 import online.fivem.server.modules.client_event_exchanger.ClientEvent
-import kotlin.coroutines.CoroutineContext
 import kotlin.js.Date
 
-class SynchronizationModule(override val coroutineContext: CoroutineContext) : AbstractServerModule() {
+class SynchronizationModule(
+	private val sessionModule: SessionModule,
+	private val mySQLModule: MySQLModule
+) : AbstractServerModule() {
 
 	private val syncData = ServerSideSynchronizationEvent(serverTime = 0.0)
 
 	private val syncDataChannel = Channel<Pair<Player, ClientSideSynchronizationEvent>>(GlobalConfig.MAX_PLAYERS)
-
-	private val sessionModule by moduleLoader.delegate<SessionModule>()
 
 	private lateinit var mySQL: Pool
 
@@ -40,7 +40,10 @@ class SynchronizationModule(override val coroutineContext: CoroutineContext) : A
 	}
 
 	override fun onStart() = launch {
-		mySQL = moduleLoader.getModule(MySQLModule::class).pool
+		sessionModule.waitForStart()
+		mySQLModule.waitForStart()
+
+		mySQL = mySQLModule.pool
 
 		startPlayerDataListener()
 		startSynchronize()

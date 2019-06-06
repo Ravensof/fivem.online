@@ -1,6 +1,7 @@
 package online.fivem.client.modules.role_play_system
 
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.common.GlobalCache.player
 import online.fivem.client.entities.Ped
@@ -14,11 +15,13 @@ import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.events.net.ClientSideSynchronizationEvent
 import online.fivem.common.events.net.sync.RolePlaySystemSaveEvent
 
-class RolePlaySystemModule : AbstractClientModule() {
-
-	private val tickExecutor by moduleLoader.delegate<TickExecutorModule>()
+class RolePlaySystemModule(
+	private val tickExecutorModule: TickExecutorModule
+) : AbstractClientModule() {
 
 	override suspend fun onInit() {
+		Client.setPlayerHealthRechargeMultiplier(Client.getPlayerId(), 0f)
+
 		Event.apply {
 			on<PlayerVehicleSeatEvent.Join.Passenger> {
 				if (it.seatIndex == 0) {
@@ -28,13 +31,10 @@ class RolePlaySystemModule : AbstractClientModule() {
 			on<PlayerVehicleSeatEvent.Left> { disableSeatShuffling(false) }
 			on<PlayersPedChangedEvent> { onPedChanged(it.ped) }
 		}
-
 	}
 
-	override fun onStart(): Job? {
-		Client.setPlayerHealthRechargeMultiplier(Client.getPlayerId(), 0f)
-
-		return super.onStart()
+	override fun onStart() = launch {
+		tickExecutorModule.waitForStart()
 	}
 
 	override fun onSync(exportObject: ClientSideSynchronizationEvent): Job? {
@@ -60,9 +60,9 @@ class RolePlaySystemModule : AbstractClientModule() {
 	private fun disableSeatShuffling(disable: Boolean) {
 		val vehicle = player.ped.getVehicleIsIn(false) ?: return
 
-		tickExecutor.remove(seatShuffling)
+		tickExecutorModule.remove(seatShuffling)
 		if (disable) {
-			seatShuffling = tickExecutor.add {
+			seatShuffling = tickExecutorModule.add {
 				if (Client.getIsTaskActive(player.ped.entity, 165)) {
 					Client.setPedIntoVehicle(player.ped.entity, vehicle.entity, 0)
 				}

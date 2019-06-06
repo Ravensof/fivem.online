@@ -1,6 +1,7 @@
 package online.fivem.client.modules.basics
 
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.extensions.disableControlAction
 import online.fivem.client.extensions.isControlPressed
@@ -9,23 +10,24 @@ import online.fivem.common.extensions.orZero
 import online.fivem.common.gtav.NativeControls
 import kotlin.js.Date
 
-class ControlHandlerModule : AbstractClientModule() {
+class ControlHandlerModule(
+	private val tickExecutorModule: TickExecutorModule
+) : AbstractClientModule() {
 
 	private val handlers = mutableListOf<Listener>()
 
-	private val tickExecutor by moduleLoader.delegate<TickExecutorModule>()
 	private var executorId = Stack.UNDEFINED_INDEX
 
 	private val pressedKeys = mutableMapOf<NativeControls.Keys, Double>()
 
-	override fun onStart(): Job? {
-		executorId = tickExecutor.add(::checkPressedKeys)
+	override fun onStart() = launch {
+		tickExecutorModule.waitForStart()
 
-		return super.onStart()
+		executorId = tickExecutorModule.add(::checkPressedKeys)
 	}
 
 	override fun onStop(): Job? {
-		tickExecutor.remove(executorId)
+		tickExecutorModule.remove(executorId)
 
 		return super.onStop()
 	}

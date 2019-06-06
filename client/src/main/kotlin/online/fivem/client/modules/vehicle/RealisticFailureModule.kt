@@ -18,9 +18,9 @@ import kotlin.math.pow
 import kotlin.random.Random
 
 //todo переписать
-class RealisticFailureModule : AbstractClientModule() {
-
-	private val tickExecutorModule by moduleLoader.delegate<TickExecutorModule>()
+class RealisticFailureModule(
+	private val tickExecutorModule: TickExecutorModule
+) : AbstractClientModule() {
 
 	private var lastVehicle: Vehicle? = null
 	private var vehicleClass = 0
@@ -59,7 +59,10 @@ class RealisticFailureModule : AbstractClientModule() {
 	private var mainJob: Job? = null
 	private var tickHandle = Stack.UNDEFINED_INDEX
 
-	override suspend fun onInit() {
+
+	override fun onStart() = launch {
+		tickExecutorModule.waitForStart()
+
 		Event.apply {
 			on<PlayerLeftOrJoinVehicleEvent.Join.Driver> { onJoinVehicle(it.vehicle) }
 			on<PlayerLeftOrJoinVehicleEvent.Changed> { onChangeVehicle(it.vehicle, it.previousVehicle) }

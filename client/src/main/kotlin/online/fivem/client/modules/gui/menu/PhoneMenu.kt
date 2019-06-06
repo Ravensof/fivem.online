@@ -8,14 +8,20 @@ import online.fivem.client.modules.gui.NavigationControlsHandler
 import online.fivem.common.common.Console
 import online.fivem.common.gtav.NativeControls
 
-class PhoneMenu : AbstractClientModule(),
+class PhoneMenu(
+	private val controlHandlerModule: ControlHandlerModule,
+	private val mainControlListenerModule: MainControlListenerModule
+
+) : AbstractClientModule(),
 	NavigationControlsHandler.Listener {
 
-	private val controlHandlerModule by moduleLoader.delegate<ControlHandlerModule>()
 	private var navigatorListener: NavigationControlsHandler? = null
 
 	override fun onStart() = launch {
-		moduleLoader.getModule(MainControlListenerModule::class).onShortPressListener(
+		controlHandlerModule.waitForStart()
+
+		mainControlListenerModule.waitForStart()
+		mainControlListenerModule.onShortPressListener(
 			NativeControls.Keys.PHONE,
 			::onPhoneOpenButton
 		)

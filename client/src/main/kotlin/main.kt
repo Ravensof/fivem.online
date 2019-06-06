@@ -1,6 +1,6 @@
 import kotlinx.coroutines.launch
 import online.fivem.client.gtav.Natives
-import online.fivem.client.modules.basics.BasicsModule
+import online.fivem.client.modules.basics.BasicsModules
 import online.fivem.client.modules.eventGenerator.EventGeneratorModule
 import online.fivem.client.modules.nui_event_exchanger.NuiEventExchangerModule
 import online.fivem.client.modules.role_play_system.RolePlaySystemModule
@@ -28,11 +28,18 @@ private fun start() {
 
 			add(NuiEventExchangerModule())
 
-			add(BasicsModule())
+			val basicsModules = BasicsModules().also {
+				add(it)
+			}
 
-			add(VehicleModule())
+			add(
+				VehicleModule(
+					apiModule = basicsModules.apiModule,
+					tickExecutorModule = basicsModules.tickExecutorModule
+				)
+			)
 
-			add(RolePlaySystemModule())
+			add(RolePlaySystemModule(basicsModules.tickExecutorModule))
 
 			add(EventGeneratorModule())//pre last
 

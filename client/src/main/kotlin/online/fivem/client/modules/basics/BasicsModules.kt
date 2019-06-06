@@ -9,9 +9,20 @@ import online.fivem.common.common.Event
 import online.fivem.common.common.Stack
 import online.fivem.common.gtav.NativeTextEntries
 
-class BasicsModule : AbstractClientModule() {
+class BasicsModules : AbstractClientModule() {
 
-	private val API by moduleLoader.delegate<API>()
+	val tickExecutorModule = TickExecutorModule()
+	private val controlHandlerModule = ControlHandlerModule(tickExecutorModule)
+	val apiModule = APIModule(
+		tickExecutorModule = tickExecutorModule,
+		controlHandlerModule = controlHandlerModule
+	)
+	private val spawnManagerModule = SpawnManagerModule(apiModule)
+	private val joinTransitionModule = JoinTransitionModule(
+		apiModule = apiModule,
+		tickExecutorModule = tickExecutorModule
+	)
+	private val dateTimeModule = DateTimeModule()
 
 	private var handleShowNui = Stack.UNDEFINED_INDEX
 
@@ -20,16 +31,21 @@ class BasicsModule : AbstractClientModule() {
 
 		moduleLoader.apply {
 			add(ErrorReporterModule())
-			add(TickExecutorModule())
-			add(ControlHandlerModule())
-			add(API())
-			add(JoinTransitionModule())
-			add(SpawnManagerModule())
-			add(DateTimeModule())
-			add(WeatherModule())
+			add(tickExecutorModule)
+			add(controlHandlerModule)
+			add(apiModule)
+			add(joinTransitionModule)
+			add(spawnManagerModule)
+			add(dateTimeModule)
+			add(WeatherModule(dateTimeModule))
 			add(VoiceTransmissionModule())
 
-			add(ServersCommandsHandlerModule())
+			add(
+				ServersCommandsHandlerModule(
+					spawnManagerModule = spawnManagerModule,
+					joinTransition = joinTransitionModule
+				)
+			)
 		}
 	}
 
@@ -40,15 +56,15 @@ class BasicsModule : AbstractClientModule() {
 	}
 
 	override fun onStop(): Job? {
-		API.hideNui()
+		apiModule.hideNui()
 
 		return super.onStop()
 	}
 
 	private fun onPauseMenuStateChanged(previousState: Int) {
-		API.cancelHideNui(handleShowNui)
+		apiModule.cancelHideNui(handleShowNui)
 		if (previousState == 0) {
-			handleShowNui = API.hideNui()
+			handleShowNui = apiModule.hideNui()
 		}
 	}
 

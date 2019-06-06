@@ -26,7 +26,9 @@ private fun start() {
 
 	ModuleLoader().apply {
 		launch {
-			add(BasicsModule())
+			val basicsModule = BasicsModule().also {
+				add(it)
+			}
 
 			add(RolePlaySystemModule())
 

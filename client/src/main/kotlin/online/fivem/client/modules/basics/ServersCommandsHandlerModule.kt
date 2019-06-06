@@ -9,10 +9,10 @@ import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.events.net.*
 import kotlin.js.Date
 
-class ServersCommandsHandlerModule : AbstractClientModule() {
-
-	private lateinit var spawnManager: SpawnManagerModule
-	private lateinit var joinTransition: JoinTransitionModule
+class ServersCommandsHandlerModule(
+	private val spawnManagerModule: SpawnManagerModule,
+	private val joinTransition: JoinTransitionModule
+) : AbstractClientModule() {
 
 	private var lastSync = 0.0
 
@@ -28,8 +28,8 @@ class ServersCommandsHandlerModule : AbstractClientModule() {
 	}
 
 	override fun onStart() = launch {
-		spawnManager = moduleLoader.getModule(SpawnManagerModule::class)
-		joinTransition = moduleLoader.getModule(JoinTransitionModule::class)
+		spawnManagerModule.waitForStart()
+		joinTransition.waitForStart()
 
 		ServerEvent.apply {
 			on<StopResourceEvent> { onStopEvent(it.eventId) }
@@ -54,7 +54,7 @@ class ServersCommandsHandlerModule : AbstractClientModule() {
 
 	private fun onPlayerSpawn(coordinatesX: CoordinatesX, model: Int?) = launch {
 		joinTransition.startTransitionJob().join()
-		spawnManager.spawnPlayerJob(coordinatesX, model).join()
+		spawnManagerModule.spawnPlayerJob(coordinatesX, model).join()
 		joinTransition.endTransitionJob()
 	}
 

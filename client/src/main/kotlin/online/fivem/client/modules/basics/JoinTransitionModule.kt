@@ -6,21 +6,26 @@ import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.gtav.Client
 import online.fivem.common.common.Stack
 
-class JoinTransitionModule : AbstractClientModule() {
+//rename to effects?
+class JoinTransitionModule(
+	private val apiModule: APIModule,
+	private val tickExecutorModule: TickExecutorModule
+) : AbstractClientModule() {
 
 	private var switchingPlayerJob: Job? = null
-	private val tickExecutor by moduleLoader.delegate<TickExecutorModule>()
-
-	private lateinit var api: API
 
 	private var muteHandle = Stack.UNDEFINED_INDEX
 
-	override fun onStart() = launch {
-		api = moduleLoader.getModule(API::class)
-
+	init {
 		Client.setManualShutdownLoadingScreenNui(true)
-		startTransitionJob().join()
+	}
 
+	override fun onStart() = launch {
+		tickExecutorModule.waitForStart()
+		apiModule.waitForStart()
+
+		startTransitionJob()
+		switchingPlayerJob?.join()
 		Client.doScreenFadeIn(1)
 		Client.shutdownLoadingScreen()
 		Client.shutdownLoadingScreenNui()
@@ -31,8 +36,8 @@ class JoinTransitionModule : AbstractClientModule() {
 	}
 
 	fun startTransitionJob(): Job {
-		api.unMuteSound(muteHandle)
-		muteHandle = api.muteSound()
+		apiModule.unMuteSound(muteHandle)
+		muteHandle = apiModule.muteSound()
 
 		return launch {
 			if (!Client.isPlayerSwitchInProgress()) {
@@ -43,13 +48,13 @@ class JoinTransitionModule : AbstractClientModule() {
 	}
 
 	fun endTransitionJob(): Job = launch {
-		val execId = tickExecutor.add { clearScreen() }
+		val execId = tickExecutorModule.add { clearScreen() }
 
 		switchingPlayerJob?.join()
-		api.unMuteSound(muteHandle)
+		apiModule.unMuteSound(muteHandle)
 
 		Client.switchInPlayer(Client.getPlayerPedId())
-		tickExecutor.remove(execId)
+		tickExecutorModule.remove(execId)
 		Client.clearDrawOrigin()
 	}
 
