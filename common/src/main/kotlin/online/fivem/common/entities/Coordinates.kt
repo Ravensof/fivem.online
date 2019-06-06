@@ -1,5 +1,8 @@
 package online.fivem.common.entities
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 open class Coordinates(
 	open val x: Float,
 	open val y: Float,

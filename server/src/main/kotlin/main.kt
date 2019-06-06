@@ -32,7 +32,7 @@ private fun start() {
 
 			add(RolePlaySystemModule())
 
-			val clientEventExchangerModule = ClientEventExchangerModule().also {
+			val clientEventExchangerModule = ClientEventExchangerModule(basicsModule.sessionModule).also {
 				add(it, manualStart = true)//last
 			}
 

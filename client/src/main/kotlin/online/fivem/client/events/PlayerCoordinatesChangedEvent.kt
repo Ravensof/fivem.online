@@ -1,5 +1,5 @@
 package online.fivem.client.events
 
-import online.fivem.common.entities.Coordinates
+import online.fivem.common.entities.CoordinatesX
 
-class PlayerCoordinatesChangedEvent(val coordinates: Coordinates)
+class PlayerCoordinatesChangedEvent(val coordinates: CoordinatesX)

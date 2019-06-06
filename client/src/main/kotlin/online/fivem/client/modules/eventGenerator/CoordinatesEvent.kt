@@ -5,6 +5,7 @@ import kotlinx.coroutines.launch
 import online.fivem.common.common.Event
 import online.fivem.common.common.createSupervisorJob
 import online.fivem.common.entities.Coordinates
+import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.extensions.compareTo
 import online.fivem.common.extensions.distance
 import online.fivem.common.extensions.forEach
@@ -15,7 +16,7 @@ object CoordinatesEvent : CoroutineScope {
 
 	init {
 		launch {
-			Event.openSubscription(Coordinates::class).forEach { handle(it) }
+			Event.openSubscription(CoordinatesX::class).forEach { handle(it) }
 		}
 	}
 
@@ -46,7 +47,7 @@ object CoordinatesEvent : CoroutineScope {
 		onExitHandlers.remove(point)
 	}
 
-	fun handle(coordinates: Coordinates) {
+	fun handle(coordinates: CoordinatesX) {
 		onJoinHandlers.forEach {
 			if (it.key.function(coordinates)) {
 				if (!inPoints.contains(it.key)) {
@@ -64,6 +65,6 @@ object CoordinatesEvent : CoroutineScope {
 
 	class Point(
 		val coordinates: Coordinates,
-		val function: (Coordinates) -> Boolean
+		val function: (CoordinatesX) -> Boolean
 	)
 }

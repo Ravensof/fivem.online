@@ -7,9 +7,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import online.fivem.common.common.Html
 import online.fivem.common.entities.InternetRadioStation
-import online.fivem.common.events.nui.InternetRadioChangedEvent
-import online.fivem.common.events.nui.InternetRadioStopEvent
-import online.fivem.common.events.nui.InternetRadioVolumeChangeEvent
+import online.fivem.common.events.nui.InternetRadioModuleEvent
 import online.fivem.common.extensions.orOne
 import online.fivem.nui.common.AbstractNuiModule
 import online.fivem.nui.extensions.nuiResourcesLink
@@ -32,9 +30,9 @@ class InternetRadioModule : AbstractNuiModule() {
 
 	override fun onStart(): Job? {
 		ClientEvent.apply {
-			on<InternetRadioChangedEvent> { changeStation(it.internetRadioStation) }
-			on<InternetRadioStopEvent> { disable() }
-			on<InternetRadioVolumeChangeEvent> { changeVolume(it.volume) }
+			on<InternetRadioModuleEvent.Changed> { changeStation(it.internetRadioStation) }
+			on<InternetRadioModuleEvent.Stop> { disable() }
+			on<InternetRadioModuleEvent.VolumeChanged> { changeVolume(it.volume) }
 		}
 
 		return super.onStart()

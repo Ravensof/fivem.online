@@ -10,7 +10,6 @@ import online.fivem.client.extensions.getSeatOfPedInVehicle
 import online.fivem.client.extensions.isAnyRadioTrackPlaying
 import online.fivem.client.gtav.Client
 import online.fivem.common.common.Event
-import online.fivem.common.entities.Coordinates
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.extensions.orZero
 import online.fivem.common.extensions.repeatJob
@@ -54,7 +53,7 @@ class EventGeneratorModule : AbstractClientModule() {
 
 			checkPlayersPed(player.ped)
 
-			checkCoordinates(player.ped)
+			checkCoordinatesX(player.ped)
 		}
 
 		return super.onStart()
@@ -78,21 +77,19 @@ class EventGeneratorModule : AbstractClientModule() {
 		}
 	}
 
-	private suspend fun checkCoordinates(playerPed: Ped) {
-		val currentCoordinates = playerPed.coordinates
+	private suspend fun checkCoordinatesX(playerPed: Ped) {
+		val currentCoordinatesX = playerPed.coordinatesX
 
-		if (playerCoordinates != currentCoordinates) {
-			val rotation = playerPed.heading
-			val coordinates = CoordinatesX(currentCoordinates, rotation)
+		if (playerCoordinates != currentCoordinatesX) {
 
-			playerCoordinates = coordinates
+			playerCoordinates = currentCoordinatesX
 
 			Event.emit(
 				PlayerCoordinatesChangedEvent(
-					coordinates
+					currentCoordinatesX
 				)
 			)
-			CoordinatesEvent.handle(currentCoordinates)
+			CoordinatesEvent.handle(currentCoordinatesX)
 		}
 	}
 
@@ -308,7 +305,7 @@ class EventGeneratorModule : AbstractClientModule() {
 
 		private var vehiclePetrolTankHealth: Double? = null
 
-		private var playerCoordinates: Coordinates? = null
+		private var playerCoordinates: CoordinatesX? = null
 
 		private var playerSeatIndex: Int? = null
 

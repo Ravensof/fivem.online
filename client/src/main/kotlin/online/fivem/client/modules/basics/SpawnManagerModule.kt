@@ -36,7 +36,7 @@ class SpawnManagerModule(
 	fun spawnPlayerJob(coordinatesX: CoordinatesX, modelHash: Int?): Job {
 
 		val job = async(start = CoroutineStart.LAZY) {
-			player.ped.coordinates = CoordinatesX.ZERO
+			player.ped.coordinatesX = CoordinatesX.ZERO
 
 			freezePlayer(player, true)
 
@@ -46,8 +46,8 @@ class SpawnManagerModule(
 
 			val ped = player.ped
 
-			Client.requestCollisionAtCoordinates(coordinatesX)
-			ped.coordinates = coordinatesX
+			Client.requestCollisionAtCoordinates(coordinatesX.toCoordinates())
+			ped.coordinatesX = coordinatesX
 
 			withTimeoutOrNull(10_000) {
 				while (!Client.hasCollisionLoadedAroundEntity(ped.entity)) {

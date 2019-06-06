@@ -8,9 +8,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import online.fivem.common.common.Html
 import online.fivem.common.common.Utils
-import online.fivem.common.events.nui.SpeedometerDisableEvent
-import online.fivem.common.events.nui.SpeedometerEnableEvent
-import online.fivem.common.events.nui.SpeedometerUpdateEvent
+import online.fivem.common.events.nui.SpeedometerModuleEvent
 import online.fivem.nui.common.AbstractNuiModule
 import online.fivem.nui.extensions.nuiResourcesLink
 import online.fivem.nui.extensions.toHTMLImageElement
@@ -53,7 +51,7 @@ class SpeedometerModule(
 
 	override suspend fun onInit() {
 		ClientEvent.apply {
-			on<SpeedometerUpdateEvent> {
+			on<SpeedometerModuleEvent.Update> {
 				launch {
 					speedometerInterpolatorChannel.send(
 						SpeedometerData(
@@ -63,11 +61,11 @@ class SpeedometerModule(
 					)
 				}
 			}
-			on<SpeedometerEnableEvent> {
+			on<SpeedometerModuleEvent.Enable> {
 				runSpeedometer()
 				speedometerContainer?.fadeIn()
 			}
-			on<SpeedometerDisableEvent> {
+			on<SpeedometerModuleEvent.Disable> {
 				speedometerContainer?.fadeOut()
 				drawInterpolatorJob?.cancel()
 			}

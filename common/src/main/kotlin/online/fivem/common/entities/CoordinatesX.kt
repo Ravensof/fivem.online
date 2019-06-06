@@ -1,11 +1,14 @@
 package online.fivem.common.entities
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 class CoordinatesX(
-	override val x: Float,
-	override val y: Float,
-	override val z: Float,
+	val x: Float,
+	val y: Float,
+	val z: Float,
 	val rotation: Float
-) : Coordinates(x, y, z) {
+) {
 	constructor(coordinates: Coordinates, rotation: Float) : this(
 		coordinates.x,
 		coordinates.y,
@@ -24,6 +27,8 @@ class CoordinatesX(
 		result = 31 * result + rotation.hashCode()
 		return result
 	}
+
+	fun toCoordinates() = Coordinates(x, y, z)
 
 	companion object {
 		val ZERO = CoordinatesX(0f, 0f, 0f, 0f)

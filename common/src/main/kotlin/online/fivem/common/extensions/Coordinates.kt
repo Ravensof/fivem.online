@@ -1,6 +1,7 @@
 package online.fivem.common.extensions
 
 import online.fivem.common.entities.Coordinates
+import online.fivem.common.entities.CoordinatesX
 
 fun Coordinates.toArray(): Array<Number> {
 	return arrayOf(x, y, z)
@@ -15,3 +16,5 @@ fun Coordinates.distance(coordinates: Coordinates): Number {
 				).toDouble()
 	)
 }
+
+fun Coordinates.distance(coordinatesX: CoordinatesX) = distance(coordinatesX.toCoordinates())

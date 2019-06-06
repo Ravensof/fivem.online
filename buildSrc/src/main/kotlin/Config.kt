@@ -1,7 +1,7 @@
 object Config {
 	const val kotlinVersion = "1.3.31"
 	const val coroutinesVersion = "1.2.1"
-	const val serializationRuntime = "0.11.0"
+	const val serializationRuntime = "0.11.1-1.3.40-eap-67-2"
 
 	object Ftp {
 		const val host = "192.168.1.6"

@@ -20,9 +20,13 @@ abstract class Entity(val entity: Int) {
 		get() = Client.getEntityCoords(entity)
 		set(value) {
 			Client.setEntityCoordsNoOffset(entity, value.x, value.y, value.z)
-			if (value is CoordinatesX) {
-				heading = value.rotation
-			}
+		}
+
+	var coordinatesX: CoordinatesX
+		get() = CoordinatesX(coordinates = Client.getEntityCoords(entity), rotation = Client.getEntityHeading(entity))
+		set(value) {
+			Client.setEntityCoordsNoOffset(entity, value.x, value.y, value.z)
+			Client.setEntityHeading(entity, heading)
 		}
 
 	var isVisible: Boolean

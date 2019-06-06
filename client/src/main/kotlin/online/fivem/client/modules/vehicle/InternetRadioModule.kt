@@ -11,9 +11,7 @@ import online.fivem.client.modules.nui_event_exchanger.NuiEvent
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.Event
 import online.fivem.common.entities.InternetRadioStation
-import online.fivem.common.events.nui.InternetRadioChangedEvent
-import online.fivem.common.events.nui.InternetRadioStopEvent
-import online.fivem.common.events.nui.InternetRadioVolumeChangeEvent
+import online.fivem.common.events.nui.InternetRadioModuleEvent
 import online.fivem.common.extensions.orZero
 import online.fivem.common.gtav.NativeAudioScenes
 import online.fivem.common.gtav.ProfileSetting
@@ -42,7 +40,7 @@ class InternetRadioModule : AbstractClientModule() {
 	}
 
 	override fun onStart() = launch {
-		NuiEvent.emit(InternetRadioVolumeChangeEvent(this@InternetRadioModule.volume))
+		NuiEvent.emit(InternetRadioModuleEvent.VolumeChanged(this@InternetRadioModule.volume))
 	}
 
 	override fun onStop() = launch {
@@ -52,13 +50,13 @@ class InternetRadioModule : AbstractClientModule() {
 	suspend fun playRadio(radio: InternetRadioStation) {
 		muteNativeRadio(true)
 
-		NuiEvent.emit(InternetRadioChangedEvent(radio))
+		NuiEvent.emit(InternetRadioModuleEvent.Changed(radio))
 	}
 
 	suspend fun stopRadio() {
 		muteNativeRadio(false)
 
-		NuiEvent.emit(InternetRadioStopEvent())
+		NuiEvent.emit(InternetRadioModuleEvent.Stop())
 	}
 
 	private fun getInternetRadioStation(radioStation: RadioStation?): InternetRadioStation? {
@@ -79,7 +77,7 @@ class InternetRadioModule : AbstractClientModule() {
 	private fun onSettingsMusicLevelChanged(volume: Int) = launch {
 		this@InternetRadioModule.volume = volume.toDouble() / 10 * MAX_VOLUME
 
-		NuiEvent.emit(InternetRadioVolumeChangeEvent(this@InternetRadioModule.volume))
+		NuiEvent.emit(InternetRadioModuleEvent.VolumeChanged(this@InternetRadioModule.volume))
 	}
 
 	private fun getSettingsMusicLevel(): Int {

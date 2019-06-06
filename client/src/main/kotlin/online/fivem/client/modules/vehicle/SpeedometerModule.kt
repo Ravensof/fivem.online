@@ -8,9 +8,7 @@ import online.fivem.client.entities.Vehicle
 import online.fivem.client.events.PlayerLeftOrJoinVehicleEvent
 import online.fivem.client.modules.nui_event_exchanger.NuiEvent
 import online.fivem.common.common.Event
-import online.fivem.common.events.nui.SpeedometerDisableEvent
-import online.fivem.common.events.nui.SpeedometerEnableEvent
-import online.fivem.common.events.nui.SpeedometerUpdateEvent
+import online.fivem.common.events.nui.SpeedometerModuleEvent
 import online.fivem.common.extensions.repeatJob
 
 class SpeedometerModule : AbstractClientModule() {
@@ -39,12 +37,12 @@ class SpeedometerModule : AbstractClientModule() {
 
 			if (!vehicleHasSpeedo && speed > 0) {
 				vehicleHasSpeedo = true
-				NuiEvent.emit(SpeedometerEnableEvent())
+				NuiEvent.emit(SpeedometerModuleEvent.Enable())
 			}
 
 			if (vehicleHasSpeedo) {
 				NuiEvent.emit(
-					SpeedometerUpdateEvent(
+					SpeedometerModuleEvent.Update(
 						currentGear = vehicle.currentGear,
 						currentRpm = vehicle.currentRpm,
 						dashboardSpeed = speed,
@@ -67,7 +65,7 @@ class SpeedometerModule : AbstractClientModule() {
 	private fun onPlayerLeftVehicle() = launch {
 		updateJob?.cancelAndJoin()
 		vehicleHasSpeedo = false
-		NuiEvent.emit(SpeedometerDisableEvent())
+		NuiEvent.emit(SpeedometerModuleEvent.Disable())
 	}
 
 	companion object {
