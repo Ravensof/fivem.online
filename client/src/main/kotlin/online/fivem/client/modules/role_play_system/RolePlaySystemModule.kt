@@ -19,6 +19,10 @@ class RolePlaySystemModule(
 	private val tickExecutorModule: TickExecutorModule
 ) : AbstractClientModule() {
 
+	init {
+		Client.setPlayerHealthRechargeMultiplier(Client.getPlayerId(), 0f)
+	}
+
 	override suspend fun onInit() {
 		Client.setPlayerHealthRechargeMultiplier(Client.getPlayerId(), 0f)
 
@@ -42,10 +46,17 @@ class RolePlaySystemModule(
 		val playerPed = player.ped
 
 		exportObject.rolePlaySystem = RolePlaySystemSaveEvent(
-			CoordinatesX(
+			coordinatesX = CoordinatesX(
 				playerPed.coordinates,
 				playerPed.heading
-			)
+			),
+
+			health = playerPed.health,
+
+			armour = playerPed.armour,
+
+			weapons = playerPed.getWeapons().associate { it.weapon.name to it.ammo }
+
 		)
 
 		return super.onSync(exportObject)

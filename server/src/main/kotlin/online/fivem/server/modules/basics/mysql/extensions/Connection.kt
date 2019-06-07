@@ -1,9 +1,9 @@
 package online.fivem.server.modules.basics.mysql.extensions
 
 import external.nodejs.mysql.Connection
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
+import online.fivem.common.common.CustomScope
 import online.fivem.common.extensions.onNull
 import online.fivem.common.extensions.receiveAndCancel
 
@@ -16,7 +16,7 @@ private suspend fun Connection.q(query: String, params: Any? = null): Connection
 	val pauseChannel = Channel<Result>()
 
 	val callback = { error: Connection.Error?, results: Connection.Results?, fields: Array<Connection.Field> ->
-		GlobalScope.launch {
+		CustomScope.launch {
 			pauseChannel.send(Result(results, error))
 		}
 		Unit
@@ -50,3 +50,5 @@ suspend fun <T> Connection.row(query: String, params: Any? = null): T? {
 suspend fun Connection.send(query: String, params: Any? = null): Connection.Results {
 	return q(query, params)!!
 }
+
+suspend fun <T> Connection.fetch(query: String, params: Any? = null) = q(query, params)!!.toArray<T>()

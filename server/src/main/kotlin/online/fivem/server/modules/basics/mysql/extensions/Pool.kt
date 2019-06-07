@@ -2,9 +2,9 @@ package online.fivem.server.modules.basics.mysql.extensions
 
 import external.nodejs.mysql.Connection
 import external.nodejs.mysql.Pool
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
+import online.fivem.common.common.CustomScope
 
 suspend fun Pool.getConnection(): Connection {
 
@@ -16,7 +16,7 @@ suspend fun Pool.getConnection(): Connection {
 	val resultChannel = Channel<Result>()
 
 	getConnection { error, connection ->
-		GlobalScope.launch {
+		CustomScope.launch {
 			resultChannel.send(Result(connection, error))
 		}
 	}

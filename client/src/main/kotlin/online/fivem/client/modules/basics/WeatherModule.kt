@@ -45,8 +45,8 @@ class WeatherModule(
 		}
 	}
 
-	override fun onSync(data: ServerSideSynchronizationEvent) = launch {
-		data.weather?.let {
+	override fun onSync(serverData: ServerSideSynchronizationEvent) = launch {
+		serverData.weather?.let {
 			weatherQueue.send(it)
 		}
 	}

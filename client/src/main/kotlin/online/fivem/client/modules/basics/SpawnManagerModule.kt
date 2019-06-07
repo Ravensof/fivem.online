@@ -11,6 +11,7 @@ import online.fivem.client.gtav.Client
 import online.fivem.common.common.Console
 import online.fivem.common.common.Event
 import online.fivem.common.entities.CoordinatesX
+import online.fivem.common.events.net.SpawnPlayerEvent
 import online.fivem.common.extensions.onNull
 
 class SpawnManagerModule(
@@ -32,21 +33,25 @@ class SpawnManagerModule(
 		bufferedActionsModule.waitForStart()
 	}
 
-	fun spawnPlayerJob(coordinatesX: CoordinatesX, modelHash: Int?): Job {
+	fun spawnPlayerJob(event: SpawnPlayerEvent): Job {
 
 		val job = async(start = CoroutineStart.LAZY) {
 			player.ped.coordinatesX = CoordinatesX.ZERO
 
 			freezePlayer(player, true)
 
-			modelHash?.let {
+			event.pedModel?.let {
 				player.setModel(it)
 			}
 
 			val ped = player.ped
 
-			Client.requestCollisionAtCoordinates(coordinatesX.toCoordinates())
-			ped.coordinatesX = coordinatesX
+			Client.requestCollisionAtCoordinates(event.coordinatesX.toCoordinates())
+
+			bufferedActionsModule.coordinatesLocker.lock(this@SpawnManagerModule)
+			ped.coordinatesX = event.coordinatesX
+			delay(1_000)
+			bufferedActionsModule.coordinatesLocker.unlock(this@SpawnManagerModule)
 
 			withTimeoutOrNull(10_000) {
 				while (!Client.hasCollisionLoadedAroundEntity(ped.entity)) {
@@ -56,10 +61,16 @@ class SpawnManagerModule(
 				Console.warn("failed to request collision at spawn coordinates")
 			}
 
-			Client.networkResurrectLocalPlayer(coordinatesX)
+			Client.networkResurrectLocalPlayer(event.coordinatesX)
 			ped.clearTasksImmediately()
 			ped.removeAllWeapons()
 			player.clearWantedLevel()
+			player.ped.health = event.health
+			player.ped.armour = event.armour
+
+			event.weapons.forEach {
+				player.ped.giveWeapon(it.key, it.value)
+			}
 
 			freezePlayer(player, false)
 

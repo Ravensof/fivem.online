@@ -9,6 +9,7 @@ import online.fivem.client.extensions.stop
 import online.fivem.client.gtav.Client
 import online.fivem.client.modules.nui_event_exchanger.NuiEvent
 import online.fivem.common.common.BufferedAction
+import online.fivem.common.common.Locker
 import online.fivem.common.common.generateLong
 import online.fivem.common.events.nui.BlackOutEvent
 import online.fivem.common.events.nui.CancelBlackOutEvent
@@ -21,8 +22,9 @@ class BufferedActionsModule(
 	private val controlHandlerModule: ControlHandlerModule
 ) : AbstractClientModule() {
 
-	private val ragdollExecutorId = generateLong()
+	val coordinatesLocker = Locker()
 
+	private val ragdollExecutorId = generateLong()
 
 //	private val enableBlackOut = BufferedAction()
 //	private val fadeScreenStack = BufferedAction()

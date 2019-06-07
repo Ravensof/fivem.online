@@ -10,8 +10,10 @@ import online.fivem.server.Strings
 import online.fivem.server.common.AbstractServerModule
 import online.fivem.server.entities.Player
 import online.fivem.server.entities.mysqlEntities.CharacterEntity
+import online.fivem.server.entities.mysqlEntities.CharacterWeaponsEntity
 import online.fivem.server.events.PlayerConnectedEvent
 import online.fivem.server.modules.basics.mysql.MySQLModule
+import online.fivem.server.modules.basics.mysql.extensions.fetch
 import online.fivem.server.modules.basics.mysql.extensions.getConnection
 import online.fivem.server.modules.basics.mysql.extensions.row
 import online.fivem.server.modules.basics.mysql.extensions.send
@@ -30,36 +32,62 @@ class RolePlaySystemModule : AbstractServerModule() {
 	override fun onSync(player: Player, data: ClientSideSynchronizationEvent) = launch {
 		val event = data.rolePlaySystem ?: return@launch
 
-		event.coordinatesX.let {
-			mySQL.getConnection().send(
-				"""UPDATE characters
+		val connection = mySQL.getConnection()
+
+		connection.send(
+			"""UPDATE characters
 							|SET
 							|   coord_x=?,
 							|   coord_y=?,
 							|   coord_z=?,
-							|   coord_rotation=?
+							|   coord_rotation=?,
+							|   health=?
+							|
 							|WHERE id=?
 							|LIMIT 1
 						""".trimMargin(),
+			arrayOf(
+				event.coordinatesX.x,
+				event.coordinatesX.y,
+				event.coordinatesX.z,
+				event.coordinatesX.rotation,
+				event.health,
+
+				player.characterId
+			)
+		)
+
+		connection.send(
+			"""DELETE FROM character_weapons
+			|WHERE character_id=?
+		""".trimMargin(),
+			player.characterId
+		)
+
+		event.weapons.forEach {
+			connection.send(
+				"""
+			|INSERT INTO character_weapons
+			|SET
+			|   character_id=?,
+			|   weapon_id=?,
+			|   count=?
+		""".trimMargin(),
 				arrayOf(
-					it.x,
-					it.y,
-					it.z,
-					it.rotation,
-					player.characterId
+					player.characterId,
+					it.key,
+					it.value
 				)
 			)
 		}
 	}
 
-	private suspend fun spawn(player: Player, coordinatesX: CoordinatesX, pedHash: Int) {
-		ClientEvent.emit(SpawnPlayerEvent(coordinatesX, pedHash), player)
-	}
-
 	private fun onPlayerConnected(player: Player) = launch {
 
+		val connection = mySQL.getConnection()
+
 		val character =
-			mySQL.getConnection().row<CharacterEntity>(
+			connection.row<CharacterEntity>(
 				"""SELECT *
 						|FROM characters
 						|WHERE user_id=?
@@ -69,15 +97,31 @@ class RolePlaySystemModule : AbstractServerModule() {
 
 		player.characterId = character.id
 
-		spawn(
-			player,
-			CoordinatesX(
-				character.coord_x.toFloat(),
-				character.coord_y.toFloat(),
-				character.coord_z.toFloat(),
-				character.coord_rotation
-			),
-			character.pedestrian
+		val weapons = connection.fetch<CharacterWeaponsEntity>(
+			"""SELECT *
+			|FROM character_weapons
+			|WHERE character_id=?
+			|""".trimMargin(),
+			character.id
+		)
+
+		ClientEvent.emit(
+			SpawnPlayerEvent(
+				coordinatesX = CoordinatesX(
+					character.coord_x.toFloat(),
+					character.coord_y.toFloat(),
+					character.coord_z.toFloat(),
+					character.coord_rotation
+				),
+
+				pedModel = character.pedestrian,
+
+				health = character.health,
+
+				armour = character.armour,
+
+				weapons = weapons.associate { it.weapon_id to it.count }
+			), player
 		)
 	}
 }

@@ -13,7 +13,7 @@ import online.fivem.common.other.Serializable
 
 abstract class AbstractClientModule : AbstractModule() {
 
-	open fun onSync(data: ServerSideSynchronizationEvent): Job? = null
+	open fun onSync(serverData: ServerSideSynchronizationEvent): Job? = null
 
 	open fun onSync(exportObject: ClientSideSynchronizationEvent): Job? = null
 

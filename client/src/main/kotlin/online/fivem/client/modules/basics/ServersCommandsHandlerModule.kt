@@ -5,7 +5,6 @@ import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.events.PauseMenuStateChangedEvent
 import online.fivem.client.modules.server_event_exchanger.ServerEvent
 import online.fivem.common.common.Event
-import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.events.net.*
 import kotlin.js.Date
 
@@ -34,7 +33,7 @@ class ServersCommandsHandlerModule(
 		ServerEvent.apply {
 			on<StopResourceEvent> { onStopEvent(it.eventId) }
 			on<ServerSideSynchronizationEvent> { onServerRequest(it) }
-			on<SpawnPlayerEvent> { onPlayerSpawn(it.coordinatesX, it.pedModel) }
+			on<SpawnPlayerEvent> { onPlayerSpawn(it) }
 		}
 	}
 
@@ -52,9 +51,9 @@ class ServersCommandsHandlerModule(
 		moduleLoader.stop()
 	}
 
-	private fun onPlayerSpawn(coordinatesX: CoordinatesX, model: Int?) = launch {
+	private fun onPlayerSpawn(event: SpawnPlayerEvent) = launch {
 		joinTransitionModule.startTransition(this@ServersCommandsHandlerModule)
-		spawnManagerModule.spawnPlayerJob(coordinatesX, model).join()
+		spawnManagerModule.spawnPlayerJob(event).join()
 		joinTransitionModule.endTransition(this@ServersCommandsHandlerModule)
 	}
 

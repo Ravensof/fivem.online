@@ -1,6 +1,6 @@
 package online.fivem.client.modules.eventGenerator
 
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.common.CoordinatesEvent
 import online.fivem.client.common.GlobalCache.player
@@ -10,6 +10,7 @@ import online.fivem.client.events.*
 import online.fivem.client.extensions.getSeatOfPedInVehicle
 import online.fivem.client.extensions.isAnyRadioTrackPlaying
 import online.fivem.client.gtav.Client
+import online.fivem.client.modules.basics.BufferedActionsModule
 import online.fivem.common.common.Event
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.extensions.orZero
@@ -19,7 +20,9 @@ import online.fivem.common.gtav.RadioStation
 import kotlin.js.Date
 import kotlin.math.absoluteValue
 
-class EventGeneratorModule : AbstractClientModule() {
+class EventGeneratorModule(
+	private val bufferedActionsModule: BufferedActionsModule
+) : AbstractClientModule() {
 
 	private var isFadeOut: Boolean = true
 
@@ -33,14 +36,15 @@ class EventGeneratorModule : AbstractClientModule() {
 
 	private var vehiclePlayerTryingToGet: Vehicle? = null
 
-	override fun onStart(): Job? {
+	override fun onStart() = launch {
+		bufferedActionsModule.waitForStart()
 
-		repeatJob(50) {
+		this@EventGeneratorModule.repeatJob(50) {
 			checkVehicleHealth(player.ped)
 			checkAcceleration(player.ped)
 		}
 
-		repeatJob(500) {
+		this@EventGeneratorModule.repeatJob(500) {
 			checkPauseMenuState(Client.getPauseMenuState())
 
 			checkIsPlayerInVehicle(player.ped)
@@ -48,7 +52,7 @@ class EventGeneratorModule : AbstractClientModule() {
 			checkRadio()
 		}
 
-		repeatJob(1_000) {
+		this@EventGeneratorModule.repeatJob(1_000) {
 			checkAudioMusicLevelInMP(Client.getProfileSetting(ProfileSetting.AUDIO_MUSIC_LEVEL_IN_MP).orZero())
 			checkIsScreenFadedInOut(Client.isScreenFadedOut())
 
@@ -56,8 +60,6 @@ class EventGeneratorModule : AbstractClientModule() {
 
 			checkCoordinatesX(player.ped)
 		}
-
-		return super.onStart()
 	}
 
 	private suspend fun checkPlayerTryingToGetAnyVehicle(playerPed: Ped) {
@@ -85,6 +87,8 @@ class EventGeneratorModule : AbstractClientModule() {
 
 			playerCoordinates = currentCoordinatesX
 
+			if (bufferedActionsModule.coordinatesLocker.isLocked()) return
+
 			Event.emit(
 				PlayerCoordinatesChangedEvent(
 					currentCoordinatesX
@@ -107,6 +111,9 @@ class EventGeneratorModule : AbstractClientModule() {
 
 			if (playerAcceleration.absoluteValue >= accelerationThreshold) {
 				if (!playerPed.isTryingToGetInAnyVehicle()) {
+
+					if (bufferedActionsModule.coordinatesLocker.isLocked()) return@let
+
 					Event.emit(
 						AccelerationThresholdAchievedEvent(
 							playerAcceleration,

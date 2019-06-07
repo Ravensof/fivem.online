@@ -1,7 +1,6 @@
 package online.fivem.common.common
 
 import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 
 class BufferedAction {
@@ -20,7 +19,7 @@ class BufferedAction {
 
 		if (isInProgress) return
 		isInProgress = true
-		this.action = GlobalScope.async { action() }
+		this.action = CustomScope.async { action() }
 		this.action?.await()
 	}
 

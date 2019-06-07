@@ -18,6 +18,151 @@ import online.fivem.common.gtav.RadioStation
 object Client {
 
 	/**
+	 * This native removes a specified weapon from your selected ped.
+	 * Weapon Hashes: pastebin.com/0wwDZgkF
+	 * Example:
+	 * C#:
+	 * Function.Call(Hash.REMOVE_WEAPON_FROM_PED, Game.Player.Character, 0x99B507EA);
+	 * C++:
+	 * WEAPON::REMOVE_WEAPON_FROM_PED(PLAYER::PLAYER_PED_ID(), 0x99B507EA);
+	 * The code above removes the knife from the player.
+	 */
+	fun removeWeaponFromPed(ped: EntityId, weaponHash: Number) {
+		RemoveWeaponFromPed(ped, weaponHash)
+	}
+
+	/**
+	 * [16/06/2017 by ins1de] :
+	 * Drops the weapon object from selected peds and turns it into a pickup.
+	 * Offset defines the next position of the weapon, ammo count is the stored ammo in the pickup (if ammoCount == 0, pickup won't be created)
+	 * Default offset values (freemode.c):
+	 * if (is_ped_walking(player_ped_id()))
+	 * {
+	 * vVar1 = {0.6f, 4.7f, -0.1f};
+	 * }
+	 * else if (is_ped_sprinting(player_ped_id()))
+	 * {
+	 * vVar1 = {0.6f, 5.7f, -0.1f};
+	 * }
+	 * else if (is_ped_running(player_ped_id()))
+	 * {
+	 * vVar1 = {0.6f, 4.7f, -0.1f};
+	 * }
+	 * else
+	 * {
+	 * vVar1 = {0.4f, 4.7f, -0.1f};
+	 * }
+	 */
+	fun setPedDropsInventoryWeapon(
+		ped: EntityId,
+		weaponHash: Number,
+		xOffset: Number,
+		yOffset: Number,
+		zOffset: Number,
+		ammoCount: Int
+	) {
+		SetPedDropsInventoryWeapon(ped, weaponHash, xOffset, yOffset, zOffset, ammoCount)
+	}
+
+	fun setPedDropsWeapon(ped: EntityId) {
+		SetPedDropsWeapon(ped)
+	}
+
+	fun setPedDropsWeaponsWhenDead(ped: EntityId, toggle: Boolean) {
+		SetPedDropsWeaponsWhenDead(ped, toggle)
+	}
+
+	/**
+	 * Gives a weapon to PED with a delay, example:
+	 * WEAPON::GIVE_DELAYED_WEAPON_TO_PED(PED::PLAYER_PED_ID(), GAMEPLAY::GET_HASH_KEY("WEAPON_PISTOL"), 1000, false)
+	 * ----------------------------------------------------------------------------------------------------------------------------------------
+	 * Translation table:
+	 * pastebin.com/a39K8Nz8
+	 */
+	fun giveDelayedWeaponToPed(ped: EntityId, weaponHash: Float, ammoCount: Int, equipNow: Boolean = false) {
+		GiveDelayedWeaponToPed(ped, weaponHash, ammoCount, equipNow)
+	}
+
+	/**
+	 * isHidden - ????
+	 * All weapon names (add to the list if something is missing), use GAMEPLAY::GET_HASH_KEY((char *)weaponNames[i]) to get get the hash:
+	 * static LPCSTR weaponNames[] = {
+	 * "WEAPON_KNIFE", "WEAPON_NIGHTSTICK", "WEAPON_HAMMER", "WEAPON_BAT", "WEAPON_GOLFCLUB",
+	 * "WEAPON_CROWBAR", "WEAPON_PISTOL", "WEAPON_COMBATPISTOL", "WEAPON_APPISTOL", "WEAPON_PISTOL50",
+	 * "WEAPON_MICROSMG", "WEAPON_SMG", "WEAPON_ASSAULTSMG", "WEAPON_ASSAULTRIFLE",
+	 * "WEAPON_CARBINERIFLE", "WEAPON_ADVANCEDRIFLE", "WEAPON_MG", "WEAPON_COMBATMG", "WEAPON_PUMPSHOTGUN",
+	 * "WEAPON_SAWNOFFSHOTGUN", "WEAPON_ASSAULTSHOTGUN", "WEAPON_BULLPUPSHOTGUN", "WEAPON_STUNGUN", "WEAPON_SNIPERRIFLE",
+	 * "WEAPON_HEAVYSNIPER", "WEAPON_GRENADELAUNCHER", "WEAPON_GRENADELAUNCHER_SMOKE", "WEAPON_RPG", "WEAPON_MINIGUN",
+	 * "WEAPON_GRENADE", "WEAPON_STICKYBOMB", "WEAPON_SMOKEGRENADE", "WEAPON_BZGAS", "WEAPON_MOLOTOV",
+	 * "WEAPON_FIREEXTINGUISHER", "WEAPON_PETROLCAN", "WEAPON_FLARE", "WEAPON_SNSPISTOL", "WEAPON_SPECIALCARBINE",
+	 * "WEAPON_HEAVYPISTOL", "WEAPON_BULLPUPRIFLE", "WEAPON_HOMINGLAUNCHER", "WEAPON_PROXMINE", "WEAPON_SNOWBALL",
+	 * "WEAPON_VINTAGEPISTOL", "WEAPON_DAGGER", "WEAPON_FIREWORK", "WEAPON_MUSKET", "WEAPON_MARKSMANRIFLE",
+	 * "WEAPON_HEAVYSHOTGUN", "WEAPON_GUSENBERG", "WEAPON_HATCHET", "WEAPON_RAILGUN", "WEAPON_COMBATPDW",
+	 * "WEAPON_KNUCKLE", "WEAPON_MARKSMANPISTOL", "WEAPON_FLASHLIGHT", "WEAPON_MACHETE", "WEAPON_MACHINEPISTOL",
+	 * "WEAPON_SWITCHBLADE", "WEAPON_REVOLVER", "WEAPON_COMPACTRIFLE", "WEAPON_DBSHOTGUN", "WEAPON_FLAREGUN",
+	 * "WEAPON_AUTOSHOTGUN", "WEAPON_BATTLEAXE", "WEAPON_COMPACTLAUNCHER", "WEAPON_MINISMG", "WEAPON_PIPEBOMB",
+	 * "WEAPON_POOLCUE", "WEAPON_SWEEPER", "WEAPON_WRENCH"
+	 * };
+	 * ----------------------------------------------------------------------------------------------------------------------------------------
+	 * Translation table:
+	 * pastebin.com/a39K8Nz8
+	 */
+	fun giveWeaponToPed(
+		ped: EntityId,
+		weaponHash: String,
+		ammoCount: Int,
+		isHidden: Boolean = false,
+		equipNow: Boolean = false
+	) {
+		GiveWeaponToPed(ped, weaponHash, ammoCount, isHidden, equipNow)
+	}
+
+	/**
+	 * // Returns the size of the default weapon component clip.
+	 * Use it like this:
+	 * char cClipSize[32];
+	 * Hash cur;
+	 * if (WEAPON::GET_CURRENT_PED_WEAPON(playerPed, &amp;cur, 1))
+	 * {
+	 * if (WEAPON::IS_WEAPON_VALID(cur))
+	 * {
+	 * int iClipSize = WEAPON::GET_WEAPON_CLIP_SIZE(cur);
+	 * sprintf_s(cClipSize, "ClipSize: %.d", iClipSize);
+	 * vDrawString(cClipSize, 0.5f, 0.5f);
+	 * }
+	 * }
+	 */
+	fun getWeaponClipSize(weaponHash: Number): Int {
+		return GetWeaponClipSize(weaponHash)
+	}
+
+	/**
+	 * WEAPON::GET_AMMO_IN_PED_WEAPON(PLAYER::PLAYER_PED_ID(), a_0)
+	 * From decompiled scripts
+	 * Returns total ammo in weapon
+	 * GTALua Example :
+	 * natives.WEAPON.GET_AMMO_IN_PED_WEAPON(plyPed, WeaponHash)
+	 */
+	fun getAmmoInPedWeapon(ped: EntityId, weaponHash: String): Int {
+		return GetAmmoInPedWeapon(ped, weaponHash)
+	}
+
+	fun addAmmoToPed(ped: EntityId, weaponHash: String, ammo: Int) {
+		AddAmmoToPed(ped, weaponHash, ammo)
+	}
+
+	/**
+	 * Same as SET_PED_ARMOUR, but ADDS 'amount' to the armor the Ped already has.
+	 */
+	fun addArmourToPed(ped: EntityId, amount: Number) {
+		AddArmourToPed(ped, amount)
+	}
+
+	fun getPedArmour(ped: EntityId): Int {
+		return GetPedArmour(ped)
+	}
+
+	/**
 	 * Set modKit to 0 if you plan to call SET_VEHICLE_MOD. That's what the game does. Most body modifications through SET_VEHICLE_MOD will not take effect until this is set to 0.
 	 * ---------
 	 * Setting the modKit to 0 also seems to load some livery related vehicle information. For example, using GET_LIVERY_NAME() will return NULL if you haven't set the modKit to 0 in advance. As soon as you set it to 0, GET_LIVERY_NAME() will work properly.
@@ -2319,6 +2464,14 @@ object Client {
 	}
 
 	/**
+	 * p2 should be FALSE, otherwise it seems to always return FALSE
+	 * Bool does not check if the weapon is current equipped, unfortunately.
+	 */
+	fun hasPedGotWeapon(ped: EntityId, weaponHash: String): Boolean {
+		return HasPedGotWeapon(ped, weaponHash, false) == 1
+	}
+
+	/**
 	 * Make sure to request the model first and wait until it has loaded.
 	 */
 	fun setPlayerModel(player: Int, hash: Int) {
@@ -2561,12 +2714,9 @@ private external fun SwitchInPlayer(ped: EntityId)
  */
 //private external fun N_0x49da8145672b2725()
 
-//private external fun AddAmmoToPed(ped: number, weaponHash: string | number, ammo: number)
+private external fun AddAmmoToPed(ped: EntityId, weaponHash: String/*| Number*/, ammo: Int)
 
-/**
- * Same as SET_PED_ARMOUR, but ADDS 'amount' to the armor the Ped already has.
- */
-//private external fun AddArmourToPed(ped: number, amount: number)
+private external fun AddArmourToPed(ped: EntityId, amount: Number)
 
 /**
  * Creates an orange ( default ) Blip-object. Returns a Blip-object which can then be modified.
@@ -8767,7 +8917,7 @@ private external fun GetPauseMenuState(): Int
 
 //private external fun GetPedAmmoTypeFromWeapon_2(ped: number, weaponHash: string | number): number;
 
-//private external fun GetPedArmour(ped: number): number;
+private external fun GetPedArmour(ped: EntityId): Int
 
 //private external fun GetPedAsGroupLeader(groupID: number): number;
 
@@ -10365,22 +10515,7 @@ private external fun GetVehicleWindowTint(vehicle: EntityId): Int
 
 //private external fun GetWaypointDistanceAlongRoute(p0: string, p1: number): number;
 
-/**
- * // Returns the size of the default weapon component clip.
- * Use it like this:
- * char cClipSize[32];
- * Hash cur;
- * if (WEAPON::GET_CURRENT_PED_WEAPON(playerPed, &amp;cur, 1))
- * {
- * if (WEAPON::IS_WEAPON_VALID(cur))
- * {
- * int iClipSize = WEAPON::GET_WEAPON_CLIP_SIZE(cur);
- * sprintf_s(cClipSize, "ClipSize: %.d", iClipSize);
- * vDrawString(cClipSize, 0.5f, 0.5f);
- * }
- * }
- */
-//private external fun GetWeaponClipSize(weaponHash: string | number): number;
+private external fun GetWeaponClipSize(weaponHash: Number): Int
 
 //private external fun GetWeaponComponentHudStats(componentHash: string | number, outData: number): number;
 
@@ -10579,14 +10714,7 @@ private external fun GetVehicleWindowTint(vehicle: EntityId): Int
  */
 //private external fun GiveAchievementToPlayer(achId: number): number;
 
-/**
- * Gives a weapon to PED with a delay, example:
- * WEAPON::GIVE_DELAYED_WEAPON_TO_PED(PED::PLAYER_PED_ID(), GAMEPLAY::GET_HASH_KEY("WEAPON_PISTOL"), 1000, false)
- * ----------------------------------------------------------------------------------------------------------------------------------------
- * Translation table:
- * pastebin.com/a39K8Nz8
- */
-//private external fun GiveDelayedWeaponToPed(ped: number, weaponHash: string | number, ammoCount: number, equipNow: boolean)
+private external fun GiveDelayedWeaponToPed(ped: EntityId, weaponHash: Number, ammoCount: Int, equipNow: Boolean)
 
 /**
  * PoliceMotorcycleHelmet	1024
@@ -10639,31 +10767,21 @@ private external fun GetVehicleWindowTint(vehicle: EntityId): Int
 
 //private external fun GiveWeaponObjectToPed(weaponObject: number, ped: number)
 
-/**
- * isHidden - ????
- * All weapon names (add to the list if something is missing), use GAMEPLAY::GET_HASH_KEY((char *)weaponNames[i]) to get get the hash:
- * static LPCSTR weaponNames[] = {
- * "WEAPON_KNIFE", "WEAPON_NIGHTSTICK", "WEAPON_HAMMER", "WEAPON_BAT", "WEAPON_GOLFCLUB",
- * "WEAPON_CROWBAR", "WEAPON_PISTOL", "WEAPON_COMBATPISTOL", "WEAPON_APPISTOL", "WEAPON_PISTOL50",
- * "WEAPON_MICROSMG", "WEAPON_SMG", "WEAPON_ASSAULTSMG", "WEAPON_ASSAULTRIFLE",
- * "WEAPON_CARBINERIFLE", "WEAPON_ADVANCEDRIFLE", "WEAPON_MG", "WEAPON_COMBATMG", "WEAPON_PUMPSHOTGUN",
- * "WEAPON_SAWNOFFSHOTGUN", "WEAPON_ASSAULTSHOTGUN", "WEAPON_BULLPUPSHOTGUN", "WEAPON_STUNGUN", "WEAPON_SNIPERRIFLE",
- * "WEAPON_HEAVYSNIPER", "WEAPON_GRENADELAUNCHER", "WEAPON_GRENADELAUNCHER_SMOKE", "WEAPON_RPG", "WEAPON_MINIGUN",
- * "WEAPON_GRENADE", "WEAPON_STICKYBOMB", "WEAPON_SMOKEGRENADE", "WEAPON_BZGAS", "WEAPON_MOLOTOV",
- * "WEAPON_FIREEXTINGUISHER", "WEAPON_PETROLCAN", "WEAPON_FLARE", "WEAPON_SNSPISTOL", "WEAPON_SPECIALCARBINE",
- * "WEAPON_HEAVYPISTOL", "WEAPON_BULLPUPRIFLE", "WEAPON_HOMINGLAUNCHER", "WEAPON_PROXMINE", "WEAPON_SNOWBALL",
- * "WEAPON_VINTAGEPISTOL", "WEAPON_DAGGER", "WEAPON_FIREWORK", "WEAPON_MUSKET", "WEAPON_MARKSMANRIFLE",
- * "WEAPON_HEAVYSHOTGUN", "WEAPON_GUSENBERG", "WEAPON_HATCHET", "WEAPON_RAILGUN", "WEAPON_COMBATPDW",
- * "WEAPON_KNUCKLE", "WEAPON_MARKSMANPISTOL", "WEAPON_FLASHLIGHT", "WEAPON_MACHETE", "WEAPON_MACHINEPISTOL",
- * "WEAPON_SWITCHBLADE", "WEAPON_REVOLVER", "WEAPON_COMPACTRIFLE", "WEAPON_DBSHOTGUN", "WEAPON_FLAREGUN",
- * "WEAPON_AUTOSHOTGUN", "WEAPON_BATTLEAXE", "WEAPON_COMPACTLAUNCHER", "WEAPON_MINISMG", "WEAPON_PIPEBOMB",
- * "WEAPON_POOLCUE", "WEAPON_SWEEPER", "WEAPON_WRENCH"
- * };
- * ----------------------------------------------------------------------------------------------------------------------------------------
- * Translation table:
- * pastebin.com/a39K8Nz8
- */
-//private external fun GiveWeaponToPed(ped: number, weaponHash: string | number, ammoCount: number, isHidden: boolean, equipNow: boolean)
+//private external fun GiveWeaponToPed(
+//	ped: EntityId,
+//	weaponHash: Float,
+//	ammoCount: Int,
+//	isHidden: Boolean,
+//	equipNow: Boolean
+//)
+
+private external fun GiveWeaponToPed(
+	ped: EntityId,
+	weaponHash: String,
+	ammoCount: Int,
+	isHidden: Boolean,
+	equipNow: Boolean
+)
 
 //private external fun HasAchievementBeenPassed(achievement: number): number;
 
@@ -10850,11 +10968,7 @@ private external fun HasModelLoaded(model: Int): Number
  */
 //private external fun HasPedBeenDamagedByWeapon(ped: number, weaponHash: string | number, weaponType: number): number;
 
-/**
- * p2 should be FALSE, otherwise it seems to always return FALSE
- * Bool does not check if the weapon is current equipped, unfortunately.
- */
-//private external fun HasPedGotWeapon(ped: number, weaponHash: string | number, p2: boolean): number;
+private external fun HasPedGotWeapon(ped: EntityId, weaponHash: String/* | number*/, p2: Boolean): Number
 
 //private external fun HasPedGotWeaponComponent(ped: number, weaponHash: string | number, componentHash: string | number): number;
 
@@ -21514,17 +21628,7 @@ private external fun RemoveAllPedWeapons(ped: EntityId, p1: Boolean)
 
 //private external fun RemoveWeaponComponentFromWeaponObject(p0: number, p1: number)
 
-/**
- * This native removes a specified weapon from your selected ped.
- * Weapon Hashes: pastebin.com/0wwDZgkF
- * Example:
- * C#:
- * Function.Call(Hash.REMOVE_WEAPON_FROM_PED, Game.Player.Character, 0x99B507EA);
- * C++:
- * WEAPON::REMOVE_WEAPON_FROM_PED(PLAYER::PLAYER_PED_ID(), 0x99B507EA);
- * The code above removes the knife from the player.
- */
-//private external fun RemoveWeaponFromPed(ped: number, weaponHash: string | number)
+private external fun RemoveWeaponFromPed(ped: EntityId, weaponHash: Number)
 
 /**
  * This native makes the gameplay camera zoom into first person/third person with a special effect.
@@ -25019,31 +25123,16 @@ private external fun SetPedCanRagdollFromPlayerImpact(ped: Int, toggle: Boolean)
 
 //private external fun SetPedDriveByClipsetOverride(ped: number, clipset: string)
 
-/**
- * [16/06/2017 by ins1de] :
- * Drops the weapon object from selected peds and turns it into a pickup.
- * Offset defines the next position of the weapon, ammo count is the stored ammo in the pickup (if ammoCount == 0, pickup won't be created)
- * Default offset values (freemode.c):
- * if (is_ped_walking(player_ped_id()))
- * {
- * vVar1 = {0.6f, 4.7f, -0.1f};
- * }
- * else if (is_ped_sprinting(player_ped_id()))
- * {
- * vVar1 = {0.6f, 5.7f, -0.1f};
- * }
- * else if (is_ped_running(player_ped_id()))
- * {
- * vVar1 = {0.6f, 4.7f, -0.1f};
- * }
- * else
- * {
- * vVar1 = {0.4f, 4.7f, -0.1f};
- * }
- */
-//private external fun SetPedDropsInventoryWeapon(ped: number, weaponHash: string | number, xOffset: number, yOffset: number, zOffset: number, ammoCount: number)
+private external fun SetPedDropsInventoryWeapon(
+	ped: EntityId,
+	weaponHash: Number,
+	xOffset: Number,
+	yOffset: Number,
+	zOffset: Number,
+	ammoCount: Number
+)
 
-//private external fun SetPedDropsWeapon(ped: number)
+private external fun SetPedDropsWeapon(ped: EntityId)
 
 //private external fun SetPedDropsWeaponsWhenDead(ped: number, toggle: boolean)
 
