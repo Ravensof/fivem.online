@@ -10,3 +10,7 @@ typealias Handle = Int
 fun createSupervisorJob(parent: Job? = null): CoroutineContext {
 	return SupervisorJob(parent) + ExceptionsStorage.coroutineExceptionHandler
 }
+
+private var lastLong = Long.MIN_VALUE
+
+fun generateLong() = ++lastLong

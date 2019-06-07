@@ -10,7 +10,6 @@ import online.fivem.client.extensions.requestCollisionAtCoordinates
 import online.fivem.client.gtav.Client
 import online.fivem.common.common.Console
 import online.fivem.common.common.Event
-import online.fivem.common.common.Stack
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.extensions.onNull
 
@@ -76,14 +75,12 @@ class SpawnManagerModule(
 		return job
 	}
 
-	private var lockControlHandle = Stack.UNDEFINED_INDEX
-
-	private fun freezePlayer(player: Player, freeze: Boolean) {
+	private suspend fun freezePlayer(player: Player, freeze: Boolean) {
 
 		val ped = player.ped
 
-		bufferedActionsModule.unLockControl(lockControlHandle)
 		if (!freeze) {
+			bufferedActionsModule.unLockControl(this)
 
 			ped.isVisible = true
 			ped.isInAVehicle()
@@ -96,7 +93,7 @@ class SpawnManagerModule(
 			player.isInvincible = false
 
 		} else {
-			lockControlHandle = bufferedActionsModule.lockControl()
+			bufferedActionsModule.lockControl(this@SpawnManagerModule)
 
 			ped.isVisible = false
 			ped.setCollision(false)

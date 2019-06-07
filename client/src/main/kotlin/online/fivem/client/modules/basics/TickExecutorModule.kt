@@ -3,20 +3,20 @@ package online.fivem.client.modules.basics
 import kotlinx.coroutines.Job
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.gtav.Natives.setTick
-import online.fivem.common.common.Handle
-import online.fivem.common.common.Stack
+import online.fivem.common.common.generateLong
 
 class TickExecutorModule : AbstractClientModule() {
 
-	private val tickFunctions = Stack<() -> Unit>()
+	private val tickFunctions = mutableMapOf<Any, () -> Unit>()
 
 	override suspend fun onInit() {
 		setTick {
 			try {
-				tickFunctions.forEach { it() }
+				tickFunctions.forEach { it.value() }
 			} catch (e: Throwable) {
-				println("onTick: ${e.message}")
-				throw e
+				ErrorReporterModule.handleError(
+					Exception("TickExecutorModule:onTick", e)
+				)
 			}
 		}
 	}
@@ -27,11 +27,19 @@ class TickExecutorModule : AbstractClientModule() {
 		return super.onStop()
 	}
 
-	fun add(function: () -> Unit): Handle {
-		return tickFunctions.add(function)
+	fun add(function: () -> Unit): Long {
+		val key = generateLong()
+
+		tickFunctions[key] = function
+
+		return key
 	}
 
-	fun remove(index: Handle) {
-		tickFunctions.remove(index)
+	fun add(key: Any, function: () -> Unit) {
+		tickFunctions[key] = function
+	}
+
+	fun remove(key: Any) {
+		tickFunctions.remove(key)
 	}
 }

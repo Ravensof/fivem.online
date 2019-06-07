@@ -20,7 +20,7 @@ class DateTimeModule : AbstractClientModule() {
 	override fun onStart() = launch {
 		val tickExecutor = moduleLoader.getModule(TickExecutorModule::class)
 
-		tickExecutor.add {
+		tickExecutor.add(this@DateTimeModule) {
 			Date.setDate(date.day, date.month + 1, date.year)
 			Date.setTime(date.hour, date.minute, date.second)
 		}

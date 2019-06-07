@@ -21,13 +21,13 @@ class LazyVehiclesScanner(
 		val scannerChannel = Channel<Vehicle>(GlobalConfig.MAX_PLAYERS)
 		val vehiclesIterator = VehiclesIterator()
 
-		val executorId = tickExecutorModule.add { scanNext(vehiclesIterator, scannerChannel, predicate) }
+		tickExecutorModule.add(this@LazyVehiclesScanner) { scanNext(vehiclesIterator, scannerChannel, predicate) }
 
 		val list = mutableListOf<Vehicle>()
 
 		scannerChannel.forEach { list.add(it) }
 
-		tickExecutorModule.remove(executorId)
+		tickExecutorModule.remove(this@LazyVehiclesScanner)
 		vehiclesIterator.close()
 
 		return@async list

@@ -12,7 +12,7 @@ import online.fivem.client.extensions.getDisabledControlNormal
 import online.fivem.client.gtav.Client
 import online.fivem.client.modules.basics.TickExecutorModule
 import online.fivem.common.common.Event
-import online.fivem.common.common.Stack
+import online.fivem.common.common.generateLong
 import online.fivem.common.gtav.NativeControls
 import kotlin.math.pow
 import kotlin.random.Random
@@ -57,7 +57,7 @@ class RealisticFailureModule(
 		if (Cfg.randomTireBurstInterval != 0) Random.nextInt(tireBurstMaxNumber) else 0
 
 	private var mainJob: Job? = null
-	private var tickHandle = Stack.UNDEFINED_INDEX
+	private val tickHandle = generateLong()
 
 
 	override fun onStart() = launch {
@@ -260,7 +260,7 @@ class RealisticFailureModule(
 
 		if (!Cfg.torqueMultiplierEnabled && !Cfg.preventVehicleFlip && !Cfg.limpMode) return
 
-		tickHandle = tickExecutorModule.add {
+		tickExecutorModule.add(tickHandle) {
 			if (Cfg.torqueMultiplierEnabled || Cfg.sundayDriver || Cfg.limpMode) {
 
 				var factor = 1.0

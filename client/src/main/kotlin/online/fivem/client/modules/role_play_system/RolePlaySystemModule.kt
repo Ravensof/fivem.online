@@ -10,7 +10,7 @@ import online.fivem.client.events.PlayersPedChangedEvent
 import online.fivem.client.gtav.Client
 import online.fivem.client.modules.basics.TickExecutorModule
 import online.fivem.common.common.Event
-import online.fivem.common.common.Stack
+import online.fivem.common.common.generateLong
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.events.net.ClientSideSynchronizationEvent
 import online.fivem.common.events.net.sync.RolePlaySystemSaveEvent
@@ -55,18 +55,20 @@ class RolePlaySystemModule(
 		Client.setPedCanRagdollFromPlayerImpact(ped.entity, true)
 	}
 
-	private var seatShuffling = Stack.UNDEFINED_INDEX
+	private val seatShuffling = generateLong()
 
 	private fun disableSeatShuffling(disable: Boolean) {
 		val vehicle = player.ped.getVehicleIsIn(false) ?: return
 
-		tickExecutorModule.remove(seatShuffling)
+
 		if (disable) {
-			seatShuffling = tickExecutorModule.add {
+			tickExecutorModule.add(seatShuffling) {
 				if (Client.getIsTaskActive(player.ped.entity, 165)) {
 					Client.setPedIntoVehicle(player.ped.entity, vehicle.entity, 0)
 				}
 			}
+		} else {
+			tickExecutorModule.remove(seatShuffling)
 		}
 	}
 }

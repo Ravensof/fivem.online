@@ -1,6 +1,7 @@
 package online.fivem.client.modules.basics
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.common.GlobalCache.player
 import online.fivem.client.extensions.start
@@ -8,14 +9,10 @@ import online.fivem.client.extensions.stop
 import online.fivem.client.gtav.Client
 import online.fivem.client.modules.nui_event_exchanger.NuiEvent
 import online.fivem.common.common.BufferedAction
-import online.fivem.common.common.Handle
-import online.fivem.common.common.Stack
+import online.fivem.common.common.generateLong
 import online.fivem.common.events.nui.BlackOutEvent
 import online.fivem.common.events.nui.CancelBlackOutEvent
 import online.fivem.common.events.nui.ShowGuiEvent
-import online.fivem.common.extensions.UnitStack
-import online.fivem.common.extensions.set
-import online.fivem.common.extensions.unset
 import online.fivem.common.gtav.NativeAudioScenes
 import online.fivem.common.gtav.NativeControls
 
@@ -24,40 +21,49 @@ class BufferedActionsModule(
 	private val controlHandlerModule: ControlHandlerModule
 ) : AbstractClientModule() {
 
-	private val enableBlackOut = UnitStack()
+	private val ragdollExecutorId = generateLong()
+
+
+//	private val enableBlackOut = BufferedAction()
+//	private val fadeScreenStack = BufferedAction()
+
+	private val nuiBlackOutScreenStack = BufferedAction()
+	private val ragdollBuffer = BufferedAction()
+	private val controlEffectsBuffer = BufferedAction()
+	private val hideNuiBuffer = BufferedAction()
+	private val soundEffectsBuffer = BufferedAction()
 
 	override fun onStart() = launch {
 		tickExecutorModule.waitForStart()
 		controlHandlerModule.waitForStart()
 	}
 
-	fun setBlackOut() = enableBlackOut.set {
-		@Suppress("DEPRECATION")
-		Client.setBlackout(true)
-	}
 
-	fun unSetBlackOut(handle: Handle) = enableBlackOut.unset(handle) {
-		@Suppress("DEPRECATION")
-		Client.setBlackout(false)
-	}
+//	suspend fun setBlackOut(key: Any) = enableBlackOut.start(key) {
+//		@Suppress("DEPRECATION")
+//		Client.setBlackout(true)
+//	}
+//
+//	suspend fun unSetBlackOut(key: Any) = enableBlackOut.cancel(key) {
+//		@Suppress("DEPRECATION")
+//		Client.setBlackout(false)
+//	}
 
-	private val hideNui = BufferedAction()
 
-	suspend fun hideNui(key: Any) = hideNui.start(key) {
+	suspend fun hideNui(key: Any) = hideNuiBuffer.start(key) {
 		NuiEvent.emit(ShowGuiEvent(false))
 	}
 
-	suspend fun cancelHideNui(key: Any) = hideNui.cancel(key) {
+	suspend fun cancelHideNui(key: Any) = hideNuiBuffer.cancel(key) {
 		NuiEvent.emit(ShowGuiEvent(true))
 	}
 
-	private val nuiBlackOutScreenStack = UnitStack()
 
-	fun setBlackScreen(transitionTime: Int = 0) = setJob(nuiBlackOutScreenStack) {
-		var supportId = -1
+	suspend fun setBlackScreen(key: Any, transitionTime: Int = 0) = nuiBlackOutScreenStack.start(key) {
+		val supportId = generateLong()
 
 		if (transitionTime == 0) {
-			supportId = tickExecutorModule.add {
+			tickExecutorModule.add(supportId) {
 				Client.drawRect(
 					0.0, 0.0,
 					1000.0, 2000.0,//todo подставлять разрешение экрана
@@ -71,71 +77,49 @@ class BufferedActionsModule(
 		tickExecutorModule.remove(supportId)
 	}
 
-	fun unSetBlackScreen(handle: Handle, transitionDuration: Int) = unsetJob(nuiBlackOutScreenStack, handle) {
+	suspend fun unSetBlackScreen(key: Any, transitionDuration: Int) = nuiBlackOutScreenStack.cancel(key) {
 		NuiEvent.emit(CancelBlackOutEvent(transitionDuration))
 		delay(transitionDuration.toLong())
 	}
 
-	fun doScreenFadeOutAsync(duration: Int) = setJob(fadeScreenStack) {
-		@Suppress("DEPRECATION")
-		Client.doScreenFadeOut(duration)
-	}
 
-	private val fadeScreenStack = UnitStack()
+//	suspend fun doScreenFadeOutAsync(key:Any,duration: Int) = fadeScreenStack.start(key) {
+//		@Suppress("DEPRECATION")
+//		Client.doScreenFadeOut(duration)
+//	}
+//
+//	suspend fun doScreenFadeInJob(key: Any, transitionDuration: Int) = fadeScreenStack.cancel(key) {
+//		@Suppress("DEPRECATION")
+//		Client.doScreenFadeIn(transitionDuration)
+//	}
 
-	fun doScreenFadeInJob(handle: Handle, transitionDuration: Int) = unsetJob(fadeScreenStack, handle) {
-		@Suppress("DEPRECATION")
-		Client.doScreenFadeIn(transitionDuration)
-	}
-
-	private val ragdollStack = UnitStack()
-	private var ragdollExecutorId = Stack.UNDEFINED_INDEX
-
-
-	fun setRagdollEffect(): Handle = ragdollStack.set {
+	suspend fun setRagdollEffect(key: Any) = ragdollBuffer.start(key) {
 		val playerPed = player.ped.entity
-		ragdollExecutorId = tickExecutorModule.add { Client.setPedToRagdoll(playerPed) }
+		tickExecutorModule.add(ragdollExecutorId) { Client.setPedToRagdoll(playerPed) }
 	}
 
-	fun removeRagdollEffect(handle: Handle) = ragdollStack.unset(handle) {
+	suspend fun removeRagdollEffect(key: Any) = ragdollBuffer.cancel(key) {
 		tickExecutorModule.remove(ragdollExecutorId)
 	}
 
-	private val playerControlStack = UnitStack()
 
-	fun lockControl(): Handle = playerControlStack.set {
+	suspend fun lockControl(key: Any) = controlEffectsBuffer.start(key) {
 		controlHandlerModule.addListener(LockControlListener)
 	}
 
-	fun unLockControl(handle: Handle) = playerControlStack.unset(handle) {
+	suspend fun unLockControl(key: Any) = controlEffectsBuffer.cancel(key) {
 		controlHandlerModule.removeListener(LockControlListener)
 	}
 
-	private val muteSoundStack = UnitStack()
 
-	fun muteSound(): Handle = muteSoundStack.set {
+	suspend fun muteSound(key: Any) = soundEffectsBuffer.start(key) {
 		NativeAudioScenes.MP_LEADERBOARD_SCENE.start()
 	}
 
-	fun unMuteSound(handle: Handle) = muteSoundStack.unset(handle) {
+	suspend fun unMuteSound(key: Any) = soundEffectsBuffer.cancel(key) {
 		NativeAudioScenes.MP_LEADERBOARD_SCENE.stop()
 	}
 
-	private fun setJob(stack: UnitStack, doOnce: suspend () -> Unit): Deferred<Handle> = async {
-		if (stack.isEmpty()) {
-			doOnce()
-		}
-		return@async stack.add(Unit)
-	}
-
-	private fun unsetJob(stack: UnitStack, handle: Handle, doOnce: suspend () -> Unit): Job {
-		stack.remove(handle)
-		return launch {
-			if (stack.isEmpty()) {
-				doOnce()
-			}
-		}
-	}
 
 	private object LockControlListener : ControlHandlerModule.Listener {
 		override val registeredKeys: List<NativeControls.Keys> = NativeControls.Keys.values().toList()

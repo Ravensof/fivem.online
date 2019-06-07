@@ -3,19 +3,21 @@ package online.fivem.client.modules.basics
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.gtav.Client
 import online.fivem.common.common.BufferedAction
-import online.fivem.common.common.Stack
+import online.fivem.common.common.Console
+import online.fivem.common.common.generateLong
+import online.fivem.common.extensions.onNull
 
 class JoinTransitionModule(
 	private val bufferedActionsModule: BufferedActionsModule,
 	private val tickExecutorModule: TickExecutorModule
 ) : AbstractClientModule() {
 
-	private var muteHandle = Stack.UNDEFINED_INDEX
-
-	private val bufferedAction = BufferedAction()
+	private val transitionBuffer = BufferedAction()
+	private val clearScreenExecutor = generateLong()
 
 	init {
 		Client.setManualShutdownLoadingScreenNui(true)
@@ -42,27 +44,38 @@ class JoinTransitionModule(
 		startTransition(this@JoinTransitionModule)
 	}
 
-	suspend fun startTransition(key: Any) = bufferedAction.start(key) {
+	suspend fun startTransition(key: Any) = transitionBuffer.start(key) {
+		tickExecutorModule.add(clearScreenExecutor) { clearScreen() }
 
-		bufferedActionsModule.hideNui(this@JoinTransitionModule)
-
-		bufferedActionsModule.unMuteSound(muteHandle)
-
-		muteHandle = bufferedActionsModule.muteSound()
+		launch {
+			bufferedActionsModule.hideNui(this@JoinTransitionModule)
+		}
 
 		if (!Client.isPlayerSwitchInProgress()) {
-			Client.switchOutPlayer(Client.getPlayerPedId())
+			withTimeoutOrNull(20_000) {
+				Client.switchOutPlayer(Client.getPlayerPedId())
+				true
+			}.onNull {
+				Console.warn("JoinTransitionModule: cannot switch out player")
+			}
+		}
+
+		launch {
+			bufferedActionsModule.muteSound(this@JoinTransitionModule)
 		}
 	}
 
-	suspend fun endTransition(key: Any) = bufferedAction.cancel(key) {
+	suspend fun endTransition(key: Any) = transitionBuffer.cancel(key) {
 
-		val execId = tickExecutorModule.add { clearScreen() }
-
-		bufferedActionsModule.unMuteSound(muteHandle)
-		Client.switchInPlayer(Client.getPlayerPedId())
-		tickExecutorModule.remove(execId)
-		bufferedActionsModule.cancelHideNui(this@JoinTransitionModule)
+		bufferedActionsModule.unMuteSound(this)
+		withTimeoutOrNull(40_000) {
+			Client.switchInPlayer(Client.getPlayerPedId())
+			true
+		}.onNull {
+			Console.warn("JoinTransitionModule: cannot switch in player")
+		}
+		tickExecutorModule.remove(clearScreenExecutor)
+		bufferedActionsModule.cancelHideNui(this)
 	}
 
 	private fun clearScreen() {

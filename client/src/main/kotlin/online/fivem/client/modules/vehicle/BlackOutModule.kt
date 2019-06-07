@@ -82,11 +82,11 @@ class BlackOutModule(
 		if (timeLeft > 0) return@launch addBlackOut(timeMillis)
 		timeLeft += EXTRA_BLACKOUT_TIME * 1_000 + timeMillis
 
-		val blackOutHandle = bufferedActionsModule.setBlackScreen()
+		launch { bufferedActionsModule.setBlackScreen(this@BlackOutModule) }
 
-		val muteHandle = bufferedActionsModule.muteSound()
-		val lockHandle = bufferedActionsModule.lockControl()
-		val ragdollHandle = bufferedActionsModule.setRagdollEffect()
+		launch { bufferedActionsModule.muteSound(this@BlackOutModule) }
+		launch { bufferedActionsModule.lockControl(this@BlackOutModule) }
+		launch { bufferedActionsModule.setRagdollEffect(this@BlackOutModule) }
 
 		var time: Long
 
@@ -98,9 +98,9 @@ class BlackOutModule(
 
 		launch { Sounds.SHOCK_EFFECT.play() }
 		delay(2_000)
-		bufferedActionsModule.unMuteSound(muteHandle)
-		bufferedActionsModule.unLockControl(lockHandle)
-		bufferedActionsModule.unSetBlackScreen(blackOutHandle.await(), WAKING_UP_TIME * 1_000).join()
-		bufferedActionsModule.removeRagdollEffect(ragdollHandle)
+		bufferedActionsModule.unMuteSound(this@BlackOutModule)
+		bufferedActionsModule.unLockControl(this@BlackOutModule)
+		bufferedActionsModule.unSetBlackScreen(this@BlackOutModule, WAKING_UP_TIME * 1_000)
+		bufferedActionsModule.removeRagdollEffect(this@BlackOutModule)
 	}
 }
