@@ -1,61 +1,68 @@
 package online.fivem.client.modules.basics
 
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.gtav.Client
+import online.fivem.common.common.BufferedAction
 import online.fivem.common.common.Stack
 
-//rename to effects?
 class JoinTransitionModule(
-	private val apiModule: APIModule,
+	private val bufferedActionsModule: BufferedActionsModule,
 	private val tickExecutorModule: TickExecutorModule
 ) : AbstractClientModule() {
 
-	private var switchingPlayerJob: Job? = null
-
 	private var muteHandle = Stack.UNDEFINED_INDEX
+
+	private val bufferedAction = BufferedAction()
 
 	init {
 		Client.setManualShutdownLoadingScreenNui(true)
 	}
 
 	override fun onStart() = launch {
-		tickExecutorModule.waitForStart()
-		apiModule.waitForStart()
+		bufferedActionsModule.waitForStart()
 
-		startTransitionJob()
-		switchingPlayerJob?.join()
+		startTransition(this@JoinTransitionModule)
+
 		Client.doScreenFadeIn(1)
 		Client.shutdownLoadingScreen()
 		Client.shutdownLoadingScreenNui()
-	}
 
-	override fun onStop(): Job? = launch {
-		startTransitionJob().join()
-	}
+		tickExecutorModule.waitForStart()
 
-	fun startTransitionJob(): Job {
-		apiModule.unMuteSound(muteHandle)
-		muteHandle = apiModule.muteSound()
-
-		return launch {
-			if (!Client.isPlayerSwitchInProgress()) {
-				switchingPlayerJob = launch { Client.switchOutPlayer(Client.getPlayerPedId()) }
-				switchingPlayerJob?.join()
-			}
+		this@JoinTransitionModule.launch {
+			delay(5_000)
+			endTransition(this@JoinTransitionModule)
 		}
 	}
 
-	fun endTransitionJob(): Job = launch {
+	override fun onStop(): Job? = launch {
+		startTransition(this@JoinTransitionModule)
+	}
+
+	suspend fun startTransition(key: Any) = bufferedAction.start(key) {
+
+		bufferedActionsModule.hideNui(this@JoinTransitionModule)
+
+		bufferedActionsModule.unMuteSound(muteHandle)
+
+		muteHandle = bufferedActionsModule.muteSound()
+
+		if (!Client.isPlayerSwitchInProgress()) {
+			Client.switchOutPlayer(Client.getPlayerPedId())
+		}
+	}
+
+	suspend fun endTransition(key: Any) = bufferedAction.cancel(key) {
+
 		val execId = tickExecutorModule.add { clearScreen() }
 
-		switchingPlayerJob?.join()
-		apiModule.unMuteSound(muteHandle)
-
+		bufferedActionsModule.unMuteSound(muteHandle)
 		Client.switchInPlayer(Client.getPlayerPedId())
 		tickExecutorModule.remove(execId)
-		Client.clearDrawOrigin()
+		bufferedActionsModule.cancelHideNui(this@JoinTransitionModule)
 	}
 
 	private fun clearScreen() {

@@ -2419,17 +2419,29 @@ object Client {
 	 * fucks up on mount chilliad
 	 */
 	suspend fun switchOutPlayer(ped: EntityId) {
-		SwitchOutPlayer(ped, 0, 1)
-		while (getPlayerSwitchState() != 5) {
-			delay(25)
-		}
+		var result = false
+		do {
+			withTimeoutOrNull(10_000) {
+				SwitchOutPlayer(ped, 0, 1)
+				while (getPlayerSwitchState() != 5) {
+					delay(500)
+				}
+				result = true
+			}
+		} while (!result)
 	}
 
 	suspend fun switchInPlayer(ped: EntityId) {
-		SwitchInPlayer(ped)
-		while (getPlayerSwitchState() != 12) {
-			delay(25)
-		}
+		var result = false
+		do {
+			withTimeoutOrNull(10_000) {
+				SwitchInPlayer(ped)
+				while (getPlayerSwitchState() != 12) {
+					delay(500)
+				}
+				result = true
+			}
+		} while (!result)
 	}
 
 	fun setCloudHatOpacity(opacity: Number) {
@@ -2464,7 +2476,7 @@ object Client {
 	}
 
 	fun getPlayerSwitchState(): Int {
-		return GetPlayerSwitchState().toInt()
+		return GetPlayerSwitchState()
 	}
 
 	/**
@@ -29854,7 +29866,7 @@ private external fun GetPlayerRadioStationName(): String?
 
 //private external fun GetPlayerSprintTimeRemaining(player: number): number;
 
-private external fun GetPlayerSwitchState(): Number
+private external fun GetPlayerSwitchState(): Int
 
 //private external fun GetPlayerSwitchType(): number;
 

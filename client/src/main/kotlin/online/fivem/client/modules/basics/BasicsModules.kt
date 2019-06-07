@@ -1,30 +1,33 @@
 package online.fivem.client.modules.basics
 
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.events.PauseMenuStateChangedEvent
 import online.fivem.client.extensions.addText
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.Event
-import online.fivem.common.common.Stack
 import online.fivem.common.gtav.NativeTextEntries
 
 class BasicsModules : AbstractClientModule() {
 
 	val tickExecutorModule = TickExecutorModule()
+
 	private val controlHandlerModule = ControlHandlerModule(tickExecutorModule)
-	val apiModule = APIModule(
+
+	val apiModule = BufferedActionsModule(
 		tickExecutorModule = tickExecutorModule,
 		controlHandlerModule = controlHandlerModule
 	)
+
 	private val spawnManagerModule = SpawnManagerModule(apiModule)
+
 	private val joinTransitionModule = JoinTransitionModule(
-		apiModule = apiModule,
+		bufferedActionsModule = apiModule,
 		tickExecutorModule = tickExecutorModule
 	)
-	private val dateTimeModule = DateTimeModule()
 
-	private var handleShowNui = Stack.UNDEFINED_INDEX
+	private val dateTimeModule = DateTimeModule()
 
 	override suspend fun onInit() {
 		Event.on<PauseMenuStateChangedEvent> { onPauseMenuStateChanged(it.previousState) }
@@ -43,7 +46,7 @@ class BasicsModules : AbstractClientModule() {
 			add(
 				ServersCommandsHandlerModule(
 					spawnManagerModule = spawnManagerModule,
-					joinTransition = joinTransitionModule
+					joinTransitionModule = joinTransitionModule
 				)
 			)
 		}
@@ -55,16 +58,15 @@ class BasicsModules : AbstractClientModule() {
 		return super.onStart()
 	}
 
-	override fun onStop(): Job? {
-		apiModule.hideNui()
-
-		return super.onStop()
+	override fun onStop() = launch {
+		apiModule.hideNui(this@BasicsModules)
 	}
 
-	private fun onPauseMenuStateChanged(previousState: Int) {
-		apiModule.cancelHideNui(handleShowNui)
+	private fun onPauseMenuStateChanged(previousState: Int) = launch {
 		if (previousState == 0) {
-			handleShowNui = apiModule.hideNui()
+			apiModule.hideNui(this@BasicsModules)
+		} else {
+			apiModule.cancelHideNui(this@BasicsModules)
 		}
 	}
 

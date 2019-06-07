@@ -11,7 +11,7 @@ import kotlin.js.Date
 
 class ServersCommandsHandlerModule(
 	private val spawnManagerModule: SpawnManagerModule,
-	private val joinTransition: JoinTransitionModule
+	private val joinTransitionModule: JoinTransitionModule
 ) : AbstractClientModule() {
 
 	private var lastSync = 0.0
@@ -29,7 +29,7 @@ class ServersCommandsHandlerModule(
 
 	override fun onStart() = launch {
 		spawnManagerModule.waitForStart()
-		joinTransition.waitForStart()
+		joinTransitionModule.waitForStart()
 
 		ServerEvent.apply {
 			on<StopResourceEvent> { onStopEvent(it.eventId) }
@@ -53,9 +53,9 @@ class ServersCommandsHandlerModule(
 	}
 
 	private fun onPlayerSpawn(coordinatesX: CoordinatesX, model: Int?) = launch {
-		joinTransition.startTransitionJob().join()
+		joinTransitionModule.startTransition(this@ServersCommandsHandlerModule)
 		spawnManagerModule.spawnPlayerJob(coordinatesX, model).join()
-		joinTransition.endTransitionJob()
+		joinTransitionModule.endTransition(this@ServersCommandsHandlerModule)
 	}
 
 	private suspend fun onServerRequest(event: ServerSideSynchronizationEvent) {

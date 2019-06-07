@@ -7,6 +7,7 @@ import online.fivem.client.extensions.start
 import online.fivem.client.extensions.stop
 import online.fivem.client.gtav.Client
 import online.fivem.client.modules.nui_event_exchanger.NuiEvent
+import online.fivem.common.common.BufferedAction
 import online.fivem.common.common.Handle
 import online.fivem.common.common.Stack
 import online.fivem.common.events.nui.BlackOutEvent
@@ -18,7 +19,7 @@ import online.fivem.common.extensions.unset
 import online.fivem.common.gtav.NativeAudioScenes
 import online.fivem.common.gtav.NativeControls
 
-class APIModule(
+class BufferedActionsModule(
 	private val tickExecutorModule: TickExecutorModule,
 	private val controlHandlerModule: ControlHandlerModule
 ) : AbstractClientModule() {
@@ -40,14 +41,14 @@ class APIModule(
 		Client.setBlackout(false)
 	}
 
-	private val hideNui = UnitStack()
+	private val hideNui = BufferedAction()
 
-	fun hideNui() = hideNui.set {
-		NuiEvent.emitAsync(ShowGuiEvent(false))
+	suspend fun hideNui(key: Any) = hideNui.start(key) {
+		NuiEvent.emit(ShowGuiEvent(false))
 	}
 
-	fun cancelHideNui(handle: Handle) = hideNui.unset(handle) {
-		NuiEvent.emitAsync(ShowGuiEvent(true))
+	suspend fun cancelHideNui(key: Any) = hideNui.cancel(key) {
+		NuiEvent.emit(ShowGuiEvent(true))
 	}
 
 	private val nuiBlackOutScreenStack = UnitStack()

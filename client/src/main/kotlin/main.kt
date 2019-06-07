@@ -34,7 +34,7 @@ private fun start() {
 
 			add(
 				VehicleModule(
-					apiModule = basicsModules.apiModule,
+					bufferedActionsModule = basicsModules.apiModule,
 					tickExecutorModule = basicsModules.tickExecutorModule
 				)
 			)

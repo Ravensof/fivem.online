@@ -10,7 +10,7 @@ import online.fivem.client.events.PlayersPedHealthChangedEvent
 import online.fivem.client.extensions.play
 import online.fivem.client.extensions.prefetch
 import online.fivem.client.gtav.Client
-import online.fivem.client.modules.basics.APIModule
+import online.fivem.client.modules.basics.BufferedActionsModule
 import online.fivem.common.GlobalConfig.BlackOut.ACCELERATION_THRESHOLD
 import online.fivem.common.GlobalConfig.BlackOut.BLACKOUT_TIME_FROM_COMMAS
 import online.fivem.common.GlobalConfig.BlackOut.EXTRA_BLACKOUT_TIME
@@ -20,7 +20,7 @@ import online.fivem.common.common.Console
 import online.fivem.common.common.Event
 
 class BlackOutModule(
-	private val apiModule: APIModule
+	private val bufferedActionsModule: BufferedActionsModule
 ) : AbstractClientModule() {
 
 	private var timeLeft: Long = 0
@@ -65,7 +65,7 @@ class BlackOutModule(
 	}
 
 	override fun onStart() = launch {
-		apiModule.waitForStart()
+		bufferedActionsModule.waitForStart()
 	}
 
 	override fun onStop(): Job? {
@@ -82,11 +82,11 @@ class BlackOutModule(
 		if (timeLeft > 0) return@launch addBlackOut(timeMillis)
 		timeLeft += EXTRA_BLACKOUT_TIME * 1_000 + timeMillis
 
-		val blackOutHandle = apiModule.setBlackScreen()
+		val blackOutHandle = bufferedActionsModule.setBlackScreen()
 
-		val muteHandle = apiModule.muteSound()
-		val lockHandle = apiModule.lockControl()
-		val ragdollHandle = apiModule.setRagdollEffect()
+		val muteHandle = bufferedActionsModule.muteSound()
+		val lockHandle = bufferedActionsModule.lockControl()
+		val ragdollHandle = bufferedActionsModule.setRagdollEffect()
 
 		var time: Long
 
@@ -98,9 +98,9 @@ class BlackOutModule(
 
 		launch { Sounds.SHOCK_EFFECT.play() }
 		delay(2_000)
-		apiModule.unMuteSound(muteHandle)
-		apiModule.unLockControl(lockHandle)
-		apiModule.unSetBlackScreen(blackOutHandle.await(), WAKING_UP_TIME * 1_000).join()
-		apiModule.removeRagdollEffect(ragdollHandle)
+		bufferedActionsModule.unMuteSound(muteHandle)
+		bufferedActionsModule.unLockControl(lockHandle)
+		bufferedActionsModule.unSetBlackScreen(blackOutHandle.await(), WAKING_UP_TIME * 1_000).join()
+		bufferedActionsModule.removeRagdollEffect(ragdollHandle)
 	}
 }

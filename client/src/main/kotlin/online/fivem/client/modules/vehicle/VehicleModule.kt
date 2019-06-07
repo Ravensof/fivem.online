@@ -1,11 +1,11 @@
 package online.fivem.client.modules.vehicle
 
 import online.fivem.client.common.AbstractClientModule
-import online.fivem.client.modules.basics.APIModule
+import online.fivem.client.modules.basics.BufferedActionsModule
 import online.fivem.client.modules.basics.TickExecutorModule
 
 class VehicleModule(
-	private val apiModule: APIModule,
+	private val bufferedActionsModule: BufferedActionsModule,
 	private val tickExecutorModule: TickExecutorModule
 ) : AbstractClientModule() {
 
@@ -13,7 +13,7 @@ class VehicleModule(
 		moduleLoader.apply {
 			add(InternetRadioModule())
 			add(SpeedometerModule())
-			add(BlackOutModule(apiModule))
+			add(BlackOutModule(bufferedActionsModule))
 			add(RealisticFailureModule(tickExecutorModule))
 		}
 	}

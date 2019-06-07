@@ -23,7 +23,7 @@ class ModuleLoader(override val coroutineContext: CoroutineContext = createSuper
 		try {
 			if (isStarted) throw IllegalStateException("you have to call ModuleLoader::add() before ModuleLoader::startAll()")
 
-			module.moduleLoader = this@ModuleLoader
+			module.moduleLoader = this
 			module.onInit()
 
 			if (!manualStart) {

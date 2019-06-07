@@ -15,7 +15,7 @@ import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.extensions.onNull
 
 class SpawnManagerModule(
-	private val apiModule: APIModule
+	private val bufferedActionsModule: BufferedActionsModule
 ) : AbstractClientModule() {
 
 
@@ -30,7 +30,7 @@ class SpawnManagerModule(
 //	}
 
 	override fun onStart() = launch {
-		apiModule.waitForStart()
+		bufferedActionsModule.waitForStart()
 	}
 
 	fun spawnPlayerJob(coordinatesX: CoordinatesX, modelHash: Int?): Job {
@@ -82,7 +82,7 @@ class SpawnManagerModule(
 
 		val ped = player.ped
 
-		apiModule.unLockControl(lockControlHandle)
+		bufferedActionsModule.unLockControl(lockControlHandle)
 		if (!freeze) {
 
 			ped.isVisible = true
@@ -96,7 +96,7 @@ class SpawnManagerModule(
 			player.isInvincible = false
 
 		} else {
-			lockControlHandle = apiModule.lockControl()
+			lockControlHandle = bufferedActionsModule.lockControl()
 
 			ped.isVisible = false
 			ped.setCollision(false)
