@@ -34,14 +34,14 @@ private fun start() {
 
 			add(
 				VehicleModule(
-					bufferedActionsModule = basicsModules.apiModule,
+					bufferedActionsModule = basicsModules.bufferedActionsModule,
 					tickExecutorModule = basicsModules.tickExecutorModule
 				)
 			)
 
 			add(RolePlaySystemModule(basicsModules.tickExecutorModule))
 
-			add(EventGeneratorModule())//pre last
+			add(EventGeneratorModule(basicsModules.bufferedActionsModule))//pre last
 
 			val serverExchangerModule = ServerEventExchangerModule().also {
 				add(it, manualStart = true)//last

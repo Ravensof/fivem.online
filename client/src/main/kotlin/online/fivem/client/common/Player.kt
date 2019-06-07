@@ -20,10 +20,11 @@ class Player(
 
 	fun clearWantedLevel() = Client.clearPlayerWantedLevel(id)
 
-	suspend fun setModel(hash: Int) {
+	suspend fun setModel(hash: Int) = try {
 		requestModel(hash)
 		setPlayerModel(id, hash)
 		ped = Ped.newInstance(Client.getPlayerPedId())
+	} finally {
 		setModelAsNoLongerNeeded(hash)
 	}
 

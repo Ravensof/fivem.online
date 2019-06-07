@@ -34,7 +34,7 @@ class ServersCommandsHandlerModule(
 		ServerEvent.apply {
 			on<StopResourceEvent> { onStopEvent(it.eventId) }
 			on<ServerSideSynchronizationEvent> { onServerRequest(it) }
-			on<SpawnPlayerEvent> { onPlayerSpawn(it.coordinatesX, it.model) }
+			on<SpawnPlayerEvent> { onPlayerSpawn(it.coordinatesX, it.pedModel) }
 		}
 	}
 

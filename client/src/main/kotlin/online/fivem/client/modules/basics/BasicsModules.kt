@@ -15,15 +15,15 @@ class BasicsModules : AbstractClientModule() {
 
 	private val controlHandlerModule = ControlHandlerModule(tickExecutorModule)
 
-	val apiModule = BufferedActionsModule(
+	val bufferedActionsModule = BufferedActionsModule(
 		tickExecutorModule = tickExecutorModule,
 		controlHandlerModule = controlHandlerModule
 	)
 
-	private val spawnManagerModule = SpawnManagerModule(apiModule)
+	private val spawnManagerModule = SpawnManagerModule(bufferedActionsModule)
 
 	private val joinTransitionModule = JoinTransitionModule(
-		bufferedActionsModule = apiModule,
+		bufferedActionsModule = bufferedActionsModule,
 		tickExecutorModule = tickExecutorModule
 	)
 
@@ -36,7 +36,7 @@ class BasicsModules : AbstractClientModule() {
 			add(ErrorReporterModule())
 			add(tickExecutorModule)
 			add(controlHandlerModule)
-			add(apiModule)
+			add(bufferedActionsModule)
 			add(joinTransitionModule)
 			add(spawnManagerModule)
 			add(dateTimeModule)
@@ -59,14 +59,14 @@ class BasicsModules : AbstractClientModule() {
 	}
 
 	override fun onStop() = launch {
-		apiModule.hideNui(this@BasicsModules)
+		bufferedActionsModule.hideNui(this@BasicsModules)
 	}
 
 	private fun onPauseMenuStateChanged(previousState: Int) = launch {
 		if (previousState == 0) {
-			apiModule.hideNui(this@BasicsModules)
+			bufferedActionsModule.hideNui(this@BasicsModules)
 		} else {
-			apiModule.cancelHideNui(this@BasicsModules)
+			bufferedActionsModule.cancelHideNui(this@BasicsModules)
 		}
 	}
 

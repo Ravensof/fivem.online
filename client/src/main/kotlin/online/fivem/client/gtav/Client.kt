@@ -3,6 +3,7 @@
 package online.fivem.client.gtav
 
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withTimeoutOrNull
 import online.fivem.client.extensions.invokeNative
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.EntityId
@@ -1515,12 +1516,14 @@ object Client {
 		heading: Float,
 		isNetwork: Boolean = true,
 		thisScriptCheck: Boolean = false
-	): Int {
+	): Int = try {
 		requestModel(modelHash)
 		while (!hasModelLoaded(modelHash)) {
 			delay(100)
 		}
-		return CreateVehicle(modelHash, x, y, z, heading, isNetwork, thisScriptCheck)
+		CreateVehicle(modelHash, x, y, z, heading, isNetwork, thisScriptCheck)
+	} finally {
+		setModelAsNoLongerNeeded(modelHash)
 	}
 
 	/**

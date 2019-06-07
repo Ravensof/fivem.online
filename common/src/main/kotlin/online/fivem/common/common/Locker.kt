@@ -22,7 +22,7 @@ class Locker : CoroutineScope {
 		lockQueue.add(key)
 
 		unlockChannel.receive()
-		if (!lockQueue.contains(key)) throw IllegalStateException("locking is been canceled")
+		if (!lockQueue.contains(key)) return//throw IllegalStateException("locking is been canceled ($key)")
 
 		lockKey = key
 		lockQueue.remove(key)
