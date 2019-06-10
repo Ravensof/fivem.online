@@ -3,6 +3,7 @@ package online.fivem.client.entities
 import online.fivem.client.common.GlobalCache
 import online.fivem.client.gtav.Client
 import online.fivem.common.common.EntityId
+import online.fivem.common.gtav.NativeTask
 import online.fivem.common.gtav.NativeWeapons
 
 class Ped private constructor(
@@ -23,7 +24,7 @@ class Ped private constructor(
 
 	fun isInAVehicle() = Client.isPedInAnyVehicle(entity, false)
 
-	fun getVehicleIsUsing(): Vehicle? {
+	fun getVehicleIsInteracted(): Vehicle? {
 		Client.getVehiclePedIsUsing(entity)?.let { entity ->
 			return Vehicle.newInstance(entity)
 		}
@@ -35,15 +36,23 @@ class Ped private constructor(
 		return Client.getVehiclePedIsIn(entity, lastVehicle)?.let { Vehicle.newInstance(it) }
 	}
 
+	fun isTaskActive(task: NativeTask) = Client.getIsTaskActive(entity, task.number)
+
+	fun clearTasks() = Client.clearPedTasks(entity)
+
 	fun clearTasksImmediately() = Client.clearPedTasksImmediately(entity)
 
 	fun dropWeapon() {
 		Client.setPedDropsWeapon(entity)
 	}
 
-//	fun setDropsWeaponsWhenDead(toggle: Boolean) {
-//		Client.setPedDropsWeaponsWhenDead(entity, toggle)
-//	}
+	fun setIntoVehicle(vehicle: EntityId, seatIndex: Int) {
+		Client.setPedIntoVehicle(entity, vehicle, seatIndex)
+	}
+
+	fun setDropsWeaponsWhenDead(toggle: Boolean) {
+		Client.setPedDropsWeaponsWhenDead(entity, toggle)
+	}
 
 	fun hasGotWeapon(weapon: NativeWeapons): Boolean {
 		return Client.hasPedGotWeapon(entity, weapon.name)
@@ -80,11 +89,11 @@ class Ped private constructor(
 				set(value) = Client.addAmmoToPed(ped.entity, weapon.name, value - ammo)
 
 //			fun drop(){
-//				Client.setPedDropsInventoryWeapon(ped, weapon.hash)
+//				Client.setPedDropsInventoryWeapon(ped.entity, weapon.name)
 //			}
 
 			fun remove() {
-				Client.removeWeaponFromPed(ped.entity, weapon.hash)
+				Client.removeWeaponFromPed(ped.entity, weapon.name)
 			}
 		}
 	}

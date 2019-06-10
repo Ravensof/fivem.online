@@ -24,18 +24,19 @@ class ModuleLoader(override val coroutineContext: CoroutineContext = createSuper
 			if (isStarted) throw IllegalStateException("you have to call ModuleLoader::add() before ModuleLoader::startAll()")
 
 			module.moduleLoader = this
-			module.onInit()
+			withTimeout(MODULE_LOADING_TIMEOUT) {
+				module.onInit()
+			}
 
 			if (!manualStart) {
 				startQueue.add(module)
 			}
 		} catch (exception: Throwable) {
-			ExceptionsStorage.add(
+			throw
 				Exception(
 					"failed to load module ${module::class.simpleName}: \r\n${exception.message}\r\n ${exception.cause}",
 					exception
 				)
-			)
 		}
 	}
 

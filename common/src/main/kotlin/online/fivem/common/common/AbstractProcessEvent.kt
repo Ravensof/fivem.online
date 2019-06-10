@@ -11,8 +11,6 @@ abstract class AbstractProcessEvent<T>(
 			val result = result.getCompleted()
 			onComplete(result)
 		}
-
-		result.start()
 	}
 
 	fun start() = result.start()

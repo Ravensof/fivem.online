@@ -5,7 +5,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.events.AccelerationThresholdAchievedEvent
-import online.fivem.client.events.PlayerSpawnProcess
+import online.fivem.client.events.PlayerPedSpawnedEvent
 import online.fivem.client.events.PlayersPedHealthChangedEvent
 import online.fivem.client.extensions.play
 import online.fivem.client.extensions.prefetch
@@ -24,24 +24,25 @@ class BlackOutModule(
 ) : AbstractClientModule() {
 
 	private var timeLeft: Long = 0
-	private var isAllowed = false
 
 	override suspend fun onInit() {
+		launch {
+			Sounds.SHOCK_EFFECT.prefetch()
+		}
+	}
+
+	override fun onStart() = launch {
+		bufferedActionsModule.waitForStart()
+
 		Event.apply {
-			on<PlayerSpawnProcess> {
-				launch {
-					isAllowed = false
-					it.join()
-					isAllowed = true
-				}
+			on<PlayerPedSpawnedEvent> {
+				timeLeft = 0
 			}
 			on<PlayersPedHealthChangedEvent.Zero> {
-				if (!isAllowed) return@on
-				Console.debug("blackout from death (${it.diff})")
 				blackOut(BLACKOUT_TIME_FROM_COMMAS * 1_000)
 			}
 			on<AccelerationThresholdAchievedEvent> {
-				if (!isAllowed || it.accelerationModule < ACCELERATION_THRESHOLD) return@on
+				if (it.accelerationModule < ACCELERATION_THRESHOLD) return@on
 
 				val playerPed = Client.getPlayerPedId()
 				val currentHealth = Client.getEntityHealth(playerPed)
@@ -58,14 +59,6 @@ class BlackOutModule(
 				)
 			}
 		}
-
-		launch {
-			Sounds.SHOCK_EFFECT.prefetch()
-		}
-	}
-
-	override fun onStart() = launch {
-		bufferedActionsModule.waitForStart()
 	}
 
 	override fun onStop(): Job? {

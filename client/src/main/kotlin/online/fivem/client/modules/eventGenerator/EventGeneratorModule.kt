@@ -64,7 +64,7 @@ class EventGeneratorModule(
 
 	private suspend fun checkPlayerTryingToGetAnyVehicle(playerPed: Ped) {
 		val vehiclePlayerTryingToGetNow =
-			if (playerPed.isTryingToGetInAnyVehicle()) playerPed.getVehicleIsUsing() else null
+			if (playerPed.isTryingToGetInAnyVehicle()) playerPed.getVehicleIsInteracted() else null
 
 		if (vehiclePlayerTryingToGetNow != vehiclePlayerTryingToGet) {
 

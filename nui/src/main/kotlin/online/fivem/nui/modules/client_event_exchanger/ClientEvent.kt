@@ -2,7 +2,6 @@ package online.fivem.nui.modules.client_event_exchanger
 
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.ReceiveChannel
-import online.fivem.common.common.AbstractProcessEvent
 import online.fivem.common.other.Serializable
 import kotlin.reflect.KClass
 
@@ -19,10 +18,6 @@ object ClientEvent {
 			it.key.isInstance(data)
 		}.forEach {
 			it.value.send(data)
-		}
-
-		if (data is AbstractProcessEvent<*>) {
-			data.start()
 		}
 	}
 

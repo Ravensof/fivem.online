@@ -1,5 +1,5 @@
 html {
-	overflow: auto;
+	overflow: hidden;
 }
 
 body, html {
@@ -79,7 +79,7 @@ body, html {
 	border-radius: 10px;
 }
 
-#browser_frame {
+#browser_container {
 	position: absolute;
 	top: 0;
 	bottom: 0;
@@ -91,7 +91,7 @@ body, html {
 	align-items: center;
 }
 
-#browser_frame .phone-glass {
+#browser_container .phone-glass {
 	position: absolute;
 
 	width: 96.6vw;
@@ -114,7 +114,7 @@ body, html {
 	background-color: white;
 }
 
-#browser_frame img {
+#browser_container img {
 	top: 0;
 	bottom: 0;
 	left: 0;

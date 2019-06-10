@@ -17,6 +17,8 @@ class GUIModule : AbstractNuiModule() {
 	lateinit var mainView: MainView
 		private set
 
+	private val content = jQuery("#content")
+
 	private val iframeLoading = async {
 		val channel = Channel<Unit>()
 
@@ -24,7 +26,6 @@ class GUIModule : AbstractNuiModule() {
 			channel.close()
 		}
 
-		val content = jQuery("#content")
 		content.attr("src", interfaceFile)
 
 		channel.forEach { }
@@ -44,9 +45,9 @@ class GUIModule : AbstractNuiModule() {
 
 	private fun onShowGui(show: Boolean) {
 		if (show) {
-			mainView.view.fadeIn()
+			content.fadeIn()
 		} else {
-			mainView.view.fadeOut()
+			content.fadeOut()
 		}
 	}
 

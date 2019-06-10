@@ -13,12 +13,22 @@ import kotlin.js.Date
 
 object Console : Console, CoroutineScope {
 	override val coroutineContext: CoroutineContext = Job()
-	private val channel = Channel<String>(32)
+	private val channel = Channel<Message>(32)
 
 	init {
 		launch {
 			for (data in channel) {
-				console.log(data)
+				when (data) {
+					is Message.Debug -> console.log(data.prefix, *data.obj)
+
+					is Message.Info -> console.info(data.prefix, *data.obj)
+
+					is Message.Warning -> console.warn(data.prefix, *data.obj)
+
+					is Message.Error -> console.error(data.prefix, *data.obj)
+
+					else -> console.log(data.prefix, *data.obj)
+				}
 			}
 		}
 	}
@@ -28,53 +38,36 @@ object Console : Console, CoroutineScope {
 	}
 
 	override fun error(vararg o: Any?) {
-		if (GlobalConfig.SHOW_CONSOLE_ERROR) {
-			var str = "${getTimeStamp()}$CONSOLE_PREFIX[ERROR]: "
-			o.forEach {
-				str += it
-			}
-			launch { channel.send(str) }
-		}
+		if (!GlobalConfig.SHOW_CONSOLE_ERROR) return
+
+		launch { channel.send(Message.Error("${getTimeStamp()}$CONSOLE_PREFIX[ERROR]: ", *o)) }
 	}
 
 	override fun info(vararg o: Any?) {
-		if (GlobalConfig.SHOW_CONSOLE_INFO) {
-			var str = "${getTimeStamp()}$CONSOLE_PREFIX[INFO]: "
-			o.forEach {
-				str += it
-			}
-			launch { channel.send(str) }
-		}
+		if (!GlobalConfig.SHOW_CONSOLE_INFO) return
+
+		launch { channel.send(Message.Info("${getTimeStamp()}$CONSOLE_PREFIX[INFO]: ", *o)) }
 	}
 
 	override fun log(vararg o: Any?) {
-		if (GlobalConfig.SHOW_CONSOLE_LOG) {
-			var str = "${getTimeStamp()}$CONSOLE_PREFIX[LOG]: "
-			o.forEach {
-				str += it
-			}
-			launch { channel.send(str) }
-		}
+		if (!GlobalConfig.SHOW_CONSOLE_LOG) return
+
+		launch { channel.send(Message.Log("${getTimeStamp()}$CONSOLE_PREFIX[LOG]: ", *o)) }
+
 	}
 
 	override fun warn(vararg o: Any?) {
-		if (GlobalConfig.SHOW_CONSOLE_WARN) {
-			var str = "${getTimeStamp()}$CONSOLE_PREFIX[WARN]: "
-			o.forEach {
-				str += it
-			}
-			launch { channel.send(str) }
-		}
+		if (!GlobalConfig.SHOW_CONSOLE_WARN) return
+
+		launch { channel.send(Message.Warning("${getTimeStamp()}$CONSOLE_PREFIX[WARN]: ", *o)) }
+
 	}
 
 	fun debug(vararg o: Any?) {
-		if (GlobalConfig.SHOW_CONSOLE_DEBUG) {
-			var str = "${getTimeStamp()}$CONSOLE_PREFIX[DEBUG]: "
-			o.forEach {
-				str += it
-			}
-			launch { channel.send(str) }
-		}
+		if (!GlobalConfig.SHOW_CONSOLE_DEBUG) return
+
+		launch { channel.send(Message.Debug("${getTimeStamp()}$CONSOLE_PREFIX[DEBUG]: ", *o)) }
+
 	}
 
 	private fun getTimeStamp(): String {
@@ -94,6 +87,15 @@ object Console : Console, CoroutineScope {
 			log("checkValue: $functionName=$functionResult")
 		}
 		return functionResult
+	}
+
+	private sealed class Message(val prefix: String, vararg val obj: Any?) {
+
+		class Log(prefix: String, vararg obj: Any?) : Message(prefix, *obj)
+		class Info(prefix: String, vararg obj: Any?) : Message(prefix, *obj)
+		class Debug(prefix: String, vararg obj: Any?) : Message(prefix, *obj)
+		class Warning(prefix: String, vararg obj: Any?) : Message(prefix, *obj)
+		class Error(prefix: String, vararg obj: Any?) : Message(prefix, *obj)
 	}
 }
 

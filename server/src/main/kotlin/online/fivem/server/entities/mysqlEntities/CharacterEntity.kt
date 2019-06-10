@@ -1,6 +1,6 @@
 package online.fivem.server.entities.mysqlEntities
 
-abstract class CharacterEntity(
+class CharacterEntity(
 	val id: Int,
 	val coord_x: Double,
 	val coord_y: Double,

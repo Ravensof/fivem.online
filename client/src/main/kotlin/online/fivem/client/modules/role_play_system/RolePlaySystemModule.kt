@@ -14,6 +14,7 @@ import online.fivem.common.common.generateLong
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.events.net.ClientSideSynchronizationEvent
 import online.fivem.common.events.net.sync.RolePlaySystemSaveEvent
+import online.fivem.common.gtav.NativeTask
 
 class RolePlaySystemModule(
 	private val tickExecutorModule: TickExecutorModule
@@ -24,7 +25,7 @@ class RolePlaySystemModule(
 	}
 
 	override suspend fun onInit() {
-		Client.setPlayerHealthRechargeMultiplier(Client.getPlayerId(), 0f)
+		moduleLoader.add(VehiclesSyncModule())
 
 		Event.apply {
 			on<PlayerVehicleSeatEvent.Join.Passenger> {
@@ -71,11 +72,10 @@ class RolePlaySystemModule(
 	private fun disableSeatShuffling(disable: Boolean) {
 		val vehicle = player.ped.getVehicleIsIn(false) ?: return
 
-
 		if (disable) {
 			tickExecutorModule.add(seatShuffling) {
-				if (Client.getIsTaskActive(player.ped.entity, 165)) {
-					Client.setPedIntoVehicle(player.ped.entity, vehicle.entity, 0)
+				if (player.ped.isTaskActive(NativeTask.InVehicleSeatShuffle)) {
+					player.ped.setIntoVehicle(vehicle.entity, 0)
 				}
 			}
 		} else {

@@ -27,7 +27,7 @@ object Client {
 	 * WEAPON::REMOVE_WEAPON_FROM_PED(PLAYER::PLAYER_PED_ID(), 0x99B507EA);
 	 * The code above removes the knife from the player.
 	 */
-	fun removeWeaponFromPed(ped: EntityId, weaponHash: Number) {
+	fun removeWeaponFromPed(ped: EntityId, weaponHash: String) {
 		RemoveWeaponFromPed(ped, weaponHash)
 	}
 
@@ -996,6 +996,22 @@ object Client {
 	}
 
 	/**
+	 * 1
+	 * 2 - CARLOCK_LOCKED (locked)
+	 * 3
+	 * 4 - CARLOCK_LOCKED_PLAYER_INSIDE (can get in, can't leave)
+	 * (maybe, these are leftovers from GTA:VC)
+	 * 5
+	 * 6
+	 * 7
+	 * (source: GTA VC miss2 leak, matching constants for 0/2/4, testing)
+	 * They use 10 in am_mp_property_int, don't know what it does atm.
+	 */
+	fun setVehicleDoorsLocked(vehicle: EntityId, doorLockStatus: Int) {
+		SetVehicleDoorsLocked(vehicle, doorLockStatus)
+	}
+
+	/**
 	 * 1000 is max health
 	 * Begins leaking gas at around 650 health
 	 * -999.90002441406 appears to be minimum health, although nothing special occurs &lt;- false statement
@@ -1955,6 +1971,13 @@ object Client {
 	}
 
 	/**
+	 * 2 seems to disable getting vehicle in modshop
+	 */
+	fun getVehicleDoorLockStatus(vehicle: EntityId): Int {
+		return GetVehicleDoorLockStatus(vehicle)
+	}
+
+	/**
 	 * Returns 1000.0 if the function is unable to get the address of the specified vehicle or if it's not a vehicle.
 	 * Minimum: -4000
 	 * Maximum: 1000
@@ -2423,6 +2446,10 @@ object Client {
 		return IsPedFatallyInjured(ped) == 1
 	}
 
+	fun clearPedTasks(ped: EntityId) {
+		ClearPedTasks(ped)
+	}
+
 	/**
 	 * Immediately stops the pedestrian from whatever it's doing. They stop fighting, animations, etc. they forget what they were doing.
 	 */
@@ -2449,7 +2476,7 @@ object Client {
 	 * Request a model to be loaded into memory
 	 * Looking it the disassembly, it seems like it actually returns the model if it's already loaded.
 	 */
-	suspend fun requestModel(hash: Int) {
+	private suspend fun requestModel(hash: Int) {
 		RequestModel(hash)
 		while (!hasModelLoaded(hash)) {
 			delay(25)
@@ -2474,14 +2501,17 @@ object Client {
 	/**
 	 * Make sure to request the model first and wait until it has loaded.
 	 */
-	fun setPlayerModel(player: Int, hash: Int) {
+	suspend fun setPlayerModel(player: Int, hash: Int) = try {
+		requestModel(hash)
 		SetPlayerModel(player, hash)
+	} finally {
+		setModelAsNoLongerNeeded(hash)
 	}
 
 	/**
 	 * Unloads model from memory
 	 */
-	fun setModelAsNoLongerNeeded(hash: Int) {
+	private fun setModelAsNoLongerNeeded(hash: Int) {
 		SetModelAsNoLongerNeeded(hash)
 	}
 
@@ -4368,7 +4398,7 @@ private external fun ClearOverrideWeather()
 
 //private external fun ClearPedSecondaryTask(ped: number)
 
-//private external fun ClearPedTasks(ped: number)
+private external fun ClearPedTasks(ped: EntityId)
 
 private external fun ClearPedTasksImmediately(ped: EntityId)
 
@@ -6994,14 +7024,7 @@ private external fun FreezeEntityPosition(entity: EntityId, toggle: Boolean)
 
 //private external fun GetAmmoInClip(ped: number, weaponHash: string | number, ammo: number): number;
 
-/**
- * WEAPON::GET_AMMO_IN_PED_WEAPON(PLAYER::PLAYER_PED_ID(), a_0)
- * From decompiled scripts
- * Returns total ammo in weapon
- * GTALua Example :
- * natives.WEAPON.GET_AMMO_IN_PED_WEAPON(plyPed, WeaponHash)
- */
-//private external fun GetAmmoInPedWeapon(ped: number, weaponhash: string | number): number;
+private external fun GetAmmoInPedWeapon(ped: EntityId, weaponhash: String/*Number*/): Int
 
 /**
  * Returns the degree of angle between (x1, y1) and (x2, y2) lines in 2D coordinate system.
@@ -10126,10 +10149,7 @@ private external fun GetVehicleDirtLevel(vehicle: EntityId): Int
  */
 //private external fun GetVehicleDoorAngleRatio(vehicle: number, door: number): number;
 
-/**
- * 2 seems to disable getting vehicle in modshop
- */
-//private external fun GetVehicleDoorLockStatus(vehicle: Entity): Number
+private external fun GetVehicleDoorLockStatus(vehicle: EntityId): Int
 
 //private external fun GetVehicleDoorsLockedForPlayer(vehicle: Entity, player: Int): Number
 
@@ -21628,7 +21648,7 @@ private external fun RemoveAllPedWeapons(ped: EntityId, p1: Boolean)
 
 //private external fun RemoveWeaponComponentFromWeaponObject(p0: number, p1: number)
 
-private external fun RemoveWeaponFromPed(ped: EntityId, weaponHash: Number)
+private external fun RemoveWeaponFromPed(ped: EntityId, weaponHash: String/*Number*/)
 
 /**
  * This native makes the gameplay camera zoom into first person/third person with a special effect.
@@ -25134,7 +25154,7 @@ private external fun SetPedDropsInventoryWeapon(
 
 private external fun SetPedDropsWeapon(ped: EntityId)
 
-//private external fun SetPedDropsWeaponsWhenDead(ped: number, toggle: boolean)
+private external fun SetPedDropsWeaponsWhenDead(ped: EntityId, toggle: Boolean)
 
 /**
  * This is the SET_CHAR_DUCKING from GTA IV, that makes Peds duck. This function does nothing in GTA V. It cannot set the ped as ducking in vehicles, and IS_PED_DUCKING will always return false.
@@ -26794,19 +26814,7 @@ private external fun SetVehicleDoorBroken(vehicle: EntityId, doorIndex: Int, del
  */
 //private external fun SetVehicleDoorShut(vehicle: number, doorIndex: number, closeInstantly: boolean)
 
-/**
- * 1
- * 2 - CARLOCK_LOCKED (locked)
- * 3
- * 4 - CARLOCK_LOCKED_PLAYER_INSIDE (can get in, can't leave)
- * (maybe, these are leftovers from GTA:VC)
- * 5
- * 6
- * 7
- * (source: GTA VC miss2 leak, matching constants for 0/2/4, testing)
- * They use 10 in am_mp_property_int, don't know what it does atm.
- */
-//private external fun SetVehicleDoorsLocked(vehicle: number, doorLockStatus: number)
+private external fun SetVehicleDoorsLocked(vehicle: EntityId, doorLockStatus: Int)
 
 /**
  * After some analysis, I've decided that these are what the parameters are.

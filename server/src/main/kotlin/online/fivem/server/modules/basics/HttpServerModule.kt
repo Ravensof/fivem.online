@@ -23,6 +23,7 @@ class HttpServerModule : AbstractServerModule() {
 	override suspend fun onInit() {
 		app.use("/common", express.static(ROOT_DIR + "common"))
 		app.use("/nui", express.static(ROOT_DIR + "nui"))
+		app.use("/loadingScreen", express.static(ROOT_DIR + "loadingScreen"))
 	}
 
 	override fun onStart() = launch {

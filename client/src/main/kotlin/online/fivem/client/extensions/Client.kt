@@ -7,6 +7,7 @@ import online.fivem.common.common.EntityId
 import online.fivem.common.entities.Coordinates
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.entities.RGB
+import online.fivem.common.gtav.NativeTask
 import online.fivem.common.gtav.NativeWeather
 
 suspend fun Client.createVehicle(
@@ -14,7 +15,7 @@ suspend fun Client.createVehicle(
 	coordinatesX: CoordinatesX,
 	isNetwork: Boolean = true,
 	thisScriptCheck: Boolean = false
-) = Client.createVehicle(
+) = createVehicle(
 	modelHash,
 	coordinatesX.x,
 	coordinatesX.y,
@@ -25,7 +26,7 @@ suspend fun Client.createVehicle(
 )
 
 fun Client.networkResurrectLocalPlayer(coordinatesX: CoordinatesX, changeTime: Boolean = true) =
-	Client.networkResurrectLocalPlayer(
+	networkResurrectLocalPlayer(
 		coordinatesX.x,
 		coordinatesX.y,
 		coordinatesX.z,
@@ -157,6 +158,10 @@ fun Client.wasPhotoTaken(): Boolean {
 
 fun Client.savePhoto(unk: Int) {
 	Natives.invokeNative<Nothing>("0x3dec726c25a11bac")
+}
+
+fun Client.getIsTaskActive(ped: EntityId, task: NativeTask): Boolean {
+	return getIsTaskActive(ped, task.number)
 }
 
 fun Client.isAnyRadioTrackPlaying() = getAudibleMusicTrackTextId() != 1

@@ -1,9 +1,11 @@
+<!-- redirect to http://fivem.online/?? -->
 <!DOCTYPE html>
 <html>
 <head>
 	<meta charset="UTF-8">
-	<meta name="Created by" content="El-CasT">
-	<title>Loading06</title>
+	<meta content="width=device-width, initial-scale=1" name="viewport">
+	<meta content="El-CasT" name="Created by">
+	<title>Loading Screen</title>
 	<style>
 		body {
 			background-color: #000000;
@@ -66,8 +68,8 @@
 </head>
 <body onkeypress="myFunction(event)" onload="init();" style="margin:0px;">
 <div id="animation_container" style="background-color:rgba(0, 0, 0, 1.00); width:1920px; height:1080px">
-	<canvas id="canvas" width="1920" height="1080"
-	        style="position: absolute; display: none; background-color:rgba(0, 0, 0, 1.00);"></canvas>
+	<canvas height="1080" id="canvas" style="position: absolute; display: none; background-color:rgba(0, 0, 0, 1.00);"
+	        width="1920"></canvas>
 	<div id="dom_overlay_container"
 	     style="pointer-events:none; overflow:hidden; width:1920px; height:1080px; position: absolute; left: 0px; top: 0px; display: none;">
 	</div>
@@ -77,7 +79,7 @@
 	<span style='display: inline-block; height: 100%; vertical-align: middle;'></span> <img src=images/_preloader.gif
 	                                                                                        style='vertical-align: middle; max-height: 100%'/>
 </div>
-<audio id="toggle-mute" src="sound/intro.mp3" autoplay loop></audio>
+<audio autoplay id="toggle-mute" loop src="sound/intro.mp3"></audio>
 <script>
 	var vid = document.getElementById("toggle-mute");
 	vid.volume = 0.18;

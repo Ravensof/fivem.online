@@ -13,8 +13,7 @@ import online.fivem.common.gtav.NativeVehicles
 import kotlin.reflect.KProperty
 
 class Vehicle private constructor(
-	entity: EntityId,
-	val id: Int = -1
+	entity: EntityId
 ) : Entity(entity) {
 
 	val networkId = Client.networkGetNetworkIdFromEntity(entity)
@@ -90,7 +89,6 @@ class Vehicle private constructor(
 		get() = Client.getVehicleNextGear(entity)
 		set(value) = Client.setVehicleNextGear(entity, value)
 
-	//oilLevel вроде ни на что не влияет, поэтому использую как идентификатор
 	//steeringAngle set get
 	//steeringScale set get
 	var turboPressure: Int
@@ -170,6 +168,10 @@ class Vehicle private constructor(
 	var tyresCanBurst: Boolean
 		get() = Client.getVehicleTyresCanBurst(entity)
 		set(value) = Client.setVehicleTyresCanBurst(entity, value)
+
+	var doorsLockStatus: Int
+		get() = Client.getVehicleDoorLockStatus(entity)
+		set(value) = Client.setVehicleDoorsLocked(entity, value)
 
 	init {
 		if (!Client.doesEntityExist(entity)) throw VehicleDoesntExistsException("vehicle $entity doesnt exists")
@@ -304,34 +306,29 @@ class Vehicle private constructor(
 	companion object {
 
 		suspend fun create(
-			id: Int,
 			vehicleModel: NativeVehicles,
 			coordinatesX: CoordinatesX
 		): Vehicle {
-			withTimeout(5_000) { Client.requestModel(vehicleModel.hash) }//todo test
 
 			val entity = withTimeout(5_000) {
 				Client.createVehicle(vehicleModel.hash, coordinatesX)
 			}//todo test
 
-			Client.setModelAsNoLongerNeeded(vehicleModel.hash)
-
-			return newInstance(entity, id).apply {
+			return newInstance(entity).apply {
 				ownedByPlayer = true
 				setOnGroundProperly()
 			}
 		}
 
 		fun newInstance(
-			entity: EntityId,
-			id: Int = -1
+			entity: EntityId
 		): Vehicle {
 
 			GlobalCache.getVehicle(entity)?.let {
 				return it
 			}
 
-			val vehicle = Vehicle(entity, id)
+			val vehicle = Vehicle(entity)
 
 			GlobalCache.putVehicle(vehicle)
 

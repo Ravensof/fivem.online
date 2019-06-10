@@ -2,6 +2,7 @@ package online.fivem.common.common
 
 import kotlinx.coroutines.CoroutineExceptionHandler
 import online.fivem.common.extensions.onNull
+import online.fivem.common.extensions.stackTrace
 import kotlin.coroutines.CoroutineContext
 
 object ExceptionsStorage {
@@ -26,7 +27,7 @@ object ExceptionsStorage {
 			?.onThrowable(throwable)
 			.onNull {
 				exceptions += throwable
-				throw throwable
+				Console.error(throwable.stackTrace())
 			}
 	}
 

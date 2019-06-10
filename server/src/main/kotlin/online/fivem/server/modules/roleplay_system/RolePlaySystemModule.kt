@@ -41,7 +41,8 @@ class RolePlaySystemModule : AbstractServerModule() {
 							|   coord_y=?,
 							|   coord_z=?,
 							|   coord_rotation=?,
-							|   health=?
+							|   health=?,
+							|   armour=?
 							|
 							|WHERE id=?
 							|LIMIT 1
@@ -52,6 +53,7 @@ class RolePlaySystemModule : AbstractServerModule() {
 				event.coordinatesX.z,
 				event.coordinatesX.rotation,
 				event.health,
+				event.armour,
 
 				player.characterId
 			)

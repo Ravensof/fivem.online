@@ -14,6 +14,7 @@ import online.fivem.server.entities.Player
 import online.fivem.server.entities.mysqlEntities.BlackListTable
 import online.fivem.server.entities.mysqlEntities.UserEntity
 import online.fivem.server.events.PlayerConnectedEvent
+import online.fivem.server.events.PlayerDisconnectedEvent
 import online.fivem.server.gtav.Exports
 import online.fivem.server.gtav.Natives
 import online.fivem.server.modules.basics.mysql.MySQLModule
@@ -26,7 +27,6 @@ import kotlin.collections.set
 class SessionModule(
 	private val mySQLModule: MySQLModule
 ) : AbstractServerModule() {
-
 
 	private val players = mutableMapOf<PlayerSrc, Player>()
 
@@ -63,7 +63,9 @@ class SessionModule(
 
 		val identifiers = Natives.getPlayerIdentifiers(playerSrc)
 
-		val user = mySQL.getConnection().row<UserEntity>(
+		val connection = mySQL.getConnection()
+
+		val user = connection.row<UserEntity>(
 			"""SELECT id
 					|FROM users
 					|WHERE
@@ -76,7 +78,7 @@ class SessionModule(
 			)
 		) ?: return@launch Natives.dropPlayer(playerSrc, Strings.NO_SUCH_USER)
 
-		val sessionId = mySQL.getConnection().send(
+		val sessionId = connection.send(
 			"""INSERT INTO sessions
 					|SET
 					|  user_id=?,
@@ -109,12 +111,17 @@ class SessionModule(
 	private fun onPlayerDropped(playerId: Int, reason: String) {
 
 		launch {
+
+			val connection = mySQL.getConnection()
+
 			players.forEach {
 				if (it.key.value == playerId) {
 					val player = it.value
 					players.remove(it.key)
 
-					mySQL.getConnection().send(
+					Event.emit(PlayerDisconnectedEvent(player))
+
+					connection.send(
 						"""UPDATE sessions
 						|SET
 						|   left_reason=?,

@@ -1,0 +1,51 @@
+<!-- redirect to http://fivem.online/?? -->
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Loading Screen</title>
+
+	<style>
+		body, html {
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			overflow: hidden;
+		}
+
+		#content {
+			width: 100%;
+			height: 100%;
+			border-width: 0;
+		}
+	</style>
+</head>
+<body>
+
+<iframe id="content" src="loading_screen.html"></iframe>
+
+<script>
+	document.getElementById("content").focus()
+</script>
+
+<script src="../../../nui/resources/main/js/jquery-3.3.1.min.js"></script>
+
+<script src="../../../common/lib/kotlin.js"></script>
+<script src="../../../common/lib/kotlinx-coroutines-core.js"></script>
+<script src="../../../common/lib/kotlinx-serialization-runtime.js"></script>
+
+<script src="../../../common/resources/main/externalJS/base64Danko.min.js"></script>
+<script src="../../../common/resources/main/externalJS/sha512.min.js"></script>
+<script src="../../../common/resources/main/externalJS/common.js"></script>
+
+<script src="../../../common/lib/common.js"></script>
+
+<script src="../../../nui/lib/kotlinx-html-js.js"></script>
+
+<script src="../../../nui/resources/main/js/howler_2.0.15.core.min.js"></script>
+<script src="../../../nui/resources/main/js/jquery.scrollTo.min.js"></script>
+<script src="../../../nui/resources/main/js/includeHTML.js"></script>
+
+<script src="../../../loadingScreen/lib/loadingScreen.js"></script>
+</body>
+</html>

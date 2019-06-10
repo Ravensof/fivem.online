@@ -17,15 +17,6 @@ class ServersCommandsHandlerModule(
 
 	private val syncData = ClientSideSynchronizationEvent()
 
-	init {
-		Event.apply {
-			on<PauseMenuStateChangedEvent.Enabled> {
-				if (Date.now() - lastSync >= SYNC_TIME_THRESHOLD_MILLISECONDS) synchronizeToServer()
-			}
-//			on<SpawnVehicleEvent> { onVehicleSpawn(it) }
-		}
-	}
-
 	override fun onStart() = launch {
 		spawnManagerModule.waitForStart()
 		joinTransitionModule.waitForStart()
@@ -34,6 +25,13 @@ class ServersCommandsHandlerModule(
 			on<StopResourceEvent> { onStopEvent(it.eventId) }
 			on<ServerSideSynchronizationEvent> { onServerRequest(it) }
 			on<SpawnPlayerEvent> { onPlayerSpawn(it) }
+		}
+
+		Event.apply {
+			on<PauseMenuStateChangedEvent.Enabled> {
+				if (Date.now() - lastSync >= SYNC_TIME_THRESHOLD_MILLISECONDS) synchronizeToServer()
+			}
+//			on<SpawnVehicleEvent> { onVehicleSpawn(it) }
 		}
 	}
 
@@ -53,7 +51,7 @@ class ServersCommandsHandlerModule(
 
 	private fun onPlayerSpawn(event: SpawnPlayerEvent) = launch {
 		joinTransitionModule.startTransition(this@ServersCommandsHandlerModule)
-		spawnManagerModule.spawnPlayerJob(event).join()
+		spawnManagerModule.spawnPlayerPed(event).join()
 		joinTransitionModule.endTransition(this@ServersCommandsHandlerModule)
 	}
 

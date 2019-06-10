@@ -1,10 +1,12 @@
 package online.fivem.client.modules.basics
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.common.GlobalCache.player
 import online.fivem.client.common.Player
-import online.fivem.client.events.PlayerSpawnProcess
+import online.fivem.client.events.PlayerPedSpawnedEvent
 import online.fivem.client.extensions.networkResurrectLocalPlayer
 import online.fivem.client.extensions.requestCollisionAtCoordinates
 import online.fivem.client.gtav.Client
@@ -33,57 +35,47 @@ class SpawnManagerModule(
 		bufferedActionsModule.waitForStart()
 	}
 
-	fun spawnPlayerJob(event: SpawnPlayerEvent): Job {
+	fun spawnPlayerPed(event: SpawnPlayerEvent) = launch {
 
-		val job = async(start = CoroutineStart.LAZY) {
-			player.ped.coordinatesX = CoordinatesX.ZERO
+		bufferedActionsModule.coordinatesLocker.lock(this@SpawnManagerModule)
 
-			freezePlayer(player, true)
+		player.ped.coordinatesX = CoordinatesX.ZERO
 
-			event.pedModel?.let {
-				player.setModel(it)
-			}
+		freezePlayer(player, true)
 
-			val ped = player.ped
-
-			Client.requestCollisionAtCoordinates(event.coordinatesX.toCoordinates())
-
-			bufferedActionsModule.coordinatesLocker.lock(this@SpawnManagerModule)
-			ped.coordinatesX = event.coordinatesX
-			delay(1_000)
-			bufferedActionsModule.coordinatesLocker.unlock(this@SpawnManagerModule)
-
-			withTimeoutOrNull(10_000) {
-				while (!Client.hasCollisionLoadedAroundEntity(ped.entity)) {
-					delay(100)
-				}
-			}.onNull {
-				Console.warn("failed to request collision at spawn coordinates")
-			}
-
-			Client.networkResurrectLocalPlayer(event.coordinatesX)
-			ped.clearTasksImmediately()
-			ped.removeAllWeapons()
-			player.clearWantedLevel()
-			player.ped.health = event.health
-			player.ped.armour = event.armour
-
-			event.weapons.forEach {
-				player.ped.giveWeapon(it.key, it.value)
-			}
-
-			freezePlayer(player, false)
-
-			PlayerSpawnProcess.FinishedEvent()
+		event.pedModel?.let {
+			player.setModel(it)
 		}
 
-		Event.emitAsync(
-			PlayerSpawnProcess(job) {
-				Event.emitAsync(it)
-			}
-		)
+		val ped = player.ped
 
-		return job
+		Client.requestCollisionAtCoordinates(event.coordinatesX.toCoordinates())
+
+		ped.coordinatesX = event.coordinatesX
+
+		withTimeoutOrNull(10_000) {
+			while (!Client.hasCollisionLoadedAroundEntity(ped.entity)) {
+				delay(100)
+			}
+		}.onNull {
+			Console.warn("failed to request collision at spawn coordinates")
+		}
+
+		Client.networkResurrectLocalPlayer(event.coordinatesX)
+		ped.clearTasksImmediately()
+		ped.removeAllWeapons()
+		player.clearWantedLevel()
+		player.ped.health = event.health
+		player.ped.armour = event.armour
+
+		event.weapons.forEach {
+			player.ped.giveWeapon(it.key, it.value)
+		}
+
+		freezePlayer(player, false)
+		bufferedActionsModule.coordinatesLocker.unlock(this@SpawnManagerModule)
+
+		Event.emit(PlayerPedSpawnedEvent(ped))
 	}
 
 	private suspend fun freezePlayer(player: Player, freeze: Boolean) {
