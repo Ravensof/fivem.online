@@ -8,10 +8,8 @@ suspend inline fun <T> ReceiveChannel<T>.forEach(function: (T) -> Unit) {
 	}
 }
 
-suspend fun <T> ReceiveChannel<T>.receiveAndCancel(): T {
-	val result = receive()
-
+suspend fun <T> ReceiveChannel<T>.receiveAndCancel(): T = try {
+	receive()
+} finally {
 	cancel()
-
-	return result
 }

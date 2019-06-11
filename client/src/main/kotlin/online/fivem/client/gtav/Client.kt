@@ -1533,6 +1533,10 @@ object Client {
 		SetNetworkIdCanMigrate(netId, toggle)
 	}
 
+	fun setNetworkIdExistsOnAllMachines(netId: Int, toggle: Boolean) {
+		SetNetworkIdExistsOnAllMachines(netId, toggle)
+	}
+
 	fun networkGetNetworkIdFromEntity(entity: EntityId): Int {
 		return NetworkGetNetworkIdFromEntity(entity)
 	}
@@ -24297,7 +24301,7 @@ private external fun SetModelAsNoLongerNeeded(model: Int)
 
 private external fun SetNetworkIdCanMigrate(netId: Int, toggle: Boolean)
 
-//private external fun SetNetworkIdExistsOnAllMachines(netId: number, toggle: boolean)
+private external fun SetNetworkIdExistsOnAllMachines(netId: Int, toggle: Boolean)
 
 /**
  * not tested....

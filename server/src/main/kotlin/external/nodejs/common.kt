@@ -1,3 +1,5 @@
 package external.nodejs
 
-external fun require(module: String): dynamic
+fun requireNodeJSModule(module: String) = require(module)
+
+private external fun require(module: String): dynamic

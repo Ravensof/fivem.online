@@ -19,12 +19,19 @@ import online.fivem.server.modules.basics.mysql.extensions.row
 import online.fivem.server.modules.basics.mysql.extensions.send
 import online.fivem.server.modules.client_event_exchanger.ClientEvent
 
-class RolePlaySystemModule : AbstractServerModule() {
+class RolePlaySystemModule(
+	private val mySQLModule: MySQLModule
+) : AbstractServerModule() {
 
 	private lateinit var mySQL: Pool
 
+	override suspend fun onInit() {
+		moduleLoader.add(VehiclesSyncModule(mySQLModule))
+	}
+
 	override fun onStart() = launch {
-		mySQL = moduleLoader.getModule(MySQLModule::class).pool
+		mySQLModule.waitForStart()
+		mySQL = mySQLModule.pool
 
 		Event.on<PlayerConnectedEvent> { onPlayerConnected(it.player) }
 	}

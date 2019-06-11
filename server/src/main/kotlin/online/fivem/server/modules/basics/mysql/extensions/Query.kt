@@ -1,14 +1,14 @@
 package online.fivem.server.modules.basics.mysql.extensions
 
 import external.nodejs.mysql.Connection
-import external.nodejs.require
+import external.nodejs.requireNodeJSModule
 import external.nodejs.stream.Stream
 import external.nodejs.stream.TransformParams
 import kotlinx.coroutines.channels.Channel
 import online.fivem.common.extensions.forEach
 
 suspend fun <T> Connection.Query.forEach(function: (T) -> Unit) {
-	val stream = require("stream").unsafeCast<Stream>()
+	val stream = requireNodeJSModule("stream").unsafeCast<Stream>()
 	val pauseChannel = Channel<Unit>()
 
 	stream()

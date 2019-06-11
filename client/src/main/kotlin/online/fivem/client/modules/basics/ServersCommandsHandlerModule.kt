@@ -15,8 +15,6 @@ class ServersCommandsHandlerModule(
 
 	private var lastSync = 0.0
 
-	private val syncData = ClientSideSynchronizationEvent()
-
 	override fun onStart() = launch {
 		spawnManagerModule.waitForStart()
 		joinTransitionModule.waitForStart()
@@ -71,6 +69,8 @@ class ServersCommandsHandlerModule(
 	}
 
 	private fun synchronizeToServer() = launch {
+
+		val syncData = ClientSideSynchronizationEvent()
 
 		moduleLoader.getLoadedModules().forEach { module ->
 			if (module !is AbstractClientModule) return@forEach

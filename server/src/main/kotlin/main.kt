@@ -30,7 +30,7 @@ private fun start() {
 				add(it)
 			}
 
-			add(RolePlaySystemModule())
+			add(RolePlaySystemModule(basicsModule.mySQLModule))
 
 			val clientEventExchangerModule = ClientEventExchangerModule(basicsModule.sessionModule).also {
 				add(it, manualStart = true)//last

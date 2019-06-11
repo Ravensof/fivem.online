@@ -604,4 +604,44 @@ enum class NativeVehicles(val hash: Int, val category: Category) {
 		WINDOWS(46),
 		LIVERY(48),
 	}
+
+//	enum class Weapon(val hash: Number) {
+//		//	----------------Vehicle Weapons----------------
+//		ROTORS(2971687502),
+//		TANK(1945616459),
+//		SPACE_ROCKET(4171469727),
+//		PLANE_ROCKET(3473446624),
+//		PLAYER_LAZER(3800181289),
+//		PLAYER_LASER(4026335563),
+//		PLAYER_BULLET(1259576109),
+//		PLAYER_BUZZARD(1186503822),
+//		PLAYER_HUNTER(2669318622),
+//		ENEMY_LASER(1566990507),
+//		SEARCHLIGHT(3450622333),
+//		RADAR(3530961278),
+//		WATER_CANNON(1741783703),
+//
+////	----------------DLC Vehicle Weapons----------------
+//
+//		//	Heists Update:
+////	------------------------------------
+//		TURRET_INSURGENT(1155224728),
+//		TURRET_TECHNICAL(2144528907),
+//		NOSE_TURRET_VALKYRIE(1097917585),
+//		PLAYER_SAVAGE(1638077257),
+//
+//		//	Executives and Other Criminals:
+////	------------------------------------
+//		TURRET_LIMO(729375873),
+//
+//		//	Import/Export:
+////	------------------------------------
+//		CANNON_BLAZER(3959029566),
+//		TURRET_BOXVILLE(3041872152),
+//		RUINER_BULLET(50118905),
+//	}
+
+	companion object {
+		fun findByHash(hash: Int) = values().find { it.hash == hash }
+	}
 }

@@ -8,17 +8,17 @@ import online.fivem.common.common.CustomScope
 import online.fivem.common.extensions.receiveAndCancel
 
 
-suspend fun <T> Connection.row(query: String, params: Any? = null): T? {
+suspend fun <T> Connection.row(query: String, params: Any? = arrayOf<Any>()): T? {
 	return q("$query LIMIT 1", params)?.toArray<Any>()?.firstOrNull().unsafeCast<T?>()
 }
 
-suspend fun Connection.send(query: String, params: Any? = null): Connection.Results {
+suspend fun Connection.send(query: String, params: Any? = arrayOf<Any>()): Connection.Results {
 	return q(query, params)!!
 }
 
-suspend fun <T> Connection.fetch(query: String, params: Any? = null) = q(query, params)!!.toArray<T>()
+suspend fun <T> Connection.fetch(query: String, params: Any? = arrayOf<Any>()) = q(query, params)!!.toArray<T>()
 
-private suspend fun Connection.q(query: String, params: Any? = null): Connection.Results? {
+private suspend fun Connection.q(query: String, params: Any? = arrayOf<Any>()): Connection.Results? {
 	val pauseChannel = Channel<Result>()
 
 	val callback = { error: Connection.Error?, results: Connection.Results?, fields: Array<Connection.Field> ->

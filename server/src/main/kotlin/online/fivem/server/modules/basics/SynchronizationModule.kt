@@ -25,7 +25,7 @@ class SynchronizationModule(
 	private val mySQLModule: MySQLModule
 ) : AbstractServerModule() {
 
-	private val syncData = ServerSideSynchronizationEvent(serverTime = 0.0)
+	private var syncData = ServerSideSynchronizationEvent(serverTime = 0.0)
 
 	private val syncDataChannel = Channel<Pair<Player, ClientSideSynchronizationEvent>>(GlobalConfig.MAX_PLAYERS)
 
@@ -63,6 +63,8 @@ class SynchronizationModule(
 
 		if (players.isEmpty()) return@repeatJob
 
+		val syncData = ServerSideSynchronizationEvent(serverTime = 0.0)
+
 		launch {
 			modules.forEach {
 				launch {
@@ -70,6 +72,8 @@ class SynchronizationModule(
 				}
 			}
 		}.join()
+
+		this.syncData = syncData
 
 		for (playerSrc in players) {
 			syncDataFor(playerSrc)

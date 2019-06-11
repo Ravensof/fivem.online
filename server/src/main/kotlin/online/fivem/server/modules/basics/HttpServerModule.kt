@@ -4,7 +4,7 @@ package online.fivem.server.modules.basics
 import external.nodejs.express.Express
 import external.nodejs.express.Server
 import external.nodejs.express.getInstance
-import external.nodejs.require
+import external.nodejs.requireNodeJSModule
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
@@ -16,7 +16,7 @@ import online.fivem.server.common.AbstractServerModule
 
 class HttpServerModule : AbstractServerModule() {
 
-	private val express = require("express").unsafeCast<Express>()
+	private val express = requireNodeJSModule("express").unsafeCast<Express>()
 	private val app = express.getInstance()
 	private var server: Server? = null
 

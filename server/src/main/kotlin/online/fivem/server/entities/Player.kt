@@ -12,6 +12,10 @@ class Player(
 ) {
 	var characterId: Int = -1
 
+	override fun equals(other: Any?): Boolean {
+		return other is Player && userId == other.userId
+	}
+
 	fun drop(reason: String) {
 		Natives.dropPlayer(playerSrc, reason)
 	}

@@ -2,7 +2,7 @@ package online.fivem.server.modules.basics
 
 import external.nodejs.express.App
 import external.nodejs.http.HTTP
-import external.nodejs.require
+import external.nodejs.requireNodeJSModule
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
@@ -19,11 +19,11 @@ class VoiceTransmissionModule : AbstractServerModule() {
 
 		Console.debug("require easyrtc..")
 		// Load required modules
-		val http = require("http").unsafeCast<HTTP>()            // http server core module
-		val express = require("express")           // web framework external module
-		val serveStatic = require("serve-static")  // serve static files
-		val socketIo = require("socket.io")        // web socket external module
-		val easyrtc = require("easyrtc")   // EasyRTC external module
+		val http = requireNodeJSModule("http").unsafeCast<HTTP>()            // http server core module
+		val express = requireNodeJSModule("express")           // web framework external module
+		val serveStatic = requireNodeJSModule("serve-static")  // serve static files
+		val socketIo = requireNodeJSModule("socket.io")        // web socket external module
+		val easyrtc = requireNodeJSModule("easyrtc")   // EasyRTC external module
 
 		// Set process name
 		//		process.title = "node-easyrtc";

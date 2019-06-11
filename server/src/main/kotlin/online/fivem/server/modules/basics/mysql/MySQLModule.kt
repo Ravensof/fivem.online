@@ -1,7 +1,7 @@
 package online.fivem.server.modules.basics.mysql
 
 import external.nodejs.mysql.Pool
-import external.nodejs.require
+import external.nodejs.requireNodeJSModule
 import online.fivem.server.ServerConfig.MYSQL_PARAMS
 import online.fivem.server.common.AbstractServerModule
 
@@ -9,7 +9,7 @@ class MySQLModule : AbstractServerModule() {
 
 	val pool: Pool by lazy { mysql.createPool(MYSQL_PARAMS) }
 
-	private val mysql = require("mysql").unsafeCast<external.nodejs.mysql.MySQL>()
+	private val mysql = requireNodeJSModule("mysql").unsafeCast<external.nodejs.mysql.MySQL>()
 
 	override suspend fun onInit() {
 		testConnection()

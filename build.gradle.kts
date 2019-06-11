@@ -108,8 +108,9 @@ subprojects {
 
 		val copyToServer by registering(UploadingToServerTask::class) {
 			dependsOn(assemble)
-			moduleName.set(project.name)
-			buildDir.set(this@subprojects.buildDir)
+			moduleName = project.name
+			buildDir = this@subprojects.buildDir
+			projectResourcesDir = File(project.projectDir.parent + "/buildSrc/build/resources/main")
 		}
 
 		val fullBuildAndCopy by registering(Copy::class) {

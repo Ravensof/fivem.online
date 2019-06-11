@@ -2,6 +2,8 @@ package online.fivem.common
 
 import online.fivem.common.events.net.*
 import online.fivem.common.events.net.sync.RolePlaySystemSaveEvent
+import online.fivem.common.events.net.sync.VehiclesSyncClientEvent
+import online.fivem.common.events.net.sync.VehiclesSyncServerEvent
 import online.fivem.common.events.nui.*
 import online.fivem.common.other.SerializerInterface
 
@@ -11,6 +13,10 @@ val Serializer: SerializerInterface = kSerializer //online.fivem.common.common.S
 
 private fun main() {
 	kSerializer.add(
+		//sync
+		VehiclesSyncClientEvent::class to VehiclesSyncClientEvent.serializer(),
+		VehiclesSyncServerEvent::class to VehiclesSyncServerEvent.serializer(),
+
 		//net
 		RolePlaySystemSaveEvent::class to RolePlaySystemSaveEvent.serializer(),
 
@@ -22,6 +28,9 @@ private fun main() {
 		ServerSideSynchronizationEvent::class to ServerSideSynchronizationEvent.serializer(),
 		SpawnPlayerEvent::class to SpawnPlayerEvent.serializer(),
 		StopResourceEvent::class to StopResourceEvent.serializer(),
+
+		SpawnVehiclesCommand::class to SpawnVehiclesCommand.serializer(),
+		VehiclesSpawnedEvent::class to VehiclesSpawnedEvent.serializer(),
 		//nui
 		BlackOutEvent::class to BlackOutEvent.serializer(),
 		CancelBlackOutEvent::class to CancelBlackOutEvent.serializer(),
@@ -46,5 +55,6 @@ private fun main() {
 		WebStorageEvent.Post::class to WebStorageEvent.Post.serializer(),
 		WebStorageEvent.Request::class to WebStorageEvent.Request.serializer(),
 		WebStorageEvent.Response::class to WebStorageEvent.Response.serializer()
+
 	)
 }

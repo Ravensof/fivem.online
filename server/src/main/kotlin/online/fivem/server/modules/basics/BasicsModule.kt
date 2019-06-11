@@ -5,7 +5,7 @@ import online.fivem.server.modules.basics.mysql.MySQLModule
 
 class BasicsModule : AbstractServerModule() {
 
-	private val mySQLModule = MySQLModule()
+	val mySQLModule = MySQLModule()
 	val sessionModule = SessionModule(mySQLModule)
 
 	override suspend fun onInit() {

@@ -312,9 +312,10 @@ class Vehicle private constructor(
 
 			val entity = withTimeout(5_000) {
 				Client.createVehicle(vehicleModel.hash, coordinatesX)
-			}//todo test
+			}
 
 			return newInstance(entity).apply {
+				Client.setNetworkIdExistsOnAllMachines(networkId, true)
 				ownedByPlayer = true
 				setOnGroundProperly()
 			}

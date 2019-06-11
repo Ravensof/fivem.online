@@ -3,9 +3,7 @@ package tasks
 import Config
 import org.apache.commons.net.ftp.FTPClient
 import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
-import org.gradle.kotlin.dsl.property
 import java.io.File
 import java.io.FileInputStream
 import java.nio.file.Files
@@ -13,10 +11,11 @@ import java.nio.file.Path
 
 open class UploadingToServerTask : DefaultTask() {
 
-	@Input
-	val moduleName = project.objects.property<String>()
-	@Input
-	val buildDir = project.objects.property<File>()
+	var moduleName = ""
+
+	lateinit var buildDir: File
+
+	lateinit var projectResourcesDir: File
 
 	private val client = FTPClient()
 
@@ -24,9 +23,9 @@ open class UploadingToServerTask : DefaultTask() {
 
 	@TaskAction
 	fun start() {
-		if (!buildDir.get().exists()) return
+		if (!this::buildDir.isInitialized || !this::projectResourcesDir.isInitialized || !buildDir.exists()) return
 
-		rootDir = "${Config.Ftp.root}${moduleName.get()}"
+		rootDir = "${Config.Ftp.root}$moduleName"
 
 		try {
 			client.connect(Config.Ftp.host)
@@ -35,9 +34,10 @@ open class UploadingToServerTask : DefaultTask() {
 
 			client.removeDirectory("$rootDir/lib")
 
-			uploadToLibsRoot(buildDir.get().absolutePath + "/lib")
-			uploadToLibsRoot(buildDir.get().absolutePath + "/classes")
+			uploadToLibsRoot(buildDir.absolutePath + "/lib")
+			uploadToLibsRoot(buildDir.absolutePath + "/classes")
 			uploadResources()
+			uploadBuildSrcResources()
 
 			client.logout()
 		} catch (e: Throwable) {
@@ -70,7 +70,7 @@ open class UploadingToServerTask : DefaultTask() {
 			.sorted(Comparator.reverseOrder())
 			.map(Path::toFile)
 			.filter { !it.isDirectory }
-			.filter { it.name.endsWith(".js") && !it.name.endsWith(".meta.js") && !it.name.endsWith(".map.js") }
+			.filter { it.name.endsWith(".js") }// && !it.name.endsWith(".meta.js") && !it.name.endsWith(".map.js") }
 			.forEach {
 				uploadFile(it, "$rootDir/lib/${it.name}")
 			}
@@ -79,16 +79,32 @@ open class UploadingToServerTask : DefaultTask() {
 	private fun uploadResources() {
 		client.removeDirectory("$rootDir/resources")
 
-		Files.walk(Path.of(buildDir.get().absolutePath + "/resources"))
+		Files.walk(Path.of(buildDir.absolutePath + "/resources"))
 			.sorted(Comparator.reverseOrder())
 			.map(Path::toFile)
 			.filter { !it.isDirectory }
 			.forEach {
-				val remotePath = it.absolutePath.removePrefix(buildDir.get().absolutePath)
+				val remotePath = it.absolutePath.removePrefix(buildDir.absolutePath)
 
 				uploadFile(
 					it,
 					"$rootDir$remotePath"
+				)
+			}
+	}
+
+	//todo сделать, чтобы не выполнялось каждый раз для каждого модуля
+	private fun uploadBuildSrcResources() {
+		Files.walk(Path.of(projectResourcesDir.absolutePath))
+			.sorted(Comparator.reverseOrder())
+			.map(Path::toFile)
+			.filter { !it.isDirectory }
+			.forEach {
+				val remotePath = it.absolutePath.removePrefix(projectResourcesDir.absolutePath)
+
+				uploadFile(
+					it,
+					"${Config.Ftp.root}$remotePath"
 				)
 			}
 	}
