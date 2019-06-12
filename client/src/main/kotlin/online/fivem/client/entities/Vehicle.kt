@@ -240,7 +240,7 @@ class Vehicle private constructor(
 		Client.setVehicleEngineOn(entity, value, instantly)
 	}
 
-	fun getTurboPressureRPMBased(vehicle: EntityId, startRPM: Double = 0.6, endRPM: Double = 1.0): Double {
+	fun getTurboPressureRPMBased(startRPM: Double = 0.6, endRPM: Double = 1.0): Double {
 		return (
 				Utils.normalizeToLimits(
 					currentRpm, startRPM, endRPM

@@ -1,5 +1,6 @@
 package online.fivem.client.modules.vehicle
 
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -24,6 +25,8 @@ class BlackOutModule(
 ) : AbstractClientModule() {
 
 	private var timeLeft: Long = 0
+	private var waiting: Job? = null
+	private var enabled = false
 
 	override suspend fun onInit() {
 		launch {
@@ -36,12 +39,15 @@ class BlackOutModule(
 
 		Event.apply {
 			on<PlayerPedSpawnedEvent> {
+				waiting?.cancel()
 				timeLeft = 0
+				enabled = true
 			}
 			on<PlayersPedHealthChangedEvent.Zero> {
 				blackOut(BLACKOUT_TIME_FROM_COMMAS * 1_000)
 			}
 			on<AccelerationThresholdAchievedEvent> {
+				if (!enabled) return@on
 				if (it.accelerationModule < ACCELERATION_THRESHOLD) return@on
 
 				val playerPed = Client.getPlayerPedId()
@@ -81,12 +87,9 @@ class BlackOutModule(
 		launch { bufferedActionsModule.lockControl(this@BlackOutModule) }
 		launch { bufferedActionsModule.setRagdollEffect(this@BlackOutModule) }
 
-		var time: Long
-
-		while (timeLeft > 0) {
-			time = timeLeft
-			delay(time)
-			timeLeft -= time
+		try {
+			waiting().join()
+		} catch (e: CancellationException) {
 		}
 
 		launch { Sounds.SHOCK_EFFECT.play() }
@@ -95,5 +98,18 @@ class BlackOutModule(
 		bufferedActionsModule.unLockControl(this@BlackOutModule)
 		bufferedActionsModule.unSetBlackScreen(this@BlackOutModule, WAKING_UP_TIME * 1_000)
 		bufferedActionsModule.removeRagdollEffect(this@BlackOutModule)
+	}
+
+	private fun waiting() = launch {
+		var time: Long
+
+		while (timeLeft > 0) {
+			time = timeLeft
+			delay(time)
+			timeLeft -= time
+		}
+	}.also {
+		waiting?.cancel()
+		waiting = it
 	}
 }

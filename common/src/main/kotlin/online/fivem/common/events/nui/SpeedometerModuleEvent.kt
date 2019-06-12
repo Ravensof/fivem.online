@@ -15,14 +15,17 @@ sealed class SpeedometerModuleEvent : Serializable() {
 		val currentGear: Int,
 		val currentRpm: Double,
 		val dashboardSpeed: Double,
-//		val nextGear: Int,
+		val handbrake: Boolean,
+		val turboPressure: Double?
 
+	) : SpeedometerModuleEvent()
+
+	@kotlinx.serialization.Serializable
+	class SlowUpadate(
 		val engineTemperature: Float,
 		val fuelLevel: Double,
-		val handbrake: Boolean,
 		val oilLevel: Float,
 		val petrolTankHealth: Double,
-		val turboPressure: Int?,
 		val isEngineRunning: Boolean,
 		val engineOn: Boolean,
 		val engineHealth: Double

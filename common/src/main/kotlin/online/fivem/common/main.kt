@@ -51,6 +51,7 @@ private fun main() {
 		SpeedometerModuleEvent.Enable::class to SpeedometerModuleEvent.Enable.serializer(),
 		SpeedometerModuleEvent.Disable::class to SpeedometerModuleEvent.Disable.serializer(),
 		SpeedometerModuleEvent.Update::class to SpeedometerModuleEvent.Update.serializer(),
+		SpeedometerModuleEvent.SlowUpadate::class to SpeedometerModuleEvent.SlowUpadate.serializer(),
 
 		WebStorageEvent.Post::class to WebStorageEvent.Post.serializer(),
 		WebStorageEvent.Request::class to WebStorageEvent.Request.serializer(),

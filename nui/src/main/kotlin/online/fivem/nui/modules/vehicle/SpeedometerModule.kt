@@ -88,56 +88,56 @@ class SpeedometerModule(
 		return super.onStop()
 	}
 
-	private fun runSpeedometer() {
-		drawInterpolatorJob?.cancel()
-		drawInterpolatorJob = launch {
+	private fun runSpeedometer() = launch {
 
-			var lastSpeed = 0.0
-			var lastRpm = 0.0
-			var lastUpdate = Date.now()
+		var lastSpeed = 0.0
+		var lastRpm = 0.0
+		var lastUpdate = Date.now()
 
-			var stepRPM: Double
-			var stepSpeed: Double
+		var stepRPM: Double
+		var stepSpeed: Double
 
-			var del: Long = 0
-			var drawingTime: Double
+		var del: Long = 0
+		var drawingTime: Double
 
-			for (data in speedometerInterpolatorChannel) {
-				stepRPM = (data.rpm * 180 - lastRpm) / INTERPOLATION_STEPS
-				stepSpeed = (data.speed * Utils.MPS_TO_MILES_PER_HOUR * 180 / 150 - lastSpeed) / INTERPOLATION_STEPS
+		for (data in speedometerInterpolatorChannel) {
+			stepRPM = (data.rpm * 180 - lastRpm) / INTERPOLATION_STEPS
+			stepSpeed = (data.speed * Utils.MPS_TO_MILES_PER_HOUR * 180 / 150 - lastSpeed) / INTERPOLATION_STEPS
 
-				for (i in 1..INTERPOLATION_STEPS) {
-					drawingTime = Date.now()
-					context2D.clearRect(0.0, 0.0, context2D.canvas.width.toDouble(), context2D.canvas.height.toDouble())
-					drawRotatedImage(
-						tachometerArrow,
-						105.0,
-						102.0,
-						lastRpm,
-						tachometerArrow.width.toDouble() / 2,
-						17.02
-					)
-					drawRotatedImage(
-						speedometerArrow,
-						291.0,
-						182.0,
-						lastSpeed,
-						148.0,
-						speedometerArrow.height.toDouble() / 2
-					)
+			for (i in 1..INTERPOLATION_STEPS) {
+				drawingTime = Date.now()
+				context2D.clearRect(0.0, 0.0, context2D.canvas.width.toDouble(), context2D.canvas.height.toDouble())
+				drawRotatedImage(
+					tachometerArrow,
+					105.0,
+					102.0,
+					lastRpm,
+					tachometerArrow.width.toDouble() / 2,
+					17.02
+				)
+				drawRotatedImage(
+					speedometerArrow,
+					291.0,
+					182.0,
+					lastSpeed,
+					148.0,
+					speedometerArrow.height.toDouble() / 2
+				)
 
-					lastRpm += stepRPM
-					lastSpeed += stepSpeed
+				lastRpm += stepRPM
+				lastSpeed += stepSpeed
 
-					if (i != INTERPOLATION_STEPS) {
-						delay(del - (Date.now() - drawingTime).toLong())
-					}
+				if (i != INTERPOLATION_STEPS) {
+					delay(del - (Date.now() - drawingTime).toLong())
 				}
-
-				del = (Date.now() - lastUpdate).toLong() / INTERPOLATION_STEPS
-				lastUpdate = Date.now()
 			}
+
+			del = (Date.now() - lastUpdate).toLong() / INTERPOLATION_STEPS
+			lastUpdate = Date.now()
 		}
+	}.also {
+		drawInterpolatorJob?.cancel()
+		drawInterpolatorJob = it
 	}
 
 	private fun drawRotatedImage(
