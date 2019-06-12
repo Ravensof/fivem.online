@@ -11,7 +11,6 @@ import online.fivem.common.events.net.ClientSideSynchronizationEvent
 import online.fivem.common.events.net.SpawnVehiclesCommand
 import online.fivem.common.events.net.VehiclesSpawnedEvent
 import online.fivem.common.events.net.sync.VehiclesSyncClientEvent
-import online.fivem.common.gtav.NativeVehicles
 
 class VehiclesSyncModule(
 
@@ -51,8 +50,7 @@ class VehiclesSyncModule(
 
 		vehicles.forEach {
 			val vehicle = Vehicle.create(
-				vehicleModel = NativeVehicles.findByHash(it.modelHash)
-					?: throw IllegalArgumentException("cannot find vehicle with hash=${it.modelHash}"),
+				vehicleModel = it.modelHash,
 				coordinatesX = it.coordinatesX
 			)
 

@@ -9,7 +9,8 @@ import online.fivem.common.common.Utils
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.entities.RGB
 import online.fivem.common.extensions.orZero
-import online.fivem.common.gtav.NativeVehicles
+import online.fivem.common.gtav.NativeVehicle
+import online.fivem.common.gtav.NativeVehicleMod
 import kotlin.reflect.KProperty
 
 class Vehicle private constructor(
@@ -264,11 +265,11 @@ class Vehicle private constructor(
 	}
 
 	class Mod(private val vehicle: EntityId) {
-		operator fun get(mod: NativeVehicles.Mod): Int {
+		operator fun get(mod: NativeVehicleMod): Int {
 			return mod.getOn(vehicle) ?: -1
 		}
 
-		operator fun set(mod: NativeVehicles.Mod, value: Int) {
+		operator fun set(mod: NativeVehicleMod, value: Int) {
 			mod.setOn(vehicle, value)
 		}
 	}
@@ -306,12 +307,17 @@ class Vehicle private constructor(
 	companion object {
 
 		suspend fun create(
-			vehicleModel: NativeVehicles,
+			vehicleModel: NativeVehicle,
+			coordinatesX: CoordinatesX
+		) = create(vehicleModel.hash, coordinatesX)
+
+		suspend fun create(
+			vehicleModel: Int,
 			coordinatesX: CoordinatesX
 		): Vehicle {
 
 			val entity = withTimeout(5_000) {
-				Client.createVehicle(vehicleModel.hash, coordinatesX)
+				Client.createVehicle(vehicleModel, coordinatesX)
 			}
 
 			return newInstance(entity).apply {

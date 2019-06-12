@@ -20,17 +20,6 @@ class SpawnManagerModule(
 	private val bufferedActionsModule: BufferedActionsModule
 ) : AbstractClientModule() {
 
-
-//	private fun vehicleSpawn(event: SpawnVehicleEvent) {
-//
-//		launch {
-//			val vehicle = withTimeout(5_000) { Client.createVehicle(event.vehicleModel, event.coordinatesX).await() }
-//
-//			Client.setVehicleOilLevel(vehicle, event.vehicleId)
-//			Client.setVehicleWheelHealth(vehicle)
-//		}
-//	}
-
 	override fun onStart() = launch {
 		bufferedActionsModule.waitForStart()
 	}
@@ -41,7 +30,7 @@ class SpawnManagerModule(
 
 		player.ped.coordinatesX = CoordinatesX.ZERO
 
-		freezePlayer(player, true)
+		freezePlayer(player)
 
 		event.pedModel?.let {
 			player.setModel(it)
@@ -72,41 +61,42 @@ class SpawnManagerModule(
 			player.ped.giveWeapon(it.key, it.value)
 		}
 
-		freezePlayer(player, false)
+		unfreezePlayer(player)
 		bufferedActionsModule.coordinatesLocker.unlock(this@SpawnManagerModule)
 
 		Event.emit(PlayerPedSpawnedEvent(ped))
 	}
 
-	private suspend fun freezePlayer(player: Player, freeze: Boolean) {
+	private suspend fun freezePlayer(player: Player) {
 
 		val ped = player.ped
 
-		if (!freeze) {
-			bufferedActionsModule.unLockControl(this)
+		bufferedActionsModule.lockControl(this@SpawnManagerModule)
 
-			ped.isVisible = true
-			ped.isInAVehicle()
+		ped.isVisible = false
+		ped.setCollision(false)
+		ped.freezePosition(true)
+		player.isInvincible = true
 
-			if (!ped.isInAVehicle()) {
-				ped.setCollision(true)
-			}
-
-			ped.freezePosition(false)
-			player.isInvincible = false
-
-		} else {
-			bufferedActionsModule.lockControl(this@SpawnManagerModule)
-
-			ped.isVisible = false
-			ped.setCollision(false)
-			ped.freezePosition(true)
-			player.isInvincible = true
-
-			if (Client.isPedFatallyInjured(ped.entity)) {
-				ped.clearTasksImmediately()
-			}
+		if (Client.isPedFatallyInjured(ped.entity)) {
+			ped.clearTasksImmediately()
 		}
+	}
+
+	private suspend fun unfreezePlayer(player: Player) {
+		val ped = player.ped
+
+		bufferedActionsModule.unLockControl(this)
+
+		ped.isVisible = true
+		ped.isInAVehicle()
+
+		if (!ped.isInAVehicle()) {
+			ped.setCollision(true)
+		}
+
+		ped.freezePosition(false)
+		player.isInvincible = false
 	}
 }
 

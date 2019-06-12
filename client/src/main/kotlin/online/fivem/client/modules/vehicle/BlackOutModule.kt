@@ -89,15 +89,16 @@ class BlackOutModule(
 
 		try {
 			waiting().join()
+			launch { Sounds.SHOCK_EFFECT.play() }
+			delay(2_000)
 		} catch (e: CancellationException) {
-		}
 
-		launch { Sounds.SHOCK_EFFECT.play() }
-		delay(2_000)
-		bufferedActionsModule.unMuteSound(this@BlackOutModule)
-		bufferedActionsModule.unLockControl(this@BlackOutModule)
-		bufferedActionsModule.unSetBlackScreen(this@BlackOutModule, WAKING_UP_TIME * 1_000)
-		bufferedActionsModule.removeRagdollEffect(this@BlackOutModule)
+		} finally {
+			bufferedActionsModule.unMuteSound(this@BlackOutModule)
+			bufferedActionsModule.unLockControl(this@BlackOutModule)
+			bufferedActionsModule.unSetBlackScreen(this@BlackOutModule, WAKING_UP_TIME * 1_000)
+			bufferedActionsModule.removeRagdollEffect(this@BlackOutModule)
+		}
 	}
 
 	private fun waiting() = launch {

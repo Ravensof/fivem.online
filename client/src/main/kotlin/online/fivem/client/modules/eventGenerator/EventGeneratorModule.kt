@@ -24,8 +24,6 @@ class EventGeneratorModule(
 	private val bufferedActionsModule: BufferedActionsModule
 ) : AbstractClientModule() {
 
-	private var isFadeOut: Boolean = true
-
 	var accelerationThreshold: Double = 150.0 // m/s^2
 		set(value) {
 			if (value > field) {
@@ -35,6 +33,8 @@ class EventGeneratorModule(
 	private var iLastSpeedCheck = 0.0
 
 	private var vehiclePlayerTryingToGet: Vehicle? = null
+
+	private var isRadioEnabled = false
 
 	override fun onStart() = launch {
 		bufferedActionsModule.waitForStart()
@@ -54,7 +54,6 @@ class EventGeneratorModule(
 
 		this@EventGeneratorModule.repeatJob(1_000) {
 			checkAudioMusicLevelInMP(Client.getProfileSetting(ProfileSetting.AUDIO_MUSIC_LEVEL_IN_MP).orZero())
-			checkIsScreenFadedInOut(Client.isScreenFadedOut())
 
 			checkPlayersPed(player.ped)
 
@@ -123,13 +122,6 @@ class EventGeneratorModule(
 					)
 				}
 			}
-		}
-	}
-
-	private suspend fun checkIsScreenFadedInOut(isFadeOut: Boolean) {
-		if (isFadeOut != this.isFadeOut) {
-			this.isFadeOut = isFadeOut
-			Event.emit(ScreenFadeOutEvent(isFadeOut))
 		}
 	}
 
@@ -255,12 +247,14 @@ class EventGeneratorModule(
 
 	private suspend fun checkRadio() {
 		val currentRadio =
-			if (playersVehicle?.isEngineRunning() == true && Client.isAnyRadioTrackPlaying()) Client.getRadioStation() else null
+			if (playersVehicle?.isEngineRunning() == true && (isRadioEnabled || Client.isAnyRadioTrackPlaying())) Client.getRadioStation() else null
 
 		if (currentRadio != playerRadioStationName) {
 			Event.emit(PlayerRadioStationChangedEvent(currentRadio))
 
 			playerRadioStationName = currentRadio
+
+			isRadioEnabled = currentRadio != null
 
 			if (currentRadio != null) {
 				Event.emit(PlayerVehicleRadioToggledEvent.Enabled(currentRadio))
