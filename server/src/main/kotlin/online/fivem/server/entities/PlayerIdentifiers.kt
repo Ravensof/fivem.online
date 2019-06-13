@@ -1,4 +1,4 @@
-package online.fivem.common.gtav.entities
+package online.fivem.server.entities
 
 class PlayerIdentifiers(
 	val name: String? = null,

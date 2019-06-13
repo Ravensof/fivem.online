@@ -41,19 +41,20 @@ class RolePlaySystemModule(
 
 		val connection = mySQL.getConnection()
 
+		//language=sql
 		connection.send(
 			"""UPDATE characters
-							|SET
-							|   coord_x=?,
-							|   coord_y=?,
-							|   coord_z=?,
-							|   coord_rotation=?,
-							|   health=?,
-							|   armour=?
-							|
-							|WHERE id=?
-							|LIMIT 1
-						""".trimMargin(),
+				SET
+					coord_x=?,
+					coord_y=?,
+					coord_z=?,
+					coord_rotation=?,
+					health=?,
+					armour=?
+
+				WHERE id=?
+				LIMIT 1
+				""".trimIndent(),
 			arrayOf(
 				event.coordinatesX.x,
 				event.coordinatesX.y,
@@ -66,22 +67,24 @@ class RolePlaySystemModule(
 			)
 		)
 
+		//language=sql
 		connection.send(
-			"""DELETE FROM character_weapons
-			|WHERE character_id=?
-		""".trimMargin(),
+			"""DELETE
+				FROM character_weapons
+				WHERE character_id=?
+		""".trimIndent(),
 			player.characterId
 		)
 
 		event.weapons.forEach {
+			//language=sql
 			connection.send(
-				"""
-			|INSERT INTO character_weapons
-			|SET
-			|   character_id=?,
-			|   weapon_id=?,
-			|   count=?
-		""".trimMargin(),
+				"""INSERT INTO character_weapons
+					SET
+						character_id=?,
+						weapon_id=?,
+						count=?
+						""".trimIndent(),
 				arrayOf(
 					player.characterId,
 					it.key,
@@ -95,22 +98,26 @@ class RolePlaySystemModule(
 
 		val connection = mySQL.getConnection()
 
+		//language=sql
 		val character =
 			connection.row<CharacterEntity>(
 				"""SELECT *
-						|FROM characters
-						|WHERE user_id=?
-						|""".trimMargin(),
+					FROM characters
+					WHERE user_id=?
+					""".trimIndent(),
 				arrayOf(player.userId)
 			) ?: return@launch player.drop(Strings.NO_SUCH_CHARACTER)
 
 		player.characterId = character.id
 
+		//language=sql
 		val weapons = connection.fetch<CharacterWeaponsEntity>(
-			"""SELECT *
-			|FROM character_weapons
-			|WHERE character_id=?
-			|""".trimMargin(),
+			"""SELECT
+				weapon_id,
+				count
+				FROM character_weapons
+				WHERE character_id=?
+				""".trimIndent(),
 			character.id
 		)
 

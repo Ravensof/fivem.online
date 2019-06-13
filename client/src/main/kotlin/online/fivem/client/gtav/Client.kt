@@ -2477,6 +2477,13 @@ object Client {
 	}
 
 	/**
+	 * IPL list: pastebin.com/iNGLY32D
+	 */
+	fun requestIpl(iplName: String) {
+		RequestIpl(iplName)
+	}
+
+	/**
 	 * Request a model to be loaded into memory
 	 * Looking it the disassembly, it seems like it actually returns the model if it's already loaded.
 	 */
@@ -2576,7 +2583,11 @@ object Client {
 	 * Returns active radio station name
 	 */
 	fun getRadioStation(): RadioStation? {
-		return GetPlayerRadioStationName()?.let { RadioStation.valueOf(it) }
+		return GetPlayerRadioStationName()?.let { code ->
+			RadioStation
+				.values()
+				.find { it.code == code }
+		}
 	}
 
 	fun getPlayerRadioStationIndex(): Int? {
@@ -21832,10 +21843,7 @@ private external fun RequestCollisionAtCoord(x: Number, y: Number, z: Number): N
  */
 //private external fun N_0x8a7a40100edfec58(interiorID: number, roomName: string)
 
-/**
- * IPL list: pastebin.com/iNGLY32D
- */
-//private external fun RequestIpl(iplName: string)
+private external fun RequestIpl(iplName: String)
 
 /**
  * streaming::request_menu_ped_model(joaat("player_zero"));

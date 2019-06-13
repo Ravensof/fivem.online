@@ -4,5 +4,5 @@ import online.fivem.client.gtav.Client
 import online.fivem.common.gtav.NativeTextEntries
 
 fun NativeTextEntries.addText(text: String) {
-	Client.addTextEntry(name, text)
+	Client.addTextEntry(code, text)
 }

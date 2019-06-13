@@ -32,13 +32,13 @@ class WeatherModule(
 			for (weather in weatherQueue) {
 				currentTemperature = weather.temperature
 
-				if (weather.weatherName == currentWeather.name) continue
+				if (weather.weatherName == currentWeather.code) continue
 
 				val newWeather = NativeWeather.valueOf(weather.weatherName)
 
 				val changingTime = (weather.appearanceTime - dateTimeModule.date.time) / dateTimeModule.date.timeSpeed
 
-				Console.debug("request changing weather from ${currentWeather.name} to ${weather.weatherName} in $changingTime ms")
+				Console.debug("request changing weather from ${currentWeather.code} to ${weather.weatherName} in $changingTime ms")
 
 				setWeather(newWeather, changingTime.toFloat()).join()
 			}

@@ -42,6 +42,7 @@ class BasicsModules : AbstractClientModule() {
 			add(dateTimeModule)
 			add(WeatherModule(dateTimeModule))
 			add(VoiceTransmissionModule())
+			add(MapModule())
 
 			add(
 				ServersCommandsHandlerModule(
@@ -71,6 +72,6 @@ class BasicsModules : AbstractClientModule() {
 	}
 
 	private fun changeHeaderInMainMenu() {
-		NativeTextEntries.FE_THDR_GTAO.addText(GlobalConfig.SERVER_NAME_IN_MENU)
+		NativeTextEntries.MENU_TITLE.addText(GlobalConfig.SERVER_NAME_IN_MENU)
 	}
 }

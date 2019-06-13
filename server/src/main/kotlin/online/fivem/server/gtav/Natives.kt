@@ -2,8 +2,8 @@ package online.fivem.server.gtav
 
 import online.fivem.common.GlobalConfig
 import online.fivem.common.entities.PlayerSrc
-import online.fivem.common.gtav.entities.Command
-import online.fivem.common.gtav.entities.PlayerIdentifiers
+import online.fivem.server.entities.Command
+import online.fivem.server.entities.PlayerIdentifiers
 
 object Natives {
 

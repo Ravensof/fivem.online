@@ -23,7 +23,6 @@ class RealisticFailureModule(
 ) : AbstractClientModule() {
 
 	private var lastVehicle: Vehicle? = null
-	private var vehicleClass = 0
 	private var fCollisionDamageMult = 0.0
 	private var fDeformationDamageMult = 0.0
 	private var fEngineDamageMult = 0.0
@@ -116,9 +115,7 @@ class RealisticFailureModule(
 		mainJob?.cancel()
 		mainJob = launch {
 
-			vehicleClass = vehicle.classType
-
-			if (!isVehicleCanHandled(vehicleClass)) return@launch
+			if (!isVehicleCanHandled(vehicle.classType)) return@launch
 
 			preset(vehicle)
 			someFunc(vehicle)
@@ -131,14 +128,14 @@ class RealisticFailureModule(
 				healthEngineNew = healthEngineCurrent
 				healthEngineDelta = healthEngineLast - healthEngineCurrent
 				healthEngineDeltaScaled = healthEngineDelta * Cfg.damageFactorEngine *
-						Cfg.classDamageMultiplier[vehicleClass]
+						Cfg.classDamageMultiplier[vehicle.classType]
 
 				healthBodyCurrent = vehicle.bodyHealth
 
 				healthBodyNew = healthBodyCurrent
 				healthBodyDelta = healthBodyLast - healthBodyCurrent
 				healthBodyDeltaScaled = healthBodyDelta * Cfg.damageFactorBody *
-						Cfg.classDamageMultiplier[vehicleClass]
+						Cfg.classDamageMultiplier[vehicle.classType]
 
 				healthPetrolTankCurrent = vehicle.petrolTankHealth
 				if (Cfg.compatibilityMode && healthPetrolTankCurrent < 1) {
@@ -150,7 +147,7 @@ class RealisticFailureModule(
 				healthPetrolTankNew = healthPetrolTankCurrent
 				healthPetrolTankDelta = healthPetrolTankLast - healthPetrolTankCurrent
 				healthPetrolTankDeltaScaled = healthPetrolTankDelta * Cfg.damageFactorPetrolTank *
-						Cfg.classDamageMultiplier[vehicleClass]
+						Cfg.classDamageMultiplier[vehicle.classType]
 
 				if (healthEngineCurrent > Cfg.engineSafeGuard + 1) {
 					vehicle.setUndriveable(false)

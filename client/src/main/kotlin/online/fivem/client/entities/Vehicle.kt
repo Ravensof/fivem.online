@@ -193,7 +193,22 @@ class Vehicle private constructor(
 	}
 
 	override fun equals(other: Any?): Boolean {
-		return other is Vehicle && other.entity == entity
+		return super.equals(other) && other is Vehicle
+				&& networkId == other.networkId
+				&& numberOfWheels == other.numberOfWheels
+				&& numberOfDoors == other.numberOfDoors
+				&& numberOfPassengersSeats == other.numberOfPassengersSeats
+				&& classType == other.classType
+	}
+
+	override fun hashCode(): Int {
+		var result = super.hashCode()
+		result = 31 * result + networkId
+		result = 31 * result + numberOfWheels
+		result = 31 * result + numberOfDoors
+		result = 31 * result + numberOfPassengersSeats
+		result = 31 * result + classType
+		return result
 	}
 
 	fun setUndriveable(undriveable: Boolean = false) {
@@ -261,6 +276,7 @@ class Vehicle private constructor(
 //	}
 
 	fun destroy() {
+		Client.setNetworkIdExistsOnAllMachines(networkId, false)
 		Client.setVehicleAsNoLongerNeeded(entity)
 	}
 

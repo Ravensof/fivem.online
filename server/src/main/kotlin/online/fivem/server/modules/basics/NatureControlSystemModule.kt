@@ -98,8 +98,8 @@ class NatureControlSystemModule : AbstractServerModule() {
 
 		previousWeather = this@NatureControlSystemModule.currentWeather
 		this@NatureControlSystemModule.currentWeather = Weather(
-			weatherName = weather.name,
-			appearanceTime = if (previousWeather?.weatherName == weather.name) previousWeather?.appearanceTime.orZero() else
+			weatherName = weather.code,
+			appearanceTime = if (previousWeather?.weatherName == weather.code) previousWeather?.appearanceTime.orZero() else
 				currentTime + date.timeSpeed * TIME_IN_MILLISECONDS_FOR_APPLYING_WEATHER,
 			temperature = currentTemperature
 		)

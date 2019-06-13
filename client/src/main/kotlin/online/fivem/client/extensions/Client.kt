@@ -123,8 +123,8 @@ fun Client.invokeNative(functionName: String, vararg args: Any): Any {
 fun Client.setWeatherTypeTransition(weatherType1: NativeWeather, weatherType2: NativeWeather, percentWeather2: Float) {
 	@Suppress("DEPRECATION")
 	setWeatherTypeTransition(
-		getHexHashKey(weatherType1.name),
-		getHexHashKey(weatherType2.name),
+		getHexHashKey(weatherType1.code),
+		getHexHashKey(weatherType2.code),
 		percentWeather2
 	)//todo test
 }

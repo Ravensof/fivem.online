@@ -1,16 +1,16 @@
 package online.fivem.common.gtav
 
-enum class NativeWeather {
-	CLEAR,
-	EXTRASUNNY,
-	CLOUDS,
-	OVERCAST,
-	RAIN,
-	CLEARING,
-	THUNDER,
-	SMOG,
-	FOGGY,
-	XMAS,
-	SNOWLIGHT,
-	BLIZZARD
+enum class NativeWeather(val code: String) {
+	CLEAR("CLEAR"),
+	EXTRASUNNY("EXTRASUNNY"),
+	CLOUDS("CLOUDS"),
+	OVERCAST("OVERCAST"),
+	RAIN("RAIN"),
+	CLEARING("CLEARING"),
+	THUNDER("THUNDER"),
+	SMOG("SMOG"),
+	FOGGY("FOGGY"),
+	XMAS("XMAS"),
+	SNOWLIGHT("SNOWLIGHT"),
+	BLIZZARD("BLIZZARD")
 }

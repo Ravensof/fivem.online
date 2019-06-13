@@ -33,6 +33,16 @@ abstract class Entity(val entity: Int) {
 		get() = Client.isEntityVisible(entity)
 		set(value) = Client.setEntityVisible(entity, value)
 
+	override fun equals(other: Any?): Boolean {
+		return other is Entity && entity == other.entity && model == other.model
+	}
+
+	override fun hashCode(): Int {
+		var result = entity
+		result = 31 * result + model
+		return result
+	}
+
 	fun getSpeed() = Client.getEntitySpeed(entity)
 
 	fun getSpeedVector(relative: Boolean) = Client.getEntitySpeedVector(entity, relative)

@@ -65,28 +65,30 @@ class SessionModule(
 
 		val connection = mySQL.getConnection()
 
+		//language=sql
 		val user = connection.row<UserEntity>(
 			"""SELECT id
-					|FROM users
-					|WHERE
-					|   steam=? AND
-					|   license=?
-					|""".trimMargin(),
+				FROM users
+				WHERE
+					(steam=? OR steam is NULL) AND
+					license=?
+			""".trimIndent(),
 			arrayOf(
 				identifiers.steam,
 				identifiers.license
 			)
 		) ?: return@launch Natives.dropPlayer(playerSrc, Strings.NO_SUCH_USER)
 
+		//language=sql
 		val sessionId = connection.send(
 			"""INSERT INTO sessions
-					|SET
-					|  user_id=?,
-					|  steam=?,
-					|  discord=?,
-					|  license=?,
-					|  ip=?
-					|""".trimMargin(),
+				SET
+					user_id=?,
+					steam=?,
+					discord=?,
+					license=?,
+					ip=?
+					""".trimIndent(),
 			arrayOf(
 				user.id,
 				identifiers.steam,
@@ -121,13 +123,14 @@ class SessionModule(
 
 					Event.emit(PlayerDisconnectedEvent(player))
 
+					//language=sql
 					connection.send(
 						"""UPDATE sessions
-						|SET
-						|   left_reason=?,
-						|   logout_date=NOW()
-						|WHERE id=?
-						|LIMIT 1""".trimMargin(),
+							SET
+								left_reason=?,
+								logout_date=NOW()
+							WHERE id=?
+							LIMIT 1""".trimIndent(),
 						arrayOf(
 							reason,
 							player.sessionId
@@ -148,14 +151,15 @@ class SessionModule(
 			val identifiers = Natives.getPlayerIdentifiers(source)
 
 			val blackList = async {
+				//language=sql
 				mySQL.getConnection().row<BlackListTable>(
 					"""SELECT reason
-				|FROM `black_list`
-				|WHERE
-				|   ip=? OR
-				|   steam=? OR
-				|   license=?
-				|""".trimMargin(),
+						FROM `black_list`
+						WHERE
+						    ip=? OR
+							steam=? OR
+							license=?
+					""".trimIndent(),
 					arrayOf(
 						identifiers.ip,
 						identifiers.steam,

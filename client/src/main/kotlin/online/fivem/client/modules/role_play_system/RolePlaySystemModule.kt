@@ -56,7 +56,7 @@ class RolePlaySystemModule(
 
 			armour = playerPed.armour,
 
-			weapons = playerPed.getWeapons().associate { it.weapon.name to it.ammo }
+			weapons = playerPed.getWeapons().associate { it.weapon.code to it.ammo }
 
 		)
 
