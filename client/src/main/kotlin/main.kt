@@ -5,7 +5,7 @@ import online.fivem.client.modules.eventGenerator.EventGeneratorModule
 import online.fivem.client.modules.nui_event_exchanger.NuiEventExchangerModule
 import online.fivem.client.modules.role_play_system.RolePlaySystemModule
 import online.fivem.client.modules.server_event_exchanger.ServerEventExchangerModule
-import online.fivem.client.modules.vehicle.VehicleModule
+import online.fivem.client.modules.test.Test
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.Console
 import online.fivem.common.common.ModuleLoader
@@ -33,19 +33,19 @@ private fun start() {
 			}
 
 			add(
-				VehicleModule(
+				RolePlaySystemModule(
 					bufferedActionsModule = basicsModules.bufferedActionsModule,
 					tickExecutorModule = basicsModules.tickExecutorModule
 				)
 			)
-
-			add(RolePlaySystemModule(basicsModules.tickExecutorModule))
 
 			add(EventGeneratorModule(basicsModules.bufferedActionsModule))//pre last
 
 			val serverExchangerModule = ServerEventExchangerModule().also {
 				add(it, manualStart = true)//last
 			}
+
+			add(Test())
 
 			startAll()
 

@@ -5,18 +5,18 @@ import kotlinx.coroutines.launch
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.common.GlobalCache.player
 import online.fivem.client.entities.Ped
-import online.fivem.client.events.PlayerVehicleSeatEvent
 import online.fivem.client.events.PlayersPedChangedEvent
 import online.fivem.client.gtav.Client
+import online.fivem.client.modules.basics.BufferedActionsModule
 import online.fivem.client.modules.basics.TickExecutorModule
+import online.fivem.client.modules.role_play_system.vehicle.VehicleModule
 import online.fivem.common.common.Event
-import online.fivem.common.common.generateLong
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.events.net.ClientSideSynchronizationEvent
 import online.fivem.common.events.net.sync.RolePlaySystemSaveEvent
-import online.fivem.common.gtav.NativeTask
 
 class RolePlaySystemModule(
+	private val bufferedActionsModule: BufferedActionsModule,
 	private val tickExecutorModule: TickExecutorModule
 ) : AbstractClientModule() {
 
@@ -25,28 +25,25 @@ class RolePlaySystemModule(
 	}
 
 	override suspend fun onInit() {
-		moduleLoader.add(VehiclesSyncModule())
+		moduleLoader.add(
+			VehicleModule(
+				tickExecutorModule = tickExecutorModule
+			)
+		)
 
-		Event.apply {
-			on<PlayerVehicleSeatEvent.Join.Passenger> {
-				if (it.seatIndex == 0) {
-					disableSeatShuffling(true)
-				}
-			}
-			on<PlayerVehicleSeatEvent.Left> { disableSeatShuffling(false) }
-			on<PlayersPedChangedEvent> { onPedChanged(it.ped) }
-		}
+		moduleLoader.add(VehiclesSyncModule())
+		moduleLoader.add(BlackOutModule(bufferedActionsModule))
 	}
 
 	override fun onStart() = launch {
-		tickExecutorModule.waitForStart()
+		Event.on<PlayersPedChangedEvent> { onPedChanged(it.ped) }
 	}
 
-	override fun onSync(exportObject: ClientSideSynchronizationEvent): Job? {
+	override fun onSaveState(container: ClientSideSynchronizationEvent): Job? {
 
 		val playerPed = player.ped
 
-		exportObject.rolePlaySystem = RolePlaySystemSaveEvent(
+		container.rolePlaySystem = RolePlaySystemSaveEvent(
 			coordinatesX = CoordinatesX(
 				playerPed.coordinates,
 				playerPed.heading
@@ -60,26 +57,10 @@ class RolePlaySystemModule(
 
 		)
 
-		return super.onSync(exportObject)
+		return super.onSaveState(container)
 	}
 
 	private fun onPedChanged(ped: Ped) {
 		Client.setPedCanRagdollFromPlayerImpact(ped.entity, true)
-	}
-
-	private val seatShuffling = generateLong()
-
-	private fun disableSeatShuffling(disable: Boolean) {
-		val vehicle = player.ped.getVehicleIsIn(false) ?: return
-
-		if (disable) {
-			tickExecutorModule.add(seatShuffling) {
-				if (player.ped.isTaskActive(NativeTask.InVehicleSeatShuffle)) {
-					player.ped.setIntoVehicle(vehicle.entity, 0)
-				}
-			}
-		} else {
-			tickExecutorModule.remove(seatShuffling)
-		}
 	}
 }

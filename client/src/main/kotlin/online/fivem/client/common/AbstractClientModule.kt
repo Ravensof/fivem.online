@@ -9,17 +9,12 @@ import online.fivem.common.common.AbstractModule
 import online.fivem.common.events.net.ClientSideSynchronizationEvent
 import online.fivem.common.events.net.ServerSideSynchronizationEvent
 import online.fivem.common.extensions.forEach
-import online.fivem.common.other.Serializable
 
 abstract class AbstractClientModule : AbstractModule() {
 
 	open fun onSync(serverData: ServerSideSynchronizationEvent): Job? = null
 
-	open fun onSync(exportObject: ClientSideSynchronizationEvent): Job? = null
-
-	protected fun NuiEvent.emitAsync(data: Serializable) = launch {
-		emit(data)
-	}
+	open fun onSaveState(container: ClientSideSynchronizationEvent): Job? = null
 
 	protected inline fun <reified T : Any> NuiEvent.on(noinline action: suspend (T) -> Unit): ReceiveChannel<T> {
 

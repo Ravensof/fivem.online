@@ -1,4 +1,4 @@
-package online.fivem.client.modules.vehicle
+package online.fivem.client.modules.role_play_system.vehicle
 
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch

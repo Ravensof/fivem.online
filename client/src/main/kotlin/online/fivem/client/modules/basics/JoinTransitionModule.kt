@@ -1,15 +1,16 @@
 package online.fivem.client.modules.basics
 
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import online.fivem.client.common.AbstractClientModule
+import online.fivem.client.common.GlobalCache.player
 import online.fivem.client.gtav.Client
 import online.fivem.common.common.BufferedAction
 import online.fivem.common.common.Console
 import online.fivem.common.common.generateLong
 import online.fivem.common.extensions.onNull
+import online.fivem.common.gtav.NativePeds
 
 class JoinTransitionModule(
 	private val bufferedActionsModule: BufferedActionsModule,
@@ -27,7 +28,8 @@ class JoinTransitionModule(
 		bufferedActionsModule.waitForStart()
 		tickExecutorModule.waitForStart()
 
-		delay(3_000) //без этого switchOutPlayer() первый раз не срабатывет
+		player.setModel(NativePeds.ABIGAIL.hash)//нужно для того, чтобы сработал switchOut
+
 		startTransition(this@JoinTransitionModule)
 		transitionBuffer.cancel(this@JoinTransitionModule) {}
 
@@ -47,13 +49,11 @@ class JoinTransitionModule(
 			bufferedActionsModule.hideNui(this@JoinTransitionModule)
 		}
 
-		if (!Client.isPlayerSwitchInProgress()) {
-			withTimeoutOrNull(20_000) {
-				Client.switchOutPlayer(Client.getPlayerPedId())
-				true
-			}.onNull {
-				Console.warn("JoinTransitionModule: cannot switch out player")
-			}
+		withTimeoutOrNull(20_000) {
+			player.ped.switchOut()
+			true
+		}.onNull {
+			Console.warn("JoinTransitionModule: cannot switch out player")
 		}
 
 		launch {
@@ -65,7 +65,7 @@ class JoinTransitionModule(
 
 		bufferedActionsModule.unMuteSound(this)
 		withTimeoutOrNull(40_000) {
-			Client.switchInPlayer(Client.getPlayerPedId())
+			player.ped.switchIn()
 			true
 		}.onNull {
 			Console.warn("JoinTransitionModule: cannot switch in player")

@@ -1,9 +1,9 @@
 package online.fivem.client.extensions
 
 import online.fivem.client.gtav.Client
-import online.fivem.common.gtav.NativeInteriorPlace
+import online.fivem.common.gtav.NativeIPl
 
-fun NativeInteriorPlace.request() {
+fun NativeIPl.request() {
 	code.forEach {
 		Client.requestIpl(it)
 	}

@@ -1,4 +1,4 @@
-package online.fivem.client.modules.vehicle
+package online.fivem.client.modules.role_play_system
 
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
@@ -94,10 +94,12 @@ class BlackOutModule(
 		} catch (e: CancellationException) {
 
 		} finally {
-			bufferedActionsModule.unMuteSound(this@BlackOutModule)
-			bufferedActionsModule.unLockControl(this@BlackOutModule)
-			bufferedActionsModule.unSetBlackScreen(this@BlackOutModule, WAKING_UP_TIME * 1_000)
-			bufferedActionsModule.removeRagdollEffect(this@BlackOutModule)
+			this@BlackOutModule.launch {
+				bufferedActionsModule.unMuteSound(this@BlackOutModule)
+				bufferedActionsModule.unLockControl(this@BlackOutModule)
+				bufferedActionsModule.unSetBlackScreen(this@BlackOutModule, WAKING_UP_TIME * 1_000)
+				bufferedActionsModule.removeRagdollEffect(this@BlackOutModule)
+			}
 		}
 	}
 
@@ -105,7 +107,7 @@ class BlackOutModule(
 		var time: Long
 
 		while (timeLeft > 0) {
-			time = timeLeft
+			time = if (timeLeft > 500) 500 else timeLeft
 			delay(time)
 			timeLeft -= time
 		}

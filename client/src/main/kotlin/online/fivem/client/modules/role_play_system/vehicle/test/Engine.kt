@@ -1,4 +1,4 @@
-package online.fivem.client.modules.vehicle.test
+package online.fivem.client.modules.role_play_system.vehicle.test
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

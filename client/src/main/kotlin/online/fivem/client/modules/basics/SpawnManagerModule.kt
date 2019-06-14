@@ -54,11 +54,15 @@ class SpawnManagerModule(
 		ped.clearTasksImmediately()
 		ped.removeAllWeapons()
 		player.clearWantedLevel()
-		player.ped.health = event.health
-		player.ped.armour = event.armour
 
-		event.weapons.forEach {
-			player.ped.giveWeapon(it.key, it.value)
+		player.ped.apply {
+
+			health = event.health
+			armour = event.armour
+
+			event.weapons.forEach {
+				giveWeapon(it.key, it.value)
+			}
 		}
 
 		unfreezePlayer(player)

@@ -2620,6 +2620,8 @@ object Client {
 	 * fucks up on mount chilliad
 	 */
 	suspend fun switchOutPlayer(ped: EntityId) {
+		if (isPlayerSwitchInProgress()) return
+
 		var result = false
 		do {
 			withTimeoutOrNull(10_000) {

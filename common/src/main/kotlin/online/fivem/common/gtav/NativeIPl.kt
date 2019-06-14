@@ -5,7 +5,7 @@ import online.fivem.common.entities.Coordinates
 //https://wiki.gtanet.work/index.php?title=Online_Interiors_and_locations
 
 @Suppress("SpellCheckingInspection")
-enum class NativeInteriorPlace(vararg val code: String, val coordinates: Coordinates? = null) {
+enum class NativeIPl(vararg val code: String, val coordinates: Coordinates? = null) {
 	// Simeon:
 	SHR_INT("shr_int", coordinates = Coordinates(-47.16170f, -1115.3327f, 26.5f)),
 

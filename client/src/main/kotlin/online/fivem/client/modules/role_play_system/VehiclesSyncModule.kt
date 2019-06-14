@@ -23,7 +23,7 @@ class VehiclesSyncModule(
 		return super.onStart()
 	}
 
-	override fun onSync(exportObject: ClientSideSynchronizationEvent) = launch {
+	override fun onSaveState(container: ClientSideSynchronizationEvent) = launch {
 
 		val vehicles = mutableListOf<VehiclesSyncClientEvent.Vehicle>()
 
@@ -39,7 +39,7 @@ class VehiclesSyncModule(
 				)
 			}
 
-		exportObject.vehiclesSyncClientEvent = VehiclesSyncClientEvent(
+		container.vehiclesSyncClientEvent = VehiclesSyncClientEvent(
 			vehicles = vehicles
 		)
 	}

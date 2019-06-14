@@ -69,6 +69,10 @@ class Ped private constructor(
 		return NativeWeapon.values().filter { it != NativeWeapon.WEAPON_UNARMED }.mapNotNull { weapon[it] }
 	}
 
+	suspend fun switchOut() = Client.switchOutPlayer(entity)
+
+	suspend fun switchIn() = Client.switchInPlayer(entity)
+
 	fun removeAllWeapons() = Client.removeAllPedWeapons(entity)
 
 	class PedDoesntExistsException(message: String) : Exception(message)

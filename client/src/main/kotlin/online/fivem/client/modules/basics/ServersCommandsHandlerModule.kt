@@ -75,7 +75,7 @@ class ServersCommandsHandlerModule(
 		moduleLoader.getLoadedModules().forEach { module ->
 			if (module !is AbstractClientModule) return@forEach
 
-			module.onSync(syncData)?.join()
+			module.onSaveState(syncData)?.join()
 		}
 
 		ServerEvent.emit(syncData)
