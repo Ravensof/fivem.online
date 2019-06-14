@@ -25,19 +25,15 @@ class JoinTransitionModule(
 
 	override fun onStart() = launch {
 		bufferedActionsModule.waitForStart()
+		tickExecutorModule.waitForStart()
 
+		delay(3_000) //без этого switchOutPlayer() первый раз не срабатывет
 		startTransition(this@JoinTransitionModule)
+		transitionBuffer.cancel(this@JoinTransitionModule) {}
 
 		Client.doScreenFadeIn(1)
 		Client.shutdownLoadingScreen()
 		Client.shutdownLoadingScreenNui()
-
-		tickExecutorModule.waitForStart()
-
-		this@JoinTransitionModule.launch {
-			delay(5_000)
-			endTransition(this@JoinTransitionModule)
-		}
 	}
 
 	override fun onStop(): Job? = launch {
