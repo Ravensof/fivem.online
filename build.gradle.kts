@@ -12,7 +12,7 @@ buildscript {
 }
 
 plugins {
-	id("kotlin2js").version(Config.kotlinVersion)
+	kotlin("js") version Config.kotlinVersion
 	id("kotlinx-serialization").version(Config.kotlinVersion)
 }
 
@@ -62,6 +62,7 @@ subprojects {
 	(tasks["compileKotlin2Js"] as Kotlin2JsCompile).apply {
 		kotlinOptions.moduleKind = "umd"
 		kotlinOptions.sourceMap = true
+		kotlinOptions.metaInfo = true
 	}
 
 	configurations {
@@ -72,8 +73,8 @@ subprojects {
 
 		compile("org.jetbrains.kotlin:kotlin-stdlib-js:" + Config.kotlinVersion)
 //		testCompile "org.jetbrains.kotlin:kotlin-test-js:$kotlinVersion"
-		compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:0.11.1-1.3.40-eap-67-2")
-		compile("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.2.1")
+		compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:0.11.1-1.3.40-eap-107")
+		compile("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.3.0-M1")
 
 		when (project.name) {
 			"common" -> {
@@ -81,7 +82,7 @@ subprojects {
 
 			"nui", "loadingScreen" -> {
 				implementation("org.jetbrains.kotlinx:kotlinx-html-common:0.6.11")
-				compile("org.jetbrains.kotlinx:kotlinx-html-js:0.6.1")
+				compile("org.jetbrains.kotlinx:kotlinx-html-js:0.6.10")
 				compile("kotlin.js.externals:kotlin-js-jquery:3.2.0-0")
 			}
 
