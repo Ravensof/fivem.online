@@ -15,10 +15,12 @@ object GlobalConfig {
 	const val WEBRTC_PORT = HTTP_PORT + 1
 
 	const val SERVER_NAME_IN_MENU = "FIVEM.ONLINE"
-	const val MAX_PLAYERS = 32
+	const val MAX_PLAYERS = 256
 	const val APP_VERSION = 190107
 
 	const val GAME_TIME_SPEED = 30.0
+
+	var concatConsoleOutput = false
 
 	val internetRadioStations: Map<String, InternetRadioStation> = mapOf(
 		RadioStation.RADIO_01_CLASS_ROCK.code to InternetRadioStation(

@@ -1,4 +1,5 @@
 import kotlinx.coroutines.launch
+import online.fivem.common.GlobalConfig
 import online.fivem.common.common.Console
 import online.fivem.common.common.ModuleLoader
 import online.fivem.nui.modules.basics.BasicsModule
@@ -10,6 +11,8 @@ import online.fivem.nui.modules.voice_transmission.VoiceTransmissionModule
 
 private fun main() {
 	Console.log("nui side loading..")
+
+	GlobalConfig.concatConsoleOutput = true
 
 	ModuleLoader().apply {
 		launch {

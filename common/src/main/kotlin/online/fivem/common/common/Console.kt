@@ -18,18 +18,28 @@ object Console : Console, CoroutineScope {
 	init {
 		launch {
 			for (data in channel) {
-				when (data) {
-					is Message.Debug -> console.log(data.prefix, *data.obj)
-
-					is Message.Info -> console.info(data.prefix, *data.obj)
-
-					is Message.Warning -> console.warn(data.prefix, *data.obj)
-
-					is Message.Error -> console.error(data.prefix, *data.obj)
-
-					else -> console.log(data.prefix, *data.obj)
-				}
+				print(data)
 			}
+		}
+	}
+
+	private fun print(message: Message) {
+		val obj = if (GlobalConfig.concatConsoleOutput) {
+			arrayOf(message.prefix + " " + message.obj.joinToString(separator = "\r\n"))
+		} else {
+			arrayOf(message.prefix) + message.obj
+		}
+
+		when (message) {
+			is Message.Debug -> console.log(*obj)
+
+			is Message.Info -> console.info(*obj)
+
+			is Message.Warning -> console.warn(*obj)
+
+			is Message.Error -> console.error(*obj)
+
+			else -> console.log(*obj)
 		}
 	}
 
