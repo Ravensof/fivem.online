@@ -74,7 +74,7 @@ subprojects {
 		compile("org.jetbrains.kotlin:kotlin-stdlib-js:" + Config.kotlinVersion)
 //		testCompile "org.jetbrains.kotlin:kotlin-test-js:$kotlinVersion"
 		compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:0.11.1-1.3.40-eap-107")
-		compile("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.3.0-M1")
+		compile("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.2.2")
 
 		when (project.name) {
 			"common" -> {

@@ -51,7 +51,7 @@ client_scripts {
 	'common/resources/main/external_js/sha512.min.js',
 	'common/lib/kotlin.js',
 	'common/lib/kotlinx-coroutines-core.js',
-	'common/lib/kotlinx-serialization-runtime.js',
+	'common/lib/kotlinx-serialization-kotlinx-serialization-runtime.js',
 	'common/lib/common.js',
 	-- end common
 	'client/resources/main/client.lua',
@@ -68,7 +68,7 @@ server_scripts {
 	'common/resources/main/external_js/sha512.min.js',
 	'common/lib/kotlin.js',
 	'common/lib/kotlinx-coroutines-core.js',
-	'common/lib/kotlinx-serialization-runtime.js',
+	'common/lib/kotlinx-serialization-kotlinx-serialization-runtime.js',
 	'common/lib/common.js',
 	-- end common
 
