@@ -1,12 +1,14 @@
 package online.fivem.nui.modules.basics
 
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import js.externals.jquery.JQuery
+import js.externals.jquery.jQuery
+import kotlinx.coroutines.Job
 import online.fivem.common.events.nui.DebugNUITextEvent
+import online.fivem.common.extensions.repeatJob
 import online.fivem.nui.common.AbstractNuiModule
 import online.fivem.nui.common.View
-import online.fivem.nui.modules.basics.test.DebugView
 import online.fivem.nui.modules.client_event_exchanger.ClientEvent
+import org.w3c.dom.HTMLElement
 import kotlin.coroutines.CoroutineContext
 import kotlin.js.Date
 
@@ -16,16 +18,8 @@ class DebugModule(
 ) : AbstractNuiModule() {
 
 	private val debugBlock by lazy { containerView.view.find("#debug") }
-	private var timeLeft: Double = 0.0
 
-	private val showJob by lazy {
-		launch {
-			while (timeLeft > Date.now()) {
-				delay(1_000)
-			}
-			debugBlock.hide()
-		}
-	}
+	private val blocks = mutableMapOf<Int, Block>()
 
 	override suspend fun onInit() {
 		debugBlock.hide()
@@ -33,32 +27,48 @@ class DebugModule(
 		ClientEvent.on<DebugNUITextEvent> { onConsoleLogWeb(it.id, it.text) }
 	}
 
-	private fun getDebugView(id: Int): DebugView {
-		containerView.children.findLast { it is DebugView && it.id == id }?.let {
-			return it as DebugView
+	override fun onStart(): Job? {
+
+		repeatJob(1_000) {
+
+			val time = Date.now()
+
+			blocks.forEach {
+				if (it.value.timeToRemove >= time) return@repeatJob
+
+				blocks.remove(it.key)
+				it.value.element.remove()
+
+				if (blocks.isEmpty()) {
+					debugBlock.hide()
+				}
+			}
 		}
 
-		val debugView = DebugView(id)
-		containerView.add(debugView)
-
-		return debugView
+		return super.onStart()
 	}
 
 	private fun onConsoleLogWeb(id: Int, text: String) {
 
-//		val debugView = getDebugView(id)
-
-		timeLeft = Date.now() + HIDE_DEBUG_TIMEOUT
-
-		debugBlock.html("")
-		debugBlock.show()
-
-		debugBlock.append(text)
-
-		showJob.start()
+		blocks.getOrPut(id) {
+			Block(
+				element = jQuery("<div></div>")
+			).also {
+				debugBlock.append(it.element)
+				debugBlock.show()
+			}
+		}.apply {
+			timeToRemove = Date.now() + HIDE_DEBUG_TIMEOUT
+			element.html(text)
+		}
 	}
 
-	companion object {
-		private const val HIDE_DEBUG_TIMEOUT = 15_000
+	private companion object {
+		const val HIDE_DEBUG_TIMEOUT = 15_000
 	}
+
+	private class Block(
+		val element: JQuery<HTMLElement>,
+		var timeToRemove: Double = 0.0
+	)
 }

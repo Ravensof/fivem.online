@@ -1,79 +1,99 @@
 package online.fivem.client.modules.basics
 
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.common.GlobalCache.player
 import online.fivem.client.entities.Ped
 import online.fivem.client.events.PlayersPedChangedEvent
 import online.fivem.client.extensions.distance
 import online.fivem.client.extensions.getPlayersOnline
-import online.fivem.client.extensions.isControlPressed
 import online.fivem.client.gtav.Client
 import online.fivem.client.gtav.Client.getEntityCoords
 import online.fivem.client.gtav.Client.getPlayerPed
 import online.fivem.client.gtav.Client.hasEntityClearLosToEntity
 import online.fivem.common.common.Event
+import online.fivem.common.extensions.forEach
 import online.fivem.common.extensions.repeatJob
-import online.fivem.common.gtav.NativeControls
 
-class VoiceTransmissionModule : AbstractClientModule() {
+class VoiceTransmissionModule(
+	private val stateRepositoryModule: StateRepositoryModule
+) : AbstractClientModule() {
 
 	var playerPed: Ped? = null
+	//todo location_id
+
+	private var checkJob: Job? = null
+
+	init {
+		Client.networkSetTalkerProximity(-1000)
+	}
 
 	override suspend fun onInit() {
-		Event.apply {
-			on<PlayersPedChangedEvent> { playerPed = it.ped }
-		}
-		super.onInit()
+		Event.on<PlayersPedChangedEvent> { playerPed = it.ped }
 	}
 
-	override fun onStart(): Job? {
+	override fun onStart() = launch {
+		stateRepositoryModule.waitForStart()
 
-		Client.networkSetTalkerProximity(-1000)
-//		Client.networkIsPlayerTalking()//если говорит, делать canPedSeePed()
-//		Client.hasEntityClearLosToEntityInFront()
-//		Client.networkOverrideReceiveRestrictions()
-//		Client.networkOverrideSendRestrictions()
-
-//		Client.canPedSeePed()
-
-		repeatJob(100) {
-
-			if (Client.networkIsPlayerTalking(player.id) || NativeControls.Keys.PUSH_TO_TALK.isControlPressed()) return@repeatJob
-
-			val myCoordinates = player.ped.coordinates
-
-			Client.getPlayersOnline().forEach { anotherPlayer ->
-				if (anotherPlayer == player.id) return@forEach
-
-				val anotherPlayerPed = getPlayerPed(anotherPlayer) ?: return@forEach
-				val anotherPlayerCoordinates = getEntityCoords(Client.getPlayerPedId())
-
-				val distance = myCoordinates.distance(anotherPlayerCoordinates)
-
-				Client.networkOverrideSendRestrictions(
-					anotherPlayer,
-					when {
-						distance <= DISTANCE_HEARING_THROUGH_WALLS -> true
-
-						distance <= DISTANCE_HEARING_CLEAR && hasEntityClearLosToEntity(
-							player.ped.entity,
-							anotherPlayerPed
-						) -> true
-
-//						Client.hasEntityClearLosToEntityInFront(myPed, anotherPlayerPed) -> true
-
-						else -> false
-					}
-				)
+		this@VoiceTransmissionModule.launch {
+			stateRepositoryModule.isPlayerTalking.openSubscription().forEach { isTalking ->
+				if (isTalking) {
+					startTalking()
+				} else {
+					stopTalking()
+				}
 			}
 		}
-
-		return super.onStart()
 	}
 
-	companion object {
+	private fun startTalking() = repeatJob(100) {
+
+		val myCoordinates = player.ped.coordinates
+
+		Client.getPlayersOnline().forEach { anotherPlayer ->
+			if (anotherPlayer == player.id) return@forEach
+
+			val anotherPlayerPed = getPlayerPed(anotherPlayer) ?: return@forEach
+			val anotherPlayerCoordinates = getEntityCoords(anotherPlayerPed)
+
+			val distance = myCoordinates.distance(anotherPlayerCoordinates)
+
+			val enable = when {
+
+				player.ped.isInAVehicle() -> distance <= DISTANCE_HEARING_IN_VEHICLE
+
+				distance <= DISTANCE_HEARING_THROUGH_WALLS -> true
+
+				distance <= DISTANCE_HEARING_CLEAR && hasEntityClearLosToEntity(
+					player.ped.entity,
+					anotherPlayerPed
+				) -> true
+
+				distance <= DISTANCE_HEARING_CLEAR_IN_FRONT && Client.hasEntityClearLosToEntityInFront(
+					player.ped.entity,
+					anotherPlayerPed
+				) -> true
+
+				else -> false
+			}
+
+			Client.networkOverrideSendRestrictions(
+				anotherPlayer,
+				enable
+			)
+		}
+	}.also {
+		checkJob?.cancel()
+		checkJob = it
+	}
+
+	private fun stopTalking() = checkJob?.cancel()
+
+	private companion object {
 		const val DISTANCE_HEARING_THROUGH_WALLS = 2.0
+		const val DISTANCE_HEARING_IN_VEHICLE = 4.0
 		const val DISTANCE_HEARING_CLEAR = 15.0
+		const val DISTANCE_HEARING_CLEAR_IN_FRONT = 25.0
 	}
 }

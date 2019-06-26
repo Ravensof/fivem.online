@@ -1,7 +1,6 @@
 import kotlinx.coroutines.launch
 import online.fivem.client.gtav.Natives
 import online.fivem.client.modules.basics.BasicsModules
-import online.fivem.client.modules.eventGenerator.EventGeneratorModule
 import online.fivem.client.modules.nui_event_exchanger.NuiEventExchangerModule
 import online.fivem.client.modules.role_play_system.RolePlaySystemModule
 import online.fivem.client.modules.server_event_exchanger.ServerEventExchangerModule
@@ -38,8 +37,6 @@ private fun start() {
 					tickExecutorModule = basicsModules.tickExecutorModule
 				)
 			)
-
-			add(EventGeneratorModule(basicsModules.bufferedActionsModule))//pre last
 
 			val serverExchangerModule = ServerEventExchangerModule().also {
 				add(it, manualStart = true)//last

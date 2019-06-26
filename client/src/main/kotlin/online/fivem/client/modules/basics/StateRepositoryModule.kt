@@ -1,5 +1,6 @@
-package online.fivem.client.modules.eventGenerator
+package online.fivem.client.modules.basics
 
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.launch
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.common.CoordinatesEvent
@@ -9,20 +10,23 @@ import online.fivem.client.entities.Vehicle
 import online.fivem.client.events.*
 import online.fivem.client.extensions.getSeatOfPedInVehicle
 import online.fivem.client.extensions.isAnyRadioTrackPlaying
+import online.fivem.client.extensions.isControlPressed
 import online.fivem.client.gtav.Client
-import online.fivem.client.modules.basics.BufferedActionsModule
 import online.fivem.common.common.Event
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.extensions.orZero
 import online.fivem.common.extensions.repeatJob
+import online.fivem.common.gtav.NativeControls
 import online.fivem.common.gtav.ProfileSetting
 import online.fivem.common.gtav.RadioStation
 import kotlin.js.Date
 import kotlin.math.absoluteValue
 
-class EventGeneratorModule(
+class StateRepositoryModule(
 	private val bufferedActionsModule: BufferedActionsModule
 ) : AbstractClientModule() {
+
+	val isPlayerTalking = ConflatedBroadcastChannel<Boolean>()
 
 	var accelerationThreshold: Double = 150.0 // m/s^2
 		set(value) {
@@ -39,12 +43,16 @@ class EventGeneratorModule(
 	override fun onStart() = launch {
 		bufferedActionsModule.waitForStart()
 
-		this@EventGeneratorModule.repeatJob(50) {
+		this@StateRepositoryModule.repeatJob(25) {
+			checkIsPlayerTalking(player.id)
+		}
+
+		this@StateRepositoryModule.repeatJob(50) {
 			checkVehicleHealth(player.ped)
 			checkAcceleration(player.ped)
 		}
 
-		this@EventGeneratorModule.repeatJob(500) {
+		this@StateRepositoryModule.repeatJob(500) {
 			checkPauseMenuState(Client.getPauseMenuState())
 
 			checkIsPlayerInVehicle(player.ped)
@@ -52,13 +60,21 @@ class EventGeneratorModule(
 			checkRadio()
 		}
 
-		this@EventGeneratorModule.repeatJob(1_000) {
+		this@StateRepositoryModule.repeatJob(1_000) {
 			checkAudioMusicLevelInMP(Client.getProfileSetting(ProfileSetting.AUDIO_MUSIC_LEVEL_IN_MP).orZero())
 
 			checkPlayersPed(player.ped)
 
 			checkCoordinatesX(player.ped)
 		}
+	}
+
+	private suspend fun checkIsPlayerTalking(playerId: Int) {
+		val value = Client.networkIsPlayerTalking(playerId) || NativeControls.Keys.PUSH_TO_TALK.isControlPressed()
+
+		if (isPlayerTalking.valueOrNull == value) return
+
+		isPlayerTalking.send(value)
 	}
 
 	private suspend fun checkPlayerTryingToGetAnyVehicle(playerPed: Ped) {

@@ -20,6 +20,10 @@ class BasicsModules : AbstractClientModule() {
 		controlHandlerModule = controlHandlerModule
 	)
 
+	private val stateRepositoryModule = StateRepositoryModule(
+		bufferedActionsModule = bufferedActionsModule
+	)
+
 	private val spawnManagerModule = SpawnManagerModule(bufferedActionsModule)
 
 	private val joinTransitionModule = JoinTransitionModule(
@@ -41,7 +45,7 @@ class BasicsModules : AbstractClientModule() {
 			add(spawnManagerModule)
 			add(dateTimeModule)
 			add(WeatherModule(dateTimeModule))
-			add(VoiceTransmissionModule())
+			add(VoiceTransmissionModule(stateRepositoryModule))
 			add(MapModule())
 
 			add(
@@ -50,6 +54,7 @@ class BasicsModules : AbstractClientModule() {
 					joinTransitionModule = joinTransitionModule
 				)
 			)
+			add(stateRepositoryModule)
 		}
 	}
 
