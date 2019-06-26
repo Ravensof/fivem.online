@@ -16,6 +16,7 @@ import online.fivem.common.GlobalConfig.BlackOut.ACCELERATION_THRESHOLD
 import online.fivem.common.GlobalConfig.BlackOut.BLACKOUT_TIME_FROM_COMMAS
 import online.fivem.common.GlobalConfig.BlackOut.EXTRA_BLACKOUT_TIME
 import online.fivem.common.GlobalConfig.BlackOut.WAKING_UP_TIME
+import online.fivem.common.GlobalConfig.allowBlackOutFromSpeed
 import online.fivem.common.Sounds
 import online.fivem.common.common.Console
 import online.fivem.common.common.Event
@@ -47,6 +48,8 @@ class BlackOutModule(
 				blackOut(BLACKOUT_TIME_FROM_COMMAS * 1_000)
 			}
 			on<AccelerationThresholdAchievedEvent> {
+				if (!allowBlackOutFromSpeed) return@on
+
 				if (!enabled) return@on
 				if (it.accelerationModule < ACCELERATION_THRESHOLD) return@on
 

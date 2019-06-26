@@ -27,11 +27,22 @@ object ClientEvent {
 
 	suspend fun emit(
 		data: Serializable,
-		playerSrc: PlayerSrc? = null
+		playerSrc: PlayerSrc
 	) {
 		ClientEventExchangerModule.channel.send(
 			ClientEventExchangerModule.SendingPacket(
 				playerSrc = playerSrc,
+				data = data
+			)
+		)
+	}
+
+	suspend fun emitAll(
+		data: Serializable
+	) {
+		ClientEventExchangerModule.channel.send(
+			ClientEventExchangerModule.SendingPacket(
+				playerSrc = null,
 				data = data
 			)
 		)

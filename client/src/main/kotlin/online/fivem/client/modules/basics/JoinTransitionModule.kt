@@ -10,7 +10,6 @@ import online.fivem.common.common.BufferedAction
 import online.fivem.common.common.Console
 import online.fivem.common.common.generateLong
 import online.fivem.common.extensions.onNull
-import online.fivem.common.gtav.NativePeds
 
 class JoinTransitionModule(
 	private val bufferedActionsModule: BufferedActionsModule,
@@ -28,10 +27,12 @@ class JoinTransitionModule(
 		bufferedActionsModule.waitForStart()
 		tickExecutorModule.waitForStart()
 
-		player.setModel(NativePeds.ABIGAIL.hash)//нужно для того, чтобы сработал switchOut
-
-		startTransition(this@JoinTransitionModule)
-		transitionBuffer.cancel(this@JoinTransitionModule) {}
+		withTimeoutOrNull(10_000) {
+			player.ped.switchOut()//todo перед спавном игрока работает через раз
+			true
+		}.onNull {
+			Console.warn("JoinTransitionModule: cannot switch out player")
+		}
 
 		Client.doScreenFadeIn(1)
 		Client.shutdownLoadingScreen()

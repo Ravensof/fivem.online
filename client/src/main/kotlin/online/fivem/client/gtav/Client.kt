@@ -2624,7 +2624,7 @@ object Client {
 
 		var result = false
 		do {
-			withTimeoutOrNull(10_000) {
+			withTimeoutOrNull(5_000) {
 				SwitchOutPlayer(ped, 0, 1)
 				while (getPlayerSwitchState() != 5) {
 					delay(500)
@@ -2637,7 +2637,7 @@ object Client {
 	suspend fun switchInPlayer(ped: EntityId) {
 		var result = false
 		do {
-			withTimeoutOrNull(10_000) {
+			withTimeoutOrNull(5_000) {
 				SwitchInPlayer(ped)
 				while (getPlayerSwitchState() != 12) {
 					delay(500)

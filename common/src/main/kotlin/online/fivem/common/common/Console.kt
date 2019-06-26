@@ -1,7 +1,6 @@
 package online.fivem.common.common
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import online.fivem.common.GlobalConfig
@@ -11,8 +10,11 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.js.Console
 import kotlin.js.Date
 
+@Suppress("ConstantConditionIf")
 object Console : Console, CoroutineScope {
-	override val coroutineContext: CoroutineContext = Job()
+
+	override val coroutineContext: CoroutineContext = createSupervisorJob()
+
 	private val channel = Channel<Message>(32)
 
 	init {
@@ -44,7 +46,7 @@ object Console : Console, CoroutineScope {
 	}
 
 	override fun dir(o: Any) {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+		TODO("not implemented")
 	}
 
 	override fun error(vararg o: Any?) {

@@ -5,6 +5,9 @@ import online.fivem.common.gtav.RadioStation
 
 @Suppress("MemberVisibilityCanBePrivate")
 object GlobalConfig {
+
+	const val allowBlackOutFromSpeed = false
+
 	const val MODULE_NAME = "fivem-online"
 	const val SERVER_IP = "server1.fivem.online"
 

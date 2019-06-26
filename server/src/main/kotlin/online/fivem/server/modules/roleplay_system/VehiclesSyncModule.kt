@@ -97,7 +97,8 @@ class VehiclesSyncModule(
 		ClientEvent.emit(
 			SpawnVehiclesCommand(
 				vehicles = vehicles
-			)
+			),
+			player
 		)
 
 		withTimeout(20_000) {

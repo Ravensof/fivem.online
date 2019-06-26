@@ -58,7 +58,6 @@ mysql уже должен быть установлен.
 	const val MODULE_NAME = "fivem-online" // название папки fivem модуля в папке your_server_path/resources/
 	const val SERVER_IP = "server1.fivem.online" // ip адрес fivem сервера
 	const val SERVER_PORT = 30120 //порт сервера, должен совпадать с значением в server.cfg
-	const val MAX_PLAYERS = 32 // должно совпадать со значением в server.cfg
 	
 в `server.cfg` добавить 
 
