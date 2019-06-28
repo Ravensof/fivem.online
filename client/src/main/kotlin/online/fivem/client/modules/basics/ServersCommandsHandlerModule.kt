@@ -1,5 +1,6 @@
 package online.fivem.client.modules.basics
 
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.events.PauseMenuStateChangedEvent
@@ -15,7 +16,7 @@ class ServersCommandsHandlerModule(
 
 	private var lastSync = 0.0
 
-	override fun onStart() = launch {
+	override fun onStartAsync() = async {
 		spawnManagerModule.waitForStart()
 		joinTransitionModule.waitForStart()
 

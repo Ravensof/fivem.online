@@ -1,7 +1,7 @@
-package online.fivem.nui.modules.mobile_phone
+package online.fivem.nui.modules.mobile_phone.apps
 
 import js.externals.jquery.JQuery
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.async
 import online.fivem.nui.common.AbstractNuiModule
 import org.w3c.dom.HTMLElement
 
@@ -11,14 +11,16 @@ class MobilePhoneBrowserModule(
 ) : AbstractNuiModule() {
 
 	private lateinit var window: JQuery<HTMLElement>
-	private lateinit var frame: JQuery<HTMLElement>
+	var browserContainer: JQuery<HTMLElement>? = null
+		set(value) {
+			field = value
 
-	override fun onStart() = launch {
-		mobilePhoneModule.waitForStart()
+			window = value?.find("#browser_screen")?.contents() ?: return
 
-		frame = mobilePhoneModule.browserFrame
-		window = frame.find("#browser_screen").contents()
+			value.hide()
+		}
 
-		frame.hide()
+	override fun onStartAsync() = async {
+
 	}
 }

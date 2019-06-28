@@ -1,7 +1,7 @@
 package online.fivem.server.modules.basics
 
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.async
 import online.fivem.common.common.Utils
 import online.fivem.common.common.VDate
 import online.fivem.common.entities.Weather
@@ -20,7 +20,7 @@ class NatureControlSystemModule : AbstractServerModule() {
 	private var currentWeather: Weather? = null
 	private val date = VDate()
 
-	override fun onStart() = launch {
+	override fun onStartAsync() = async {
 		startWeatherGenerator()
 	}
 

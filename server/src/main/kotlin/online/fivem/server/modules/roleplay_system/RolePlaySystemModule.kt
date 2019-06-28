@@ -1,6 +1,7 @@
 package online.fivem.server.modules.roleplay_system
 
 import external.nodejs.mysql.Pool
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import online.fivem.common.common.Event
 import online.fivem.common.entities.CoordinatesX
@@ -29,7 +30,7 @@ class RolePlaySystemModule(
 		moduleLoader.add(VehiclesSyncModule(mySQLModule))
 	}
 
-	override fun onStart() = launch {
+	override fun onStartAsync() = async {
 		mySQLModule.waitForStart()
 		mySQL = mySQLModule.pool
 

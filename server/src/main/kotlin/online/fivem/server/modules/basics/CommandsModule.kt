@@ -1,6 +1,7 @@
 package online.fivem.server.modules.basics
 
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import online.fivem.server.common.AbstractServerModule
@@ -10,7 +11,7 @@ class CommandsModule(
 	private val sessionModule: SessionModule
 ) : AbstractServerModule() {
 
-	override fun onStart() = launch {
+	override fun onStartAsync() = async {
 		sessionModule.waitForStart()
 
 		this@CommandsModule.launch {

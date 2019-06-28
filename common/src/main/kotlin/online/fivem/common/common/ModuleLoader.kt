@@ -56,7 +56,7 @@ class ModuleLoader(override val coroutineContext: CoroutineContext = createSuper
 	suspend fun start(module: AbstractModule) {
 		try {
 			Console.log("start module ${module::class.simpleName}")
-			withTimeout(MODULE_LOADING_TIMEOUT) { module.onStart()?.join() }
+			withTimeout(MODULE_LOADING_TIMEOUT) { module.onStartAsync()?.await() }
 			Console.log("loaded module ${module::class.simpleName}")
 
 			modules.add(module)

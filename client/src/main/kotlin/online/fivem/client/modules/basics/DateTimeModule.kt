@@ -1,6 +1,6 @@
 package online.fivem.client.modules.basics
 
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.async
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.entities.Date
 import online.fivem.client.modules.server_event_exchanger.ServerEvent
@@ -17,7 +17,7 @@ class DateTimeModule : AbstractClientModule() {
 		}
 	}
 
-	override fun onStart() = launch {
+	override fun onStartAsync() = async {
 		val tickExecutor = moduleLoader.getModule(TickExecutorModule::class)
 
 		tickExecutor.add(this@DateTimeModule) {

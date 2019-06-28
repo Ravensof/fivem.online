@@ -1,6 +1,7 @@
 package online.fivem.client.modules.basics
 
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import online.fivem.client.common.AbstractClientModule
@@ -23,7 +24,7 @@ class JoinTransitionModule(
 		Client.setManualShutdownLoadingScreenNui(true)
 	}
 
-	override fun onStart() = launch {
+	override fun onStartAsync() = async {
 		bufferedActionsModule.waitForStart()
 		tickExecutorModule.waitForStart()
 

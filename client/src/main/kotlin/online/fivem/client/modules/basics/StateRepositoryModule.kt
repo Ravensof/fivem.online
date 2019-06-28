@@ -1,7 +1,7 @@
 package online.fivem.client.modules.basics
 
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.launch
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.common.CoordinatesEvent
 import online.fivem.client.common.GlobalCache.player
@@ -40,7 +40,7 @@ class StateRepositoryModule(
 
 	private var isRadioEnabled = false
 
-	override fun onStart() = launch {
+	override fun onStartAsync() = async {
 		bufferedActionsModule.waitForStart()
 
 		this@StateRepositoryModule.repeatJob(25) {

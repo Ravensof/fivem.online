@@ -2,6 +2,7 @@ package online.fivem.nui.modules.vehicle
 
 import external.howler.Howl
 import external.howler.HowlOptions
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -28,14 +29,14 @@ class InternetRadioModule : AbstractNuiModule() {
 
 	private var internetRadioStation: InternetRadioStation? = null
 
-	override fun onStart(): Job? {
+	override fun onStartAsync(): Deferred<*>? {
 		ClientEvent.apply {
 			on<InternetRadioModuleEvent.Changed> { changeStation(it.internetRadioStation) }
 			on<InternetRadioModuleEvent.Stop> { disable() }
 			on<InternetRadioModuleEvent.VolumeChanged> { changeVolume(it.volume) }
 		}
 
-		return super.onStart()
+		return super.onStartAsync()
 	}
 
 	override fun onStop(): Job? {

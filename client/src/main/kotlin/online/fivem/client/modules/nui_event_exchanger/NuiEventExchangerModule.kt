@@ -1,5 +1,6 @@
 package online.fivem.client.modules.nui_event_exchanger
 
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import online.fivem.client.common.AbstractClientModule
@@ -33,7 +34,7 @@ class NuiEventExchangerModule : AbstractClientModule() {
 		}
 	}
 
-	override fun onStart() = launch {
+	override fun onStartAsync() = async {
 
 		Console.log("waiting for nui")
 

@@ -1,6 +1,6 @@
 package online.fivem.client.modules.role_play_system
 
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.launch
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.common.VehiclesIterator
@@ -16,11 +16,11 @@ class VehiclesSyncModule(
 
 ) : AbstractClientModule() {
 
-	override fun onStart(): Job? {
+	override fun onStartAsync(): Deferred<*>? {
 
 		ServerEvent.on<SpawnVehiclesCommand> { onVehiclesSpawnEvent(it.vehicles) }
 
-		return super.onStart()
+		return super.onStartAsync()
 	}
 
 	override fun onSaveState(container: ClientSideSynchronizationEvent) = launch {

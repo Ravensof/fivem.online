@@ -1,7 +1,7 @@
 package online.fivem.client.modules.role_play_system
 
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.async
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.common.GlobalCache.player
 import online.fivem.client.entities.Ped
@@ -35,7 +35,7 @@ class RolePlaySystemModule(
 		moduleLoader.add(BlackOutModule(bufferedActionsModule))
 	}
 
-	override fun onStart() = launch {
+	override fun onStartAsync() = async {
 		Event.on<PlayersPedChangedEvent> { onPedChanged(it.ped) }
 	}
 

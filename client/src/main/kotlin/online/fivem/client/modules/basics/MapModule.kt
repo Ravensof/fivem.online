@@ -1,13 +1,13 @@
 package online.fivem.client.modules.basics
 
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.Deferred
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.extensions.request
 import online.fivem.common.gtav.NativeIPl
 
 class MapModule : AbstractClientModule() {
 
-	override fun onStart(): Job? {
+	override fun onStartAsync(): Deferred<*>? {
 		listOf(
 			NativeIPl.SHR_INT,
 			NativeIPl.TREVORS_TRAILER_TRASH,
@@ -227,6 +227,6 @@ class MapModule : AbstractClientModule() {
 			it.request()
 		}
 
-		return super.onStart()
+		return super.onStartAsync()
 	}
 }

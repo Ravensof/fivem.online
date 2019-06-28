@@ -1,7 +1,7 @@
 package online.fivem.client.modules.basics
 
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.async
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.extensions.disableControlAction
 import online.fivem.client.extensions.isControlPressed
@@ -17,7 +17,7 @@ class ControlHandlerModule(
 
 	private val pressedKeys = mutableMapOf<NativeControls.Keys, Double>()
 
-	override fun onStart() = launch {
+	override fun onStartAsync() = async {
 		tickExecutorModule.waitForStart()
 
 		tickExecutorModule.add(this@ControlHandlerModule, ::checkPressedKeys)

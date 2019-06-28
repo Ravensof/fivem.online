@@ -1,9 +1,6 @@
 package online.fivem.client.modules.role_play_system.vehicle
 
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.entities.Vehicle
 import online.fivem.client.events.PlayerLeftOrJoinVehicleEvent
@@ -59,7 +56,7 @@ class RealisticFailureModule(
 	private val tickHandle = generateLong()
 
 
-	override fun onStart() = launch {
+	override fun onStartAsync() = async {
 		tickExecutorModule.waitForStart()
 
 		Event.apply {

@@ -1,6 +1,7 @@
 package online.fivem.server.modules.roleplay_system
 
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import online.fivem.common.common.Event
@@ -27,7 +28,7 @@ class VehiclesSyncModule(
 
 	private var playersCount = 0
 
-	override fun onStart() = launch {
+	override fun onStartAsync() = async {
 		mySQLModule.waitForStart()
 
 		Event.on<PlayerConnectedEvent> { onPlayerConnected(it.player) }

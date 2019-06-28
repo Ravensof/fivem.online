@@ -1,6 +1,7 @@
 package online.fivem.server.modules.basics
 
 import external.nodejs.mysql.Pool
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -39,7 +40,7 @@ class SynchronizationModule(
 		Event.on<PlayerConnectedEvent> { syncDataFor(it.player.playerSrc) }
 	}
 
-	override fun onStart() = launch {
+	override fun onStartAsync() = async {
 		sessionModule.waitForStart()
 		mySQLModule.waitForStart()
 

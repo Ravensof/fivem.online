@@ -1,11 +1,13 @@
 package online.fivem.nui.modules.mobile_phone
 
 import js.externals.jquery.JQuery
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import online.fivem.common.extensions.repeatJob
 import online.fivem.nui.common.AbstractNuiModule
 import online.fivem.nui.modules.basics.GUIModule
+import online.fivem.nui.modules.mobile_phone.apps.BrowserAppModule
+import online.fivem.nui.modules.mobile_phone.apps.SmsAppModule
 import org.w3c.dom.HTMLElement
 
 class MobilePhoneModule(
@@ -54,7 +56,7 @@ class MobilePhoneModule(
 		moduleLoader.add(MobilePhoneBrowserModule(this))
 	}
 
-	override fun onStart() = launch {
+	override fun onStartAsync() = async {
 		guiModule.waitForStart()
 
 		val mainView = guiModule.mainView

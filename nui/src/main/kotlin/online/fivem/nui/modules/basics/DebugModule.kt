@@ -2,7 +2,7 @@ package online.fivem.nui.modules.basics
 
 import js.externals.jquery.JQuery
 import js.externals.jquery.jQuery
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.Deferred
 import online.fivem.common.events.nui.DebugNUITextEvent
 import online.fivem.common.extensions.repeatJob
 import online.fivem.nui.common.AbstractNuiModule
@@ -27,7 +27,7 @@ class DebugModule(
 		ClientEvent.on<DebugNUITextEvent> { onConsoleLogWeb(it.id, it.text) }
 	}
 
-	override fun onStart(): Job? {
+	override fun onStartAsync(): Deferred<*>? {
 
 		repeatJob(1_000) {
 
@@ -45,7 +45,7 @@ class DebugModule(
 			}
 		}
 
-		return super.onStart()
+		return super.onStartAsync()
 	}
 
 	private fun onConsoleLogWeb(id: Int, text: String) {

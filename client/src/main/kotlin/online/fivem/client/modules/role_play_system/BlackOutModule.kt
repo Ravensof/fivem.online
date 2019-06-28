@@ -1,9 +1,6 @@
 package online.fivem.client.modules.role_play_system
 
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.events.AccelerationThresholdAchievedEvent
 import online.fivem.client.events.PlayerPedSpawnedEvent
@@ -35,7 +32,7 @@ class BlackOutModule(
 		}
 	}
 
-	override fun onStart() = launch {
+	override fun onStartAsync() = async {
 		bufferedActionsModule.waitForStart()
 
 		Event.apply {

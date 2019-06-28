@@ -1,6 +1,6 @@
 package online.fivem.client.modules.gui.menu
 
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.async
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.modules.basics.ControlHandlerModule
 import online.fivem.client.modules.gui.MainControlListenerModule
@@ -17,7 +17,7 @@ class PhoneMenu(
 
 	private var navigatorListener: NavigationControlsHandler? = null
 
-	override fun onStart() = launch {
+	override fun onStartAsync() = async {
 		controlHandlerModule.waitForStart()
 
 		mainControlListenerModule.waitForStart()

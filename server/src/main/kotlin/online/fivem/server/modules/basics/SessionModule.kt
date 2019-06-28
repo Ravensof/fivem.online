@@ -40,7 +40,7 @@ class SessionModule(
 
 	}
 
-	override fun onStart() = launch {
+	override fun onStartAsync() = async {
 		mySQLModule.waitForStart()
 		mySQL = mySQLModule.pool
 	}

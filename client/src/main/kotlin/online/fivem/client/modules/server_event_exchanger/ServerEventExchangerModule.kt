@@ -40,7 +40,7 @@ class ServerEventExchangerModule : AbstractClientModule() {
 	}
 
 	@ExperimentalCoroutinesApi
-	override fun onStart() = launch {
+	override fun onStartAsync() = async {
 
 		val key = async { ServerEvent.openSubscription(EstablishConnectionEvent::class).receiveAndCancel().key }
 

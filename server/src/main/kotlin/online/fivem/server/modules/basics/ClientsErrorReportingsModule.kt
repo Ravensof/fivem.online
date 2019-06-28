@@ -1,7 +1,7 @@
 package online.fivem.server.modules.basics
 
 import external.nodejs.mysql.Pool
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.async
 import online.fivem.common.common.Console
 import online.fivem.common.events.net.ErrorReportEvent
 import online.fivem.server.common.AbstractServerModule
@@ -21,7 +21,7 @@ class ClientsErrorReportingsModule : AbstractServerModule() {
 		}
 	}
 
-	override fun onStart() = launch {
+	override fun onStartAsync() = async {
 		mySQL = moduleLoader.getModule(MySQLModule::class).pool
 	}
 

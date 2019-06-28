@@ -1,7 +1,7 @@
 package online.fivem.client.modules.basics
 
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.common.GlobalCache.player
 import online.fivem.client.extensions.start
@@ -35,7 +35,7 @@ class BufferedActionsModule(
 	private val hideNuiBuffer = BufferedAction()
 	private val soundEffectsBuffer = BufferedAction()
 
-	override fun onStart() = launch {
+	override fun onStartAsync() = async {
 		tickExecutorModule.waitForStart()
 		controlHandlerModule.waitForStart()
 	}

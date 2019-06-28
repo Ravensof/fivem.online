@@ -49,7 +49,7 @@ class ClientEventExchangerModule(
 	}
 
 	@ExperimentalCoroutinesApi
-	override fun onStart() = launch {
+	override fun onStartAsync() = async {
 		sessionModule.waitForStart()
 
 		playersSendChannels.forEachIndexed { playerSrc, channel ->

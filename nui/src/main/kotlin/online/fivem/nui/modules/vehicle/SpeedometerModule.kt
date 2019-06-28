@@ -3,6 +3,7 @@ package online.fivem.nui.modules.vehicle
 import js.externals.jquery.JQuery
 import js.externals.jquery.jQuery
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -72,7 +73,7 @@ class SpeedometerModule(
 		}
 	}
 
-	override fun onStart() = launch {
+	override fun onStartAsync() = async {
 		guiModule.waitForStart()
 
 		speedometerContainer = guiModule.mainView.view.find("#speedometer_container")

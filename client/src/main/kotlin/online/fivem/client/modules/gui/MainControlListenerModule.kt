@@ -1,7 +1,7 @@
 package online.fivem.client.modules.gui
 
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.async
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.modules.basics.ControlHandlerModule
 import online.fivem.common.gtav.NativeControls
@@ -15,7 +15,7 @@ class MainControlListenerModule(
 	private val longPressHandlers = mutableMapOf<NativeControls.Keys, () -> Boolean>()
 
 
-	override fun onStart() = launch {
+	override fun onStartAsync() = async {
 		controlHandlerModule.waitForStart()
 
 		controlHandlerModule.addListener(this@MainControlListenerModule)

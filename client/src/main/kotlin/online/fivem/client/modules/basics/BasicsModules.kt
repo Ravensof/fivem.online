@@ -1,6 +1,6 @@
 package online.fivem.client.modules.basics
 
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.launch
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.events.PauseMenuStateChangedEvent
@@ -58,10 +58,10 @@ class BasicsModules : AbstractClientModule() {
 		}
 	}
 
-	override fun onStart(): Job? {
+	override fun onStartAsync(): Deferred<*>? {
 		changeHeaderInMainMenu()
 
-		return super.onStart()
+		return super.onStartAsync()
 	}
 
 	override fun onStop() = launch {

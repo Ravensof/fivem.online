@@ -2,6 +2,7 @@ package online.fivem.nui.modules.client_event_exchanger
 
 import js.externals.jquery.jQuery
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -21,7 +22,7 @@ import kotlin.browser.window
 
 class ClientEventExchangerModule : AbstractNuiModule(), EventListener {
 
-	override fun onStart() = launch {
+	override fun onStartAsync() = async {
 		window.addEventListener("message", this@ClientEventExchangerModule)
 
 		Console.log("connecting to client")

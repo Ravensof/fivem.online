@@ -1,5 +1,6 @@
 package online.fivem.client.modules.basics
 
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
@@ -20,7 +21,7 @@ class SpawnManagerModule(
 	private val bufferedActionsModule: BufferedActionsModule
 ) : AbstractClientModule() {
 
-	override fun onStart() = launch {
+	override fun onStartAsync() = async {
 		bufferedActionsModule.waitForStart()
 	}
 

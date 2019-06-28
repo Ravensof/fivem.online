@@ -1,6 +1,7 @@
 package online.fivem.client.modules.basics
 
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.common.GlobalCache.player
@@ -33,7 +34,7 @@ class VoiceTransmissionModule(
 		Event.on<PlayersPedChangedEvent> { playerPed = it.ped }
 	}
 
-	override fun onStart() = launch {
+	override fun onStartAsync() = async {
 		stateRepositoryModule.waitForStart()
 
 		this@VoiceTransmissionModule.launch {
@@ -50,6 +51,7 @@ class VoiceTransmissionModule(
 	private fun startTalking() = repeatJob(100) {
 
 		val myCoordinates = player.ped.coordinates
+		val loudness = player.networkGetLoudness()//1f
 
 		Client.getPlayersOnline().forEach { anotherPlayer ->
 			if (anotherPlayer == player.id) return@forEach

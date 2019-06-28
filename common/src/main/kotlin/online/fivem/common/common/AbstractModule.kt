@@ -18,7 +18,7 @@ abstract class AbstractModule : CoroutineScope {
 
 	open suspend fun onInit() {}
 
-	open fun onStart(): Job? = null
+	open fun onStartAsync(): Deferred<*>? = null
 
 	open fun onStop(): Job? {
 

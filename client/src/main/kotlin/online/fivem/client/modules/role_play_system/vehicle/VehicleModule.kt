@@ -1,6 +1,6 @@
 package online.fivem.client.modules.role_play_system.vehicle
 
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.async
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.common.GlobalCache
 import online.fivem.client.events.PlayerVehicleSeatEvent
@@ -32,7 +32,7 @@ class VehicleModule(
 		}
 	}
 
-	override fun onStart() = launch {
+	override fun onStartAsync() = async {
 		tickExecutorModule.waitForStart()
 	}
 

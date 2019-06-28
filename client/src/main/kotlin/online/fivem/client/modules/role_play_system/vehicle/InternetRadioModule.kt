@@ -1,5 +1,6 @@
 package online.fivem.client.modules.role_play_system.vehicle
 
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.events.PlayerRadioStationChangedEvent
@@ -39,7 +40,7 @@ class InternetRadioModule : AbstractClientModule() {
 		}
 	}
 
-	override fun onStart() = launch {
+	override fun onStartAsync() = async {
 		NuiEvent.emit(InternetRadioModuleEvent.VolumeChanged(this@InternetRadioModule.volume))
 	}
 

@@ -1,5 +1,6 @@
 package online.fivem.client.modules.basics
 
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -23,7 +24,7 @@ class WeatherModule(
 	private var currentWeather: NativeWeather = NativeWeather.OVERCAST
 	private var currentTemperature = 0.0
 
-	override fun onStart() = launch {
+	override fun onStartAsync() = async {
 		dateTimeModule.waitForStart()
 
 		setWeather(currentWeather, 1f)
