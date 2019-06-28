@@ -34,7 +34,8 @@ private fun start() {
 			add(
 				RolePlaySystemModule(
 					bufferedActionsModule = basicsModules.bufferedActionsModule,
-					tickExecutorModule = basicsModules.tickExecutorModule
+					tickExecutorModule = basicsModules.tickExecutorModule,
+					stateRepositoryModule = basicsModules.stateRepositoryModule
 				)
 			)
 

@@ -51,7 +51,7 @@ class VoiceTransmissionModule(
 	private fun startTalking() = repeatJob(100) {
 
 		val myCoordinates = player.ped.coordinates
-		val loudness = player.networkGetLoudness()//1f
+		val loudness = 1f //player.networkGetLoudness() * 10
 
 		Client.getPlayersOnline().forEach { anotherPlayer ->
 			if (anotherPlayer == player.id) return@forEach
@@ -63,16 +63,16 @@ class VoiceTransmissionModule(
 
 			val enable = when {
 
-				player.ped.isInAVehicle() -> distance <= DISTANCE_HEARING_IN_VEHICLE
+				player.ped.isInAVehicle() -> distance <= DISTANCE_HEARING_IN_VEHICLE * loudness
 
-				distance <= DISTANCE_HEARING_THROUGH_WALLS -> true
+				distance <= DISTANCE_HEARING_THROUGH_WALLS * loudness -> true
 
 				distance <= DISTANCE_HEARING_CLEAR && hasEntityClearLosToEntity(
 					player.ped.entity,
 					anotherPlayerPed
 				) -> true
 
-				distance <= DISTANCE_HEARING_CLEAR_IN_FRONT && Client.hasEntityClearLosToEntityInFront(
+				distance <= DISTANCE_HEARING_CLEAR_IN_FRONT * loudness && Client.hasEntityClearLosToEntityInFront(
 					player.ped.entity,
 					anotherPlayerPed
 				) -> true

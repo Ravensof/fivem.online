@@ -23,6 +23,8 @@ class Player(
 		ped = getPed()
 	}
 
+	fun networkGetLoudness() = Client.networkGetPlayerLoudness(id)
+
 	private fun getPed() =
 		Ped.newInstance(
 			Client.getPlayerPed(id) ?: throw IllegalStateException("player's ped can't be null")

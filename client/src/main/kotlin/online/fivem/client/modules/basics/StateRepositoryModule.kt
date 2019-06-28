@@ -28,6 +28,8 @@ class StateRepositoryModule(
 
 	val isPlayerTalking = ConflatedBroadcastChannel<Boolean>()
 
+	val coordinatesX = ConflatedBroadcastChannel<CoordinatesX>()
+
 	var accelerationThreshold: Double = 150.0 // m/s^2
 		set(value) {
 			if (value > field) {
@@ -98,9 +100,7 @@ class StateRepositoryModule(
 	private suspend fun checkCoordinatesX(playerPed: Ped) {
 		val currentCoordinatesX = playerPed.coordinatesX
 
-		if (playerCoordinates != currentCoordinatesX) {
-
-			playerCoordinates = currentCoordinatesX
+		if (coordinatesX.valueOrNull != currentCoordinatesX) {
 
 			if (bufferedActionsModule.coordinatesLocker.isLocked()) return
 
@@ -110,33 +110,32 @@ class StateRepositoryModule(
 				)
 			)
 			CoordinatesEvent.handle(currentCoordinatesX)
+			coordinatesX.send(currentCoordinatesX)
 		}
 	}
 
 	private suspend fun checkAcceleration(playerPed: Ped) {
-		playerCoordinates?.let {
-			val dateNow = Date.now() / 1_000
-			val dt = dateNow - iLastSpeedCheck
-			val iSpeed = playerPed.getSpeed()
+		val dateNow = Date.now() / 1_000
+		val dt = dateNow - iLastSpeedCheck
+		val iSpeed = playerPed.getSpeed()
 
-			iLastSpeedCheck = dateNow
+		iLastSpeedCheck = dateNow
 
-			playerAcceleration = (iSpeed - playerSpeed) / dt
-			playerSpeed = iSpeed
+		playerAcceleration = (iSpeed - playerSpeed) / dt
+		playerSpeed = iSpeed
 
-			if (playerAcceleration.absoluteValue >= accelerationThreshold) {
-				if (!playerPed.isTryingToGetInAnyVehicle()) {
+		if (playerAcceleration.absoluteValue >= accelerationThreshold) {
+			if (!playerPed.isTryingToGetInAnyVehicle()) {
 
-					if (bufferedActionsModule.coordinatesLocker.isLocked()) return@let
+				if (bufferedActionsModule.coordinatesLocker.isLocked()) return
 
-					Event.emit(
-						AccelerationThresholdAchievedEvent(
-							playerAcceleration,
-							playerAcceleration.absoluteValue,
-							dt
-						)
+				Event.emit(
+					AccelerationThresholdAchievedEvent(
+						playerAcceleration,
+						playerAcceleration.absoluteValue,
+						dt
 					)
-				}
+				)
 			}
 		}
 	}
@@ -322,8 +321,6 @@ class StateRepositoryModule(
 		private var vehicleEngineHealth: Double? = null
 
 		private var vehiclePetrolTankHealth: Double? = null
-
-		private var playerCoordinates: CoordinatesX? = null
 
 		private var playerSeatIndex: Int? = null
 

@@ -20,7 +20,7 @@ class BasicsModules : AbstractClientModule() {
 		controlHandlerModule = controlHandlerModule
 	)
 
-	private val stateRepositoryModule = StateRepositoryModule(
+	val stateRepositoryModule = StateRepositoryModule(
 		bufferedActionsModule = bufferedActionsModule
 	)
 

@@ -15,6 +15,7 @@ import online.fivem.common.gtav.NativeControls
 import online.fivem.common.gtav.ProfileSetting
 import online.fivem.common.gtav.RadioStation
 
+//todo rename to NativeFunctions
 object Client {
 
 	/**
@@ -553,8 +554,8 @@ object Client {
 		SetWeatherTypeOverTime(weatherType, time)
 	}
 
-	fun networkSetTalkerProximity(p0: Int) {
-		NetworkSetTalkerProximity(p0)
+	fun networkSetTalkerProximity(playerId: Int) {
+		NetworkSetTalkerProximity(playerId)
 	}
 
 	/**
@@ -1134,6 +1135,107 @@ object Client {
 	}
 
 	/**
+	 * enum MarkerTypes
+	 * {
+	 * MarkerTypeUpsideDownCone = 0,
+	 * MarkerTypeVerticalCylinder = 1,
+	 * MarkerTypeThickChevronUp = 2,
+	 * MarkerTypeThinChevronUp = 3,
+	 * MarkerTypeCheckeredFlagRect = 4,
+	 * MarkerTypeCheckeredFlagCircle = 5,
+	 * MarkerTypeVerticleCircle = 6,
+	 * MarkerTypePlaneModel = 7,
+	 * MarkerTypeLostMCDark = 8,
+	 * MarkerTypeLostMCLight = 9,
+	 * MarkerTypeNumber0 = 10,
+	 * MarkerTypeNumber1 = 11,
+	 * MarkerTypeNumber2 = 12,
+	 * MarkerTypeNumber3 = 13,
+	 * MarkerTypeNumber4 = 14,
+	 * MarkerTypeNumber5 = 15,
+	 * MarkerTypeNumber6 = 16,
+	 * MarkerTypeNumber7 = 17,
+	 * MarkerTypeNumber8 = 18,
+	 * MarkerTypeNumber9 = 19,
+	 * MarkerTypeChevronUpx1 = 20,
+	 * MarkerTypeChevronUpx2 = 21,
+	 * MarkerTypeChevronUpx3 = 22,
+	 * MarkerTypeHorizontalCircleFat = 23,
+	 * MarkerTypeReplayIcon = 24,
+	 * MarkerTypeHorizontalCircleSkinny = 25,
+	 * MarkerTypeHorizontalCircleSkinny_Arrow = 26,
+	 * MarkerTypeHorizontalSplitArrowCircle = 27,
+	 * MarkerTypeDebugSphere = 28,
+	 * MarkerTypeDallorSign = 29,
+	 * MarkerTypeHorizontalBars = 30,
+	 * MarkerTypeWolfHead = 31
+	 * };
+	 * dirX/Y/Z represent a heading on each axis in which the marker should face, alternatively you can rotate each axis independently with rotX/Y/Z (and set dirX/Y/Z all to 0).
+	 * faceCamera - Rotates only the y-axis (the heading) towards the camera
+	 * p19 - no effect, default value in script is 2
+	 * rotate - Rotates only on the y-axis (the heading)
+	 * textureDict - Name of texture dictionary to load texture from (e.g. "GolfPutting")
+	 * textureName - Name of texture inside dictionary to load (e.g. "PuttingMarker")
+	 * drawOnEnts - Draws the marker onto any entities that intersect it
+	 * basically what he said, except textureDict and textureName are totally not char*, or if so, then they are always set to 0/NULL/nullptr in every script I checked, eg:
+	 * bj.c: graphics::draw_marker(6, vParam0, 0f, 0f, 1f, 0f, 0f, 0f, 4f, 4f, 4f, 240, 200, 80, iVar1, 0, 0, 2, 0, 0, 0, false);
+	 * his is what I used to draw an amber downward pointing chevron "V", has to be redrawn every frame.  The 180 is for 180 degrees rotation around the Y axis, the 50 is alpha, assuming max is 100, but it will accept 255.
+	 * GRAPHICS::DRAW_MARKER(2, v.x, v.y, v.z + 2, 0, 0, 0, 0, 180, 0, 2, 2, 2, 255, 128, 0, 50, 0, 1, 1, 0, 0, 0, 0);
+	 */
+	fun drawMarker(
+		markerType: Int,
+		posX: Float,
+		posY: Float,
+		posZ: Float,
+		dirX: Float = 0f,
+		dirY: Float = 0f,
+		dirZ: Float = 0f,
+		rotX: Float = 0f,
+		rotY: Float = 0f,
+		rotZ: Float = 0f,
+		scaleX: Double = 1.0,
+		scaleY: Double = 1.0,
+		scaleZ: Double = 1.0,
+		red: Number,
+		green: Number,
+		blue: Number,
+		alpha: Number,
+		bobUpAndDown: Boolean = false,
+		faceCamera: Boolean = false,
+		rotate: Boolean = false,
+		textureDict: String? = null,
+		textureName: String? = null,
+		drawOnEnts: Boolean = false
+	) {
+		DrawMarker(
+			markerType,
+			posX,
+			posY,
+			posZ,
+			dirX,
+			dirY,
+			dirZ,
+			rotX,
+			rotY,
+			rotZ,
+			scaleX,
+			scaleY,
+			scaleZ,
+			red,
+			green,
+			blue,
+			alpha,
+			bobUpAndDown,
+			faceCamera,
+			2,
+			rotate,
+			textureDict,
+			textureName,
+			drawOnEnts
+		)
+	}
+
+	/**
 	 * Draws a notification above the map and returns the notifications handle
 	 * Color syntax:
 	 * ~r~ = Red
@@ -1539,6 +1641,10 @@ object Client {
 
 	fun networkGetNetworkIdFromEntity(entity: EntityId): Int {
 		return NetworkGetNetworkIdFromEntity(entity)
+	}
+
+	fun networkGetPlayerLoudness(playerId: Int): Float {
+		return NetworkGetPlayerLoudness(playerId).toFloat()
 	}
 
 	fun setVehicleHasBeenOwnedByPlayer(vehicle: EntityId, owned: Boolean = true) {
@@ -5822,55 +5928,32 @@ private external fun DoesEntityExist(entity: EntityId): Number
  */
 //private external fun DrawLine(x1: number, y1: number, z1: number, x2: number, y2: number, z2: number, red: number, green: number, blue: number, alpha: number)
 
-/**
- * enum MarkerTypes
- * {
- * MarkerTypeUpsideDownCone = 0,
- * MarkerTypeVerticalCylinder = 1,
- * MarkerTypeThickChevronUp = 2,
- * MarkerTypeThinChevronUp = 3,
- * MarkerTypeCheckeredFlagRect = 4,
- * MarkerTypeCheckeredFlagCircle = 5,
- * MarkerTypeVerticleCircle = 6,
- * MarkerTypePlaneModel = 7,
- * MarkerTypeLostMCDark = 8,
- * MarkerTypeLostMCLight = 9,
- * MarkerTypeNumber0 = 10,
- * MarkerTypeNumber1 = 11,
- * MarkerTypeNumber2 = 12,
- * MarkerTypeNumber3 = 13,
- * MarkerTypeNumber4 = 14,
- * MarkerTypeNumber5 = 15,
- * MarkerTypeNumber6 = 16,
- * MarkerTypeNumber7 = 17,
- * MarkerTypeNumber8 = 18,
- * MarkerTypeNumber9 = 19,
- * MarkerTypeChevronUpx1 = 20,
- * MarkerTypeChevronUpx2 = 21,
- * MarkerTypeChevronUpx3 = 22,
- * MarkerTypeHorizontalCircleFat = 23,
- * MarkerTypeReplayIcon = 24,
- * MarkerTypeHorizontalCircleSkinny = 25,
- * MarkerTypeHorizontalCircleSkinny_Arrow = 26,
- * MarkerTypeHorizontalSplitArrowCircle = 27,
- * MarkerTypeDebugSphere = 28,
- * MarkerTypeDallorSign = 29,
- * MarkerTypeHorizontalBars = 30,
- * MarkerTypeWolfHead = 31
- * };
- * dirX/Y/Z represent a heading on each axis in which the marker should face, alternatively you can rotate each axis independently with rotX/Y/Z (and set dirX/Y/Z all to 0).
- * faceCamera - Rotates only the y-axis (the heading) towards the camera
- * p19 - no effect, default value in script is 2
- * rotate - Rotates only on the y-axis (the heading)
- * textureDict - Name of texture dictionary to load texture from (e.g. "GolfPutting")
- * textureName - Name of texture inside dictionary to load (e.g. "PuttingMarker")
- * drawOnEnts - Draws the marker onto any entities that intersect it
- * basically what he said, except textureDict and textureName are totally not char*, or if so, then they are always set to 0/NULL/nullptr in every script I checked, eg:
- * bj.c: graphics::draw_marker(6, vParam0, 0f, 0f, 1f, 0f, 0f, 0f, 4f, 4f, 4f, 240, 200, 80, iVar1, 0, 0, 2, 0, 0, 0, false);
- * his is what I used to draw an amber downward pointing chevron "V", has to be redrawn every frame.  The 180 is for 180 degrees rotation around the Y axis, the 50 is alpha, assuming max is 100, but it will accept 255.
- * GRAPHICS::DRAW_MARKER(2, v.x, v.y, v.z + 2, 0, 0, 0, 0, 180, 0, 2, 2, 2, 255, 128, 0, 50, 0, 1, 1, 0, 0, 0, 0);
- */
-//private external fun DrawMarker(_type: number, posX: number, posY: number, posZ: number, dirX: number, dirY: number, dirZ: number, rotX: number, rotY: number, rotZ: number, scaleX: number, scaleY: number, scaleZ: number, red: number, green: number, blue: number, alpha: number, bobUpAndDown: boolean, faceCamera: boolean, p19: number, rotate: boolean, textureDict: string, textureName: string, drawOnEnts: boolean)
+private external fun DrawMarker(
+	_type: Number,
+	posX: Number,
+	posY: Number,
+	posZ: Number,
+	dirX: Number,
+	dirY: Number,
+	dirZ: Number,
+	rotX: Number,
+	rotY: Number,
+	rotZ: Number,
+	scaleX: Number,
+	scaleY: Number,
+	scaleZ: Number,
+	red: Number,
+	green: Number,
+	blue: Number,
+	alpha: Number,
+	bobUpAndDown: Boolean,
+	faceCamera: Boolean,
+	p19: Number,
+	rotate: Boolean,
+	textureDict: String?,
+	textureName: String?,
+	drawOnEnts: Boolean
+)
 
 private external fun DrawNotification(blink: Boolean, showInBrief: Boolean): Number
 
@@ -19556,7 +19639,7 @@ private external fun NetworkGetNetworkIdFromEntity(entity: EntityId): Int
  */
 //private external fun N_0x6c0e2e0125610278(ped: number): number;
 
-//private external fun NetworkGetPlayerLoudness(p0: number): number;
+private external fun NetworkGetPlayerLoudness(p0: Int): Number
 
 //private external fun NetworkGetPresenceInviteHandle(p0: number, p1: number): number;
 
