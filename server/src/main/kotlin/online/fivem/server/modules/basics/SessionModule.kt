@@ -173,9 +173,8 @@ class SessionModule(
 
 			blackList.await()?.let {
 				val reason = Strings.YOU_ARE_BANNED_FROM_THIS_SERVER.replace("%s", it.reason.orEmpty())
-				Natives.mainThread {
-					setKickReason(reason)
-				}
+
+				setKickReason(reason)
 			}
 		}
 	}

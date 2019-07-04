@@ -73,16 +73,16 @@ subprojects {
 
 		compile("org.jetbrains.kotlin:kotlin-stdlib-js:" + Config.kotlinVersion)
 //		testCompile "org.jetbrains.kotlin:kotlin-test-js:$kotlinVersion"
-		compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:0.11.1-1.3.40-eap-107")
-		compile("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.2.2")
+		compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:0.11.1")
+		compile("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.3.0-M2")
 
 		when (project.name) {
 			"common" -> {
 			}
 
 			"nui", "loadingScreen" -> {
-				implementation("org.jetbrains.kotlinx:kotlinx-html-common:0.6.11")
-				compile("org.jetbrains.kotlinx:kotlinx-html-js:0.6.10")
+				implementation("org.jetbrains.kotlinx:kotlinx-html-common:0.6.12")
+				compile("org.jetbrains.kotlinx:kotlinx-html-js:0.6.12")
 				compile("kotlin.js.externals:kotlin-js-jquery:3.2.0-0")
 			}
 

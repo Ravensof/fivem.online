@@ -1,3 +1,4 @@
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import online.fivem.client.gtav.Natives
 import online.fivem.client.modules.basics.BasicsModules
@@ -8,6 +9,7 @@ import online.fivem.client.modules.test.Test
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.Console
 import online.fivem.common.common.ModuleLoader
+import online.fivem.common.common.defaultDispatcher
 import online.fivem.common.gtav.NativeEvents
 
 private fun main() {
@@ -20,6 +22,8 @@ private fun main() {
 }
 
 private fun start() {
+	defaultDispatcher = Dispatchers.Unconfined
+
 	Console.log("client side loading..")
 
 	ModuleLoader().apply {

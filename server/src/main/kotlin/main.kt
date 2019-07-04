@@ -1,9 +1,12 @@
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.Console
 import online.fivem.common.common.ModuleLoader
+import online.fivem.common.common.defaultDispatcher
 import online.fivem.common.gtav.NativeEvents
 import online.fivem.server.ServerConfig.CURRENT_RESOURCE_NAME
+import online.fivem.server.extensions.Native
 import online.fivem.server.gtav.Natives
 import online.fivem.server.modules.basics.BasicsModule
 import online.fivem.server.modules.client_event_exchanger.ClientEventExchangerModule
@@ -22,6 +25,8 @@ private fun main() {
 }
 
 private fun start() {
+	defaultDispatcher = Dispatchers.Native
+
 	Console.log("server side loading..")
 
 	ModuleLoader().apply {

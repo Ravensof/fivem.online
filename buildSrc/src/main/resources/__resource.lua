@@ -12,6 +12,7 @@ files {
 	'nui/lib/kotlinx-html-js.js',
 	'nui/lib/nui.js',
 
+	'nui/resources/main/common.js',
 	'nui/resources/main/index.html',
 
 	-- splashScreen
