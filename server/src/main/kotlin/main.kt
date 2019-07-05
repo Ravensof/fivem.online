@@ -1,32 +1,39 @@
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.Console
+import online.fivem.common.common.CustomScope
 import online.fivem.common.common.ModuleLoader
-import online.fivem.common.common.defaultDispatcher
 import online.fivem.common.gtav.NativeEvents
+import online.fivem.server.ServerConfig
 import online.fivem.server.ServerConfig.CURRENT_RESOURCE_NAME
-import online.fivem.server.extensions.Native
 import online.fivem.server.gtav.Natives
+import online.fivem.server.gtav.enums.ResourceState
 import online.fivem.server.modules.basics.BasicsModule
 import online.fivem.server.modules.client_event_exchanger.ClientEventExchangerModule
 import online.fivem.server.modules.roleplay_system.RolePlaySystemModule
+import online.fivem.server.modules.test.Test
 
 private fun main() {
+	CustomScope.launch {
+		ServerConfig.init()
 
-	if (CURRENT_RESOURCE_NAME != GlobalConfig.MODULE_NAME)
-		throw Exception("GlobalConfig.MODULE_NAME should be set in $CURRENT_RESOURCE_NAME")
+		if (CURRENT_RESOURCE_NAME != GlobalConfig.MODULE_NAME)
+			throw Exception("GlobalConfig.MODULE_NAME should be set in $CURRENT_RESOURCE_NAME")
 
-	Natives.on(NativeEvents.Server.RESOURCE_START) { resourceName: String ->
-		if (resourceName == GlobalConfig.MODULE_NAME) {
+		Natives.on(NativeEvents.Server.RESOURCE_START) { resourceName: String ->
+
+			if (resourceName == GlobalConfig.MODULE_NAME) {
+				start()
+			}
+		}
+
+		if (Natives.getResourceState(CURRENT_RESOURCE_NAME) == ResourceState.STARTED) {
 			start()
 		}
 	}
 }
 
 private fun start() {
-	defaultDispatcher = Dispatchers.Native
-
 	Console.log("server side loading..")
 
 	ModuleLoader().apply {

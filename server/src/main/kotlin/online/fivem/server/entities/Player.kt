@@ -1,6 +1,5 @@
 package online.fivem.server.entities
 
-import online.fivem.common.entities.PlayerSrc
 import online.fivem.server.gtav.Natives
 
 class Player(
@@ -16,7 +15,7 @@ class Player(
 		return other is Player && userId == other.userId
 	}
 
-	fun drop(reason: String) {
+	suspend fun drop(reason: String) {
 		Natives.dropPlayer(playerSrc, reason)
 	}
 }

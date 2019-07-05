@@ -4,11 +4,11 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.launch
 import online.fivem.common.common.AbstractModule
-import online.fivem.common.entities.PlayerSrc
 import online.fivem.common.events.net.ClientSideSynchronizationEvent
 import online.fivem.common.events.net.ServerSideSynchronizationEvent
 import online.fivem.common.extensions.forEach
 import online.fivem.server.entities.Player
+import online.fivem.server.entities.PlayerSrc
 import online.fivem.server.modules.client_event_exchanger.ClientEvent
 
 abstract class AbstractServerModule : AbstractModule() {

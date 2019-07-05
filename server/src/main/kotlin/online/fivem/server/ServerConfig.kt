@@ -1,7 +1,6 @@
 package online.fivem.server
 
 import external.nodejs.mysql.Params
-import online.fivem.common.GlobalConfig
 import online.fivem.server.gtav.Natives
 
 object ServerConfig {
@@ -16,6 +15,14 @@ object ServerConfig {
 		password = "qwerta"
 	)
 
-	val CURRENT_RESOURCE_NAME = Natives.getCurrentResourceName()
-	val CURRENT_RESOURCE_PATH = Natives.getResourcePath(CURRENT_RESOURCE_NAME) + "/"
+	lateinit var CURRENT_RESOURCE_NAME: String
+		private set
+
+	lateinit var CURRENT_RESOURCE_PATH: String
+		private set
+
+	suspend fun init() {
+		CURRENT_RESOURCE_NAME = Natives.getCurrentResourceName()
+		CURRENT_RESOURCE_PATH = Natives.getResourcePath(CURRENT_RESOURCE_NAME) + "/"
+	}
 }

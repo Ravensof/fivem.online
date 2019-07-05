@@ -7,14 +7,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.Event
-import online.fivem.common.entities.PlayerSrc
 import online.fivem.common.events.net.ClientSideSynchronizationEvent
 import online.fivem.common.events.net.ServerSideSynchronizationEvent
-import online.fivem.common.extensions.orZero
 import online.fivem.common.extensions.repeatJob
 import online.fivem.server.ServerConfig
 import online.fivem.server.common.AbstractServerModule
 import online.fivem.server.entities.Player
+import online.fivem.server.entities.PlayerSrc
 import online.fivem.server.events.PlayerConnectedEvent
 import online.fivem.server.gtav.Natives
 import online.fivem.server.modules.basics.mysql.MySQLModule
@@ -51,7 +50,7 @@ class SynchronizationModule(
 	}
 
 	private fun syncDataFor(playerSrc: PlayerSrc) = launch {
-		syncData.serverTime = Date.now() + Natives.getPlayerPing(playerSrc).orZero()
+		syncData.serverTime = Date.now() + Natives.getPlayerPing(playerSrc)
 		ClientEvent.emit(syncData, playerSrc)
 	}
 

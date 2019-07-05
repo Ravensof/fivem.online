@@ -2,9 +2,9 @@ package online.fivem.server.modules.client_event_exchanger
 
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.ReceiveChannel
-import online.fivem.common.entities.PlayerSrc
 import online.fivem.common.other.Serializable
 import online.fivem.server.entities.Player
+import online.fivem.server.entities.PlayerSrc
 import kotlin.reflect.KClass
 
 object ClientEvent {

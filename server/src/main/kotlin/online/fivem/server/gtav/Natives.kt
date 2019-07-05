@@ -1,17 +1,23 @@
+@file:Suppress("FunctionName")
+
 package online.fivem.server.gtav
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import online.fivem.common.GlobalConfig
-import online.fivem.common.entities.PlayerSrc
 import online.fivem.server.entities.Command
 import online.fivem.server.entities.PlayerIdentifiers
+import online.fivem.server.entities.PlayerSrc
+import online.fivem.server.extensions.Native
+import online.fivem.server.gtav.enums.ResourceState
 
 object Natives {
 
-	fun startResource(resourceName: String) {
+	suspend fun startResource(resourceName: String) = withContext(Dispatchers.Native) {
 		StartResource(resourceName)
 	}
 
-	fun stopResource(resourceName: String) {
+	suspend fun stopResource(resourceName: String) = withContext(Dispatchers.Native) {
 		StopResource(resourceName)
 	}
 
@@ -20,67 +26,78 @@ object Natives {
 	 * @param resourceName The name of the resource.
 	 * @return The resource directory name, possibly without trailing slash.
 	 */
-	fun getResourcePath(resourceName: String): String {
-		return GetResourcePath(resourceName)
+	suspend fun getResourcePath(resourceName: String) = withContext(Dispatchers.Native) {
+		return@withContext GetResourcePath(resourceName)
 	}
 
-	fun on(eventName: String, callback: Any) = online.fivem.server.gtav.on(eventName, callback)
-
-	fun emitNet(eventName: String, playerSrc: Int, data: Any) = emitNet(eventName, playerSrc.toString(), data)
-
-	fun onNet(eventName: String, callback: (PlayerSrc, Any) -> Unit): Unit = Exports.onNet(eventName, callback)
-
-	fun getRegisteredCommands(): Array<Command> {
-		return GetRegisteredCommands()
+	/**
+	 * Returns the current state of the specified resource.
+	 * @param resourceName The name of the resource.
+	 * @return The resource state. One of `"missing", "started", "starting", "stopped", "stopping", "uninitialized" or "unknown"`.
+	 */
+	suspend fun getResourceState(resourceName: String): ResourceState = withContext(Dispatchers.Native) {
+		val code = GetResourceState(resourceName)
+		return@withContext ResourceState.values().find { it.code == code } ?: ResourceState.UNKNOWN
 	}
 
-	fun registerCommand(
+	suspend fun on(eventName: String, callback: Any) = withContext(Dispatchers.Native) {
+		online.fivem.server.gtav.on(eventName, callback)
+	}
+
+	suspend fun emitNet(eventName: String, playerSrc: Int, data: Any) = withContext(Dispatchers.Native) {
+		emitNet(eventName, playerSrc.toString(), data)
+	}
+
+
+	suspend fun onNet(eventName: String, callback: (PlayerSrc, Any) -> Unit) = withContext(Dispatchers.Native) {
+		Exports.onNet(eventName, callback)
+	}
+
+	suspend fun getRegisteredCommands() = withContext(Dispatchers.Native) {
+		return@withContext GetRegisteredCommands()
+	}
+
+	suspend fun registerCommand(
 		commandName: String,
 		restricted: Boolean = false,
 		handler: (Int, Array<String>, String) -> Unit
-	) {
+
+	) = withContext(Dispatchers.Native) {
 		RegisterCommand(commandName, handler, restricted)
 	}
 
 	//не работает для бинарных файлов
-	fun loadResourceFile(resourceName: String, fileName: String): String? {
-		return LoadResourceFile(resourceName, fileName)
+	suspend fun loadResourceFile(resourceName: String, fileName: String): String? = withContext(Dispatchers.Native) {
+		return@withContext LoadResourceFile(resourceName, fileName)
 	}
 
-	fun loadFile(fileName: String): String? {
-		return loadResourceFile(GlobalConfig.MODULE_NAME, fileName)
+	suspend fun loadFile(fileName: String): String? = withContext(Dispatchers.Native) {
+		return@withContext loadResourceFile(GlobalConfig.MODULE_NAME, fileName)
 	}
 
-	fun saveResourceFile(resourceName: String, fileName: String, data: String): Boolean {
-		return SaveResourceFile(resourceName, fileName, data, data.length) == 1
-	}
+	suspend fun saveResourceFile(resourceName: String, fileName: String, data: String) =
+		withContext(Dispatchers.Native) {
+			return@withContext SaveResourceFile(resourceName, fileName, data, data.length) == 1
+		}
 
-	fun saveFile(fileName: String, data: String): Boolean {
-		return SaveResourceFile(GlobalConfig.MODULE_NAME, fileName, data, data.length) == 1
+	suspend fun saveFile(fileName: String, data: String): Boolean = withContext(Dispatchers.Native) {
+		return@withContext SaveResourceFile(GlobalConfig.MODULE_NAME, fileName, data, data.length) == 1
 	}
 
 	//наверное, возвращает сколько всего игроков, включая подключающихся. != кол-ву игроков в одной сессии
-	fun countPlayersOnline(): Int {
-		return GetNumPlayerIndices()
+	suspend fun countPlayersOnline(): Int = withContext(Dispatchers.Native) {
+		return@withContext GetNumPlayerIndices()
 	}
 
-	fun getPlayerIP(playerSrc: PlayerSrc): String? {
-		return if (playerSrc.value > 0) {
-			GetPlayerEndpoint(playerSrc.value)
-		} else {
-			null
-		}
+	suspend fun getPlayerIP(playerSrc: PlayerSrc): String? = withContext(Dispatchers.Native) {
+		return@withContext GetPlayerEndpoint(playerSrc.value)
 	}
 
-	fun getPlayerPing(playerSrc: PlayerSrc): Int? {
-		return if (playerSrc.value > 0) {
-			GetPlayerPing(playerSrc.value)
-		} else {
-			null
-		}
+	suspend fun getPlayerPing(playerSrc: PlayerSrc): Int = withContext(Dispatchers.Native) {
+		return@withContext GetPlayerPing(playerSrc.value)
 	}
 
-	fun getPlayers(): List<PlayerSrc> {
+	suspend fun getPlayers(): List<PlayerSrc> = withContext(Dispatchers.Native) {
 		val playersList = mutableListOf<PlayerSrc>()
 
 		for (i in 1..GlobalConfig.MAX_PLAYERS) {
@@ -89,10 +106,10 @@ object Natives {
 			}
 		}
 
-		return playersList
+		return@withContext playersList
 	}
 
-	fun getPlayerIdentifiers(playerSrc: PlayerSrc): PlayerIdentifiers {
+	suspend fun getPlayerIdentifiers(playerSrc: PlayerSrc): PlayerIdentifiers = withContext(Dispatchers.Native) {
 
 		var steam: String? = null
 		var license: String? = null
@@ -116,7 +133,7 @@ object Natives {
 			}
 		}
 
-		return PlayerIdentifiers(
+		return@withContext PlayerIdentifiers(
 			steam = steam,
 			license = license,
 			ip = ip,
@@ -125,40 +142,32 @@ object Natives {
 		)
 	}
 
-	fun getPlayerIdentifiers(source: Int): PlayerIdentifiers {
-		return getPlayerIdentifiers(PlayerSrc(source))
+	suspend fun getPlayerIdentifiers(source: Int): PlayerIdentifiers = withContext(Dispatchers.Native) {
+		return@withContext getPlayerIdentifiers(PlayerSrc(source))
 	}
 
-	fun getPlayerName(playerSrc: PlayerSrc): String? {
-		return if (playerSrc.value > 0) {
-			GetPlayerName(playerSrc.value)
-		} else {
-			null
-		}
+	suspend fun getPlayerName(playerSrc: PlayerSrc): String? = withContext(Dispatchers.Native) {
+		return@withContext GetPlayerName(playerSrc.value)
 	}
 
-	fun dropPlayer(playerSrc: PlayerSrc, reason: String) {
+	suspend fun dropPlayer(playerSrc: PlayerSrc, reason: String) = withContext(Dispatchers.Native) {
 		DropPlayer(playerSrc.value, reason)
 	}
 
-	fun dropPlayer(playerSrc: Int, reason: String) {
+	suspend fun dropPlayer(playerSrc: Int, reason: String) = withContext(Dispatchers.Native) {
 		DropPlayer(playerSrc, reason)
 	}
 
-	fun executeCommand(commandString: String) {
+	suspend fun executeCommand(commandString: String) = withContext(Dispatchers.Native) {
 		ExecuteCommand(commandString)
 	}
 
-	fun mainThread(callback: () -> Unit) {
-		setImmediate(callback)
+	suspend fun getCurrentResourceName(): String = withContext(Dispatchers.Native) {
+		return@withContext GetCurrentResourceName()
 	}
 
-	fun getCurrentResourceName(): String {
-		return GetCurrentResourceName()
-	}
-
-	private fun getNumPlayerIdentifiers(playerSrc: PlayerSrc): Int {
-		return GetNumPlayerIdentifiers(playerSrc.value)
+	private suspend fun getNumPlayerIdentifiers(playerSrc: PlayerSrc): Int = withContext(Dispatchers.Native) {
+		return@withContext GetNumPlayerIdentifiers(playerSrc.value)
 	}
 }
 
@@ -315,11 +324,6 @@ private external fun GetResourceMetadata(resourceName: String, metadataKey: Stri
 
 private external fun GetResourcePath(resourceName: String): String
 
-/**
- * Returns the current state of the specified resource.
- * @param resourceName The name of the resource.
- * @return The resource state. One of `"missing", "started", "starting", "stopped", "stopping", "uninitialized" or "unknown"`.
- */
 private external fun GetResourceState(resourceName: String): String
 
 private external fun InvokeFunctionReference(

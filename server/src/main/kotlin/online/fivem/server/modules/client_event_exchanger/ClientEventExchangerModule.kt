@@ -5,7 +5,6 @@ import kotlinx.coroutines.channels.Channel
 import online.fivem.common.GlobalConfig
 import online.fivem.common.Serializer
 import online.fivem.common.common.Console
-import online.fivem.common.entities.PlayerSrc
 import online.fivem.common.events.net.AcceptEvent
 import online.fivem.common.events.net.EstablishConnectionEvent
 import online.fivem.common.events.net.ImReadyEvent
@@ -21,6 +20,7 @@ import online.fivem.common.other.SerializerInterface
 import online.fivem.common.other.ServersNetPacket
 import online.fivem.server.Strings
 import online.fivem.server.common.AbstractServerModule
+import online.fivem.server.entities.PlayerSrc
 import online.fivem.server.gtav.Exports
 import online.fivem.server.gtav.Natives
 import online.fivem.server.modules.basics.SessionModule
@@ -42,10 +42,11 @@ class ClientEventExchangerModule(
 	init {
 		Exports.on(NativeEvents.Server.PLAYER_DROPPED) { playerId: Int, _: String -> onPlayerDropped(playerId) }
 
-		Natives.onNet(GlobalConfig.NET_EVENT_NAME, ::onNetEvent)
+		launch {
+			Natives.onNet(GlobalConfig.NET_EVENT_NAME, ::onNetEvent)
 
-		Natives.onNet(GlobalConfig.NET_EVENT_ESTABLISHING_NAME, ::onEstablishingConnection)
-
+			Natives.onNet(GlobalConfig.NET_EVENT_ESTABLISHING_NAME, ::onEstablishingConnection)
+		}
 	}
 
 	@ExperimentalCoroutinesApi
@@ -127,10 +128,12 @@ class ClientEventExchangerModule(
 			Serializer.deserialize<ImReadyEvent>(netPacket.toString())
 			onClientReady(playerSrc)
 		} catch (e: SerializerInterface.DeserializationException) {
-			Natives.dropPlayer(
-				playerSrc,
-				Strings.CLIENT_WRONG_PACKET_FORMAT
-			)
+			launch {
+				Natives.dropPlayer(
+					playerSrc,
+					Strings.CLIENT_WRONG_PACKET_FORMAT
+				)
+			}
 		}
 	}
 
@@ -164,10 +167,12 @@ class ClientEventExchangerModule(
 				}
 			}
 		} catch (exception: Throwable) {
-			return Natives.dropPlayer(
-				playerSrc,
-				exception.message.toString()
-			)
+			launch {
+				Natives.dropPlayer(
+					playerSrc,
+					exception.message.toString()
+				)
+			}
 		}
 	}
 
@@ -176,10 +181,16 @@ class ClientEventExchangerModule(
 	}
 
 	private fun onClientReady(playerSrc: PlayerSrc) {
-		if (clients.containsKey(playerSrc.value)) return Natives.dropPlayer(
-			playerSrc,
-			Strings.CLIENT_ALREADY_CONNECTED
-		)
+		if (clients.containsKey(playerSrc.value)) {
+			launch {
+				Natives.dropPlayer(
+					playerSrc,
+					Strings.CLIENT_ALREADY_CONNECTED
+				)
+			}
+
+			return
+		}
 
 		val key = Random.nextDouble()
 
@@ -191,11 +202,13 @@ class ClientEventExchangerModule(
 	private fun emit(playerSrc: Int, data: Serializable) {
 		val packet = ServersNetPacket(Serializer.serializeToPacket(data))
 
-		Natives.emitNet(
-			eventName = GlobalConfig.NET_EVENT_NAME,
-			playerSrc = playerSrc,
-			data = packet
-		)
+		launch {
+			Natives.emitNet(
+				eventName = GlobalConfig.NET_EVENT_NAME,
+				playerSrc = playerSrc,
+				data = packet
+			)
+		}
 	}
 
 	private fun <T> createChannels(): List<Channel<T>> {

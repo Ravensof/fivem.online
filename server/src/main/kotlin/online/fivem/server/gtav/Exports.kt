@@ -9,7 +9,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.Html
-import online.fivem.common.entities.PlayerSrc
+import online.fivem.server.entities.PlayerSrc
 
 private external val exports: dynamic
 

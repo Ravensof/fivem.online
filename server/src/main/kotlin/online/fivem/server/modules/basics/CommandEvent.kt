@@ -17,9 +17,11 @@ object CommandEvent : CoroutineScope {
 	fun on(command: String, callback: Handler) {
 		handlers[command] = callback
 
-		registerCommand(command, false) { playerSrc, args, raw ->
-			launch {
-				CommandsModule.executionQueue.send(CommandsModule.RawCommand(playerSrc, command, args, raw))
+		launch {
+			registerCommand(command, false) { playerSrc, args, raw ->
+				this@CommandEvent.launch {
+					CommandsModule.executionQueue.send(CommandsModule.RawCommand(playerSrc, command, args, raw))
+				}
 			}
 		}
 	}
