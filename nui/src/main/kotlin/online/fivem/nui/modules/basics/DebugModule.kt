@@ -34,13 +34,13 @@ class DebugModule(
 			val time = Date.now()
 
 			blocks.forEach {
-				if (it.value.timeToRemove >= time) return@repeatJob
+				if (it.value.timeToRemove < time) {
+					blocks.remove(it.key)
+					it.value.element.remove()
 
-				blocks.remove(it.key)
-				it.value.element.remove()
-
-				if (blocks.isEmpty()) {
-					debugBlock.hide()
+					if (blocks.isEmpty()) {
+						debugBlock.hide()
+					}
 				}
 			}
 		}
