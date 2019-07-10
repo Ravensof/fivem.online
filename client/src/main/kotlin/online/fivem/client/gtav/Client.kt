@@ -12,8 +12,8 @@ import online.fivem.common.entities.Coordinates
 import online.fivem.common.entities.RGB
 import online.fivem.common.entities.Time
 import online.fivem.common.gtav.NativeControls
-import online.fivem.common.gtav.ProfileSetting
 import online.fivem.common.gtav.RadioStation
+import online.fivem.enums.PauseMenuState
 
 //todo rename to NativeFunctions
 object Client {
@@ -1501,6 +1501,20 @@ object Client {
 	}
 
 	/**
+	 * Does not take effect immediately, unfortunately.
+	 * profileSetting seems to only be 936, 937 and 938 in scripts
+	 * gtaforums.com/topic/799843-stats-profile-settings/
+	 */
+	//todo test
+	suspend fun setProfileSetting(profileSetting: Int, value: Int) {
+		N_0x68f01422be1d838f(profileSetting, value)
+
+		while (getProfileSetting(profileSetting) != value) {
+			delay(250)
+		}
+	}
+
+	/**
 	 * SET_VEHICLE_BOOST_ACTIVE(vehicle, 1, 0);
 	 * SET_VEHICLE_BOOST_ACTIVE(vehicle, 0, 0);
 	 * Will give a boost-soundeffect.
@@ -1881,8 +1895,8 @@ object Client {
 	/**
 	 * gtaforums.com/topic/799843-stats-profile-settings/
 	 */
-	fun getProfileSetting(profileSetting: ProfileSetting): Int {
-		return GetProfileSetting(profileSetting.id)
+	fun getProfileSetting(profileSetting: Int): Int {
+		return GetProfileSetting(profileSetting)
 	}
 
 	fun addTextEntry(entryKey: String, entryText: String) {
@@ -2251,8 +2265,10 @@ object Client {
 	 * 30
 	 * 35
 	 */
-	fun getPauseMenuState(): Int {
-		return GetPauseMenuState()
+	fun getPauseMenuState(): PauseMenuState {
+		val state = GetPauseMenuState()
+
+		return PauseMenuState.values().find { it.code == state } ?: PauseMenuState.DISABLED
 	}
 
 	/**
@@ -2521,6 +2537,18 @@ object Client {
 	 */
 	fun freezeEntityPosition(entity: EntityId, toggle: Boolean) {
 		FreezeEntityPosition(entity, toggle)
+	}
+
+	/**
+	 * Returns all player indices for 'active' physical players known to the client.
+	 * The data returned adheres to the following layout:
+	 * ```
+	 * [127, 42, 13, 37]
+	 * ```
+	 * @return An object containing a list of player indices.
+	 */
+	fun getActivePlayers(): Array<Int> {
+		return GetActivePlayers()
 	}
 
 	/**
@@ -7082,6 +7110,8 @@ private external fun FreezeEntityPosition(entity: EntityId, toggle: Boolean)
  * This gets the progression of an achievement. Returns 0 if the achievement cannot be progressed.
  */
 //private external fun N_0x1c186837d0619335(achId: number): number;
+
+private external fun GetActivePlayers(): Array<Int>
 
 /**
  * Returns current screen resolution.
@@ -28328,12 +28358,8 @@ private external fun StartScreenEffect(effectName: String, duration: Int, looped
  * gtaforums.com/topic/799843-stats-profile-settings/
  */
 //private external fun StatSetProfileSetting(profileSetting: number, value: number)
-/**
- * Does not take effect immediately, unfortunately.
- * profileSetting seems to only be 936, 937 and 938 in scripts
- * gtaforums.com/topic/799843-stats-profile-settings/
- */
-//private external fun N_0x68f01422be1d838f(profileSetting: number, value: number)
+
+private external fun N_0x68f01422be1d838f(profileSetting: Int, value: Int)
 
 //private external fun StatSetString(statName: string | number, value: string, save: boolean): number;
 

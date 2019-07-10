@@ -2,7 +2,6 @@ package online.fivem.client.extensions
 
 import online.fivem.client.gtav.Client
 import online.fivem.client.gtav.Natives
-import online.fivem.common.GlobalConfig
 import online.fivem.common.common.EntityId
 import online.fivem.common.entities.Coordinates
 import online.fivem.common.entities.CoordinatesX
@@ -127,17 +126,6 @@ fun Client.setWeatherTypeTransition(weatherType1: NativeWeather, weatherType2: N
 		getHexHashKey(weatherType2.code),
 		percentWeather2
 	)//todo test
-}
-
-fun Client.getPlayersOnline(): List<Int> {
-	val list = mutableListOf<Int>()
-
-	for (i in 0 until GlobalConfig.MAX_PLAYERS) {
-		if (networkIsPlayerActive(i)) {
-			list.add(i)
-		}
-	}
-	return list
 }
 
 fun Client.cellFrontCamActivate(activate: Boolean) {

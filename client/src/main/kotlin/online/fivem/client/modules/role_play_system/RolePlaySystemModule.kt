@@ -2,19 +2,18 @@ package online.fivem.client.modules.role_play_system
 
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.common.GlobalCache.player
-import online.fivem.client.entities.Ped
-import online.fivem.client.events.PlayersPedChangedEvent
 import online.fivem.client.gtav.Client
 import online.fivem.client.modules.basics.BufferedActionsModule
 import online.fivem.client.modules.basics.StateRepositoryModule
 import online.fivem.client.modules.basics.TickExecutorModule
 import online.fivem.client.modules.role_play_system.vehicle.VehicleModule
-import online.fivem.common.common.Event
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.events.net.ClientSideSynchronizationEvent
 import online.fivem.common.events.net.sync.RolePlaySystemSaveEvent
+import online.fivem.common.extensions.forEach
 
 class RolePlaySystemModule(
 	private val bufferedActionsModule: BufferedActionsModule,
@@ -29,7 +28,8 @@ class RolePlaySystemModule(
 	override suspend fun onInit() {
 		moduleLoader.add(
 			VehicleModule(
-				tickExecutorModule = tickExecutorModule
+				tickExecutorModule = tickExecutorModule,
+				stateRepositoryModule = stateRepositoryModule
 			)
 		)
 
@@ -44,7 +44,9 @@ class RolePlaySystemModule(
 	}
 
 	override fun onStartAsync() = async {
-		Event.on<PlayersPedChangedEvent> { onPedChanged(it.ped) }
+		stateRepositoryModule.waitForStart()
+
+		subscribeOnPed()
 	}
 
 	override fun onSaveState(container: ClientSideSynchronizationEvent): Job? {
@@ -68,7 +70,9 @@ class RolePlaySystemModule(
 		return super.onSaveState(container)
 	}
 
-	private fun onPedChanged(ped: Ped) {
-		Client.setPedCanRagdollFromPlayerImpact(ped.entity, true)
+	private fun subscribeOnPed() = launch {
+		stateRepositoryModule.playerPed.openSubscription().forEach { ped ->
+			Client.setPedCanRagdollFromPlayerImpact(ped.entity, true)
+		}
 	}
 }

@@ -6,7 +6,7 @@ import online.fivem.common.gtav.RadioStation
 @Suppress("MemberVisibilityCanBePrivate")
 object GlobalConfig {
 
-	const val allowBlackOutFromSpeed = false
+	const val ALLOW_BLACKOUT_FROM_SPEED = false
 
 	const val MODULE_NAME = "fivem-online"
 	const val SERVER_IP = "server1.fivem.online"
@@ -18,12 +18,9 @@ object GlobalConfig {
 	const val WEBRTC_PORT = HTTP_PORT + 1
 
 	const val SERVER_NAME_IN_MENU = "FIVEM.ONLINE"
-	const val MAX_PLAYERS = 256
 	const val APP_VERSION = 190107
 
 	const val GAME_TIME_SPEED = 30.0
-
-	var concatConsoleOutput = false
 
 	val internetRadioStations: Map<String, InternetRadioStation> = mapOf(
 		RadioStation.RADIO_01_CLASS_ROCK.code to InternetRadioStation(
@@ -124,13 +121,13 @@ object GlobalConfig {
 			defaultVolume = 0.4
 		),      // The Lab
 
-		RadioStation.RADIO_21_DLC_XM17.code to InternetRadioStation(
+		RadioStation.RADIO_21_XM17.code to InternetRadioStation(
 			url = "http://air.radiorecord.ru:805/gold_320",
 			name = "Gold",
 			defaultVolume = 0.6
 		),// Blonded Los Santos 97.8 FM
 
-		RadioStation.RADIO_22_DLC_BATTLE_MIX1_RADIO.code to InternetRadioStation(
+		RadioStation.RADIO_22_BATTLE_MIX1_RADIO.code to InternetRadioStation(
 			url = "http://air.radiorecord.ru:805/techno_320",
 			name = "Techno",
 			defaultVolume = 0.4
@@ -151,6 +148,10 @@ object GlobalConfig {
 	const val SHOW_CONSOLE_LOG = true
 
 	//dont touch
+	var concatConsoleOutput = false
+
+	const val MAX_PLAYERS = 256
+
 	const val RESOURCES_HTTP_HOME = "http://$SERVER_IP:$HTTP_PORT/"
 
 	const val CONSOLE_PREFIX = ""

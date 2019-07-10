@@ -12,13 +12,14 @@ import online.fivem.client.extensions.getSeatOfPedInVehicle
 import online.fivem.client.extensions.isAnyRadioTrackPlaying
 import online.fivem.client.extensions.isControlPressed
 import online.fivem.client.gtav.Client
+import online.fivem.client.modules.basics.state_repository_modules.ProfileSettingsRepositoryModule
 import online.fivem.common.common.Event
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.extensions.orZero
 import online.fivem.common.extensions.repeatJob
 import online.fivem.common.gtav.NativeControls
-import online.fivem.common.gtav.ProfileSetting
 import online.fivem.common.gtav.RadioStation
+import online.fivem.enums.PauseMenuState
 import kotlin.js.Date
 import kotlin.math.absoluteValue
 
@@ -26,9 +27,23 @@ class StateRepositoryModule(
 	private val bufferedActionsModule: BufferedActionsModule
 ) : AbstractClientModule() {
 
+	private val profileSettingsRepositoryModule = ProfileSettingsRepositoryModule()
+
+	val profileSettings = profileSettingsRepositoryModule.profileSettingsProvider
+
+	val playerPed = ConflatedBroadcastChannel<Ped>()
+
 	val isPlayerTalking = ConflatedBroadcastChannel<Boolean>()
 
 	val coordinatesX = ConflatedBroadcastChannel<CoordinatesX>()
+
+	val radioStation = ConflatedBroadcastChannel<RadioStation?>()
+
+	val pauseMenuState = ConflatedBroadcastChannel<PauseMenuState>()
+
+	val isPauseMenuEnabled = ConflatedBroadcastChannel<Boolean>()
+
+	val playerSpeed = ConflatedBroadcastChannel<Double>()
 
 	var accelerationThreshold: Double = 150.0 // m/s^2
 		set(value) {
@@ -42,8 +57,16 @@ class StateRepositoryModule(
 
 	private var isRadioEnabled = false
 
+
+	override suspend fun onInit() {
+		super.onInit()
+
+		moduleLoader.add(profileSettingsRepositoryModule)
+	}
+
 	override fun onStartAsync() = async {
 		bufferedActionsModule.waitForStart()
+		profileSettingsRepositoryModule.waitForStart()
 
 		this@StateRepositoryModule.repeatJob(25) {
 			checkIsPlayerTalking(player.id)
@@ -63,11 +86,12 @@ class StateRepositoryModule(
 		}
 
 		this@StateRepositoryModule.repeatJob(1_000) {
-			checkAudioMusicLevelInMP(Client.getProfileSetting(ProfileSetting.AUDIO_MUSIC_LEVEL_IN_MP).orZero())
 
 			checkPlayersPed(player.ped)
 
 			checkCoordinatesX(player.ped)
+
+			profileSettingsRepositoryModule.check().join()
 		}
 	}
 
@@ -121,8 +145,11 @@ class StateRepositoryModule(
 
 		iLastSpeedCheck = dateNow
 
-		playerAcceleration = (iSpeed - playerSpeed) / dt
-		playerSpeed = iSpeed
+		playerAcceleration = (iSpeed - playerSpeed.valueOrNull.orZero()) / dt
+
+		if (iSpeed != playerSpeed.valueOrNull.orZero()) {
+			playerSpeed.send(iSpeed)
+		}
 
 		if (playerAcceleration.absoluteValue >= accelerationThreshold) {
 			if (!playerPed.isTryingToGetInAnyVehicle()) {
@@ -141,11 +168,9 @@ class StateRepositoryModule(
 	}
 
 	private suspend fun checkPlayersPed(ped: Ped) {
-		if (playerPed?.entity != ped.entity) {
+		if (playerPed.valueOrNull?.entity != ped.entity) {
 
-			playerPed = ped
-
-			Event.emit(PlayersPedChangedEvent(ped))
+			playerPed.send(ped)
 		}
 	}
 
@@ -203,31 +228,16 @@ class StateRepositoryModule(
 		vehiclePetrolTankHealth = petrolTankHealth
 	}
 
-	private suspend fun checkPauseMenuState(state: Int) {
-		if (pauseMenuState != state) {
-			when {
-				state == 0 -> Event.emit(
-					PauseMenuStateChangedEvent.Disabled(pauseMenuState)
-				)
+	private suspend fun checkPauseMenuState(state: PauseMenuState) {
+		if (pauseMenuState.valueOrNull != state) {
 
-				pauseMenuState == 0 -> Event.emit(
-					PauseMenuStateChangedEvent.Enabled(state)
-				)
+			val isPauseMenuEnabled = state != PauseMenuState.DISABLED
 
-				else -> Event.emit(
-					PauseMenuStateChangedEvent.Switched(state, pauseMenuState)
-				)
+			if (this.isPauseMenuEnabled.valueOrNull != isPauseMenuEnabled) {
+				this.isPauseMenuEnabled.send(isPauseMenuEnabled)
 			}
 
-			pauseMenuState = state
-		}
-	}
-
-	private suspend fun checkAudioMusicLevelInMP(volume: Int) {
-		if (audioMusicLevelInMP != volume) {
-			Event.emit(ProfileSettingUpdatedEvent.AudioMusicLevelInMP(volume))
-
-			audioMusicLevelInMP = volume
+			pauseMenuState.send(state)
 		}
 	}
 
@@ -264,18 +274,11 @@ class StateRepositoryModule(
 		val currentRadio =
 			if (playersVehicle?.isEngineRunning() == true && (isRadioEnabled || Client.isAnyRadioTrackPlaying())) Client.getRadioStation() else null
 
-		if (currentRadio != playerRadioStationName) {
-			Event.emit(PlayerRadioStationChangedEvent(currentRadio))
-
-			playerRadioStationName = currentRadio
+		if (currentRadio != radioStation.valueOrNull) {
 
 			isRadioEnabled = currentRadio != null
 
-			if (currentRadio != null) {
-				Event.emit(PlayerVehicleRadioToggledEvent.Enabled(currentRadio))
-			} else {
-				Event.emit(PlayerVehicleRadioToggledEvent.Disabled())
-			}
+			radioStation.send(currentRadio)
 		}
 	}
 
@@ -310,8 +313,6 @@ class StateRepositoryModule(
 
 	companion object {
 
-		private var playerPed: Ped? = null
-
 		private var playerPedHealth: Int = 0
 
 		private var playersVehicle: Vehicle? = null
@@ -323,14 +324,6 @@ class StateRepositoryModule(
 		private var vehiclePetrolTankHealth: Double? = null
 
 		private var playerSeatIndex: Int? = null
-
-		private var pauseMenuState: Int = 0
-
-		private var audioMusicLevelInMP: Int? = null
-
-		private var playerRadioStationName: RadioStation? = null
-
-		private var playerSpeed = 0.0
 
 		private var playerAcceleration = 0.0
 	}

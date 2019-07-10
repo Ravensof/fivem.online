@@ -3,22 +3,23 @@ package online.fivem.client.modules.role_play_system.vehicle
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import online.fivem.client.common.AbstractClientModule
-import online.fivem.client.events.PlayerRadioStationChangedEvent
-import online.fivem.client.events.ProfileSettingUpdatedEvent
 import online.fivem.client.extensions.start
 import online.fivem.client.extensions.stop
+import online.fivem.client.extensions.value
 import online.fivem.client.gtav.Client
+import online.fivem.client.modules.basics.StateRepositoryModule
 import online.fivem.client.modules.nui_event_exchanger.NuiEvent
 import online.fivem.common.GlobalConfig
-import online.fivem.common.common.Event
 import online.fivem.common.entities.InternetRadioStation
 import online.fivem.common.events.nui.InternetRadioModuleEvent
-import online.fivem.common.extensions.orZero
+import online.fivem.common.extensions.forEach
 import online.fivem.common.gtav.NativeAudioScenes
 import online.fivem.common.gtav.ProfileSetting
 import online.fivem.common.gtav.RadioStation
 
-class InternetRadioModule : AbstractClientModule() {
+class InternetRadioModule(
+	private val stateRepositoryModule: StateRepositoryModule
+) : AbstractClientModule() {
 
 	private var volume = getSettingsMusicLevel().toDouble() / 10 * MAX_VOLUME
 
@@ -31,17 +32,29 @@ class InternetRadioModule : AbstractClientModule() {
 			}
 		}
 
-		Event.on<PlayerRadioStationChangedEvent> {
-			onPlayerVehicleRadioStationChanged(it.radioStation)
-		}
-
-		Event.on<ProfileSettingUpdatedEvent.AudioMusicLevelInMP> {
-			onSettingsMusicLevelChanged(it.value)
-		}
+//		Natives.invokeNative<Unit>("0x47AED84213A47510", true)
+//		Natives.invokeNative<Unit>("0x477D9DB48F889591", RadioStation.RADIO_22_BATTLE_MIX1_RADIO.code, false)
 	}
 
 	override fun onStartAsync() = async {
+		stateRepositoryModule.waitForStart()
+
+		subscribeOnRadio()
+		subscribeOnMusicLevel()
+
 		NuiEvent.emit(InternetRadioModuleEvent.VolumeChanged(this@InternetRadioModule.volume))
+	}
+
+	private fun subscribeOnMusicLevel() = launch {
+		stateRepositoryModule.profileSettings[ProfileSetting.AUDIO_MUSIC_LEVEL_IN_MP].openSubscription().forEach {
+			onSettingsMusicLevelChanged(it)
+		}
+	}
+
+	private fun subscribeOnRadio() = launch {
+		stateRepositoryModule.radioStation.openSubscription().forEach {
+			onPlayerVehicleRadioStationChanged(it)
+		}
 	}
 
 	override fun onStop() = launch {
@@ -82,7 +95,7 @@ class InternetRadioModule : AbstractClientModule() {
 	}
 
 	private fun getSettingsMusicLevel(): Int {
-		return Client.getProfileSetting(ProfileSetting.AUDIO_MUSIC_LEVEL_IN_MP).orZero()
+		return ProfileSetting.AUDIO_MUSIC_LEVEL_IN_MP.value
 	}
 
 	private fun muteNativeRadio(mute: Boolean) {

@@ -6,14 +6,11 @@ import kotlinx.coroutines.launch
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.common.GlobalCache.player
 import online.fivem.client.entities.Ped
-import online.fivem.client.events.PlayersPedChangedEvent
 import online.fivem.client.extensions.distance
-import online.fivem.client.extensions.getPlayersOnline
 import online.fivem.client.gtav.Client
 import online.fivem.client.gtav.Client.getEntityCoords
 import online.fivem.client.gtav.Client.getPlayerPed
 import online.fivem.client.gtav.Client.hasEntityClearLosToEntity
-import online.fivem.common.common.Event
 import online.fivem.common.extensions.forEach
 import online.fivem.common.extensions.repeatJob
 
@@ -30,20 +27,25 @@ class VoiceTransmissionModule(
 		Client.networkSetTalkerProximity(-1000)
 	}
 
-	override suspend fun onInit() {
-		Event.on<PlayersPedChangedEvent> { playerPed = it.ped }
-	}
-
 	override fun onStartAsync() = async {
 		stateRepositoryModule.waitForStart()
 
-		this@VoiceTransmissionModule.launch {
-			stateRepositoryModule.isPlayerTalking.openSubscription().forEach { isTalking ->
-				if (isTalking) {
-					startTalking()
-				} else {
-					stopTalking()
-				}
+		subscribeOnPed()
+		subscribeOnIsPlayerTalking()
+	}
+
+	private fun subscribeOnPed() = launch {
+		stateRepositoryModule.playerPed.openSubscription().forEach {
+			playerPed = it
+		}
+	}
+
+	private fun subscribeOnIsPlayerTalking() = launch {
+		stateRepositoryModule.isPlayerTalking.openSubscription().forEach { isTalking ->
+			if (isTalking) {
+				startTalking()
+			} else {
+				stopTalking()
 			}
 		}
 	}
@@ -53,7 +55,7 @@ class VoiceTransmissionModule(
 		val myCoordinates = player.ped.coordinates
 		val loudness = 1f //player.networkGetLoudness() * 10
 
-		Client.getPlayersOnline().forEach { anotherPlayer ->
+		Client.getActivePlayers().forEach { anotherPlayer ->
 			if (anotherPlayer == player.id) return@forEach
 
 			val anotherPlayerPed = getPlayerPed(anotherPlayer) ?: return@forEach

@@ -3,15 +3,15 @@ package online.fivem.client.modules.basics
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import online.fivem.client.common.AbstractClientModule
-import online.fivem.client.events.PauseMenuStateChangedEvent
 import online.fivem.client.modules.server_event_exchanger.ServerEvent
-import online.fivem.common.common.Event
 import online.fivem.common.events.net.*
+import online.fivem.common.extensions.forEach
 import kotlin.js.Date
 
 class ServersCommandsHandlerModule(
 	private val spawnManagerModule: SpawnManagerModule,
-	private val joinTransitionModule: JoinTransitionModule
+	private val joinTransitionModule: JoinTransitionModule,
+	private val stateRepositoryModule: StateRepositoryModule
 ) : AbstractClientModule() {
 
 	private var lastSync = 0.0
@@ -19,18 +19,14 @@ class ServersCommandsHandlerModule(
 	override fun onStartAsync() = async {
 		spawnManagerModule.waitForStart()
 		joinTransitionModule.waitForStart()
+		stateRepositoryModule.waitForStart()
+
+		subscribeOnPauseMenuState()
 
 		ServerEvent.apply {
 			on<StopResourceEvent> { onStopEvent(it.eventId) }
 			on<ServerSideSynchronizationEvent> { onServerRequest(it) }
 			on<SpawnPlayerEvent> { onPlayerSpawn(it) }
-		}
-
-		Event.apply {
-			on<PauseMenuStateChangedEvent.Enabled> {
-				if (Date.now() - lastSync >= SYNC_TIME_THRESHOLD_MILLISECONDS) synchronizeToServer()
-			}
-//			on<SpawnVehicleEvent> { onVehicleSpawn(it) }
 		}
 	}
 
@@ -41,6 +37,14 @@ class ServersCommandsHandlerModule(
 //			Client.setVehicleOilLevel(vehicle, event.vehicleId)
 //		}
 //	}
+
+	private fun subscribeOnPauseMenuState() = launch {
+		stateRepositoryModule.isPauseMenuEnabled.openSubscription().forEach { isPause ->
+			if (isPause && Date.now() - lastSync >= SYNC_TIME_THRESHOLD_MILLISECONDS) {
+				synchronizeToServer()
+			}
+		}
+	}
 
 	private fun onStopEvent(eventId: Int) = launch {
 		synchronizeToServer().join()

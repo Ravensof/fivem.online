@@ -4,7 +4,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.extensions.distance
-import online.fivem.client.extensions.getPlayersOnline
 import online.fivem.client.gtav.Client
 import online.fivem.client.gtav.enums.MarkerType
 import online.fivem.client.modules.basics.StateRepositoryModule
@@ -41,13 +40,13 @@ class VoiceIndicatorModule(
 
 		repeatJob(100) {
 
-			pedIndicators = Client.getPlayersOnline().associate { playerId ->
+			pedIndicators = Client.getActivePlayers().associate { playerId ->
 				val playerPed = Client.getPlayerPed(playerId).orZero()
 
 				playerPed to (
-						Client.networkIsPlayerTalking(playerId) && myCoordinates.toCoordinates().distance(
-							Client.getEntityCoords(playerPed)
-						) <= DRAW_DISTANCE_M
+						Client.networkIsPlayerTalking(playerId)
+								&& Client.isEntityVisible(playerPed)
+								&& myCoordinates.toCoordinates().distance(Client.getEntityCoords(playerPed)) <= DRAW_DISTANCE_M
 						)
 			}
 

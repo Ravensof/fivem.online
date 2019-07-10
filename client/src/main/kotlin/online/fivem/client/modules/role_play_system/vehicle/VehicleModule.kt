@@ -4,20 +4,22 @@ import kotlinx.coroutines.async
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.common.GlobalCache
 import online.fivem.client.events.PlayerVehicleSeatEvent
+import online.fivem.client.modules.basics.StateRepositoryModule
 import online.fivem.client.modules.basics.TickExecutorModule
 import online.fivem.common.common.Event
 import online.fivem.common.common.generateLong
 import online.fivem.common.gtav.NativeTask
 
 class VehicleModule(
-	private val tickExecutorModule: TickExecutorModule
+	private val tickExecutorModule: TickExecutorModule,
+	private val stateRepositoryModule: StateRepositoryModule
 ) : AbstractClientModule() {
 
 	private val seatShuffling = generateLong()
 
 	override suspend fun onInit() {
 		moduleLoader.apply {
-			add(InternetRadioModule())
+			add(InternetRadioModule(stateRepositoryModule))
 			add(SpeedometerModule())
 			add(RealisticFailureModule(tickExecutorModule))
 		}

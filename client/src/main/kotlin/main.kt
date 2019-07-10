@@ -1,5 +1,6 @@
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import online.fivem.client.extensions.Native
 import online.fivem.client.gtav.Natives
 import online.fivem.client.modules.basics.BasicsModules
 import online.fivem.client.modules.nui_event_exchanger.NuiEventExchangerModule
@@ -22,7 +23,7 @@ private fun main() {
 }
 
 private fun start() {
-	defaultDispatcher = Dispatchers.Unconfined
+	defaultDispatcher = Dispatchers.Native
 
 	Console.log("client side loading..")
 
