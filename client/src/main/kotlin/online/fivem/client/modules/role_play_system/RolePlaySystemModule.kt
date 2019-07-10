@@ -3,9 +3,9 @@ package online.fivem.client.modules.role_play_system
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import online.fivem.Natives
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.common.GlobalCache.player
-import online.fivem.client.gtav.Client
 import online.fivem.client.modules.basics.BufferedActionsModule
 import online.fivem.client.modules.basics.StateRepositoryModule
 import online.fivem.client.modules.basics.TickExecutorModule
@@ -22,7 +22,7 @@ class RolePlaySystemModule(
 ) : AbstractClientModule() {
 
 	init {
-		Client.setPlayerHealthRechargeMultiplier(Client.getPlayerId(), 0f)
+		Natives.setPlayerHealthRechargeMultiplier(Natives.getPlayerId(), 0f)
 	}
 
 	override suspend fun onInit() {
@@ -72,7 +72,7 @@ class RolePlaySystemModule(
 
 	private fun subscribeOnPed() = launch {
 		stateRepositoryModule.playerPed.openSubscription().forEach { ped ->
-			Client.setPedCanRagdollFromPlayerImpact(ped.entity, true)
+			Natives.setPedCanRagdollFromPlayerImpact(ped.entity, true)
 		}
 	}
 }

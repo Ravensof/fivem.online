@@ -2,11 +2,11 @@ package online.fivem.client.modules.role_play_system.vehicle
 
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import online.fivem.Natives
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.extensions.start
 import online.fivem.client.extensions.stop
 import online.fivem.client.extensions.value
-import online.fivem.client.gtav.Client
 import online.fivem.client.modules.basics.StateRepositoryModule
 import online.fivem.client.modules.nui_event_exchanger.NuiEvent
 import online.fivem.common.GlobalConfig
@@ -28,7 +28,7 @@ class InternetRadioModule(
 	override suspend fun onInit() {
 		radioStationList.forEach {
 			it.value.name?.let { name ->
-				Client.addTextEntry(it.key, name)
+				Natives.addTextEntry(it.key, name)
 			}
 		}
 
@@ -99,7 +99,7 @@ class InternetRadioModule(
 	}
 
 	private fun muteNativeRadio(mute: Boolean) {
-		Client.setFrontendRadioActive(!mute)
+		Natives.setFrontendRadioActive(!mute)
 
 		if (mute) {
 			NativeAudioScenes.DLC_MPHEIST_TRANSITION_TO_APT_FADE_IN_RADIO_SCENE.start()

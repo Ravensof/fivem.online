@@ -1,7 +1,7 @@
 package online.fivem.client.entities
 
+import online.fivem.Natives
 import online.fivem.client.common.GlobalCache
-import online.fivem.client.gtav.Client
 import online.fivem.common.common.EntityId
 import online.fivem.common.gtav.NativeTask
 import online.fivem.common.gtav.NativeWeapon
@@ -11,21 +11,22 @@ class Ped private constructor(
 ) : Entity(entity) {
 
 	var armour: Int
-		get() = Client.getPedArmour(entity)
-		set(value) = Client.addArmourToPed(entity, value - armour)
+		get() = Natives.getPedArmour(entity)
+		set(value) = Natives.addArmourToPed(entity, value - armour)
 
 	val weapon = Weapons(this)
 
 	init {
-		if (!Client.doesEntityExist(entity)) throw PedDoesntExistsException("ped $entity doesnt exists")
+		if (!Natives.doesEntityExist(entity)) throw PedDoesntExistsException("ped $entity doesnt exists")
 	}
 
-	fun isTryingToGetInAnyVehicle() = Client.isPedInAnyVehicle(entity) != (Client.getVehiclePedIsUsing(entity) != null)
+	fun isTryingToGetInAnyVehicle() =
+		Natives.isPedInAnyVehicle(entity) != (Natives.getVehiclePedIsUsing(entity) != null)
 
-	fun isInAVehicle() = Client.isPedInAnyVehicle(entity, false)
+	fun isInAVehicle() = Natives.isPedInAnyVehicle(entity, false)
 
 	fun getVehicleIsInteracted(): Vehicle? {
-		Client.getVehiclePedIsUsing(entity)?.let { entity ->
+		Natives.getVehiclePedIsUsing(entity)?.let { entity ->
 			return Vehicle.newInstance(entity)
 		}
 
@@ -33,47 +34,47 @@ class Ped private constructor(
 	}
 
 	fun getVehicleIsIn(lastVehicle: Boolean = false): Vehicle? {
-		return Client.getVehiclePedIsIn(entity, lastVehicle)?.let { Vehicle.newInstance(it) }
+		return Natives.getVehiclePedIsIn(entity, lastVehicle)?.let { Vehicle.newInstance(it) }
 	}
 
-	fun isTaskActive(task: NativeTask) = Client.getIsTaskActive(entity, task.number)
+	fun isTaskActive(task: NativeTask) = Natives.getIsTaskActive(entity, task.number)
 
-	fun clearTasks() = Client.clearPedTasks(entity)
+	fun clearTasks() = Natives.clearPedTasks(entity)
 
-	fun clearTasksImmediately() = Client.clearPedTasksImmediately(entity)
+	fun clearTasksImmediately() = Natives.clearPedTasksImmediately(entity)
 
 	fun dropWeapon() {
-		Client.setPedDropsWeapon(entity)
+		Natives.setPedDropsWeapon(entity)
 	}
 
 	fun setIntoVehicle(vehicle: EntityId, seatIndex: Int) {
-		Client.setPedIntoVehicle(entity, vehicle, seatIndex)
+		Natives.setPedIntoVehicle(entity, vehicle, seatIndex)
 	}
 
 	fun setDropsWeaponsWhenDead(toggle: Boolean) {
-		Client.setPedDropsWeaponsWhenDead(entity, toggle)
+		Natives.setPedDropsWeaponsWhenDead(entity, toggle)
 	}
 
 	fun hasGotWeapon(weapon: NativeWeapon): Boolean {
-		return Client.hasPedGotWeapon(entity, weapon.code)
+		return Natives.hasPedGotWeapon(entity, weapon.code)
 	}
 
 	fun giveWeapon(weapon: NativeWeapon, ammo: Int, isHidden: Boolean = false, equipNow: Boolean = false) =
 		giveWeapon(weapon.code, ammo, isHidden, equipNow)
 
 	fun giveWeapon(weapon: String, ammo: Int, isHidden: Boolean = false, equipNow: Boolean = false) {
-		Client.giveWeaponToPed(entity, weapon, ammo, isHidden, equipNow)
+		Natives.giveWeaponToPed(entity, weapon, ammo, isHidden, equipNow)
 	}
 
 	fun getWeapons(): List<Weapons.Weapon> {
 		return NativeWeapon.values().filter { it != NativeWeapon.WEAPON_UNARMED }.mapNotNull { weapon[it] }
 	}
 
-	suspend fun switchOut() = Client.switchOutPlayer(entity)
+	suspend fun switchOut() = Natives.switchOutPlayer(entity)
 
-	suspend fun switchIn() = Client.switchInPlayer(entity)
+	suspend fun switchIn() = Natives.switchInPlayer(entity)
 
-	fun removeAllWeapons() = Client.removeAllPedWeapons(entity)
+	fun removeAllWeapons() = Natives.removeAllPedWeapons(entity)
 
 	class PedDoesntExistsException(message: String) : Exception(message)
 
@@ -86,18 +87,18 @@ class Ped private constructor(
 
 		class Weapon(private val ped: Ped, val weapon: NativeWeapon) {
 
-//			val clipSize = Client.getWeaponClipSize(weapon.hash)
+//			val clipSize = Natives.getWeaponClipSize(weapon.hash)
 
 			var ammo
-				get() = Client.getAmmoInPedWeapon(ped.entity, weapon.code)
-				set(value) = Client.addAmmoToPed(ped.entity, weapon.code, value - ammo)
+				get() = Natives.getAmmoInPedWeapon(ped.entity, weapon.code)
+				set(value) = Natives.addAmmoToPed(ped.entity, weapon.code, value - ammo)
 
 //			fun drop(){
-//				Client.setPedDropsInventoryWeapon(ped.entity, weapon.code)
+//				Natives.setPedDropsInventoryWeapon(ped.entity, weapon.code)
 //			}
 
 			fun remove() {
-				Client.removeWeaponFromPed(ped.entity, weapon.code)
+				Natives.removeWeaponFromPed(ped.entity, weapon.code)
 			}
 		}
 	}

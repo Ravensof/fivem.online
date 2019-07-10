@@ -1,9 +1,9 @@
 package online.fivem.client.entities
 
 import kotlinx.coroutines.withTimeout
+import online.fivem.Natives
 import online.fivem.client.common.GlobalCache
 import online.fivem.client.extensions.*
-import online.fivem.client.gtav.Client
 import online.fivem.common.common.EntityId
 import online.fivem.common.common.Utils
 import online.fivem.common.entities.CoordinatesX
@@ -17,69 +17,69 @@ class Vehicle private constructor(
 	entity: EntityId
 ) : Entity(entity) {
 
-	val networkId = Client.networkGetNetworkIdFromEntity(entity)
+	val networkId = Natives.networkGetNetworkIdFromEntity(entity)
 	val handling = Handling(entity)
 	val wheels: List<Wheel>
 	val doors: List<Door>
-	val numberOfWheels = Client.getVehicleNumberOfWheels(entity)
-	val numberOfDoors = Client.getNumberOfVehicleDoors(entity)
-	val numberOfPassengersSeats = Client.getVehicleMaxNumberOfPassengers(entity)
+	val numberOfWheels = Natives.getVehicleNumberOfWheels(entity)
+	val numberOfDoors = Natives.getNumberOfVehicleDoors(entity)
+	val numberOfPassengersSeats = Natives.getVehicleMaxNumberOfPassengers(entity)
 	val mod = Mod(entity)
 
-	val classType: Int = Client.getVehicleClass(entity)
+	val classType: Int = Natives.getVehicleClass(entity)
 
 	var modKit: Int
-		get() = Client.getVehicleModKit(entity)
-		set(value) = Client.setVehicleModKit(entity, value)
+		get() = Natives.getVehicleModKit(entity)
+		set(value) = Natives.setVehicleModKit(entity, value)
 
 	var ownedByPlayer: Boolean
-		get() = Client.isVehiclePreviouslyOwnedByPlayer(entity)
-		set(value) = Client.setVehicleHasBeenOwnedByPlayer(entity, value)
+		get() = Natives.isVehiclePreviouslyOwnedByPlayer(entity)
+		set(value) = Natives.setVehicleHasBeenOwnedByPlayer(entity, value)
 
 	var clutch: Number
-		get() = Client.getVehicleClutch(entity)
-		set(value) = Client.setVehicleClutch(entity, value)
+		get() = Natives.getVehicleClutch(entity)
+		set(value) = Natives.setVehicleClutch(entity, value)
 
 	var currentRpm: Double
-		set(value) = Client.setVehicleCurrentRpm(entity, value)
-		get() = Client.getVehicleCurrentRpm(entity)
+		set(value) = Natives.setVehicleCurrentRpm(entity, value)
+		get() = Natives.getVehicleCurrentRpm(entity)
 
 	var currentGear: Int
-		get() = Client.getVehicleCurrentGear(entity)
-		set(value) = Client.setVehicleCurrentGear(entity, value)
+		get() = Natives.getVehicleCurrentGear(entity)
+		set(value) = Natives.setVehicleCurrentGear(entity, value)
 
 	var highGear: Int
-		get() = Client.getVehicleHighGear(entity)
-		set(value) = Client.setVehicleHighGear(entity, value)
+		get() = Natives.getVehicleHighGear(entity)
+		set(value) = Natives.setVehicleHighGear(entity, value)
 
 	var isAlarmSet: Boolean
-		get() = Client.isVehicleAlarmSet(entity)
-		set(value) = Client.setVehicleAlarm(entity, value)
+		get() = Natives.isVehicleAlarmSet(entity)
+		set(value) = Natives.setVehicleAlarm(entity, value)
 
 	var alarmTimeLeft: Int
-		get() = Client.getVehicleAlarmTimeLeft(entity)
-		set(value) = Client.setVehicleAlarmTimeLeft(entity, value)
+		get() = Natives.getVehicleAlarmTimeLeft(entity)
+		set(value) = Natives.setVehicleAlarmTimeLeft(entity, value)
 
 	val dashboardSpeed: Double
-		get() = Client.getVehicleDashboardSpeed(entity)
+		get() = Natives.getVehicleDashboardSpeed(entity)
 
 	var engineTemperature: Float
-		get() = Client.getVehicleEngineTemperature(entity)
-		set(value) = Client.setVehicleEngineTemperature(entity, value)
+		get() = Natives.getVehicleEngineTemperature(entity)
+		set(value) = Natives.setVehicleEngineTemperature(entity, value)
 
 	var fuelLevel: Double
-		get() = Client.getVehicleFuelLevel(entity)
-		set(value) = Client.setVehicleFuelLevel(entity, value)
+		get() = Natives.getVehicleFuelLevel(entity)
+		set(value) = Natives.setVehicleFuelLevel(entity, value)
 
 	var oilLevel: Float
-		get() = Client.getVehicleOilLevel(entity)
-		set(value) = Client.setVehicleOilLevel(entity, value)
+		get() = Natives.getVehicleOilLevel(entity)
+		set(value) = Natives.setVehicleOilLevel(entity, value)
 
 	//gravityAmount get set
 
 	var isHandBrake: Boolean
-		set(value) = Client.setVehicleHandbrake(entity, value)
-		get() = Client.getVehicleHandbrake(entity)
+		set(value) = Natives.setVehicleHandbrake(entity, value)
+		get() = Natives.getVehicleHandbrake(entity)
 
 	//handlingField set get
 	//handlingFloat set get
@@ -87,97 +87,97 @@ class Vehicle private constructor(
 	//handlingVector set get
 	//indicatorLights
 	var nextGear: Int
-		get() = Client.getVehicleNextGear(entity)
-		set(value) = Client.setVehicleNextGear(entity, value)
+		get() = Natives.getVehicleNextGear(entity)
+		set(value) = Natives.setVehicleNextGear(entity, value)
 
 	//steeringAngle set get
 	//steeringScale set get
 	var turboPressure: Int
-		get() = Client.getVehicleTurboPressure(entity).orZero()
-		set(value) = Client.setVehicleTurboPressure(entity, value)
+		get() = Natives.getVehicleTurboPressure(entity).orZero()
+		set(value) = Natives.setVehicleTurboPressure(entity, value)
 
 	var maxSpeed: Double
-		get() = Client.getVehicleMaxSpeed(entity)
-		set(value) = Client.setEntityMaxSpeed(entity, value)
+		get() = Natives.getVehicleMaxSpeed(entity)
+		set(value) = Natives.setEntityMaxSpeed(entity, value)
 
 	var isEngineOn: Boolean
-		get() = Client.isVehicleEngineOn(entity)
-		set(value) = Client.setVehicleEngineOn(entity, value, true)
+		get() = Natives.isVehicleEngineOn(entity)
+		set(value) = Natives.setVehicleEngineOn(entity, value, true)
 
 	//isVehicleInteriorLightOn
 	//isVehicleNeedsToBeHotwired
 	//isVehiclePreviouslyOwnedByPlayer
 
 	var isWanted: Boolean
-		get() = Client.isVehicleWanted(entity)
-		set(value) = Client.setVehicleIsWanted(entity, value)
+		get() = Natives.isVehicleWanted(entity)
+		set(value) = Natives.setVehicleIsWanted(entity, value)
 
 	//	SetVehicleAutoRepairDisabled
 
 	var dirtLevel: Int
-		get() = Client.getVehicleDirtLevel(entity)
-		set(value) = Client.setVehicleDirtLevel(entity, value)
+		get() = Natives.getVehicleDirtLevel(entity)
+		set(value) = Natives.setVehicleDirtLevel(entity, value)
 
 	var engineHealth: Double
-		get() = Client.getVehicleEngineHealth(entity)
-		set(value) = Client.setVehicleEngineHealth(entity, value)
+		get() = Natives.getVehicleEngineHealth(entity)
+		set(value) = Natives.setVehicleEngineHealth(entity, value)
 
 	var bodyHealth: Int
-		get() = Client.getVehicleBodyHealth(entity)
-		set(value) = Client.setVehicleBodyHealth(entity, value)
+		get() = Natives.getVehicleBodyHealth(entity)
+		set(value) = Natives.setVehicleBodyHealth(entity, value)
 
 	var petrolTankHealth: Double
-		get() = Client.getVehiclePetrolTankHealth(entity)
-		set(value) = Client.setVehiclePetrolTankHealth(entity, value)
+		get() = Natives.getVehiclePetrolTankHealth(entity)
+		set(value) = Natives.setVehiclePetrolTankHealth(entity, value)
 
 	var wheelType: Int
-		get() = Client.getVehicleWheelType(entity)
-		set(value) = Client.setVehicleWheelType(entity, value)
+		get() = Natives.getVehicleWheelType(entity)
+		set(value) = Natives.setVehicleWheelType(entity, value)
 
 	var colors: Pair<Int, Int>
-		get() = Client.getVehicleColours(entity)
-		set(value) = Client.setVehicleColours(entity, value.first, value.second)
+		get() = Natives.getVehicleColours(entity)
+		set(value) = Natives.setVehicleColours(entity, value.first, value.second)
 
 	var extraColors: Pair<Int, Int>
-		get() = Client.getVehicleExtraColours(entity)
-		set(value) = Client.setVehicleExtraColours(entity, value.first, value.second)
+		get() = Natives.getVehicleExtraColours(entity)
+		set(value) = Natives.setVehicleExtraColours(entity, value.first, value.second)
 
 	var livery: Int?
-		get() = Client.getVehicleLivery(entity)
-		set(value) = Client.setVehicleLivery(entity, value ?: -1)
+		get() = Natives.getVehicleLivery(entity)
+		set(value) = Natives.setVehicleLivery(entity, value ?: -1)
 
 	var numberPlateText: String
-		get() = Client.getVehicleNumberPlateText(entity).orEmpty()
-		set(value) = Client.setVehicleNumberPlateText(entity, value)
+		get() = Natives.getVehicleNumberPlateText(entity).orEmpty()
+		set(value) = Natives.setVehicleNumberPlateText(entity, value)
 
 	var numberPlateTextIndex: Int
-		get() = Client.getVehicleNumberPlateTextIndex(entity)
-		set(value) = Client.setVehicleNumberPlateTextIndex(entity, value)
+		get() = Natives.getVehicleNumberPlateTextIndex(entity)
+		set(value) = Natives.setVehicleNumberPlateTextIndex(entity, value)
 
 	var windowTint: Int
-		get() = Client.getVehicleWindowTint(entity)
-		set(value) = Client.setVehicleWindowTint(entity, value)
+		get() = Natives.getVehicleWindowTint(entity)
+		set(value) = Natives.setVehicleWindowTint(entity, value)
 
 	var neonLightsColour: RGB
-		get() = Client.getVehicleNeonLightsColour(entity)
-		set(value) = Client.setVehicleNeonLightsColour(entity, value)
+		get() = Natives.getVehicleNeonLightsColour(entity)
+		set(value) = Natives.setVehicleNeonLightsColour(entity, value)
 
 	var tyreSmokeColor: RGB
-		get() = Client.getVehicleTyreSmokeColor(entity)
-		set(value) = Client.setVehicleTyreSmokeColor(entity, value)
+		get() = Natives.getVehicleTyreSmokeColor(entity)
+		set(value) = Natives.setVehicleTyreSmokeColor(entity, value)
 
 	var tyresCanBurst: Boolean
-		get() = Client.getVehicleTyresCanBurst(entity)
-		set(value) = Client.setVehicleTyresCanBurst(entity, value)
+		get() = Natives.getVehicleTyresCanBurst(entity)
+		set(value) = Natives.setVehicleTyresCanBurst(entity, value)
 
 	var doorsLockStatus: Int
-		get() = Client.getVehicleDoorLockStatus(entity)
-		set(value) = Client.setVehicleDoorsLocked(entity, value)
+		get() = Natives.getVehicleDoorLockStatus(entity)
+		set(value) = Natives.setVehicleDoorsLocked(entity, value)
 
 	init {
-		if (!Client.doesEntityExist(entity)) throw VehicleDoesntExistsException("vehicle $entity doesnt exists")
+		if (!Natives.doesEntityExist(entity)) throw VehicleDoesntExistsException("vehicle $entity doesnt exists")
 
-		Client.setNetworkIdCanMigrate(networkId, true)
+		Natives.setNetworkIdCanMigrate(networkId, true)
 
 		modKit = 0
 
@@ -212,48 +212,48 @@ class Vehicle private constructor(
 	}
 
 	fun setUndriveable(undriveable: Boolean = false) {
-		Client.setVehicleUndriveable(entity, undriveable)
+		Natives.setVehicleUndriveable(entity, undriveable)
 	}
 
 	fun setEngineTorqueMultiplier(value: Double) {
-		Client.setVehicleEngineTorqueMultiplier(entity, value)
+		Natives.setVehicleEngineTorqueMultiplier(entity, value)
 	}
 
 	fun setBrakeLights(value: Boolean = false) {
-		Client.setVehicleBrakeLights(entity, value)
+		Natives.setVehicleBrakeLights(entity, value)
 	}
 
 	fun addEnginePowerMultiplier(percents: Double) {
-		Client.setVehicleEnginePowerMultiplier(entity, percents)
+		Natives.setVehicleEnginePowerMultiplier(entity, percents)
 	}
 
 	fun setForwardSpeed(speed: Number) {
-		Client.setVehicleForwardSpeed(entity, speed)
+		Natives.setVehicleForwardSpeed(entity, speed)
 	}
 
 	fun setOnGroundProperly() {
-		Client.setVehicleOnGroundProperly(entity)
+		Natives.setVehicleOnGroundProperly(entity)
 	}
 
 	fun getPassengers(): List<Ped> {
 		val list = mutableListOf<Ped>()
 
 		for (i in -1 until numberOfPassengersSeats) {
-			val entity = Client.getPedInVehicleSeat(entity, i) ?: continue
+			val entity = Natives.getPedInVehicleSeat(entity, i) ?: continue
 			list.add(Ped.newInstance(entity))
 		}
 
 		return list
 	}
 
-	fun isEngineStarting() = Client.isVehicleEngineStarting(entity)
+	fun isEngineStarting() = Natives.isVehicleEngineStarting(entity)
 
-	fun isEngineRunning() = Client.getIsVehicleEngineRunning(entity)
+	fun isEngineRunning() = Natives.getIsVehicleEngineRunning(entity)
 
-	fun isOnAllWheels() = Client.isVehicleOnAllWheels(entity)
+	fun isOnAllWheels() = Natives.isVehicleOnAllWheels(entity)
 
 	fun turnEngineOn(value: Boolean, instantly: Boolean = false) {
-		Client.setVehicleEngineOn(entity, value, instantly)
+		Natives.setVehicleEngineOn(entity, value, instantly)
 	}
 
 	fun getTurboPressureRPMBased(startRPM: Double = 0.6, endRPM: Double = 1.0): Double {
@@ -266,8 +266,8 @@ class Vehicle private constructor(
 	}
 
 //	fun setBoostActive(){
-//		Client.setVehicleBoostActive(entity, true)
-//		Client.setVehicleForwardSpeed(entity, 30)
+//		Natives.setVehicleBoostActive(entity, true)
+//		Natives.setVehicleForwardSpeed(entity, 30)
 //		NativeScreenEffects.RACE_TURBO.start()
 //	}
 
@@ -276,8 +276,8 @@ class Vehicle private constructor(
 //	}
 
 	fun destroy() {
-		Client.setNetworkIdExistsOnAllMachines(networkId, false)
-		Client.setVehicleAsNoLongerNeeded(entity)
+		Natives.setNetworkIdExistsOnAllMachines(networkId, false)
+		Natives.setVehicleAsNoLongerNeeded(entity)
 	}
 
 	class Mod(private val vehicle: EntityId) {
@@ -297,21 +297,21 @@ class Vehicle private constructor(
 	) {
 
 		var health: Number
-			get() = Client.getVehicleWheelHealth(vehicle, index)
-			set(value) = Client.setVehicleWheelHealth(vehicle, index, value)
+			get() = Natives.getVehicleWheelHealth(vehicle, index)
+			set(value) = Natives.setVehicleWheelHealth(vehicle, index, value)
 
-		val speed: Int = Client.getVehicleWheelSpeed(vehicle, index)
+		val speed: Int = Natives.getVehicleWheelSpeed(vehicle, index)
 
 		var xOffset: Number
-			get() = Client.getVehicleWheelXOffset(vehicle, index)
-			set(value) = Client.setVehicleWheelXOffset(vehicle, index, value)
+			get() = Natives.getVehicleWheelXOffset(vehicle, index)
+			set(value) = Natives.setVehicleWheelXOffset(vehicle, index, value)
 
 		var xRotation: Number
-			get() = Client.getVehicleWheelXrot(vehicle, index)
-			set(value) = Client.setVehicleWheelXrot(vehicle, index, value)
+			get() = Natives.getVehicleWheelXrot(vehicle, index)
+			set(value) = Natives.setVehicleWheelXrot(vehicle, index, value)
 
 		fun burst(onRim: Boolean, damage: Double) {
-			Client.setVehicleTyreBurst(vehicle, index, onRim, damage)
+			Natives.setVehicleTyreBurst(vehicle, index, onRim, damage)
 		}
 	}
 
@@ -333,11 +333,11 @@ class Vehicle private constructor(
 		): Vehicle {
 
 			val entity = withTimeout(5_000) {
-				Client.createVehicle(vehicleModel, coordinatesX)
+				Natives.createVehicle(vehicleModel, coordinatesX)
 			}
 
 			return newInstance(entity).apply {
-				Client.setNetworkIdExistsOnAllMachines(networkId, true)
+				Natives.setNetworkIdExistsOnAllMachines(networkId, true)
 				ownedByPlayer = true
 				setOnGroundProperly()
 			}
@@ -426,20 +426,20 @@ class Vehicle private constructor(
 
 		private class HandlingDelegate(private val fieldName: String) {
 			operator fun <T> getValue(handling: Handling, property: KProperty<*>): T = when (fieldName[0]) {
-				'f' -> Client.getVehicleHandlingFloat(handling.entity, "CHandlingData", fieldName).unsafeCast<T>()
-				'i', 'n' -> Client.getVehicleHandlingInt(handling.entity, "CHandlingData", fieldName).unsafeCast<T>()
+				'f' -> Natives.getVehicleHandlingFloat(handling.entity, "CHandlingData", fieldName).unsafeCast<T>()
+				'i', 'n' -> Natives.getVehicleHandlingInt(handling.entity, "CHandlingData", fieldName).unsafeCast<T>()
 				else -> throw Exception("this type ($fieldName) is not supported for vehicle handling")
 			}
 
 			operator fun <T> setValue(handling: Handling, property: KProperty<*>, value: T) {
 				when (property.name[0]) {
-					'f', 'n' -> Client.setVehicleHandlingFloat(
+					'f', 'n' -> Natives.setVehicleHandlingFloat(
 						handling.entity,
 						"CHandlingData",
 						fieldName,
 						value as Double
 					)
-					'i' -> Client.setVehicleHandlingInt(handling.entity, "CHandlingData", fieldName, value as Int)
+					'i' -> Natives.setVehicleHandlingInt(handling.entity, "CHandlingData", fieldName, value as Int)
 				}
 			}
 		}

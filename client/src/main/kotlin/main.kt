@@ -1,7 +1,6 @@
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import online.fivem.client.extensions.Native
-import online.fivem.client.gtav.Natives
+import online.fivem.Natives
 import online.fivem.client.modules.basics.BasicsModules
 import online.fivem.client.modules.nui_event_exchanger.NuiEventExchangerModule
 import online.fivem.client.modules.role_play_system.RolePlaySystemModule
@@ -12,6 +11,8 @@ import online.fivem.common.common.Console
 import online.fivem.common.common.ModuleLoader
 import online.fivem.common.common.defaultDispatcher
 import online.fivem.common.gtav.NativeEvents
+import online.fivem.extensions.Native
+import online.fivem.extensions.on
 
 private fun main() {
 

@@ -1,4 +1,4 @@
-package online.fivem.client.common
+package online.fivem.common
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Runnable

@@ -2,6 +2,7 @@ package online.fivem.client.modules.basics
 
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import online.fivem.Natives
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.common.CoordinatesEvent
 import online.fivem.client.common.GlobalCache.player
@@ -11,7 +12,6 @@ import online.fivem.client.events.*
 import online.fivem.client.extensions.getSeatOfPedInVehicle
 import online.fivem.client.extensions.isAnyRadioTrackPlaying
 import online.fivem.client.extensions.isControlPressed
-import online.fivem.client.gtav.Client
 import online.fivem.client.modules.basics.state_repository_modules.ProfileSettingsRepositoryModule
 import online.fivem.common.common.Event
 import online.fivem.common.entities.CoordinatesX
@@ -78,7 +78,7 @@ class StateRepositoryModule(
 		}
 
 		this@StateRepositoryModule.repeatJob(500) {
-			checkPauseMenuState(Client.getPauseMenuState())
+			checkPauseMenuState(Natives.getPauseMenuState())
 
 			checkIsPlayerInVehicle(player.ped)
 			checkPlayerTryingToGetAnyVehicle(player.ped)
@@ -96,7 +96,7 @@ class StateRepositoryModule(
 	}
 
 	private suspend fun checkIsPlayerTalking(playerId: Int) {
-		val value = Client.networkIsPlayerTalking(playerId) || NativeControls.Keys.PUSH_TO_TALK.isControlPressed()
+		val value = Natives.networkIsPlayerTalking(playerId) || NativeControls.Keys.PUSH_TO_TALK.isControlPressed()
 
 		if (isPlayerTalking.valueOrNull == value) return
 
@@ -272,7 +272,7 @@ class StateRepositoryModule(
 
 	private suspend fun checkRadio() {
 		val currentRadio =
-			if (playersVehicle?.isEngineRunning() == true && (isRadioEnabled || Client.isAnyRadioTrackPlaying())) Client.getRadioStation() else null
+			if (playersVehicle?.isEngineRunning() == true && (isRadioEnabled || Natives.isAnyRadioTrackPlaying())) Natives.getRadioStation() else null
 
 		if (currentRadio != radioStation.valueOrNull) {
 
@@ -288,7 +288,7 @@ class StateRepositoryModule(
 
 		if (currentVehicle == previousVehicle) return
 
-		val playerSeatIndex = currentVehicle?.let { Client.getSeatOfPedInVehicle(it.entity, playerPed.entity) }
+		val playerSeatIndex = currentVehicle?.let { Natives.getSeatOfPedInVehicle(it.entity, playerPed.entity) }
 		checkPlayerSeatIndex(playerSeatIndex)
 
 		when {

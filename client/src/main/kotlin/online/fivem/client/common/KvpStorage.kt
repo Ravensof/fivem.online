@@ -1,26 +1,26 @@
 package online.fivem.client.common
 
-import online.fivem.client.gtav.Client
+import online.fivem.Natives
 import online.fivem.common.Serializer
 import online.fivem.common.other.Serializable
 
 object KvpStorage {
 
-	fun delete(key: String) = Client.deleteResourceKvp(key)
+	fun delete(key: String) = Natives.deleteResourceKvp(key)
 
-	fun set(key: String, value: String) = Client.setResourceKvp(key, value)
+	fun set(key: String, value: String) = Natives.setResourceKvp(key, value)
 
-	fun set(key: String, value: Float) = Client.setResourceKvpFloat(key, value)
+	fun set(key: String, value: Float) = Natives.setResourceKvpFloat(key, value)
 
-	fun set(key: String, value: Int) = Client.setResourceKvpInt(key, value)
+	fun set(key: String, value: Int) = Natives.setResourceKvpInt(key, value)
 
 	fun set(key: String, value: Serializable) = set(key, Serializer.serialize(value))
 
-	fun getFloat(key: String): Float = Client.getResourceKvpFloat(key)
+	fun getFloat(key: String): Float = Natives.getResourceKvpFloat(key)
 
-	fun getInt(key: String): Int = Client.getResourceKvpInt(key)
+	fun getInt(key: String): Int = Natives.getResourceKvpInt(key)
 
-	fun getString(key: String): String? = Client.getResourceKvpString(key)
+	fun getString(key: String): String? = Natives.getResourceKvpString(key)
 
 	inline fun <reified R : Any> getSerializable(key: String): R? {
 		return getString(key)?.let {
@@ -29,16 +29,16 @@ object KvpStorage {
 	}
 
 	fun getKeys(prefix: String): List<String> {
-		val handle = Client.startFindKvp(prefix)
+		val handle = Natives.startFindKvp(prefix)
 
 		val list = mutableListOf<String>()
 
 		while (true) {
-			val data = Client.findKvp(handle) ?: break
+			val data = Natives.findKvp(handle) ?: break
 			list.add(data)
 		}
 
-		Client.endFindKvp(handle)
+		Natives.endFindKvp(handle)
 
 		return list
 	}

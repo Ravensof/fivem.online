@@ -1,15 +1,15 @@
 package online.fivem.client.extensions
 
-import online.fivem.client.gtav.Client
-import online.fivem.client.gtav.Natives
+import online.fivem.Natives
 import online.fivem.common.common.EntityId
 import online.fivem.common.entities.Coordinates
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.entities.RGB
 import online.fivem.common.gtav.NativeTask
 import online.fivem.common.gtav.NativeWeather
+import online.fivem.extensions.invokeNative
 
-suspend fun Client.createVehicle(
+suspend fun Natives.createVehicle(
 	modelHash: Int,
 	coordinatesX: CoordinatesX,
 	isNetwork: Boolean = true,
@@ -24,7 +24,7 @@ suspend fun Client.createVehicle(
 	thisScriptCheck
 )
 
-fun Client.networkResurrectLocalPlayer(coordinatesX: CoordinatesX, changeTime: Boolean = true) =
+fun Natives.networkResurrectLocalPlayer(coordinatesX: CoordinatesX, changeTime: Boolean = true) =
 	networkResurrectLocalPlayer(
 		coordinatesX.x,
 		coordinatesX.y,
@@ -33,7 +33,7 @@ fun Client.networkResurrectLocalPlayer(coordinatesX: CoordinatesX, changeTime: B
 		changeTime
 	)
 
-fun Client.drawScreenText2D(
+fun Natives.drawScreenText2D(
 	x: Double,
 	y: Double,
 	message: String,
@@ -62,7 +62,7 @@ fun Client.drawScreenText2D(
 	drawText(x, y)
 }
 
-fun Client.drawScreenText3D(
+fun Natives.drawScreenText3D(
 	coordinates: Coordinates,
 	message: String,
 	scale: Double = 1.0,
@@ -76,19 +76,19 @@ fun Client.drawScreenText3D(
 	}
 }
 
-fun Client.getAverageFPS(): Double {
+fun Natives.getAverageFPS(): Double {
 	return getFrameCount().toDouble() / getGameTimer()
 }
 
-fun Client.getCurrentFPS(): Double {
+fun Natives.getCurrentFPS(): Double {
 	return 1f / getFrameTime()
 }
 
-fun Client.setVehicleNeonLightsColour(vehicle: EntityId, color: RGB) {
+fun Natives.setVehicleNeonLightsColour(vehicle: EntityId, color: RGB) {
 	setVehicleNeonLightsColour(vehicle, color.red, color.green, color.blue)
 }
 
-fun Client.setVehicleTyreSmokeColor(vehicle: EntityId, color: RGB) {
+fun Natives.setVehicleTyreSmokeColor(vehicle: EntityId, color: RGB) {
 	setVehicleTyreSmokeColor(vehicle, color.red, color.green, color.blue)
 }
 
@@ -98,8 +98,8 @@ fun Client.setVehicleTyreSmokeColor(vehicle: EntityId, color: RGB) {
  * 1 позади водителя
  * 2 ...
  */
-fun Client.getSeatOfPedInVehicle(vehicle: EntityId, ped: EntityId): Int? {
-	for (i in -1 until Client.getVehicleMaxNumberOfPassengers(vehicle)) {
+fun Natives.getSeatOfPedInVehicle(vehicle: EntityId, ped: EntityId): Int? {
+	for (i in -1 until Natives.getVehicleMaxNumberOfPassengers(vehicle)) {
 		if (getPedInVehicleSeat(vehicle, i) == ped) {
 			return i
 		}
@@ -108,18 +108,14 @@ fun Client.getSeatOfPedInVehicle(vehicle: EntityId, ped: EntityId): Int? {
 	return null
 }
 
-fun Client.requestCollisionAtCoordinates(coordinates: Coordinates) =
+fun Natives.requestCollisionAtCoordinates(coordinates: Coordinates) =
 	requestCollisionAtCoordinates(coordinates.x, coordinates.y, coordinates.z)
 
-fun Client.getHexHashKey(functionName: String): String {
+fun Natives.getHexHashKey(functionName: String): String {
 	return "0x" + (getHashKey(functionName) and 0xFFFFFFFF).toString(16)
 }
 
-fun Client.invokeNative(functionName: String, vararg args: Any): Any {
-	return Natives.invokeNative(getHexHashKey(functionName), *args)
-}
-
-fun Client.setWeatherTypeTransition(weatherType1: NativeWeather, weatherType2: NativeWeather, percentWeather2: Float) {
+fun Natives.setWeatherTypeTransition(weatherType1: NativeWeather, weatherType2: NativeWeather, percentWeather2: Float) {
 	@Suppress("DEPRECATION")
 	setWeatherTypeTransition(
 		getHexHashKey(weatherType1.code),
@@ -128,28 +124,28 @@ fun Client.setWeatherTypeTransition(weatherType1: NativeWeather, weatherType2: N
 	)//todo test
 }
 
-fun Client.cellFrontCamActivate(activate: Boolean) {
-	Natives.invokeNative<Nothing>("0x2491A93618B7D838", activate)
+fun Natives.cellFrontCamActivate(activate: Boolean) {
+	Natives.invokeNative("0x2491A93618B7D838", activate)
 }
 
-fun Client.takePhoto() {
-	Natives.invokeNative<Nothing>("0xa67c35c56eb1bd9d")
+fun Natives.takePhoto() {
+	Natives.invokeNative("0xa67c35c56eb1bd9d")
 }
 
-fun Client.clearPhoto() {
-	Natives.invokeNative<Nothing>("0xd801cc02177fa3f1")
+fun Natives.clearPhoto() {
+	Natives.invokeNative("0xd801cc02177fa3f1")
 }
 
-fun Client.wasPhotoTaken(): Boolean {
-	return Natives.invokeNative<Number>("0x0d6ca79eeebd8ca3") == 1
+fun Natives.wasPhotoTaken(): Boolean {
+	return Natives.invokeNative("0x0d6ca79eeebd8ca3") == 1
 }
 
-fun Client.savePhoto(unk: Int) {
-	Natives.invokeNative<Nothing>("0x3dec726c25a11bac")
+fun Natives.savePhoto(unk: Int) {
+	Natives.invokeNative("0x3dec726c25a11bac")
 }
 
-fun Client.getIsTaskActive(ped: EntityId, task: NativeTask): Boolean {
+fun Natives.getIsTaskActive(ped: EntityId, task: NativeTask): Boolean {
 	return getIsTaskActive(ped, task.number)
 }
 
-fun Client.isAnyRadioTrackPlaying() = getAudibleMusicTrackTextId() != 1
+fun Natives.isAnyRadioTrackPlaying() = getAudibleMusicTrackTextId() != 1

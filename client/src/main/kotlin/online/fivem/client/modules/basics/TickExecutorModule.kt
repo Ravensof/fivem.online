@@ -1,15 +1,16 @@
 package online.fivem.client.modules.basics
 
 import kotlinx.coroutines.Job
+import online.fivem.Natives
 import online.fivem.client.common.AbstractClientModule
-import online.fivem.client.gtav.Natives.setTick
+import online.fivem.extensions.setTick
 
 class TickExecutorModule : AbstractClientModule() {
 
 	private val tickFunctions = mutableMapOf<Any, () -> Unit>()
 
 	override suspend fun onInit() {
-		setTick {
+		Natives.setTick {
 			try {
 				tickFunctions.forEach { it.value() }
 			} catch (e: Throwable) {

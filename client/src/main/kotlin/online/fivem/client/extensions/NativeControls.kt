@@ -2,36 +2,36 @@
 
 package online.fivem.client.extensions
 
-import online.fivem.client.gtav.Client
+import online.fivem.Natives
 import online.fivem.common.gtav.NativeControls
 
 fun NativeControls.Keys.disableControlAction(disable: Boolean = true) =
-	Client.disableControlAction(Client.defaultControlGroup.index, index, disable)
+	Natives.disableControlAction(Natives.defaultControlGroup.index, index, disable)
 
 fun NativeControls.Keys.isDisabledControlJustPressed() =
-	Client.isDisabledControlJustPressed(Client.defaultControlGroup.index, index)
+	Natives.isDisabledControlJustPressed(Natives.defaultControlGroup.index, index)
 
 fun NativeControls.Keys.isDisabledControlJustReleased() =
-	Client.isDisabledControlJustReleased(Client.defaultControlGroup.index, index)
+	Natives.isDisabledControlJustReleased(Natives.defaultControlGroup.index, index)
 
 fun NativeControls.Keys.isDisabledControlPressed() =
-	Client.isDisabledControlPressed(Client.defaultControlGroup.index, index)
+	Natives.isDisabledControlPressed(Natives.defaultControlGroup.index, index)
 
 fun NativeControls.Keys.isControlEnabled() =
-	Client.isControlEnabled(Client.defaultControlGroup.index, index)
+	Natives.isControlEnabled(Natives.defaultControlGroup.index, index)
 
 fun NativeControls.Keys.isControlJustPressed() =
-	Client.isControlJustPressed(Client.defaultControlGroup.index, index)
+	Natives.isControlJustPressed(Natives.defaultControlGroup.index, index)
 
 fun NativeControls.Keys.isControlJustReleased() =
-	Client.isControlJustReleased(Client.defaultControlGroup.index, index)
+	Natives.isControlJustReleased(Natives.defaultControlGroup.index, index)
 
 fun NativeControls.Keys.isControlPressed() =
-	Client.isControlPressed(Client.defaultControlGroup.index, index)
+	Natives.isControlPressed(Natives.defaultControlGroup.index, index)
 
 fun NativeControls.Keys.isControlReleased() =
-	Client.isControlReleased(Client.defaultControlGroup.index, index)
+	Natives.isControlReleased(Natives.defaultControlGroup.index, index)
 
 fun NativeControls.Keys.getDisabledControlNormal() =
-	Client.getDisabledControlNormal(Client.defaultControlGroup.index, index)
+	Natives.getDisabledControlNormal(Natives.defaultControlGroup.index, index)
 

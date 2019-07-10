@@ -1,12 +1,12 @@
 package online.fivem.client.modules.role_play_system.vehicle
 
 import kotlinx.coroutines.*
+import online.fivem.Natives
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.entities.Vehicle
 import online.fivem.client.events.PlayerLeftOrJoinVehicleEvent
 import online.fivem.client.extensions.disableControlAction
 import online.fivem.client.extensions.getDisabledControlNormal
-import online.fivem.client.gtav.Client
 import online.fivem.client.modules.basics.TickExecutorModule
 import online.fivem.common.common.Event
 import online.fivem.common.common.generateLong
@@ -262,8 +262,8 @@ class RealisticFailureModule(
 					factor = (healthEngineNew + 200.0) / 1100
 				}
 				if (Cfg.sundayDriver && vehicle.classType != 14) { // Not for boats
-					val accelerator = Client.getControlValue(2, 71)
-					val brake = Client.getControlValue(2, 72)
+					val accelerator = Natives.getControlValue(2, 71)
+					val brake = Natives.getControlValue(2, 72)
 					val speed = vehicle.getSpeedVector(true).y
 					// Change Braking force
 					var brk = fBrakeForce

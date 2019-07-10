@@ -1,13 +1,13 @@
 package online.fivem.client.modules.role_play_system
 
 import kotlinx.coroutines.*
+import online.fivem.Natives
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.events.AccelerationThresholdAchievedEvent
 import online.fivem.client.events.PlayerPedSpawnedEvent
 import online.fivem.client.events.PlayersPedHealthChangedEvent
 import online.fivem.client.extensions.play
 import online.fivem.client.extensions.prefetch
-import online.fivem.client.gtav.Client
 import online.fivem.client.modules.basics.BufferedActionsModule
 import online.fivem.common.GlobalConfig.ALLOW_BLACKOUT_FROM_SPEED
 import online.fivem.common.GlobalConfig.BlackOut.ACCELERATION_THRESHOLD
@@ -50,10 +50,10 @@ class BlackOutModule(
 				if (!enabled) return@on
 				if (it.accelerationModule < ACCELERATION_THRESHOLD) return@on
 
-				val playerPed = Client.getPlayerPedId()
-				val currentHealth = Client.getEntityHealth(playerPed)
+				val playerPed = Natives.getPlayerPedId()
+				val currentHealth = Natives.getEntityHealth(playerPed)
 
-				Client.setEntityHealth(playerPed, currentHealth - it.accelerationModule.toInt() / 50)
+				Natives.setEntityHealth(playerPed, currentHealth - it.accelerationModule.toInt() / 50)
 				Console.debug("blackout from ${it.accelerationModule} m/s^2")
 				blackOut(
 					(

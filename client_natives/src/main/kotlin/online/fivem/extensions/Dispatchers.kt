@@ -1,8 +1,8 @@
-package online.fivem.client.extensions
+package online.fivem.extensions
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import online.fivem.client.common.NativeDispatcher
+import online.fivem.common.NativeDispatcher
 
 
 val Dispatchers.Native: CoroutineDispatcher by lazy { NativeDispatcher() }

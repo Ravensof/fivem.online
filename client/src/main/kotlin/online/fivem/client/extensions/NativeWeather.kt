@@ -2,26 +2,26 @@
 
 package online.fivem.client.extensions
 
-import online.fivem.client.gtav.Client
+import online.fivem.Natives
 import online.fivem.common.gtav.NativeWeather
 
 fun NativeWeather.setOverTime(time: Float) {
-	Client.setWeatherTypeOverTime(name, time)
+	Natives.setWeatherTypeOverTime(name, time)
 }
 
 fun NativeWeather.setWeatherTypePersist() {
-	Client.setWeatherTypePersist(name)
+	Natives.setWeatherTypePersist(name)
 }
 
 fun NativeWeather.setWeatherTypeNow() {
-	Client.setWeatherTypeNow(name)
+	Natives.setWeatherTypeNow(name)
 }
 
 fun NativeWeather.setWeatherTypeNowPersist() {
-	Client.setWeatherTypeNowPersist(name)
+	Natives.setWeatherTypeNowPersist(name)
 }
 
 fun NativeWeather.mix(nativeWeather: NativeWeather, weather2: Float) {
-	Client.setWeatherTypeTransition(this, nativeWeather, weather2)
+	Natives.setWeatherTypeTransition(this, nativeWeather, weather2)
 }
 

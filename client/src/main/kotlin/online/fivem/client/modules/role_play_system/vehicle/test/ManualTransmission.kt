@@ -1,13 +1,15 @@
 package online.fivem.client.modules.role_play_system.vehicle.test
 
 import kotlinx.coroutines.*
+import online.fivem.Natives
 import online.fivem.client.entities.Vehicle
+import online.fivem.client.extensions.disableControlAction
 import online.fivem.client.extensions.drawScreenText2D
-import online.fivem.client.gtav.Client
 import online.fivem.client.modules.basics.TickExecutorModule
 import online.fivem.common.common.Console
 import online.fivem.common.common.Utils.normalizeToLimits
 import online.fivem.common.extensions.*
+import online.fivem.common.gtav.NativeControls
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.pow
 
@@ -52,16 +54,16 @@ class ManualTransmission(
 			while (isActive) {
 				//Get information about the new vehicle
 
-				print("Got new vehicle info")
+				Console.debug("Got new vehicle info")
 				resetLastVehicle()
 
-				vstTheoreticalMaxSpeed = Client.getVehicleHandlingFloat(
+				vstTheoreticalMaxSpeed = Natives.getVehicleHandlingFloat(
 					vehicle.entity,
 					"CHandlingData",
 					"fInitialDriveMaxFlatVel"
 				) * 1.32
 				vstAcceleration =
-						Client.getVehicleHandlingFloat(vehicle.entity, "CHandlingData", "fInitialDriveForce")
+					Natives.getVehicleHandlingFloat(vehicle.entity, "CHandlingData", "fInitialDriveForce")
 				vstNumberOfGears = vehicle.highGear
 
 				vehicle.highGear = 1
@@ -72,15 +74,15 @@ class ManualTransmission(
 				rtEngineRpm = vehicle.currentRpm
 				rtVehicleSpeed = vehicle.dashboardSpeed * 3.6
 
-				Client.disableControlAction(0, 80, true)
-				Client.disableControlAction(0, 21, true)
+				NativeControls.Keys.VEH_CIN_CAM.disableControlAction()
+				NativeControls.Keys.SPRINT.disableControlAction()
 				//DisableControlAction(2, 72, true)
 
 				//Shift up and down
-				if (Client.isDisabledControlJustPressed(0, 21)) {
+				if (Natives.isDisabledControlJustPressed(0, 21)) {
 					currentGear += 1
 					simulateGears()
-				} else if (Client.isDisabledControlJustPressed(0, 80)) {
+				} else if (Natives.isDisabledControlJustPressed(0, 80)) {
 					currentGear -= 1
 					simulateGears()
 				}
@@ -168,7 +170,7 @@ class ManualTransmission(
 					"tThrottleRaw: $tThrottleRaw",
 					"tThrottleFull: $tThrottleFull"
 				).forEachIndexed { index, string ->
-					Client.drawScreenText2D(0.01, 0.01 + index * 2, string)
+					Natives.drawScreenText2D(0.01, 0.01 + index * 2, string)
 				}
 
 				delay(1)
@@ -218,8 +220,8 @@ class ManualTransmission(
 	private fun simulateClutch() {
 		// Tell the game we are in neutral, we don't want to spin the tires in neutral.
 		if (currentGear == 0) {
-			Client.setVehicleCurrentGear(vehicle.entity, 0)
-			Client.setVehicleNextGear(vehicle.entity, 0)
+			Natives.setVehicleCurrentGear(vehicle.entity, 0)
+			Natives.setVehicleNextGear(vehicle.entity, 0)
 		}
 	}
 
@@ -227,15 +229,15 @@ class ManualTransmission(
 		// TODO: Stall if < 0.2 rpm
 		// TODO: Overrevving
 
-		tThrottleRaw = Client.getControlNormal(0, 71)
-		tThrottleFull = (vstAcceleration * tThrottleRaw * Client.getFrameTime() * 100) * gGearDiff
+		tThrottleRaw = Natives.getControlNormal(0, 71)
+		tThrottleFull = (vstAcceleration * tThrottleRaw * Natives.getFrameTime() * 100) * gGearDiff
 
 		when (currentGear) {
 			0 ->
 				if (tThrottleRaw > 0) {
-					Client.setVehicleCurrentRpm(vehicle.entity, -1.0)
+					Natives.setVehicleCurrentRpm(vehicle.entity, -1.0)
 				} else {
-					Client.setVehicleCurrentRpm(vehicle.entity, 0.0)
+					Natives.setVehicleCurrentRpm(vehicle.entity, 0.0)
 				}
 
 			1 ->
@@ -249,7 +251,7 @@ class ManualTransmission(
 						eConstEngineIdleRpm + tThrottleFull
 				engineRpm = exponentialCurve(engineRpm, gGearDiff / 100)
 				val rpm = normalizeToLimits(eEngineRpm, 0.0, 1.0)
-				Client.setVehicleCurrentRpm(vehicle.entity, rpm)
+				Natives.setVehicleCurrentRpm(vehicle.entity, rpm)
 			}
 		}
 	}

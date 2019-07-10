@@ -4,9 +4,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
+import online.fivem.Natives
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.common.GlobalCache.player
-import online.fivem.client.gtav.Client
 import online.fivem.common.common.BufferedAction
 import online.fivem.common.common.Console
 import online.fivem.common.common.generateLong
@@ -21,7 +21,7 @@ class JoinTransitionModule(
 	private val clearScreenExecutor = generateLong()
 
 	init {
-		Client.setManualShutdownLoadingScreenNui(true)
+		Natives.setManualShutdownLoadingScreenNui(true)
 	}
 
 	override fun onStartAsync() = async {
@@ -35,9 +35,9 @@ class JoinTransitionModule(
 			Console.warn("JoinTransitionModule: cannot switch out player")
 		}
 
-		Client.doScreenFadeIn(1)
-		Client.shutdownLoadingScreen()
-		Client.shutdownLoadingScreenNui()
+		Natives.doScreenFadeIn(1)
+		Natives.shutdownLoadingScreen()
+		Natives.shutdownLoadingScreenNui()
 	}
 
 	override fun onStop(): Job? = launch {
@@ -77,9 +77,9 @@ class JoinTransitionModule(
 	}
 
 	private fun clearScreen() {
-		Client.setCloudHatOpacity(CLOUD_OPACITY)
-		Client.hideHudAndRadarThisFrame()
-		Client.setDrawOrigin(0, 0, 0, 0)
+		Natives.setCloudHatOpacity(CLOUD_OPACITY)
+		Natives.hideHudAndRadarThisFrame()
+		Natives.setDrawOrigin(0, 0, 0, 0)
 	}
 
 	companion object {

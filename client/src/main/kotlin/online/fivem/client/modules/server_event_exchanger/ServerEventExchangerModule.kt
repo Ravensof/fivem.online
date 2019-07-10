@@ -5,9 +5,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import online.fivem.Natives
 import online.fivem.client.common.AbstractClientModule
-import online.fivem.client.gtav.Client
-import online.fivem.client.gtav.Natives
+import online.fivem.client.gtav.Exports
 import online.fivem.common.GlobalConfig
 import online.fivem.common.Serializer
 import online.fivem.common.common.Console
@@ -19,6 +19,7 @@ import online.fivem.common.extensions.serializeToPacket
 import online.fivem.common.other.ClientsNetPacket
 import online.fivem.common.other.Serializable
 import online.fivem.common.other.ServersNetPacket
+import online.fivem.extensions.onNet
 
 class ServerEventExchangerModule : AbstractClientModule() {
 
@@ -68,18 +69,18 @@ class ServerEventExchangerModule : AbstractClientModule() {
 	}
 
 	private fun emit(data: Serializable) {
-		Natives.emitNet(
+		Exports.emitNet(
 			eventName = GlobalConfig.NET_EVENT_NAME,
 			data = ClientsNetPacket(
 				Serializer.serializeToPacket(data),
-				playersCount = Client.getNumberOfPlayers(),
+				playersCount = Natives.getNumberOfPlayers(),
 				key = key
 			)
 		)
 	}
 
 	private fun startHandshaking() {
-		Natives.emitNet(GlobalConfig.NET_EVENT_ESTABLISHING_NAME, Serializer.serialize(ImReadyEvent()))
+		Exports.emitNet(GlobalConfig.NET_EVENT_ESTABLISHING_NAME, Serializer.serialize(ImReadyEvent()))
 	}
 
 	companion object {

@@ -3,8 +3,8 @@ package online.fivem.client.modules.nui_event_exchanger
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
+import online.fivem.Natives
 import online.fivem.client.common.AbstractClientModule
-import online.fivem.client.gtav.Client
 import online.fivem.client.gtav.Exports
 import online.fivem.common.GlobalConfig
 import online.fivem.common.Serializer
@@ -58,7 +58,7 @@ class NuiEventExchangerModule : AbstractClientModule() {
 	}
 
 	private fun emit(data: Serializable) {
-		Client.sendNuiMessage(
+		Natives.sendNuiMessage(
 			NuiPacket(Serializer.serializeToPacket(data))
 		)
 	}

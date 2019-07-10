@@ -4,13 +4,13 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
+import online.fivem.Natives
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.common.GlobalCache.player
 import online.fivem.client.common.Player
 import online.fivem.client.events.PlayerPedSpawnedEvent
 import online.fivem.client.extensions.networkResurrectLocalPlayer
 import online.fivem.client.extensions.requestCollisionAtCoordinates
-import online.fivem.client.gtav.Client
 import online.fivem.common.common.Console
 import online.fivem.common.common.Event
 import online.fivem.common.entities.CoordinatesX
@@ -39,19 +39,19 @@ class SpawnManagerModule(
 
 		val ped = player.ped
 
-		Client.requestCollisionAtCoordinates(event.coordinatesX.toCoordinates())
+		Natives.requestCollisionAtCoordinates(event.coordinatesX.toCoordinates())
 
 		ped.coordinatesX = event.coordinatesX
 
 		withTimeoutOrNull(10_000) {
-			while (!Client.hasCollisionLoadedAroundEntity(ped.entity)) {
+			while (!Natives.hasCollisionLoadedAroundEntity(ped.entity)) {
 				delay(100)
 			}
 		}.onNull {
 			Console.warn("failed to request collision at spawn coordinates")
 		}
 
-		Client.networkResurrectLocalPlayer(event.coordinatesX)
+		Natives.networkResurrectLocalPlayer(event.coordinatesX)
 		ped.clearTasksImmediately()
 		ped.removeAllWeapons()
 		player.clearWantedLevel()
@@ -83,7 +83,7 @@ class SpawnManagerModule(
 		ped.freezePosition(true)
 		player.isInvincible = true
 
-		if (Client.isPedFatallyInjured(ped.entity)) {
+		if (Natives.isPedFatallyInjured(ped.entity)) {
 			ped.clearTasksImmediately()
 		}
 	}

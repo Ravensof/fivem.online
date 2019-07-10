@@ -1,14 +1,14 @@
 package online.fivem.client.common
 
+import online.fivem.Natives
+import online.fivem.Natives.doesEntityExist
 import online.fivem.client.entities.Ped
 import online.fivem.client.entities.Vehicle
-import online.fivem.client.gtav.Client
-import online.fivem.client.gtav.Client.doesEntityExist
 import online.fivem.common.common.EntityId
 
 object GlobalCache {
 
-	val player by lazy { Player(Client.getPlayerId()) }
+	val player by lazy { Player(Natives.getPlayerId()) }
 
 	private val vehicles = mutableMapOf<EntityId, Vehicle>()
 	private val peds = mutableMapOf<EntityId, Ped>()

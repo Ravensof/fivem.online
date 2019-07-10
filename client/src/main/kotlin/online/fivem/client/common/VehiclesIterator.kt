@@ -1,6 +1,6 @@
 package online.fivem.client.common
 
-import online.fivem.client.gtav.Client
+import online.fivem.Natives
 import online.fivem.common.common.EntityId
 import online.fivem.common.common.Handle
 
@@ -10,7 +10,7 @@ class VehiclesIterator : IObjectIterator<EntityId> {
 	private var handle: Handle = 0
 
 	init {
-		val findHandle = Client.findFirstVehicle()
+		val findHandle = Natives.findFirstVehicle()
 		handle = findHandle.first
 		currentEntity = findHandle.second
 	}
@@ -21,12 +21,12 @@ class VehiclesIterator : IObjectIterator<EntityId> {
 
 	override fun next(): EntityId {
 		val entity = currentEntity
-		val nextResult = Client.findNextVehicle(handle)
+		val nextResult = Natives.findNextVehicle(handle)
 		currentEntity = nextResult.second
 		return entity
 	}
 
 	override fun close() {
-		Client.endFindVehicle(handle)
+		Natives.endFindVehicle(handle)
 	}
 }

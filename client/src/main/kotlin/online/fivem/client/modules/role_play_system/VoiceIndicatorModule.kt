@@ -2,9 +2,9 @@ package online.fivem.client.modules.role_play_system
 
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import online.fivem.Natives
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.extensions.distance
-import online.fivem.client.gtav.Client
 import online.fivem.client.gtav.enums.MarkerType
 import online.fivem.client.modules.basics.StateRepositoryModule
 import online.fivem.client.modules.basics.TickExecutorModule
@@ -40,13 +40,13 @@ class VoiceIndicatorModule(
 
 		repeatJob(100) {
 
-			pedIndicators = Client.getActivePlayers().associate { playerId ->
-				val playerPed = Client.getPlayerPed(playerId).orZero()
+			pedIndicators = Natives.getActivePlayers().associate { playerId ->
+				val playerPed = Natives.getPlayerPed(playerId).orZero()
 
 				playerPed to (
-						Client.networkIsPlayerTalking(playerId)
-								&& Client.isEntityVisible(playerPed)
-								&& myCoordinates.toCoordinates().distance(Client.getEntityCoords(playerPed)) <= DRAW_DISTANCE_M
+						Natives.networkIsPlayerTalking(playerId)
+								&& Natives.isEntityVisible(playerPed)
+								&& myCoordinates.toCoordinates().distance(Natives.getEntityCoords(playerPed)) <= DRAW_DISTANCE_M
 						)
 			}
 
@@ -55,7 +55,7 @@ class VoiceIndicatorModule(
 					pedIndicators.forEach {
 						if (!it.value) return@forEach
 
-						val coordinates = Client.getEntityCoords(it.key)
+						val coordinates = Natives.getEntityCoords(it.key)
 
 						val color = if (it.value) {
 							RGBA(160, 205, 105, 105)
@@ -63,7 +63,7 @@ class VoiceIndicatorModule(
 							RGBA(239, 239, 239, 50)
 						}
 
-						Client.drawMarker(
+						Natives.drawMarker(
 							MarkerType.HORIZONTAL_CIRCLE_SKINNY.code,
 							coordinates.x,
 							coordinates.y,

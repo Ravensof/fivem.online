@@ -2,11 +2,11 @@ package online.fivem.client.modules.basics
 
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import online.fivem.Natives
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.common.GlobalCache.player
 import online.fivem.client.extensions.start
 import online.fivem.client.extensions.stop
-import online.fivem.client.gtav.Client
 import online.fivem.client.modules.nui_event_exchanger.NuiEvent
 import online.fivem.common.common.BufferedAction
 import online.fivem.common.common.Locker
@@ -66,7 +66,7 @@ class BufferedActionsModule(
 
 		if (transitionTime == 0) {
 			tickExecutorModule.add(supportId) {
-				Client.drawRect(
+				Natives.drawRect(
 					0.0, 0.0,
 					1000.0, 2000.0,//todo подставлять разрешение экрана
 					0, 0, 0
@@ -97,7 +97,7 @@ class BufferedActionsModule(
 
 	suspend fun setRagdollEffect(key: Any) = ragdollBuffer.start(key) {
 		val playerPed = player.ped.entity
-		tickExecutorModule.add(ragdollExecutorId) { Client.setPedToRagdoll(playerPed) }
+		tickExecutorModule.add(ragdollExecutorId) { Natives.setPedToRagdoll(playerPed) }
 	}
 
 	suspend fun removeRagdollEffect(key: Any) = ragdollBuffer.cancel(key) {

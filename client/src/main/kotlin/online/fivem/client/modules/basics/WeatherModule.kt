@@ -4,12 +4,12 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import online.fivem.Natives
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.extensions.setOverTime
 import online.fivem.client.extensions.setWeatherTypeNow
 import online.fivem.client.extensions.setWeatherTypeNowPersist
 import online.fivem.client.extensions.setWeatherTypePersist
-import online.fivem.client.gtav.Client
 import online.fivem.common.common.Console
 import online.fivem.common.entities.Weather
 import online.fivem.common.events.net.ServerSideSynchronizationEvent
@@ -63,18 +63,18 @@ class WeatherModule(
 			weather.setOverTime(changingTime / 1_000)
 			delay(changingTime.toLong())
 
-			Client.clearOverrideWeather()
-			Client.clearWeatherTypePersist()
+			Natives.clearOverrideWeather()
+			Natives.clearWeatherTypePersist()
 			weather.setWeatherTypePersist()
 			weather.setWeatherTypeNow()
 			weather.setWeatherTypeNowPersist()
 
 			if (weather == NativeWeather.XMAS) {
-				Client.setForceVehicleTrails(true)
-				Client.setForcePedFootstepsTracks(true)
+				Natives.setForceVehicleTrails(true)
+				Natives.setForcePedFootstepsTracks(true)
 			} else {
-				Client.setForceVehicleTrails(false)
-				Client.setForcePedFootstepsTracks(false)
+				Natives.setForceVehicleTrails(false)
+				Natives.setForcePedFootstepsTracks(false)
 			}
 		}
 

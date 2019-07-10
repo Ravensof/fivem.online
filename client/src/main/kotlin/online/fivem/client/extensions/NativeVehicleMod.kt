@@ -1,13 +1,13 @@
 package online.fivem.client.extensions
 
-import online.fivem.client.gtav.Client
+import online.fivem.Natives
 import online.fivem.common.common.EntityId
 import online.fivem.common.gtav.NativeVehicleMod
 
 fun NativeVehicleMod.setOn(vehicle: EntityId, value: Int) {
 	when (this) {
 		NativeVehicleMod.TURBO, NativeVehicleMod.SMOKE_ENABLED, NativeVehicleMod.XENON -> {
-			Client.toggleVehicleMod(vehicle, id, value != 0)
+			Natives.toggleVehicleMod(vehicle, id, value != 0)
 		}
 
 		NativeVehicleMod.SPOILERS,
@@ -54,12 +54,12 @@ fun NativeVehicleMod.setOn(vehicle: EntityId, value: Int) {
 		NativeVehicleMod.TRIM_B,
 		NativeVehicleMod.TANK,
 		NativeVehicleMod.WINDOWS -> {
-			Client.setVehicleMod(vehicle, id, value, false)
+			Natives.setVehicleMod(vehicle, id, value, false)
 		}
 
 		NativeVehicleMod.LIVERY -> {
-			Client.setVehicleMod(vehicle, id, value, false)
-			Client.setVehicleLivery(vehicle, value)
+			Natives.setVehicleMod(vehicle, id, value, false)
+			Natives.setVehicleLivery(vehicle, value)
 		}
 	}
 }
@@ -67,7 +67,7 @@ fun NativeVehicleMod.setOn(vehicle: EntityId, value: Int) {
 fun NativeVehicleMod.getOn(vehicle: EntityId): Int? {
 	return when (this) {
 		NativeVehicleMod.TURBO, NativeVehicleMod.SMOKE_ENABLED, NativeVehicleMod.XENON -> {
-			if (Client.isToggleModOn(vehicle, id)) 1 else 0
+			if (Natives.isToggleModOn(vehicle, id)) 1 else 0
 		}
 
 		NativeVehicleMod.SPOILERS,
@@ -114,11 +114,11 @@ fun NativeVehicleMod.getOn(vehicle: EntityId): Int? {
 		NativeVehicleMod.TRIM_B,
 		NativeVehicleMod.TANK,
 		NativeVehicleMod.WINDOWS -> {
-			Client.getVehicleMod(vehicle, id)
+			Natives.getVehicleMod(vehicle, id)
 		}
 
 		NativeVehicleMod.LIVERY -> {
-			Client.getVehicleLivery(vehicle)
+			Natives.getVehicleLivery(vehicle)
 		}
 	}
 }

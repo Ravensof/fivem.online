@@ -1,37 +1,37 @@
 package online.fivem.client.entities
 
-import online.fivem.client.gtav.Client
+import online.fivem.Natives
 import online.fivem.common.entities.Coordinates
 import online.fivem.common.entities.CoordinatesX
 
 abstract class Entity(val entity: Int) {
 
-	val model = Client.getEntityModel(entity)
+	val model = Natives.getEntityModel(entity)
 
 	var health: Int
-		get() = Client.getEntityHealth(entity)
-		set(value) = Client.setEntityHealth(entity, value)
+		get() = Natives.getEntityHealth(entity)
+		set(value) = Natives.setEntityHealth(entity, value)
 
 	var heading: Float
-		get() = Client.getEntityHeading(entity)
-		set(value) = Client.setEntityHeading(entity, value)
+		get() = Natives.getEntityHeading(entity)
+		set(value) = Natives.setEntityHeading(entity, value)
 
 	var coordinates: Coordinates
-		get() = Client.getEntityCoords(entity)
+		get() = Natives.getEntityCoords(entity)
 		set(value) {
-			Client.setEntityCoordsNoOffset(entity, value.x, value.y, value.z)
+			Natives.setEntityCoordsNoOffset(entity, value.x, value.y, value.z)
 		}
 
 	var coordinatesX: CoordinatesX
-		get() = CoordinatesX(coordinates = Client.getEntityCoords(entity), rotation = Client.getEntityHeading(entity))
+		get() = CoordinatesX(coordinates = Natives.getEntityCoords(entity), rotation = Natives.getEntityHeading(entity))
 		set(value) {
-			Client.setEntityCoordsNoOffset(entity, value.x, value.y, value.z)
-			Client.setEntityHeading(entity, heading)
+			Natives.setEntityCoordsNoOffset(entity, value.x, value.y, value.z)
+			Natives.setEntityHeading(entity, heading)
 		}
 
 	var isVisible: Boolean
-		get() = Client.isEntityVisible(entity)
-		set(value) = Client.setEntityVisible(entity, value)
+		get() = Natives.isEntityVisible(entity)
+		set(value) = Natives.setEntityVisible(entity, value)
 
 	override fun equals(other: Any?): Boolean {
 		return other is Entity && entity == other.entity && model == other.model
@@ -43,15 +43,15 @@ abstract class Entity(val entity: Int) {
 		return result
 	}
 
-	fun getSpeed() = Client.getEntitySpeed(entity)
+	fun getSpeed() = Natives.getEntitySpeed(entity)
 
-	fun getSpeedVector(relative: Boolean) = Client.getEntitySpeedVector(entity, relative)
+	fun getSpeedVector(relative: Boolean) = Natives.getEntitySpeedVector(entity, relative)
 
-	fun getRoll() = Client.getEntityRoll(entity)
+	fun getRoll() = Natives.getEntityRoll(entity)
 
-	fun freezePosition(freeze: Boolean) = Client.freezeEntityPosition(entity, freeze)
+	fun freezePosition(freeze: Boolean) = Natives.freezeEntityPosition(entity, freeze)
 
 	fun setCollision(toggle: Boolean, keepPhysics: Boolean = true) =
-		Client.setEntityCollision(entity, toggle, keepPhysics)
+		Natives.setEntityCollision(entity, toggle, keepPhysics)
 
 }

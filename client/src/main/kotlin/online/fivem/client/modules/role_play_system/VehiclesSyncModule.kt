@@ -2,10 +2,10 @@ package online.fivem.client.modules.role_play_system
 
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.launch
+import online.fivem.Natives
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.common.VehiclesIterator
 import online.fivem.client.entities.Vehicle
-import online.fivem.client.gtav.Client
 import online.fivem.client.modules.server_event_exchanger.ServerEvent
 import online.fivem.common.events.net.ClientSideSynchronizationEvent
 import online.fivem.common.events.net.SpawnVehiclesCommand
@@ -28,7 +28,7 @@ class VehiclesSyncModule(
 		val vehicles = mutableListOf<VehiclesSyncClientEvent.Vehicle>()
 
 		VehiclesIterator()
-			.filter { Client.isVehiclePreviouslyOwnedByPlayer(it) }
+			.filter { Natives.isVehiclePreviouslyOwnedByPlayer(it) }
 			.forEach {
 
 				val vehicle = Vehicle.newInstance(it)

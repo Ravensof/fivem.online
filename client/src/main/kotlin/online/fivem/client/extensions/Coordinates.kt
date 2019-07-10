@@ -1,8 +1,8 @@
 package online.fivem.client.extensions
 
-import online.fivem.client.gtav.Client
+import online.fivem.Natives
 import online.fivem.common.entities.Coordinates
 
 fun Coordinates.distance(coordinates: Coordinates): Float {
-	return Client.getDistanceBetweenCoords(this, coordinates)
+	return Natives.getDistanceBetweenCoords(this, coordinates)
 }

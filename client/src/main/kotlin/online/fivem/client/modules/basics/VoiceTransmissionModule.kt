@@ -3,14 +3,11 @@ package online.fivem.client.modules.basics
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import online.fivem.Natives
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.common.GlobalCache.player
 import online.fivem.client.entities.Ped
 import online.fivem.client.extensions.distance
-import online.fivem.client.gtav.Client
-import online.fivem.client.gtav.Client.getEntityCoords
-import online.fivem.client.gtav.Client.getPlayerPed
-import online.fivem.client.gtav.Client.hasEntityClearLosToEntity
 import online.fivem.common.extensions.forEach
 import online.fivem.common.extensions.repeatJob
 
@@ -24,7 +21,7 @@ class VoiceTransmissionModule(
 	private var checkJob: Job? = null
 
 	init {
-		Client.networkSetTalkerProximity(-1000)
+		Natives.networkSetTalkerProximity(-1000)
 	}
 
 	override fun onStartAsync() = async {
@@ -55,11 +52,11 @@ class VoiceTransmissionModule(
 		val myCoordinates = player.ped.coordinates
 		val loudness = 1f //player.networkGetLoudness() * 10
 
-		Client.getActivePlayers().forEach { anotherPlayer ->
+		Natives.getActivePlayers().forEach { anotherPlayer ->
 			if (anotherPlayer == player.id) return@forEach
 
-			val anotherPlayerPed = getPlayerPed(anotherPlayer) ?: return@forEach
-			val anotherPlayerCoordinates = getEntityCoords(anotherPlayerPed)
+			val anotherPlayerPed = Natives.getPlayerPed(anotherPlayer) ?: return@forEach
+			val anotherPlayerCoordinates = Natives.getEntityCoords(anotherPlayerPed)
 
 			val distance = myCoordinates.distance(anotherPlayerCoordinates)
 
@@ -69,12 +66,12 @@ class VoiceTransmissionModule(
 
 				distance <= DISTANCE_HEARING_THROUGH_WALLS * loudness -> true
 
-				distance <= DISTANCE_HEARING_CLEAR && hasEntityClearLosToEntity(
+				distance <= DISTANCE_HEARING_CLEAR && Natives.hasEntityClearLosToEntity(
 					player.ped.entity,
 					anotherPlayerPed
 				) -> true
 
-				distance <= DISTANCE_HEARING_CLEAR_IN_FRONT * loudness && Client.hasEntityClearLosToEntityInFront(
+				distance <= DISTANCE_HEARING_CLEAR_IN_FRONT * loudness && Natives.hasEntityClearLosToEntityInFront(
 					player.ped.entity,
 					anotherPlayerPed
 				) -> true
@@ -82,7 +79,7 @@ class VoiceTransmissionModule(
 				else -> false
 			}
 
-			Client.networkOverrideSendRestrictions(
+			Natives.networkOverrideSendRestrictions(
 				anotherPlayer,
 				enable
 			)
