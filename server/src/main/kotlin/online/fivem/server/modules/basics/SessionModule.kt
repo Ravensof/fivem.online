@@ -3,6 +3,7 @@ package online.fivem.server.modules.basics
 import external.nodejs.mysql.Pool
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import online.fivem.Natives
 import online.fivem.common.common.Console
 import online.fivem.common.common.Event
 import online.fivem.common.events.net.ImReadyEvent
@@ -16,7 +17,6 @@ import online.fivem.server.entities.mysqlEntities.UserEntity
 import online.fivem.server.events.PlayerConnectedEvent
 import online.fivem.server.events.PlayerDisconnectedEvent
 import online.fivem.server.gtav.Exports
-import online.fivem.server.gtav.Natives
 import online.fivem.server.modules.basics.mysql.MySQLModule
 import online.fivem.server.modules.basics.mysql.extensions.getConnection
 import online.fivem.server.modules.basics.mysql.extensions.row

@@ -1,6 +1,7 @@
 package online.fivem.server.entities
 
-import online.fivem.server.gtav.Natives
+import online.fivem.Natives
+
 
 class Player(
 	val playerSrc: PlayerSrc,

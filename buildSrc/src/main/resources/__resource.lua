@@ -57,6 +57,7 @@ client_scripts {
 	-- end common
 	'client/resources/main/client.lua',
 
+	'client_natives/lib/client_natives.js',
 	'client/lib/client.js',
 }
 
@@ -74,5 +75,6 @@ server_scripts {
 	-- end common
 
 	'server/resources/main/server.lua',
+	'server_natives/lib/server_natives.js',
 	'server/lib/server.js',
 }

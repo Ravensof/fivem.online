@@ -2,6 +2,7 @@ package online.fivem.server.modules.client_event_exchanger
 
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
+import online.fivem.Natives
 import online.fivem.common.GlobalConfig
 import online.fivem.common.Serializer
 import online.fivem.common.common.Console
@@ -22,7 +23,6 @@ import online.fivem.server.Strings
 import online.fivem.server.common.AbstractServerModule
 import online.fivem.server.entities.PlayerSrc
 import online.fivem.server.gtav.Exports
-import online.fivem.server.gtav.Natives
 import online.fivem.server.modules.basics.SessionModule
 import kotlin.collections.set
 import kotlin.random.Random
@@ -43,9 +43,9 @@ class ClientEventExchangerModule(
 		Exports.on(NativeEvents.Server.PLAYER_DROPPED) { playerId: Int, _: String -> onPlayerDropped(playerId) }
 
 		launch {
-			Natives.onNet(GlobalConfig.NET_EVENT_NAME, ::onNetEvent)
+			Exports.onNet(GlobalConfig.NET_EVENT_NAME, ::onNetEvent)
 
-			Natives.onNet(GlobalConfig.NET_EVENT_ESTABLISHING_NAME, ::onEstablishingConnection)
+			Exports.onNet(GlobalConfig.NET_EVENT_ESTABLISHING_NAME, ::onEstablishingConnection)
 		}
 	}
 

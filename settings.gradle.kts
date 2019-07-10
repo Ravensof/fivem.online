@@ -10,4 +10,4 @@ pluginManagement {
 }
 rootProject.name = "gtav"
 
-include(":client", ":server", ":nui", ":common", ":loadingScreen")
+include(":client", ":server", ":nui", ":common", ":loadingScreen", ":client_natives", ":server_natives")

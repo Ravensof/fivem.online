@@ -5,6 +5,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import online.fivem.Natives
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.Event
 import online.fivem.common.events.net.ClientSideSynchronizationEvent
@@ -15,7 +16,6 @@ import online.fivem.server.common.AbstractServerModule
 import online.fivem.server.entities.Player
 import online.fivem.server.entities.PlayerSrc
 import online.fivem.server.events.PlayerConnectedEvent
-import online.fivem.server.gtav.Natives
 import online.fivem.server.modules.basics.mysql.MySQLModule
 import online.fivem.server.modules.client_event_exchanger.ClientEvent
 import kotlin.js.Date

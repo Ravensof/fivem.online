@@ -7,4 +7,5 @@ repositories {
 
 dependencies {
 	implementation(project(":common"))
+	implementation(project(":client_natives"))
 }

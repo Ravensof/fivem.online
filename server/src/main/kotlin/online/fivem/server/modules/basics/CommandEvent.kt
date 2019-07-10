@@ -2,9 +2,9 @@ package online.fivem.server.modules.basics
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import online.fivem.Natives
 import online.fivem.common.common.createSupervisorJob
 import online.fivem.server.entities.Player
-import online.fivem.server.gtav.Natives.registerCommand
 import kotlin.coroutines.CoroutineContext
 
 private typealias Handler = suspend (Player?, Array<String>, String) -> Unit
@@ -18,7 +18,7 @@ object CommandEvent : CoroutineScope {
 		handlers[command] = callback
 
 		launch {
-			registerCommand(command, false) { playerSrc, args, raw ->
+			Natives.registerCommand(command, false) { playerSrc, args, raw ->
 				this@CommandEvent.launch {
 					CommandsModule.executionQueue.send(CommandsModule.RawCommand(playerSrc, command, args, raw))
 				}

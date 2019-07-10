@@ -1,7 +1,7 @@
 package online.fivem.server
 
 import external.nodejs.mysql.Params
-import online.fivem.server.gtav.Natives
+import online.fivem.Natives
 
 object ServerConfig {
 

@@ -7,6 +7,7 @@ import org.gradle.api.tasks.TaskAction
 import java.io.File
 import java.io.FileInputStream
 import java.nio.file.Files
+import java.nio.file.NoSuchFileException
 import java.nio.file.Path
 
 open class UploadingToServerTask : DefaultTask() {
@@ -79,18 +80,24 @@ open class UploadingToServerTask : DefaultTask() {
 	private fun uploadResources() {
 		client.removeDirectory("$rootDir/resources")
 
-		Files.walk(Path.of(buildDir.absolutePath + "/resources"))
-			.sorted(Comparator.reverseOrder())
-			.map(Path::toFile)
-			.filter { !it.isDirectory }
-			.forEach {
-				val remotePath = it.absolutePath.removePrefix(buildDir.absolutePath)
+		val path = Path.of(buildDir.absolutePath + "/resources")
 
-				uploadFile(
-					it,
-					"$rootDir$remotePath"
-				)
-			}
+		try {
+			Files.walk(path)
+				.sorted(Comparator.reverseOrder())
+				.map(Path::toFile)
+				.filter { !it.isDirectory }
+				.forEach {
+					val remotePath = it.absolutePath.removePrefix(buildDir.absolutePath)
+
+					uploadFile(
+						it,
+						"$rootDir$remotePath"
+					)
+				}
+		} catch (e: NoSuchFileException) {
+			println("resources dir $path not found")
+		}
 	}
 
 	//todo сделать, чтобы не выполнялось каждый раз для каждого модуля

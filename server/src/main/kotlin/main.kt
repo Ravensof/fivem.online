@@ -1,12 +1,11 @@
 import kotlinx.coroutines.launch
+import online.fivem.Natives
 import online.fivem.common.GlobalConfig
 import online.fivem.common.common.Console
 import online.fivem.common.common.CustomScope
 import online.fivem.common.common.ModuleLoader
 import online.fivem.common.gtav.NativeEvents
 import online.fivem.server.ServerConfig
-import online.fivem.server.ServerConfig.CURRENT_RESOURCE_NAME
-import online.fivem.server.gtav.Natives
 import online.fivem.server.gtav.enums.ResourceState
 import online.fivem.server.modules.basics.BasicsModule
 import online.fivem.server.modules.client_event_exchanger.ClientEventExchangerModule
@@ -17,8 +16,8 @@ private fun main() {
 	CustomScope.launch {
 		ServerConfig.init()
 
-		if (CURRENT_RESOURCE_NAME != GlobalConfig.MODULE_NAME)
-			throw Exception("GlobalConfig.MODULE_NAME should be set in $CURRENT_RESOURCE_NAME")
+		if (ServerConfig.CURRENT_RESOURCE_NAME != GlobalConfig.MODULE_NAME)
+			throw Exception("GlobalConfig.MODULE_NAME should be set in ${ServerConfig.CURRENT_RESOURCE_NAME}")
 
 		Natives.on(NativeEvents.Server.RESOURCE_START) { resourceName: String ->
 
@@ -27,7 +26,7 @@ private fun main() {
 			}
 		}
 
-		if (Natives.getResourceState(CURRENT_RESOURCE_NAME) == ResourceState.STARTED) {
+		if (Natives.getResourceState(ServerConfig.CURRENT_RESOURCE_NAME) == ResourceState.STARTED) {
 			start()
 		}
 	}
