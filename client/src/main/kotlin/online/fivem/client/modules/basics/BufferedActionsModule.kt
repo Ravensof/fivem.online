@@ -96,7 +96,7 @@ class BufferedActionsModule(
 //	}
 
 	suspend fun setRagdollEffect(key: Any) = ragdollBuffer.start(key) {
-		val playerPed = player.ped.entity
+		val playerPed = player.ped.entityId
 		tickExecutorModule.add(ragdollExecutorId) { Natives.setPedToRagdoll(playerPed) }
 	}
 

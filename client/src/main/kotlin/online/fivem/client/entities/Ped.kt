@@ -11,8 +11,8 @@ class Ped private constructor(
 ) : Entity(entity) {
 
 	var armour: Int
-		get() = Natives.getPedArmour(entity)
-		set(value) = Natives.addArmourToPed(entity, value - armour)
+		get() = Natives.getPedArmour(entityId)
+		set(value) = Natives.addArmourToPed(entityId, value - armour)
 
 	val weapon = Weapons(this)
 
@@ -21,12 +21,12 @@ class Ped private constructor(
 	}
 
 	fun isTryingToGetInAnyVehicle() =
-		Natives.isPedInAnyVehicle(entity) != (Natives.getVehiclePedIsUsing(entity) != null)
+		Natives.isPedInAnyVehicle(entityId) != (Natives.getVehiclePedIsUsing(entityId) != null)
 
-	fun isInAVehicle() = Natives.isPedInAnyVehicle(entity, false)
+	fun isInAVehicle() = Natives.isPedInAnyVehicle(entityId, false)
 
 	fun getVehicleIsInteracted(): Vehicle? {
-		Natives.getVehiclePedIsUsing(entity)?.let { entity ->
+		Natives.getVehiclePedIsUsing(entityId)?.let { entity ->
 			return Vehicle.newInstance(entity)
 		}
 
@@ -34,47 +34,47 @@ class Ped private constructor(
 	}
 
 	fun getVehicleIsIn(lastVehicle: Boolean = false): Vehicle? {
-		return Natives.getVehiclePedIsIn(entity, lastVehicle)?.let { Vehicle.newInstance(it) }
+		return Natives.getVehiclePedIsIn(entityId, lastVehicle)?.let { Vehicle.newInstance(it) }
 	}
 
-	fun isTaskActive(task: NativeTask) = Natives.getIsTaskActive(entity, task.number)
+	fun isTaskActive(task: NativeTask) = Natives.getIsTaskActive(entityId, task.number)
 
-	fun clearTasks() = Natives.clearPedTasks(entity)
+	fun clearTasks() = Natives.clearPedTasks(entityId)
 
-	fun clearTasksImmediately() = Natives.clearPedTasksImmediately(entity)
+	fun clearTasksImmediately() = Natives.clearPedTasksImmediately(entityId)
 
 	fun dropWeapon() {
-		Natives.setPedDropsWeapon(entity)
+		Natives.setPedDropsWeapon(entityId)
 	}
 
 	fun setIntoVehicle(vehicle: EntityId, seatIndex: Int) {
-		Natives.setPedIntoVehicle(entity, vehicle, seatIndex)
+		Natives.setPedIntoVehicle(entityId, vehicle, seatIndex)
 	}
 
 	fun setDropsWeaponsWhenDead(toggle: Boolean) {
-		Natives.setPedDropsWeaponsWhenDead(entity, toggle)
+		Natives.setPedDropsWeaponsWhenDead(entityId, toggle)
 	}
 
 	fun hasGotWeapon(weapon: NativeWeapon): Boolean {
-		return Natives.hasPedGotWeapon(entity, weapon.code)
+		return Natives.hasPedGotWeapon(entityId, weapon.code)
 	}
 
 	fun giveWeapon(weapon: NativeWeapon, ammo: Int, isHidden: Boolean = false, equipNow: Boolean = false) =
 		giveWeapon(weapon.code, ammo, isHidden, equipNow)
 
 	fun giveWeapon(weapon: String, ammo: Int, isHidden: Boolean = false, equipNow: Boolean = false) {
-		Natives.giveWeaponToPed(entity, weapon, ammo, isHidden, equipNow)
+		Natives.giveWeaponToPed(entityId, weapon, ammo, isHidden, equipNow)
 	}
 
 	fun getWeapons(): List<Weapons.Weapon> {
 		return NativeWeapon.values().filter { it != NativeWeapon.WEAPON_UNARMED }.mapNotNull { weapon[it] }
 	}
 
-	suspend fun switchOut() = Natives.switchOutPlayer(entity)
+	suspend fun switchOut() = Natives.switchOutPlayer(entityId)
 
-	suspend fun switchIn() = Natives.switchInPlayer(entity)
+	suspend fun switchIn() = Natives.switchInPlayer(entityId)
 
-	fun removeAllWeapons() = Natives.removeAllPedWeapons(entity)
+	fun removeAllWeapons() = Natives.removeAllPedWeapons(entityId)
 
 	class PedDoesntExistsException(message: String) : Exception(message)
 
@@ -90,15 +90,15 @@ class Ped private constructor(
 //			val clipSize = Natives.getWeaponClipSize(weapon.hash)
 
 			var ammo
-				get() = Natives.getAmmoInPedWeapon(ped.entity, weapon.code)
-				set(value) = Natives.addAmmoToPed(ped.entity, weapon.code, value - ammo)
+				get() = Natives.getAmmoInPedWeapon(ped.entityId, weapon.code)
+				set(value) = Natives.addAmmoToPed(ped.entityId, weapon.code, value - ammo)
 
 //			fun drop(){
-//				Natives.setPedDropsInventoryWeapon(ped.entity, weapon.code)
+//				Natives.setPedDropsInventoryWeapon(ped.entityId, weapon.code)
 //			}
 
 			fun remove() {
-				Natives.removeWeaponFromPed(ped.entity, weapon.code)
+				Natives.removeWeaponFromPed(ped.entityId, weapon.code)
 			}
 		}
 	}

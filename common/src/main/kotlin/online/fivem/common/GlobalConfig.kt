@@ -6,6 +6,7 @@ import online.fivem.common.gtav.RadioStation
 @Suppress("MemberVisibilityCanBePrivate")
 object GlobalConfig {
 
+	const val IS_ONE_SYNC_ENABLED = true
 	const val ALLOW_BLACKOUT_FROM_SPEED = false
 
 	const val MODULE_NAME = "fivem-online"
@@ -141,11 +142,7 @@ object GlobalConfig {
 		const val WAKING_UP_TIME: Int = 10//seconds
 	}
 
-	const val SHOW_CONSOLE_ERROR = true
-	const val SHOW_CONSOLE_INFO = true
-	const val SHOW_CONSOLE_WARN = true
 	const val SHOW_CONSOLE_DEBUG = true
-	const val SHOW_CONSOLE_LOG = true
 
 	//dont touch
 	var concatConsoleOutput = false

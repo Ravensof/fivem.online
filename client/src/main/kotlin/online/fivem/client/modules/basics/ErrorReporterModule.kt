@@ -1,12 +1,12 @@
 package online.fivem.client.modules.basics
 
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.modules.server_event_exchanger.ServerEvent
 import online.fivem.client.modules.server_event_exchanger.ServerEventExchangerModule
 import online.fivem.common.common.Console
+import online.fivem.common.common.CustomScope
 import online.fivem.common.common.ExceptionsStorage
 import online.fivem.common.events.net.ErrorReportEvent
 import online.fivem.common.extensions.forEach
@@ -38,7 +38,7 @@ class ErrorReporterModule : AbstractClientModule(), ExceptionsStorage.Listener {
 		fun handleError(throwable: Throwable) {
 			val message = throwable.stackTrace()
 
-			GlobalScope.launch {
+			CustomScope.launch {
 				channel.send(message)
 			}
 			Console.error(message)

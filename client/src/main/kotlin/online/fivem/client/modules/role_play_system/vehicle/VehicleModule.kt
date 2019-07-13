@@ -44,7 +44,7 @@ class VehicleModule(
 		if (disable) {
 			tickExecutorModule.add(seatShuffling) {
 				if (GlobalCache.player.ped.isTaskActive(NativeTask.InVehicleSeatShuffle)) {
-					GlobalCache.player.ped.setIntoVehicle(vehicle.entity, 0)
+					GlobalCache.player.ped.setIntoVehicle(vehicle.entityId, 0)
 				}
 			}
 		} else {

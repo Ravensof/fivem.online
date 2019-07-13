@@ -8,32 +8,30 @@ import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.common.GlobalCache.player
 import online.fivem.client.entities.Ped
 import online.fivem.client.extensions.distance
+import online.fivem.common.GlobalConfig
+import online.fivem.common.common.EntityId
 import online.fivem.common.extensions.forEach
+import online.fivem.common.extensions.receiveAndCancel
 import online.fivem.common.extensions.repeatJob
 
 class VoiceTransmissionModule(
 	private val stateRepositoryModule: StateRepositoryModule
 ) : AbstractClientModule() {
 
-	var playerPed: Ped? = null
-	//todo location_id
-
 	private var checkJob: Job? = null
 
-	init {
+
+	override suspend fun onInit() {
 		Natives.networkSetTalkerProximity(-1000)
 	}
 
 	override fun onStartAsync() = async {
 		stateRepositoryModule.waitForStart()
 
-		subscribeOnPed()
-		subscribeOnIsPlayerTalking()
-	}
-
-	private fun subscribeOnPed() = launch {
-		stateRepositoryModule.playerPed.openSubscription().forEach {
-			playerPed = it
+		if (GlobalConfig.IS_ONE_SYNC_ENABLED) {
+			startCheckingSpeakers()
+		} else {
+			subscribeOnIsPlayerTalking()
 		}
 	}
 
@@ -47,46 +45,67 @@ class VoiceTransmissionModule(
 		}
 	}
 
+	private fun startCheckingSpeakers() = launch {
+		for (talkingPlayers in stateRepositoryModule.talkingPlayers.openSubscription()) {
+			talkingPlayers
+				.filter { it != player.id }
+				.forEach { anotherPlayer ->
+					val pedId = Natives.getPlayerPed(anotherPlayer) ?: return@forEach
+
+					Natives.networkOverrideReceiveRestrictions(
+						anotherPlayer,
+						toggle = Ped.newInstance(pedId)
+							.isAbleToTalkTo(player.ped.entityId)
+					)
+				}
+		}
+	}
+
 	private fun startTalking() = repeatJob(100) {
 
-		val myCoordinates = player.ped.coordinates
 		val loudness = 1f //player.networkGetLoudness() * 10
 
-		Natives.getActivePlayers().forEach { anotherPlayer ->
-			if (anotherPlayer == player.id) return@forEach
+		stateRepositoryModule.activePlayers
+			.receiveAndCancel()
+			.filter { it != player.id && Natives.networkIsPlayerTalking(it) }
+			.forEach { anotherPlayer ->
 
-			val anotherPlayerPed = Natives.getPlayerPed(anotherPlayer) ?: return@forEach
-			val anotherPlayerCoordinates = Natives.getEntityCoords(anotherPlayerPed)
+				val anotherPlayerPedId = Natives.getPlayerPed(anotherPlayer) ?: return@forEach
 
-			val distance = myCoordinates.distance(anotherPlayerCoordinates)
-
-			val enable = when {
-
-				player.ped.isInAVehicle() -> distance <= DISTANCE_HEARING_IN_VEHICLE * loudness
-
-				distance <= DISTANCE_HEARING_THROUGH_WALLS * loudness -> true
-
-				distance <= DISTANCE_HEARING_CLEAR && Natives.hasEntityClearLosToEntity(
-					player.ped.entity,
-					anotherPlayerPed
-				) -> true
-
-				distance <= DISTANCE_HEARING_CLEAR_IN_FRONT * loudness && Natives.hasEntityClearLosToEntityInFront(
-					player.ped.entity,
-					anotherPlayerPed
-				) -> true
-
-				else -> false
+				Natives.networkOverrideSendRestrictions(
+					anotherPlayer,
+					player.ped.isAbleToTalkTo(anotherPlayerPedId, loudness)
+				)
 			}
-
-			Natives.networkOverrideSendRestrictions(
-				anotherPlayer,
-				enable
-			)
-		}
 	}.also {
 		checkJob?.cancel()
 		checkJob = it
+	}
+
+	private fun Ped.isAbleToTalkTo(anotherPlayerPedId: EntityId, loudness: Float = 1f): Boolean {
+
+		val anotherPlayerCoordinates = Natives.getEntityCoords(anotherPlayerPedId)
+
+		val distance = coordinates.distance(anotherPlayerCoordinates)
+
+		return when {
+
+			isInAVehicle() -> distance <= DISTANCE_HEARING_IN_VEHICLE * loudness
+
+			distance <= DISTANCE_HEARING_THROUGH_WALLS * loudness -> true
+
+			distance <= DISTANCE_HEARING_CLEAR && Natives.hasEntityClearLosToEntity(
+				entityId,
+				anotherPlayerPedId
+			) -> true
+
+			distance <= DISTANCE_HEARING_CLEAR_IN_FRONT * loudness && Natives.hasEntityClearLosToEntityInFront(
+				entityId,
+				anotherPlayerPedId
+			) -> true
+
+			else -> false
+		}
 	}
 
 	private fun stopTalking() = checkJob?.cancel()

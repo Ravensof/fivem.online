@@ -16,6 +16,7 @@ import online.fivem.client.modules.basics.state_repository_modules.ProfileSettin
 import online.fivem.common.common.Event
 import online.fivem.common.entities.CoordinatesX
 import online.fivem.common.extensions.orZero
+import online.fivem.common.extensions.receiveAndCancel
 import online.fivem.common.extensions.repeatJob
 import online.fivem.common.gtav.NativeControls
 import online.fivem.common.gtav.RadioStation
@@ -45,12 +46,18 @@ class StateRepositoryModule(
 
 	val playerSpeed = ConflatedBroadcastChannel<Double>()
 
+	val activePlayers = ConflatedBroadcastChannel<Array<Int>>()
+
+	val talkingPlayers = ConflatedBroadcastChannel<List<Int>>()
+
 	var accelerationThreshold: Double = 150.0 // m/s^2
 		set(value) {
 			if (value > field) {
 				field = value
 			}
 		}
+
+
 	private var iLastSpeedCheck = 0.0
 
 	private var vehiclePlayerTryingToGet: Vehicle? = null
@@ -70,6 +77,7 @@ class StateRepositoryModule(
 
 		this@StateRepositoryModule.repeatJob(25) {
 			checkIsPlayerTalking(player.id)
+			checkTalkingPlayers()
 		}
 
 		this@StateRepositoryModule.repeatJob(50) {
@@ -87,6 +95,7 @@ class StateRepositoryModule(
 
 		this@StateRepositoryModule.repeatJob(1_000) {
 
+			checkActivePlayers()
 			checkPlayersPed(player.ped)
 
 			checkCoordinatesX(player.ped)
@@ -101,6 +110,23 @@ class StateRepositoryModule(
 		if (isPlayerTalking.valueOrNull == value) return
 
 		isPlayerTalking.send(value)
+	}
+
+	private suspend fun checkActivePlayers() {
+		val currentActivePlayers = Natives.getActivePlayers()
+
+		if (activePlayers.valueOrNull?.contentEquals(currentActivePlayers) == true) return
+
+		activePlayers.send(currentActivePlayers)
+	}
+
+	private suspend fun checkTalkingPlayers() {
+		val currentTalkingPlayers = activePlayers.openSubscription().receiveAndCancel()
+			.filter { Natives.networkIsPlayerTalking(it) }
+
+		if (talkingPlayers.valueOrNull != currentTalkingPlayers) {
+			talkingPlayers.send(currentTalkingPlayers)
+		}
 	}
 
 	private suspend fun checkPlayerTryingToGetAnyVehicle(playerPed: Ped) {
@@ -168,7 +194,7 @@ class StateRepositoryModule(
 	}
 
 	private suspend fun checkPlayersPed(ped: Ped) {
-		if (playerPed.valueOrNull?.entity != ped.entity) {
+		if (playerPed.valueOrNull?.entityId != ped.entityId) {
 
 			playerPed.send(ped)
 		}
@@ -288,7 +314,7 @@ class StateRepositoryModule(
 
 		if (currentVehicle == previousVehicle) return
 
-		val playerSeatIndex = currentVehicle?.let { Natives.getSeatOfPedInVehicle(it.entity, playerPed.entity) }
+		val playerSeatIndex = currentVehicle?.let { Natives.getSeatOfPedInVehicle(it.entityId, playerPed.entityId) }
 		checkPlayerSeatIndex(playerSeatIndex)
 
 		when {

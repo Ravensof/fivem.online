@@ -50,27 +50,19 @@ object Console : Console, CoroutineScope {
 	}
 
 	override fun error(vararg o: Any?) {
-		if (!GlobalConfig.SHOW_CONSOLE_ERROR) return
-
 		launch { channel.send(Message.Error("${getTimeStamp()}$CONSOLE_PREFIX[ERROR]: ", *o)) }
 	}
 
 	override fun info(vararg o: Any?) {
-		if (!GlobalConfig.SHOW_CONSOLE_INFO) return
-
 		launch { channel.send(Message.Info("${getTimeStamp()}$CONSOLE_PREFIX[INFO]: ", *o)) }
 	}
 
 	override fun log(vararg o: Any?) {
-		if (!GlobalConfig.SHOW_CONSOLE_LOG) return
-
 		launch { channel.send(Message.Log("${getTimeStamp()}$CONSOLE_PREFIX[LOG]: ", *o)) }
 
 	}
 
 	override fun warn(vararg o: Any?) {
-		if (!GlobalConfig.SHOW_CONSOLE_WARN) return
-
 		launch { channel.send(Message.Warning("${getTimeStamp()}$CONSOLE_PREFIX[WARN]: ", *o)) }
 
 	}

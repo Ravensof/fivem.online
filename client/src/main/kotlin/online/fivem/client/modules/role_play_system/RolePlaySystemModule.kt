@@ -72,7 +72,7 @@ class RolePlaySystemModule(
 
 	private fun subscribeOnPed() = launch {
 		stateRepositoryModule.playerPed.openSubscription().forEach { ped ->
-			Natives.setPedCanRagdollFromPlayerImpact(ped.entity, true)
+			Natives.setPedCanRagdollFromPlayerImpact(ped.entityId, true)
 		}
 	}
 }

@@ -44,7 +44,7 @@ class SpawnManagerModule(
 		ped.coordinatesX = event.coordinatesX
 
 		withTimeoutOrNull(10_000) {
-			while (!Natives.hasCollisionLoadedAroundEntity(ped.entity)) {
+			while (!Natives.hasCollisionLoadedAroundEntity(ped.entityId)) {
 				delay(100)
 			}
 		}.onNull {
@@ -83,7 +83,7 @@ class SpawnManagerModule(
 		ped.freezePosition(true)
 		player.isInvincible = true
 
-		if (Natives.isPedFatallyInjured(ped.entity)) {
+		if (Natives.isPedFatallyInjured(ped.entityId)) {
 			ped.clearTasksImmediately()
 		}
 	}

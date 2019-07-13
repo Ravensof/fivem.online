@@ -1,4 +1,4 @@
-package online.fivem.client.gtav.enums
+package online.fivem.enums
 
 enum class MarkerType(val code: Int) {
 	UPSIDE_DOWN_CONE(0),

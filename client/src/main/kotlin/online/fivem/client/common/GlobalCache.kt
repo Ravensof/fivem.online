@@ -24,7 +24,7 @@ object GlobalCache {
 	}
 
 	fun putVehicle(vehicle: Vehicle) {
-		vehicles[vehicle.entity] = vehicle
+		vehicles[vehicle.entityId] = vehicle
 
 		vehicles.forEach {
 			if (!doesEntityExist(it.key)) {
@@ -44,7 +44,7 @@ object GlobalCache {
 	}
 
 	fun putPed(ped: Ped) {
-		peds[ped.entity] = ped
+		peds[ped.entityId] = ped
 
 		peds.forEach {
 			if (!doesEntityExist(it.key)) {

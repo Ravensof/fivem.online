@@ -58,12 +58,12 @@ class ManualTransmission(
 				resetLastVehicle()
 
 				vstTheoreticalMaxSpeed = Natives.getVehicleHandlingFloat(
-					vehicle.entity,
+					vehicle.entityId,
 					"CHandlingData",
 					"fInitialDriveMaxFlatVel"
 				) * 1.32
 				vstAcceleration =
-					Natives.getVehicleHandlingFloat(vehicle.entity, "CHandlingData", "fInitialDriveForce")
+					Natives.getVehicleHandlingFloat(vehicle.entityId, "CHandlingData", "fInitialDriveForce")
 				vstNumberOfGears = vehicle.highGear
 
 				vehicle.highGear = 1
@@ -220,8 +220,8 @@ class ManualTransmission(
 	private fun simulateClutch() {
 		// Tell the game we are in neutral, we don't want to spin the tires in neutral.
 		if (currentGear == 0) {
-			Natives.setVehicleCurrentGear(vehicle.entity, 0)
-			Natives.setVehicleNextGear(vehicle.entity, 0)
+			Natives.setVehicleCurrentGear(vehicle.entityId, 0)
+			Natives.setVehicleNextGear(vehicle.entityId, 0)
 		}
 	}
 
@@ -235,9 +235,9 @@ class ManualTransmission(
 		when (currentGear) {
 			0 ->
 				if (tThrottleRaw > 0) {
-					Natives.setVehicleCurrentRpm(vehicle.entity, -1.0)
+					Natives.setVehicleCurrentRpm(vehicle.entityId, -1.0)
 				} else {
-					Natives.setVehicleCurrentRpm(vehicle.entity, 0.0)
+					Natives.setVehicleCurrentRpm(vehicle.entityId, 0.0)
 				}
 
 			1 ->
@@ -251,7 +251,7 @@ class ManualTransmission(
 						eConstEngineIdleRpm + tThrottleFull
 				engineRpm = exponentialCurve(engineRpm, gGearDiff / 100)
 				val rpm = normalizeToLimits(eEngineRpm, 0.0, 1.0)
-				Natives.setVehicleCurrentRpm(vehicle.entity, rpm)
+				Natives.setVehicleCurrentRpm(vehicle.entityId, rpm)
 			}
 		}
 	}

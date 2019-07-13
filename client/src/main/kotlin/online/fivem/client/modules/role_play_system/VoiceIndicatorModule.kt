@@ -5,13 +5,14 @@ import kotlinx.coroutines.launch
 import online.fivem.Natives
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.extensions.distance
-import online.fivem.client.gtav.enums.MarkerType
 import online.fivem.client.modules.basics.StateRepositoryModule
 import online.fivem.client.modules.basics.TickExecutorModule
 import online.fivem.common.entities.RGBA
 import online.fivem.common.extensions.forEach
 import online.fivem.common.extensions.orZero
+import online.fivem.common.extensions.receiveAndCancel
 import online.fivem.common.extensions.repeatJob
+import online.fivem.enums.MarkerType
 
 class VoiceIndicatorModule(
 	private val tickExecutorModule: TickExecutorModule,
@@ -25,7 +26,6 @@ class VoiceIndicatorModule(
 	}
 
 	private fun startDrawingIndicator() = launch {
-		val takeaway = 0.95f
 
 		val coordinatesChannel = stateRepositoryModule.coordinatesX.openSubscription()
 
@@ -40,15 +40,17 @@ class VoiceIndicatorModule(
 
 		repeatJob(100) {
 
-			pedIndicators = Natives.getActivePlayers().associate { playerId ->
-				val playerPed = Natives.getPlayerPed(playerId).orZero()
+			pedIndicators = stateRepositoryModule.talkingPlayers
+				.receiveAndCancel()
+				.associate { playerId ->
 
-				playerPed to (
-						Natives.networkIsPlayerTalking(playerId)
-								&& Natives.isEntityVisible(playerPed)
-								&& myCoordinates.toCoordinates().distance(Natives.getEntityCoords(playerPed)) <= DRAW_DISTANCE_M
-						)
-			}
+					val playerPed = Natives.getPlayerPed(playerId).orZero()
+
+					playerPed to (
+							Natives.isEntityVisible(playerPed)
+									&& myCoordinates.toCoordinates().distance(Natives.getEntityCoords(playerPed)) <= DRAW_DISTANCE_M
+							)
+				}
 
 			if (pedIndicators.isNotEmpty()) {
 				tickExecutorModule.add(this) {
@@ -67,7 +69,7 @@ class VoiceIndicatorModule(
 							MarkerType.HORIZONTAL_CIRCLE_SKINNY.code,
 							coordinates.x,
 							coordinates.y,
-							coordinates.z - takeaway,
+							coordinates.z - MARKER_POSITION,
 							rotX = 36f,
 							red = color.red,
 							green = color.green,
@@ -82,5 +84,6 @@ class VoiceIndicatorModule(
 
 	private companion object {
 		const val DRAW_DISTANCE_M = 10
+		const val MARKER_POSITION = 0.95f
 	}
 }

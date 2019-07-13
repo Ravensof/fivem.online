@@ -1,17 +1,12 @@
 package online.fivem.client.modules.basics.state_repository_modules
 
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.launch
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.extensions.value
-import online.fivem.common.common.createSupervisorJob
 import online.fivem.common.gtav.ProfileSetting
-import online.fivem.extensions.Native
 
 class ProfileSettingsRepositoryModule : AbstractClientModule() {
-
-	override val coroutineContext = createSupervisorJob() + Dispatchers.Native
 
 	private val channels = mutableMapOf<ProfileSetting, ConflatedBroadcastChannel<Int>>()
 
