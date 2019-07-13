@@ -14,19 +14,21 @@ import online.fivem.common.gtav.NativeVehicleMod
 import kotlin.reflect.KProperty
 
 class Vehicle private constructor(
-	entity: EntityId
-) : Entity(entity) {
+	entityId: EntityId
+) : Entity(entityId) {
 
-	val networkId = Natives.networkGetNetworkIdFromEntity(entity)
-	val handling = Handling(entity)
+	val networkId = Natives.networkGetNetworkIdFromEntity(entityId)
+	val numberOfWheels = Natives.getVehicleNumberOfWheels(entityId)
+	val numberOfDoors = Natives.getNumberOfVehicleDoors(entityId)
+	val numberOfPassengersSeats = Natives.getVehicleMaxNumberOfPassengers(entityId)
+
+	val handling = Handling(entityId)
+	val mod = Mod(entityId)
+
 	val wheels: List<Wheel>
 	val doors: List<Door>
-	val numberOfWheels = Natives.getVehicleNumberOfWheels(entity)
-	val numberOfDoors = Natives.getNumberOfVehicleDoors(entity)
-	val numberOfPassengersSeats = Natives.getVehicleMaxNumberOfPassengers(entity)
-	val mod = Mod(entity)
 
-	val classType: Int = Natives.getVehicleClass(entity)
+	val classType: Int = Natives.getVehicleClass(entityId)
 
 	var modKit: Int
 		get() = Natives.getVehicleModKit(entityId)
@@ -175,7 +177,7 @@ class Vehicle private constructor(
 		set(value) = Natives.setVehicleDoorsLocked(entityId, value)
 
 	init {
-		if (!Natives.doesEntityExist(entity)) throw VehicleDoesntExistsException("vehicle $entity doesnt exists")
+		if (!Natives.doesEntityExist(entityId)) throw VehicleDoesntExistsException("vehicle $entityId doesnt exists")
 
 		Natives.setNetworkIdCanMigrate(networkId, true)
 
@@ -183,12 +185,12 @@ class Vehicle private constructor(
 
 		wheels = mutableListOf()
 		for (i in 0 until numberOfWheels) {
-			wheels.add(Wheel(i, entity))
+			wheels.add(Wheel(i, entityId))
 		}
 
 		doors = mutableListOf()
 		for (i in 0 until numberOfDoors) {
-			doors.add(Door(i, entity))
+			doors.add(Door(i, entityId))
 		}
 	}
 

@@ -15,7 +15,7 @@ class TickExecutorModule : AbstractClientModule() {
 				tickFunctions.forEach { it.value() }
 			} catch (e: Throwable) {
 				ErrorReporterModule.handleError(
-					Exception("TickExecutorModule:onTick", e)
+					Exception("TickExecutorModule::onTick: ${e.message}", e)
 				)
 			}
 		}
