@@ -2,29 +2,18 @@ package online.fivem.client.modules.gui.menu
 
 import kotlinx.coroutines.async
 import online.fivem.client.common.AbstractClientModule
-import online.fivem.client.modules.basics.ControlHandlerModule
-import online.fivem.client.modules.gui.MainControlListenerModule
-import online.fivem.client.modules.gui.NavigationControlsHandler
+import online.fivem.client.modules.gui.NavigationControlHelperModule
 import online.fivem.common.common.Console
-import online.fivem.common.gtav.NativeControls
 
-class PhoneMenu(
-	private val controlHandlerModule: ControlHandlerModule,
-	private val mainControlListenerModule: MainControlListenerModule
+class PhoneMenuModule(
+	private val navigationControlHelperModule: NavigationControlHelperModule
 
 ) : AbstractClientModule(),
-	NavigationControlsHandler.Listener {
+	NavigationControlHelperModule.Listener {
 
-	private var navigatorListener: NavigationControlsHandler? = null
 
 	override fun onStartAsync() = async {
-		controlHandlerModule.waitForStart()
-
-		mainControlListenerModule.waitForStart()
-		mainControlListenerModule.onShortPressListener(
-			NativeControls.Keys.PHONE,
-			::onPhoneOpenButton
-		)
+		navigationControlHelperModule.waitForStart()
 	}
 
 	override fun onKeyUp() {
@@ -68,6 +57,7 @@ class PhoneMenu(
 	}
 
 	override fun onKeyExit() {
+		navigationControlHelperModule.listener = null
 		Console.debug("onKeyExit")
 	}
 
@@ -79,9 +69,10 @@ class PhoneMenu(
 		Console.debug("onFocusLost")
 	}
 
-	private fun onPhoneOpenButton(): Boolean {
-		navigatorListener = NavigationControlsHandler(coroutineContext, controlHandlerModule, this)
+	fun onOpen(): Boolean {
+		navigationControlHelperModule.listener = this
 
 		return true
 	}
+
 }

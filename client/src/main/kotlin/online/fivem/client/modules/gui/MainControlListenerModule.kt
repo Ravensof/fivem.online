@@ -4,21 +4,45 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.modules.basics.ControlHandlerModule
+import online.fivem.client.modules.gui.menu.InteractionMenuModule
+import online.fivem.client.modules.gui.menu.PhoneMenuModule
+import online.fivem.common.common.Console
 import online.fivem.common.gtav.NativeControls
 
 class MainControlListenerModule(
 	private val controlHandlerModule: ControlHandlerModule
 ) : AbstractClientModule(), ControlHandlerModule.Listener {
-	override val registeredKeys = mutableListOf<NativeControls.Keys>()
 
-	private val shortPressHandlers = mutableMapOf<NativeControls.Keys, () -> Boolean>()
-	private val longPressHandlers = mutableMapOf<NativeControls.Keys, () -> Boolean>()
+	override val registeredKeys = setOf(
+		NativeControls.Keys.INTERACTION_MENU,
+		NativeControls.Keys.PHONE
+	)
 
+	private val navigationControlHelperModule = NavigationControlHelperModule(
+		controlHandlerModule = controlHandlerModule
+	)
+
+	private val phoneMenu = PhoneMenuModule(
+		navigationControlHelperModule = navigationControlHelperModule
+	)
+
+	private val interactionMenu = InteractionMenuModule(
+		navigationControlHelperModule = navigationControlHelperModule
+	)
+
+	override suspend fun onInit() {
+		moduleLoader.add(navigationControlHelperModule)
+		moduleLoader.add(phoneMenu)
+		moduleLoader.add(interactionMenu)
+	}
 
 	override fun onStartAsync() = async {
 		controlHandlerModule.waitForStart()
 
 		controlHandlerModule.addListener(this@MainControlListenerModule)
+
+		phoneMenu.waitForStart()
+		interactionMenu.waitForStart()
 	}
 
 	override fun onStop(): Job? {
@@ -27,19 +51,20 @@ class MainControlListenerModule(
 		return super.onStop()
 	}
 
-	override fun onShortPressed(control: NativeControls.Keys): Boolean {
-		return shortPressHandlers[control]?.invoke() ?: false
-	}
+	override fun onShortPressed(control: NativeControls.Keys): Boolean = when (control) {
 
-	override fun onLongPressed(control: NativeControls.Keys): Boolean {
-		return longPressHandlers[control]?.invoke() ?: false
-	}
+		NativeControls.Keys.INTERACTION_MENU -> {
+			Console.debug(control.name)
+			interactionMenu.onOpen()
+		}
 
-	fun onShortPressListener(control: NativeControls.Keys, callback: () -> Boolean) {
-		shortPressHandlers[control] = callback
-	}
+		NativeControls.Keys.PHONE -> {
+			Console.debug(control.name)
+			phoneMenu.onOpen()
+		}
 
-	fun onLongPressListener(control: NativeControls.Keys, callback: () -> Boolean) {
-		longPressHandlers[control] = callback
+		else -> {
+			false
+		}
 	}
 }

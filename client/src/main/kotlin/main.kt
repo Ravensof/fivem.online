@@ -2,6 +2,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import online.fivem.Natives
 import online.fivem.client.modules.basics.BasicsModules
+import online.fivem.client.modules.gui.MainControlListenerModule
 import online.fivem.client.modules.nui_event_exchanger.NuiEventExchangerModule
 import online.fivem.client.modules.role_play_system.RolePlaySystemModule
 import online.fivem.client.modules.server_event_exchanger.ServerEventExchangerModule
@@ -36,6 +37,12 @@ private fun start() {
 			val basicsModules = BasicsModules().also {
 				add(it)
 			}
+
+			add(
+				MainControlListenerModule(
+					controlHandlerModule = basicsModules.controlHandlerModule
+				)
+			)
 
 			add(
 				RolePlaySystemModule(

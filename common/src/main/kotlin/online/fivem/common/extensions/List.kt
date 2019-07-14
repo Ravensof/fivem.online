@@ -11,3 +11,9 @@ fun List<*>?.isNotEmpty(): Boolean {
 
 	return this != null && !isEmpty()
 }
+
+inline fun <A, B> List<Pair<A, B>>.forEach(action: (A, B) -> Unit) {
+	for ((a, b) in this) {
+		action(a, b)
+	}
+}

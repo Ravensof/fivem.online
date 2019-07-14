@@ -3,8 +3,10 @@ package online.fivem.client.modules.basics
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import online.fivem.client.common.AbstractClientModule
-import online.fivem.client.extensions.disableControlAction
+import online.fivem.client.extensions.disableAllControlsAction
 import online.fivem.client.extensions.isControlPressed
+import online.fivem.client.extensions.isDisabledControlPressed
+import online.fivem.common.extensions.forEach
 import online.fivem.common.extensions.orZero
 import online.fivem.common.gtav.NativeControls
 import kotlin.js.Date
@@ -19,6 +21,8 @@ class ControlHandlerModule(
 
 	override fun onStartAsync() = async {
 		tickExecutorModule.waitForStart()
+
+		NativeControls.Keys.values().forEach { pressedKeys[it] = KEY_NOT_PRESSED }
 
 		tickExecutorModule.add(this@ControlHandlerModule, ::checkPressedKeys)
 	}
@@ -39,34 +43,88 @@ class ControlHandlerModule(
 		handlers.lastOrNull()?.onFocus()
 	}
 
-	private fun checkPressedKeys() {
+	private fun getPressedControls(): List<Pair<PressType, NativeControls.Keys>> {
 
-		getRegisteredKeys().forEach { control ->
-			val isControlPressed = control.isControlPressed()
+		val dateNow = Date.now()
+
+		return getRegisteredKeys().mapNotNull { control ->
+			val isControlPressed = control.isControlPressed() || control.isDisabledControlPressed()
 
 			if (isControlPressed) {
 
-				if (pressedKeys[control] == 0.0) {
-					pressedKeys[control] = Date.now()
+				if (pressedKeys[control] == KEY_NOT_PRESSED) {
+					pressedKeys[control] = dateNow
 
-					if (onJustPressed(control)) return disableAllKeys()
-				} else if (pressedKeys[control].orZero() > 0 && Date.now() - pressedKeys[control].orZero() > KEY_HOLD_TIME) {
-					pressedKeys[control] = -1.0
+					return@mapNotNull PressType.JUST_PRESSED to control
+				} else if (pressedKeys[control].orZero() > 0 && dateNow - pressedKeys[control].orZero() > KEY_HOLD_TIME) {
+					pressedKeys[control] = KEY_LONG_PRESSED
 
-					if (onLongPressed(control)) return disableAllKeys()
+					return@mapNotNull PressType.LONG_PRESSED to control
 				}
 
 			} else {
 
-				if (pressedKeys[control] != 0.0) {
-					pressedKeys[control] = 0.0
+				if (pressedKeys[control] != KEY_NOT_PRESSED) {
 
-					if (pressedKeys[control] != -1.0) {
-						if (onShortPressed(control)) return disableAllKeys()
+					val previousPressTime = pressedKeys[control]
+
+					pressedKeys[control] = KEY_NOT_PRESSED
+
+					if (previousPressTime == KEY_LONG_PRESSED) {
+						return@mapNotNull PressType.JUST_RELEASED to control
 					} else {
-						if (onJustReleased(control)) return disableAllKeys()
+						return@mapNotNull PressType.JUST_RELEASED_OR_SHORT_PRESSED to control
 					}
 				}
+			}
+
+			return@mapNotNull null
+		}
+	}
+
+	private fun checkPressedKeys() {
+
+		val pressedControls = getPressedControls()
+
+		handlers.asReversed().forEach { handler ->
+
+			pressedControls.forEach { pressType, control ->
+				if (when (pressType) {
+						PressType.JUST_PRESSED -> {
+							handler.onJustPressed(control).also {
+								if (it) {
+									markPressedControlsInvisibleForShortPress()
+									NativeControls.disableAllControlsAction()
+								}
+							}
+						}
+
+						PressType.JUST_RELEASED_OR_SHORT_PRESSED -> {
+							val onShortPressed = handler.onShortPressed(control)
+							val onJustReleased = handler.onJustReleased(control)
+
+							onShortPressed || onJustReleased
+						}
+
+						PressType.LONG_PRESSED -> {
+							handler.onLongPressed(control)
+						}
+
+						PressType.JUST_RELEASED -> {
+							handler.onJustReleased(control)
+						}
+
+					}
+				) return
+			}
+		}
+	}
+
+	//todo сделать, чтобы нажатие пойманное в justPressed обработчиком `A`, в justReleased отправлялось ТОЛЬКО в обработчик `A`
+	private fun markPressedControlsInvisibleForShortPress() {
+		pressedKeys.forEach { control, time ->
+			if (time > 0) {
+				pressedKeys[control] = KEY_LONG_PRESSED
 			}
 		}
 	}
@@ -77,47 +135,25 @@ class ControlHandlerModule(
 		return set
 	}
 
-	private fun onShortPressed(control: NativeControls.Keys): Boolean {
-		return handlers.asReversed().any { it.onShortPressed(control) }
+
+	private enum class PressType {
+		JUST_PRESSED,
+		JUST_RELEASED_OR_SHORT_PRESSED,
+		LONG_PRESSED,
+		JUST_RELEASED
 	}
 
-	private fun onLongPressed(control: NativeControls.Keys): Boolean {
-		return handlers.asReversed().any { it.onLongPressed(control) }
+
+	private companion object {
+
+		const val KEY_LONG_PRESSED = -1.0
+		const val KEY_NOT_PRESSED = 0.0
+		const val KEY_HOLD_TIME = 250
 	}
 
-	private fun onJustReleased(control: NativeControls.Keys): Boolean {
-		return handlers.asReversed().any { it.onJustReleased(control) }
-	}
-
-	private fun onJustPressed(control: NativeControls.Keys): Boolean {
-		return handlers.asReversed().any { it.onJustPressed(control) }
-	}
-
-	private fun disableAllKeys() {
-		NativeControls.Keys.values().forEach {
-			it.disableControlAction()
-		}
-	}
-
-	companion object {
-
-//		private val flashKeys = arrayListOf(
-//			NativeControls.Keys.CELLPHONE_SCROLL_BACKWARD,
-//			NativeControls.Keys.CURSOR_SCROLL_UP,
-//			NativeControls.Keys.CELLPHONE_SCROLL_FORWARD,
-//			NativeControls.Keys.CURSOR_SCROLL_DOWN,
-//			NativeControls.Keys.PREV_WEAPON,
-//			NativeControls.Keys.NEXT_WEAPON,
-//			NativeControls.Keys.VEH_SLOWMO_UD,
-//			NativeControls.Keys.VEH_SLOWMO_UP_ONLY,
-//			NativeControls.Keys.VEH_SLOWMO_DOWN_ONLY
-//		)
-
-		private const val KEY_HOLD_TIME = 250
-	}
 
 	interface Listener {
-		val registeredKeys: List<NativeControls.Keys>
+		val registeredKeys: Set<NativeControls.Keys>
 
 		fun onFocus() {}
 
@@ -132,49 +168,4 @@ class ControlHandlerModule(
 		fun onJustReleased(control: NativeControls.Keys): Boolean = false
 	}
 
-//	interface ExtraListener : Listener {
-//
-//		override val registeredKeys: MutableList<NativeControls.Keys>
-//
-//		val justHandlers: MutableMap<NativeControls.Keys, () -> Boolean>
-//		val shortHandlers: MutableMap<NativeControls.Keys, () -> Boolean>
-//		val longHandlers: MutableMap<NativeControls.Keys, () -> Boolean>
-//		val releaseHandlers: MutableMap<NativeControls.Keys, () -> Boolean>
-//
-//		override fun onShortPressed(control: NativeControls.Keys): Boolean = shortHandlers[control]?.invoke() ?: false
-//
-//		override fun onJustPressed(control: NativeControls.Keys): Boolean = justHandlers[control]?.invoke() ?: false
-//
-//		override fun onLongPressed(control: NativeControls.Keys): Boolean = longHandlers[control]?.invoke() ?: false
-//
-//		override fun onJustReleased(control: NativeControls.Keys): Boolean = releaseHandlers[control]?.invoke() ?: false
-//
-//		fun onShortPressed(control: NativeControls.Keys, callback: () -> Boolean) {
-//			if (!registeredKeys.contains(control)) {
-//				registeredKeys.add(control)
-//			}
-//			shortHandlers[control] = callback
-//		}
-//
-//		fun onJustPressed(control: NativeControls.Keys, callback: () -> Boolean) {
-//			if (!registeredKeys.contains(control)) {
-//				registeredKeys.add(control)
-//			}
-//			justHandlers[control] = callback
-//		}
-//
-//		fun onLongPressed(control: NativeControls.Keys, callback: () -> Boolean) {
-//			if (!registeredKeys.contains(control)) {
-//				registeredKeys.add(control)
-//			}
-//			longHandlers[control] = callback
-//		}
-//
-//		fun onJustReleased(control: NativeControls.Keys, callback: () -> Boolean) {
-//			if (!registeredKeys.contains(control)) {
-//				registeredKeys.add(control)
-//			}
-//			releaseHandlers[control] = callback
-//		}
-//	}
 }

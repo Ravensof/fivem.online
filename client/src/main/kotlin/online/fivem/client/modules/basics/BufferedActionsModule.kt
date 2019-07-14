@@ -5,6 +5,7 @@ import kotlinx.coroutines.delay
 import online.fivem.Natives
 import online.fivem.client.common.AbstractClientModule
 import online.fivem.client.common.GlobalCache.player
+import online.fivem.client.extensions.disableAllControlsAction
 import online.fivem.client.extensions.start
 import online.fivem.client.extensions.stop
 import online.fivem.client.modules.nui_event_exchanger.NuiEvent
@@ -25,6 +26,7 @@ class BufferedActionsModule(
 	val coordinatesLocker = Locker()
 
 	private val ragdollExecutorId = generateLong()
+	private val lockControlExecutorId = generateLong()
 
 //	private val enableBlackOut = BufferedAction()
 //	private val fadeScreenStack = BufferedAction()
@@ -107,9 +109,11 @@ class BufferedActionsModule(
 
 	suspend fun lockControl(key: Any) = controlEffectsBuffer.start(key) {
 		controlHandlerModule.addListener(LockControlListener)
+		tickExecutorModule.add(lockControlExecutorId) { NativeControls.disableAllControlsAction() }
 	}
 
 	suspend fun unLockControl(key: Any) = controlEffectsBuffer.cancel(key) {
+		tickExecutorModule.remove(lockControlExecutorId)
 		controlHandlerModule.removeListener(LockControlListener)
 	}
 
@@ -124,7 +128,7 @@ class BufferedActionsModule(
 
 
 	private object LockControlListener : ControlHandlerModule.Listener {
-		override val registeredKeys: List<NativeControls.Keys> = NativeControls.Keys.values().toList()
+		override val registeredKeys = NativeControls.Keys.values().toSet()
 		override fun onJustPressed(control: NativeControls.Keys): Boolean = true
 		override fun onJustReleased(control: NativeControls.Keys): Boolean = true
 		override fun onLongPressed(control: NativeControls.Keys): Boolean = true

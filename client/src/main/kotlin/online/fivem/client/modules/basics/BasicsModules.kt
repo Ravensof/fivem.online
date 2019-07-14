@@ -12,7 +12,7 @@ class BasicsModules : AbstractClientModule() {
 
 	val tickExecutorModule = TickExecutorModule()
 
-	private val controlHandlerModule = ControlHandlerModule(tickExecutorModule)
+	val controlHandlerModule = ControlHandlerModule(tickExecutorModule)
 
 	val bufferedActionsModule = BufferedActionsModule(
 		tickExecutorModule = tickExecutorModule,

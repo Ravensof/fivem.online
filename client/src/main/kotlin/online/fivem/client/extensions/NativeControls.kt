@@ -5,8 +5,11 @@ package online.fivem.client.extensions
 import online.fivem.Natives
 import online.fivem.common.gtav.NativeControls
 
-fun NativeControls.Keys.disableControlAction(disable: Boolean = true) =
-	Natives.disableControlAction(Natives.defaultControlGroup.index, index, disable)
+fun NativeControls.Keys.disableControlAction(
+	inputGroup: Int = Natives.defaultControlGroup.index,
+	disable: Boolean = true
+) =
+	Natives.disableControlAction(inputGroup, index, disable)
 
 fun NativeControls.Keys.isDisabledControlJustPressed() =
 	Natives.isDisabledControlJustPressed(Natives.defaultControlGroup.index, index)
@@ -35,3 +38,9 @@ fun NativeControls.Keys.isControlReleased() =
 fun NativeControls.Keys.getDisabledControlNormal() =
 	Natives.getDisabledControlNormal(Natives.defaultControlGroup.index, index)
 
+fun NativeControls.disableAllControlsAction() {
+	NativeControls.Keys.values()
+		.forEach {
+			it.disableControlAction()
+		}
+}
