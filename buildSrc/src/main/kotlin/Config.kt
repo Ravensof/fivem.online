@@ -1,5 +1,5 @@
 object Config {
-	const val kotlinVersion = "1.3.41"
+	const val kotlinVersion = "1.3.50"
 
 	object Ftp {
 		const val host = "192.168.1.6"
