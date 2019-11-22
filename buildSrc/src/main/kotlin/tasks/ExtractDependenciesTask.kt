@@ -1,23 +1,22 @@
 package tasks
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.TaskAction
-import org.gradle.kotlin.dsl.property
 import removeDir
 import unZip
 import java.io.File
 
 open class ExtractDependenciesTask : DefaultTask() {
 
-	@Input
-	val buildDir = project.objects.property<File>()
-	@Input
-	val files = project.objects.property<Set<File>>()
+	@InputFile
+	lateinit var buildDir: File
+	@InputFile
+	lateinit var files: Set<File>
 
 	@TaskAction
 	fun start() {
-		extract(buildDir.get(), files.get())
+		extract(buildDir, files)
 	}
 
 	companion object {

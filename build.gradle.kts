@@ -73,8 +73,8 @@ subprojects {
 
 		compile("org.jetbrains.kotlin:kotlin-stdlib-js:" + Config.kotlinVersion)
 //		testCompile "org.jetbrains.kotlin:kotlin-test-js:$kotlinVersion"
-		compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:0.11.1")
-		compile("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.3.0")
+		compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:0.14.0")
+		compile("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.3.2")
 
 		when (project.name) {
 			"common" -> {
@@ -101,8 +101,8 @@ subprojects {
 
 		val extractDependencies by registering(ExtractDependenciesTask::class) {
 			dependsOn(clean)
-			buildDir.set(this@subprojects.buildDir)
-			files.set(configurations.compile.get().files)
+			buildDir = this@subprojects.buildDir
+			files = configurations.compile.get().files
 		}
 
 		assemble.dependsOn(classes)

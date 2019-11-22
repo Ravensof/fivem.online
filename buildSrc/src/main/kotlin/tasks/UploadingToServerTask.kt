@@ -3,6 +3,8 @@ package tasks
 import Config
 import org.apache.commons.net.ftp.FTPClient
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 import java.io.FileInputStream
@@ -12,10 +14,13 @@ import java.nio.file.Path
 
 open class UploadingToServerTask : DefaultTask() {
 
+	@Input
 	var moduleName = ""
 
+	@InputFile
 	lateinit var buildDir: File
 
+	@InputFile
 	lateinit var projectResourcesDir: File
 
 	private val client = FTPClient()
